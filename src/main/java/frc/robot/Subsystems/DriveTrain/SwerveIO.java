@@ -1,5 +1,3 @@
 package frc.robot.Subsystems.DriveTrain;
 
-public class SwerveIO {
-    
-}
+public class SwerveIO {}

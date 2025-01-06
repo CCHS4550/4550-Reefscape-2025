@@ -1,5 +1,3 @@
 package frc.robot.ControlSchemes;
 
-public class DriveScheme {
-    
-}
+public class DriveScheme {}

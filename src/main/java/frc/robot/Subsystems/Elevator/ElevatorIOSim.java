@@ -1,5 +1,3 @@
 package frc.robot.Subsystems.Elevator;
 
-public class ElevatorIOSim {
-    
-}
+public class ElevatorIOSim {}

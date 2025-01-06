@@ -1,5 +1,3 @@
 package frc.robot.Subsystems.Wrist;
 
-public class WristIO {
-    
-}
+public class WristIO {}
