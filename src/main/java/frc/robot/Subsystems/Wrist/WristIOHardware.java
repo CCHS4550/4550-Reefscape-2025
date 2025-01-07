@@ -1,3 +1,3 @@
-package frc.robot.Subsystems.Wrist;
+package frc.robot.subsystems.Wrist;
 
 public class WristIOHardware {}

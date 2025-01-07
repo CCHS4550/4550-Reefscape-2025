@@ -1,3 +1,3 @@
-package frc.robot.Subsystems.Arm;
+package frc.robot.subsystems.Arm;
 
 public class ArmIOSim {}

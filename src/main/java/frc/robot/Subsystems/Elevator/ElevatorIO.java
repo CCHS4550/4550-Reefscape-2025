@@ -1,3 +1,3 @@
-package frc.robot.Subsystems.Elevator;
+package frc.robot.subsystems.Elevator;
 
 public class ElevatorIO {}

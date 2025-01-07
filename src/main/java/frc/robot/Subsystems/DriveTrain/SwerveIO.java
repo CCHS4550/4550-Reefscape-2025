@@ -1,3 +1,15 @@
-package frc.robot.Subsystems.DriveTrain;
+package frc.robot.subsystems.DriveTrain;
 
-public class SwerveIO {}
+import org.littletonrobotics.junction.AutoLog;
+
+public interface SwerveIO {
+
+    @AutoLog
+    class SwerveData { 
+        
+
+    }
+
+
+
+}

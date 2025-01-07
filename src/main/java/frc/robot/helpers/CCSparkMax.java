@@ -1,16 +1,13 @@
 package frc.robot.helpers;
 
-
 import com.revrobotics.*;
-import com.revrobotics.jni.CANSparkJNI;
 import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 // Documention: https://codedocs.revrobotics.com/java/com/revrobotics/package-summary.html
 
-public class CCSparkMax extends SparkMax {
+public class CCSparkMax extends SparkMax implements SparkMaxBase {
 
   private String name;
   private String shortName;
@@ -46,10 +43,7 @@ public class CCSparkMax extends SparkMax {
     this.name = name;
     this.shortName = shortName;
     SparkMaxConfig config = new SparkMaxConfig();
-        config
-            .inverted(reverse)
-            .idleMode(idleMode);
-
+    config.inverted(reverse).idleMode(idleMode);
 
     this.encoder = super.getEncoder();
     this.setPositionConversionFactor(positionConversionFactor);
@@ -59,30 +53,30 @@ public class CCSparkMax extends SparkMax {
     super.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
-//   public CCSparkMax(
-//       String name,
-//       String shortName,
-//       int deviceID,
-//       MotorType motorType,
-//       IdleMode idleMode,
-//       boolean reverse) {
-//     // super(deviceID, motorType);
-//     super(deviceID, motorType);
-//     this.name = name;
-//     this.shortName = shortName;
+  //   public CCSparkMax(
+  //       String name,
+  //       String shortName,
+  //       int deviceID,
+  //       MotorType motorType,
+  //       IdleMode idleMode,
+  //       boolean reverse) {
+  //     // super(deviceID, motorType);
+  //     super(deviceID, motorType);
+  //     this.name = name;
+  //     this.shortName = shortName;
 
-//     super.setInverted(reverse);
-//     super.setIdleMode(idleMode);
+  //     super.setInverted(reverse);
+  //     super.setIdleMode(idleMode);
 
-//     this.encoder = super.getEncoder();
-//     // Will return a value in Radians
-//     // this.setPositionConversionFactor(2 * Math.PI);
-//     // // Will return a value in Radians per Second
-//     // this.setVelocityConversionFactor(2 * Math.PI / 60);
-//     voltageConversionFactor = 12;
-//     super.burnFlash();
-//}
-    public CCSparkMax(
+  //     this.encoder = super.getEncoder();
+  //     // Will return a value in Radians
+  //     // this.setPositionConversionFactor(2 * Math.PI);
+  //     // // Will return a value in Radians per Second
+  //     // this.setVelocityConversionFactor(2 * Math.PI / 60);
+  //     voltageConversionFactor = 12;
+  //     super.burnFlash();
+  // }
+  public CCSparkMax(
       String name,
       String shortName,
       int deviceID,
@@ -93,10 +87,7 @@ public class CCSparkMax extends SparkMax {
     this.name = name;
     this.shortName = shortName;
     SparkMaxConfig config = new SparkMaxConfig();
-        config
-            .inverted(reverse)
-            .idleMode(idleMode);
-
+    config.inverted(reverse).idleMode(idleMode);
 
     this.encoder = super.getEncoder();
     voltageConversionFactor = 12;
@@ -104,96 +95,93 @@ public class CCSparkMax extends SparkMax {
     super.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
-//   public CCSparkMax(
-//       String name   ,
-//       String shortName,
-//       int deviceID,
-//       MotorType motorType,
-//       IdleMode idleMode,
-//       boolean reverse,
-//       double encoder) {
-//     super(deviceID, motorType);
-//     this.name = name;
-//     this.shortName = shortName;
+  //   public CCSparkMax(
+  //       String name   ,
+  //       String shortName,
+  //       int deviceID,
+  //       MotorType motorType,
+  //       IdleMode idleMode,
+  //       boolean reverse,
+  //       double encoder) {
+  //     super(deviceID, motorType);
+  //     this.name = name;
+  //     this.shortName = shortName;
 
-//     super.setInverted(reverse);
-//     super.setIdleMode(idleMode);
+  //     super.setInverted(reverse);
+  //     super.setIdleMode(idleMode);
 
-//     if (encoder < 0) return;
-//     this.encoder = super.getEncoder();
+  //     if (encoder < 0) return;
+  //     this.encoder = super.getEncoder();
 
-//     // Will return a value in Radians
-//     // this.setPositionConversionFactor(2 * Math.PI);
-//     // // Will return a value in Radians per Second
-//     // this.setVelocityConversionFactor(2 * Math.PI / 60);
-//     voltageConversionFactor = 12;
-//     super.burnFlash();
-//   }
-     public CCSparkMax(
+  //     // Will return a value in Radians
+  //     // this.setPositionConversionFactor(2 * Math.PI);
+  //     // // Will return a value in Radians per Second
+  //     // this.setVelocityConversionFactor(2 * Math.PI / 60);
+  //     voltageConversionFactor = 12;
+  //     super.burnFlash();
+  //   }
+  public CCSparkMax(
       String name,
       String shortName,
       int deviceID,
       MotorType motorType,
       IdleMode idleMode,
-      boolean reverse, 
+      boolean reverse,
       double encoder) {
     super(deviceID, motorType);
     this.name = name;
     this.shortName = shortName;
     SparkMaxConfig config = new SparkMaxConfig();
-        config
-            .inverted(reverse)
-            .idleMode(idleMode);
+    config.inverted(reverse).idleMode(idleMode);
 
+    if (encoder < 0) return;
+    this.encoder = super.getEncoder();
 
-     if (encoder < 0) return;
-     this.encoder = super.getEncoder();
-
-//     // Will return a value in Radians
-//     // this.setPositionConversionFactor(2 * Math.PI);
-//     // // Will return a value in Radians per Second
-//     // this.setVelocityConversionFactor(2 * Math.PI / 60);
-//     voltageConversionFactor = 12;
+    //     // Will return a value in Radians
+    //     // this.setPositionConversionFactor(2 * Math.PI);
+    //     // // Will return a value in Radians per Second
+    //     // this.setVelocityConversionFactor(2 * Math.PI / 60);
+    //     voltageConversionFactor = 12;
     super.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
-//   public CCSparkMax(
-//       String name,
-//       String shortName,
-//       int deviceID,
-//       MotorType motorType,
-//       IdleMode idleMode,
-//       boolean reverse,
-//       boolean encoder) {
-//     super(deviceID, motorType);
-//     this.name = name;
-//     this.shortName = shortName;
+  //   public CCSparkMax(
+  //       String name,
+  //       String shortName,
+  //       int deviceID,
+  //       MotorType motorType,
+  //       IdleMode idleMode,
+  //       boolean reverse,
+  //       boolean encoder) {
+  //     super(deviceID, motorType);
+  //     this.name = name;
+  //     this.shortName = shortName;
 
-//     super.setInverted(reverse);
-//     super.setIdleMode(idleMode);
+  //     super.setInverted(reverse);
+  //     super.setIdleMode(idleMode);
 
-//     voltageConversionFactor = 12;
-//     super.burnFlash();
-//   }
-//     public CCSparkMax(
-//       String name,
-//       String shortName,
-//       int deviceID,
-//       MotorType motorType,
-//       IdleMode idleMode,  
-//       boolean reverse,
-//       double encoder) {
-//     super(deviceID, motorType);
-//     this.name = name;
-//     this.shortName = shortName;
-//     SparkMaxConfig config = new SparkMaxConfig();
-//         config
-//             .inverted(reverse)
-//             .idleMode(idleMode);
-//     voltageConversionFactor = 12;
+  //     voltageConversionFactor = 12;
+  //     super.burnFlash();
+  //   }
+  //     public CCSparkMax(
+  //       String name,
+  //       String shortName,
+  //       int deviceID,
+  //       MotorType motorType,
+  //       IdleMode idleMode,
+  //       boolean reverse,
+  //       double encoder) {
+  //     super(deviceID, motorType);
+  //     this.name = name;
+  //     this.shortName = shortName;
+  //     SparkMaxConfig config = new SparkMaxConfig();
+  //         config
+  //             .inverted(reverse)
+  //             .idleMode(idleMode);
+  //     voltageConversionFactor = 12;
 
-//     super.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-//   }
+  //     super.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+  //   }
   public void reset() {
     encoder.setPosition(0);
   }
@@ -224,7 +212,7 @@ public class CCSparkMax extends SparkMax {
   }
 
   public double getVelocity() {
-    return encoder.getVelocity()*velocityConversionFactorOne;
+    return encoder.getVelocity() * velocityConversionFactorOne;
   }
 
   public void disable() {
@@ -267,9 +255,9 @@ public class CCSparkMax extends SparkMax {
   /**
    * Returns the position of the encoder. By default the position is in encoder units, but will
    * return a distance if the Position Conversion Factor has been set.
-   */   
+   */
   public double getPosition() {
-    return encoder.getPosition()*positionConversionFactorOne;
+    return encoder.getPosition() * positionConversionFactorOne;
   }
 
   /**
