@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class SwerveDriveSubsystem extends SubsystemBase {
   /** Creates a new SwerveDriveSubsystem. */
-  public SwerveDriveSubsystem() {}
+  public SwerveDriveSubsystem(SwerveIO io) {}
 
   @Override
   public void periodic() {

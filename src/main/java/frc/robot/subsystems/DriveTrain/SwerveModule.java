@@ -1,22 +1,23 @@
-package frc.robot.subsystems.swervedrive;
+package frc.robot.subsystems.DriveTrain;
 
 import static edu.wpi.first.units.Units.*;
 
-import com.revrobotics.SparkAnalogSensor;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.Measure;
-import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj.AnalogEncoder;
 // import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.helpers.CCSparkMax;
-import frc.maps.Constants;
+import frc.robot.helpers.CCSparkMax;
+import frc.robot.helpers.SparkMaxBase;
+
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
+
+import com.revrobotics.spark.SparkBase;
 
 // import org.littletonrobotics.junction.Logger;
 
@@ -51,8 +52,8 @@ public class SwerveModule extends SubsystemBase {
    * @param absoluteEncoderOffset The offset of the absolute encoder in radians.
    */
   public SwerveModule(
-      CCSparkMax driveMotor,
-      CCSparkMax turnMotor,
+      SparkMaxBase driveMotor,
+      SparkMaxBase turnMotor,
       int absoluteEncoderChannel,
       double absoluteEncoderOffset,
       String name) {

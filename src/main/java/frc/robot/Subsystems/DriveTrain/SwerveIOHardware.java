@@ -1,3 +1,8 @@
 package frc.robot.subsystems.DriveTrain;
 
-public class SwerveIOHardware {}
+public class SwerveIOHardware implements SwerveIO {
+
+    
+
+
+}
