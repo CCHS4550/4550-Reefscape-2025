@@ -4,12 +4,6 @@ import org.littletonrobotics.junction.AutoLog;
 
 public interface SwerveIO {
 
-    @AutoLog
-    class SwerveData { 
-        
-
-    }
-
-
-
+  @AutoLog
+  class SwerveData {}
 }

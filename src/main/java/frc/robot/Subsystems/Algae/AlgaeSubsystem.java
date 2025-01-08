@@ -1,4 +1,3 @@
 package frc.robot.Subsystems.Algae;
-public class AlgaeSubsystem {
-    
-}
+
+public class AlgaeSubsystem {}

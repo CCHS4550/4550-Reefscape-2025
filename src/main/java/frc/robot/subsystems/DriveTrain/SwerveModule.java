@@ -13,11 +13,8 @@ import edu.wpi.first.wpilibj.AnalogEncoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.helpers.CCSparkMax;
 import frc.robot.helpers.SparkMaxBase;
-
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
-
-import com.revrobotics.spark.SparkBase;
 
 // import org.littletonrobotics.junction.Logger;
 
