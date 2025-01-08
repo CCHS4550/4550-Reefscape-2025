@@ -34,4 +34,10 @@ public final class Constants {
     /** Replaying from a log file. */
     REPLAY
   }
+  public static class MotorConstants {
+    public static final int ELEVATOR_ONE = 1;
+    public static final boolean ELEVATOR_ONE_REVERSE = false;
+    public static final int ELEVATOR_TWO = 2;
+    public static final int ELEVATOR_TWO_REVERSE = true;
+  }
 }
