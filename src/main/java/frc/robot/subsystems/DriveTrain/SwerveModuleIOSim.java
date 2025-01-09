@@ -1,3 +1,3 @@
 package frc.robot.subsystems.DriveTrain;
 
-public class SwerveIOSim {}
+public class SwerveModuleIOSim {}

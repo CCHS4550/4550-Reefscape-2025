@@ -9,15 +9,11 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.Measure;
 import edu.wpi.first.wpilibj.AnalogEncoder;
-import edu.wpi.first.wpilibj.simulation.AnalogEncoderSim;
 // import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Robot;
 import frc.robot.helpers.CCMotorController;
+import frc.robot.maps.Constants;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
-
-// import org.littletonrobotics.junction.Logger;
 
 /**
  * Class for controlling a swerve module. Each module has 2 motors, one for driving and one for
@@ -27,9 +23,7 @@ import org.littletonrobotics.junction.Logger;
  * SwerveModuleState takes in a drive speed in meters per second and an angle in radians in the
  * format of Rotation2d.
  */
-public class SwerveModule extends SubsystemBase {
-
-  private double absoluteEncoderValue = 0;
+public class SwerveModuleIOHardware implements SwerveModuleIO {
 
   private CCMotorController driveMotor;
   private CCMotorController turnMotor;
@@ -40,7 +34,6 @@ public class SwerveModule extends SubsystemBase {
   // private SparkPIDController turningPIDController;
 
   private AnalogEncoder absoluteEncoder;
-  private AnalogEncoderSim absoluteEncoderSim;
   private double absoluteEncoderOffset;
   private String name;
 
@@ -53,7 +46,7 @@ public class SwerveModule extends SubsystemBase {
    * @param absoluteEncoderChannel The port of the absolute encoder.
    * @param absoluteEncoderOffset The offset of the absolute encoder in radians.
    */
-  public SwerveModule(
+  public SwerveModuleIOHardware(
       CCMotorController driveMotor,
       CCMotorController turnMotor,
       int absoluteEncoderChannel,
@@ -63,9 +56,6 @@ public class SwerveModule extends SubsystemBase {
     this.turnMotor = turnMotor;
 
     this.absoluteEncoder = new AnalogEncoder(absoluteEncoderChannel);
-    if (Robot.isSimulation()) {
-      this.absoluteEncoderSim = new AnalogEncoderSim(absoluteEncoder);
-    }
 
     this.absoluteEncoder.setDistancePerRotation(2 * Math.PI);
 
@@ -98,9 +88,9 @@ public class SwerveModule extends SubsystemBase {
     return driveMotor.getPosition(); // should be in meters?
   }
 
-  public SparkAnalogSensor getDriveAnalog() {
-    return driveMotor.getAnalog();
-  }
+  //   public SparkAnalogSensor getDriveAnalog() {
+  //     return driveMotor.getAnalog();
+  //   }
 
   /**
    * Gets the encoder value of the turn motor.
@@ -212,7 +202,7 @@ public class SwerveModule extends SubsystemBase {
   public void setDriveVelocity(double velocity) {
     // These are both in m/s
     double driveOutput =
-        drivingPidController.calculate(driveMotor.getVelocity(), velocity);
+        drivingPidController.calculate(driveMotor.getEncoder().getVelocity(), velocity);
     Logger.recordOutput("desired drivePID Output", driveOutput);
     // Feed forward
     double driveFF = driveFeedforward.calculate(velocity);
@@ -266,11 +256,11 @@ public class SwerveModule extends SubsystemBase {
   }
 
   public void resetAbsoluteEncoder() {
-    absoluteEncoderValue = 0;
+    absoluteEncoder.reset();
   }
 
   public void printAbsoluteEncoder() {
-    System.out.println(name + ": " + absoluteEncoder.get());
+    System.out.println(name + ": " + absoluteEncoder.getDistance());
   }
 
   public String getName() {

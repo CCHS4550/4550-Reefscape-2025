@@ -1,4 +1,4 @@
-package frc.robot.Subsystems.Algae;
+package frc.robot.subsystems.Algae;
 
 import edu.wpi.first.math.util.Units;
 
