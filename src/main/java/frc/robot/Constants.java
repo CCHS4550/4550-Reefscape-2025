@@ -31,7 +31,26 @@ public class Constants {
     /** Replaying from a log file. */
     REPLAY
   }
+<<<<<<< HEAD
 
+=======
+  public static class MotorConstants {
+    public static final int ELEVATOR_ONE = 1;
+    public static final boolean ELEVATOR_ONE_REVERSE = false;
+    public static final int ELEVATOR_TWO = 2;
+    public static final boolean ELEVATOR_TWO_REVERSE = true;
+    public static final int CORAL_WRIST = 3;
+    public static final boolean CORAL_WRIST_REVERSE = true;
+    
+  }
+
+  public static class ElevatorConstants{
+    double[] elevatorHeights = {0,1,2,3,4,5,6,7};
+    double elevatorMaxVelocity = 90;
+    double elevatorMaxAcceleration = 90;
+    double heightStowed = 3;
+  }
+>>>>>>> 2e734e37301ad6e13cf12ec4d3c4277fd93b30da
   public static class ConversionConstants {
 
     // 150/7 rotations of the turn motor to one rotation of the wheel
@@ -49,6 +68,7 @@ public class Constants {
     // horizontal distance travelled by one motor rotation
     public static final double HORIZONTAL_DISTANCE_TRAVELLED_PER_MOTOR_REVOLUTION =
         WHEEL_CIRCUMFRENCE * DRIVE_MOTOR_ROTATIONS_TO_WHEEL_ROTATIONS;
+<<<<<<< HEAD
     public static final double DRIVE_MOTOR_METERS_PER_SECOND_CONVERSION_FACTOR =
         HORIZONTAL_DISTANCE_TRAVELLED_PER_MOTOR_REVOLUTION / 60.0;
   }
@@ -355,3 +375,10 @@ public class Constants {
     return dividend;
   }
 }
+=======
+
+    public static final double DRIVE_MOTOR_METERS_PER_SECOND_CONVERSION_FACTOR =
+        HORIZONTAL_DISTANCE_TRAVELLED_PER_MOTOR_REVOLUTION / 60.0;
+  }
+}
+>>>>>>> 2e734e37301ad6e13cf12ec4d3c4277fd93b30da
