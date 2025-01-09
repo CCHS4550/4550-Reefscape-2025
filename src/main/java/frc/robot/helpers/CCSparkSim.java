@@ -9,8 +9,6 @@ import com.revrobotics.spark.SparkMax;
 
 /** Add your docs here. */
 public class CCSparkSim extends SparkMaxSim implements CCMotorController{
-
-
     public CCSparkSim() {
         super(SparkMax::new, );
 

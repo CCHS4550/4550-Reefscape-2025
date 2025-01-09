@@ -215,6 +215,10 @@ public class CCSparkMax extends SparkMax implements SparkMaxBase {
     return encoder.getVelocity() * velocityConversionFactorOne;
   }
 
+  public double getRawVelocity() {
+    return encoder.getVelocity();
+  }
+
   public void disable() {
     super.disable();
   }
@@ -258,6 +262,10 @@ public class CCSparkMax extends SparkMax implements SparkMaxBase {
    */
   public double getPosition() {
     return encoder.getPosition() * positionConversionFactorOne;
+  }
+
+  public double getRawPosition() {
+    return encoder.getPosition();
   }
 
   /**

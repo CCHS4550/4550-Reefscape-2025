@@ -18,4 +18,30 @@ public class AlgaeIOHardware implements AlgaeIO {
       WRIST_FAST_ACCELERATION / WRIST_VELOCITY_COEFFICIENT;
   private static final double SHOULDER_VELOCITY_CONSTRAINT =
       WRIST_VELOCITY / WRIST_VELOCITY_COEFFICIENT;
+
+  private final CCSparkMax wrist;
+  private final CCSparkMax intake;
+
+  public AlgaeIOHardware(){
+    wrist = new CCSparkMax("wrist", "wr", Constants.ALGAE_WRIST_ID, MotorType.kBrushless, IdleMode.kBrake, Constants.ALGAE_WRIST_REVERSED);
+    intake = new CCSparkMax("algae intake", "an", Constants.ALGAE_INTAKE_ID, MotorType.kBrushless, IdleMode.kBrake, Constants.ALGAE_INTAKE_REVERSED);
+  }
+  @Override
+  public void updateInputs(AlgaeIOInputs inputs){
+    inputs.wristAngleRads = wrist.getRawPosition * WRIST_POSITION_COEFFICIENT;
+    inputs.wristAppliedVolts = wrist.GetBusVoltage() * wrist.GetAppliedOutput(); //might just be get bus voltage
+    inputs.wristCurrentDrawAmps = wrist.getOutputCurrent();
+    inputs.wristAngularMomentum = wrist.getRawVelocity(); // probably have to do some math to this one, not in same units as example code
+
+    inputs.intakeAppliedVolts = intake.GetBusVoltage() * intake.GetAppliedOutput();
+    intake.intakeCurrentDrawAmps = intake.getOutputCurrent();
+  }
+  @Override
+  public void setWristvoltage(speed){
+    wrist.setVoltageFromSpeed(speed);
+  }
+  @Override
+  public void setIntakeVoltage(speed){
+    intake.setVoltageFromSpeed(speed);
+  }
 }
