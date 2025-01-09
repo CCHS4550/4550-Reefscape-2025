@@ -48,6 +48,7 @@ public final class Constants {
     double[] elevatorHeights = {0,1,2,3,4,5,6,7};
     double elevatorMaxVelocity = 90;
     double elevatorMaxAcceleration = 90;
+    double heightStowed = 3;
   }
   public static class ConversionConstants {
 

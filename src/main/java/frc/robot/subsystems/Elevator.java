@@ -3,6 +3,8 @@ package frc.robot.subsystems;
 import frc.robot.Constants;
 import frc.helpers.CCSparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode; 
+import edu.wpi.first.math.controller.ProfiledPIDController;
+
 
 import edu.wpi.first.wpilibj.drive.RobotDriveBase.MotorType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -21,6 +23,8 @@ public class Elevator extends SubsystemBase {
     private TrapezoidProfile.State goalProfile = new TrapezoidProfile();
     public static Elevator instance;
 
+    private ProfiledPIDController elevatorProfiledPID;
+
     public static Elevator getInstance (){
         if (instance == null){
             instance = new Elevator();
@@ -36,9 +40,12 @@ public class Elevator extends SubsystemBase {
         A1 (Constants.ElevatorConstants.elevatorHeights[5]),
         A2 (Constants.ElevatorConstants.elevatorHeights[6]),
         PROCESSOR(Constants.ElevatorConstants.elevatorHeights[7]);
-
+        public double height;
         public ElevatorStates (double height){
             this.height = height;
+        }
+        public double getHeight(){
+            return height;
         }
         
     }
@@ -51,10 +58,10 @@ public class Elevator extends SubsystemBase {
         profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(Constants.ElevatorConstants.elevatorMaxVelocity, Constants.ElevatorConstants.elevatorMaxAcceleration));
         timer = new Timer();
         timer.start();
-
+        elevatorProfiledPID = new ProfiledPIDController(5,0,0, new TrapezoidProfile.Constraints(Constants.ElevatorConstants.elevatoreMaxVelocity, Constants.ElevatorConstants.elevatorMaxAcceleration));
     }
     public double rotationsToHeight(double rotations){
-        return rotations * 0.3345; //random number
+        return rotations * 0.3345 + Constants.ElevatorConstants.heightStowed; //random number
     }
     public double heightToRotations (double height){
         return height * 0.35234;
@@ -86,7 +93,8 @@ public class Elevator extends SubsystemBase {
     }
 
     public void changeStates(){
-        thrbgjkaegavskjfg bkasfkvkasdjfgvjasdjkfgasd gasdjfgjars ldfg jasf kgjajk rg aJDFGJASEJDH B
+        double currentHeight = rotationToHeight(elevatorLeft.getPosition());
+        currentState.getHeight();
     }
     
 
