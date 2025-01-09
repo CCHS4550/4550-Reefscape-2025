@@ -43,6 +43,12 @@ public final class Constants {
     public static final boolean CORAL_WRIST_REVERSE = true;
     
   }
+
+  public static class ElevatorConstants{
+    double[] elevatorHeights = {0,1,2,3,4,5,6,7};
+    double elevatorMaxVelocity = 90;
+    double elevatorMaxAcceleration = 90;
+  }
   public static class ConversionConstants {
 
     // 150/7 rotations of the turn motor to one rotation of the wheel
