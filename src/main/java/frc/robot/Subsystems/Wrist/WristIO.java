@@ -1,3 +1,11 @@
 package frc.robot.subsystems.wrist;
 
-public class WristIO {}
+public interface WristIO {
+
+
+
+    @FunctionalInterface
+    interface IOFactory {
+      WristIO create();
+    }
+}

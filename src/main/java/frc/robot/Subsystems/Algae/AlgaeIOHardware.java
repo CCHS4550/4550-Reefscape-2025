@@ -4,10 +4,11 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.math.util.Units;
-import frc.robot.helpers.CCSparkMax;
-import frc.robot.maps.Constants;
+import frc.maps.Constants;
+import frc.helpers.CCSparkMax;
 
 public class AlgaeIOHardware implements AlgaeIO {
+
   private static final double WRIST_GEAR_RATIO = 1.0;
   private static final double WRIST_POSITION_COEFFICIENT =
       (2 * Math.PI) * (WRIST_GEAR_RATIO * 2048); // idk why we muliply by 2048 but we do
@@ -30,6 +31,7 @@ public class AlgaeIOHardware implements AlgaeIO {
   public AlgaeIOHardware(){
     wrist = new CCSparkMax("wrist", "wr", Constants.ALGAE_WRIST_ID, MotorType.kBrushless, IdleMode.kBrake, Constants.ALGAE_WRIST_REVERSED, 1.0, 1.0);
     intake = new CCSparkMax("algae intake", "an", Constants.ALGAE_INTAKE_ID, MotorType.kBrushless, IdleMode.kBrake, Constants.ALGAE_INTAKE_REVERSED, 1.0, 1.0);
+  
   }
   @Override
   public void updateInputs(AlgaeIOInputs inputs){

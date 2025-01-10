@@ -1,3 +1,5 @@
 package frc.robot.subsystems.wrist;
 
-public class WristIOHardware {}
+public class WristIOHardware implements WristIO {
+    
+}

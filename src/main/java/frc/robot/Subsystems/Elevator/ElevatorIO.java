@@ -1,3 +1,11 @@
 package frc.robot.subsystems.elevator;
 
-public class ElevatorIO {}
+import frc.robot.subsystems.wrist.WristIO;
+
+public interface ElevatorIO {
+
+    @FunctionalInterface
+    interface IOFactory {
+        ElevatorIO create();
+    }
+}

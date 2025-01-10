@@ -1,3 +1,14 @@
 package frc.robot.subsystems.arm;
 
-public class ArmIO {}
+public interface ArmIO {
+
+
+    @FunctionalInterface
+    interface IOFactory {
+      ArmIO create();
+    }
+    
+    
+}
+
+

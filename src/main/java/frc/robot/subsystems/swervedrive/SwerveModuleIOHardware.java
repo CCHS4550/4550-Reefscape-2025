@@ -10,9 +10,9 @@ import edu.wpi.first.math.util.Units;
 
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.AnalogEncoder;
-// import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.helpers.CCMotorController;
-import frc.robot.maps.Constants;
+import frc.helpers.CCMotorController;
+import frc.maps.Constants;
+
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 

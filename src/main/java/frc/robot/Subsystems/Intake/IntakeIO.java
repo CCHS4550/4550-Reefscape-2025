@@ -1,3 +1,11 @@
 package frc.robot.subsystems.intake;
 
-public class IntakeIO {}
+import frc.robot.subsystems.wrist.WristIO;
+
+public interface IntakeIO {
+
+    @FunctionalInterface
+    interface IOFactory {
+      IntakeIO create();
+    }
+}

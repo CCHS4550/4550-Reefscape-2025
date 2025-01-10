@@ -1,7 +1,8 @@
-package frc.robot.maps;
+package frc.maps;
 
 import static edu.wpi.first.units.Units.Inches;
 
+import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -127,14 +128,17 @@ public class Constants {
     public static final double DRIVE_RATE_LIMIT = MAX_DRIVE_SPEED_METERS_PER_SECOND * 1.5;
     public static final double TURN_RATE_LIMIT = MAX_ANGULAR_SPEED_RADIANS_PER_SECOND;
 
+
     public static final PathConstraints AUTO_PATH_CONSTRAINTS =
         new PathConstraints(
             MAX_DRIVE_SPEED_METERS_PER_SECOND - 2,
             DRIVE_RATE_LIMIT - 0.3,
             MAX_ANGULAR_SPEED_RADIANS_PER_SECOND,
             TURN_RATE_LIMIT);
-    // public static final PathConstraints AUTO_PATH_CONSTRAINTS = new
-    // PathConstraints(4, 3);
+
+    public static final RobotConfig config = new RobotConfig(null, null, null, null);
+
+
     public static final TrapezoidProfile.Constraints thetaControlConstraints =
         new TrapezoidProfile.Constraints(MAX_ANGULAR_SPEED_RADIANS_PER_SECOND, TURN_RATE_LIMIT);
 
@@ -149,6 +153,7 @@ public class Constants {
     public static final double TRACK_WITDTH = Units.inchesToMeters(24.750000);
 
     public static final double RADIUS = Math.sqrt(2) * (WHEEL_BASE / 2);
+
     /** FR FL BR BL. Same as order of swerve module states */
     public static final SwerveDriveKinematics DRIVE_KINEMATICS =
         new SwerveDriveKinematics(
@@ -158,22 +163,7 @@ public class Constants {
             new Translation2d(-WHEEL_BASE / 2, TRACK_WITDTH / 2));
   }
 
-  public static class PneumaticsConstants {
-    public static final int COMPRESSOR_FAN = 14;
-    public static final int[] PRESSURE_SEAL = {9, 10};
-    public static final int SHOOTING_VALVE = 8;
-  }
-  /* To Do */
-  public static final int LED_PORT = 0;
-  public static final int LED_LENGTH = 50;
 
-public static final int ALGAE_WRIST_ID = 0;
-
-public static final boolean ALGAE_WRIST_REVERSED = false;
-
-public static final int ALGAE_INTAKE_ID = 0;
-
-public static final boolean ALGAE_INTAKE_REVERSED = false;
 
   public static class SensorMiscConstants {
     public static final int BARREL_SENSOR = 0;
@@ -206,12 +196,6 @@ public static final boolean ALGAE_INTAKE_REVERSED = false;
     public static final double DECLINATION_KA = 0.0016397;
     public static final double DECLINATION_KG = 0.15212;
 
-    // conversion by 0.0125 (Ideal)
-    // Doesn't work oddly enough
-    // public static final double DECLINATION_KS = 0.16117;
-    // public static final double DECLINATION_KV = 0.11154;
-    // public static final double DECLINATION_KA = 0.015231;
-    // public static final double DECLINATION_KG = 0.79476;
 
     public static final double RIGHT_ASCENSION_KS = 0;
     // -0.081946;
@@ -225,17 +209,7 @@ public static final boolean ALGAE_INTAKE_REVERSED = false;
   }
 
   public class FieldPositionConstants {
-    /** Blue Top to Bottom then Red Top to Bottom */
-    public static Pose2d[] blueNotePoses =
-        new Pose2d[] {
-          new Pose2d(2.89, 7.0, null),
-          new Pose2d(2.89, 5.53, null),
-          new Pose2d(2.89, 4.10, new Rotation2d(0))
-        };
 
-    // public static Pose2d[] redNotePoses = new Pose2d[]{new Pose2d(2.89, 7.0,
-    // null), new Pose2d(2.89, 5.53, null),
-    // new Pose2d(2.89, 4.10, new Rotation2d(0))}
   }
 
   public class MechanismPositions {
@@ -315,6 +289,13 @@ public static final boolean ALGAE_INTAKE_REVERSED = false;
             new Translation3d(Inches.of(9.3418), Inches.of(0), Inches.of(14.157)),
             new Rotation3d(0, Units.degreesToRadians(0), Units.degreesToRadians(0)));
   }
+  public static class cameraTwo {
+    public static final String CAMERA_ONE_NAME = "FrontCamera";
+    public static final Transform3d ROBOT_TO_CAM =
+        new Transform3d(
+            new Translation3d(Inches.of(9.3418), Inches.of(0), Inches.of(14.157)),
+            new Rotation3d(0, Units.degreesToRadians(0), Units.degreesToRadians(0)));
+  }
 
   /**
    * Gotten from here
@@ -342,12 +323,7 @@ public static final boolean ALGAE_INTAKE_REVERSED = false;
     public static int BLUE_STAGE_BOTTOM = 16;
   }
 
-  public static Pose2d mirrorPose(Pose2d bluePose) {
-    return new Pose2d(
-        Constants.AprilTags.aprilTagFieldLayout.getFieldLength() - bluePose.getX(),
-        bluePose.getY(),
-        Rotation2d.fromRadians(Math.PI - bluePose.getRotation().getRadians()));
-  }
+
 
   public static class ElevatorConstants {
     public static double ELEVATOR_HEIGHT = 19.345;

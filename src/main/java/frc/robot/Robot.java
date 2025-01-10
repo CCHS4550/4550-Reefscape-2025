@@ -19,8 +19,15 @@ import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
+import org.littletonrobotics.urcl.URCL;
 
-import frc.robot.maps.Constants;
+import edu.wpi.first.net.PortForwarder;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.maps.Constants;
+import frc.robot.autonomous.CustomAutoChooser;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -29,7 +36,27 @@ import frc.robot.maps.Constants;
  * project.
  */
 public class Robot extends LoggedRobot {
-  public Robot() {
+
+
+  private RobotContainer robotContainer;
+  CustomAutoChooser autoChooser;
+
+  private boolean browningOut = false;
+
+
+  public Robot() {}
+
+  @Override
+  public void robotInit() {
+
+
+    autoChooser = new CustomAutoChooser();
+
+    Constants.getCurrentMode();
+
+    SmartDashboard.putBoolean("Browning Out?", browningOut);
+
+
     // Record metadata
     Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
     Logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE);
@@ -70,13 +97,57 @@ public class Robot extends LoggedRobot {
         break;
     }
 
+    
+    PortForwarder.add(5800, "photonvision.local", 5800);
+
+    // Unofficial REV-Compatible Logger
+    // Used by SysID to log REV devices
+    // This is the reason why it is largely unecessary to log Sparkmaxes, since it is done by this.
+    Logger.registerURCL(URCL.startExternal());
     // Start AdvantageKit logger
     Logger.start();
+
+    robotContainer = new RobotContainer();
   }
 
   /** This function is called periodically during all modes. */
   @Override
-  public void robotPeriodic() {}
+  public void robotPeriodic() {
+    
+    switch (Constants.currentMode) {
+      case REAL:
+        RobotState.getInstance().updateDashboard();
+        // RobotState.getInstance().updateVisionPose();
+
+        if (RobotController.getBatteryVoltage() < 10) {
+          browningOut = true;
+        } else {
+          browningOut = false;
+        }
+
+        break;
+
+      case SIM:
+        DriverStation.silenceJoystickConnectionWarning(true);
+
+        break;
+
+      case REPLAY:
+        break;
+    }
+    RobotState.getInstance().updateOdometryPose();
+    RobotState.getInstance().updateModulePositions();
+
+    // Runs the Scheduler. This is responsible for polling buttons, adding
+    // newly-scheduled
+    // commands, running already-scheduled commands, removing finished or
+    // interrupted commands,
+    // and running subsystem periodic() methods. This must be called from the
+    // robot's periodic
+    // block in order for anything in the Command-based framework to work.
+    CommandScheduler.getInstance().run();
+
+  }
 
   /** This function is called once when the robot is disabled. */
   @Override
@@ -88,7 +159,13 @@ public class Robot extends LoggedRobot {
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
-  public void autonomousInit() {}
+  public void autonomousInit() {
+    // AutoBuilderScheme.getPathPlannerAutoCommand().schedule();
+    // AutoBuilderScheme.getCustomAuto().schedule();
+    autoChooser.getSelectedCustomCommand().schedule();
+
+    System.out.println("Autonomous Routine Scheduled!");
+  }
 
   /** This function is called periodically during autonomous. */
   @Override

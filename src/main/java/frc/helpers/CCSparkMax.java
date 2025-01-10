@@ -1,8 +1,11 @@
-package frc.robot.helpers;
+package frc.helpers;
 
 import com.revrobotics.*;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+
+import frc.robot.helpers.MotorDataAutoLogged;
+
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 // Documention: https://codedocs.revrobotics.com/java/com/revrobotics/package-summary.html

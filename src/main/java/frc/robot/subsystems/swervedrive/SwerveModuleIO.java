@@ -8,7 +8,7 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import frc.robot.helpers.CCMotorController;
+import frc.helpers.CCMotorController;
 
 public interface SwerveModuleIO {
 

@@ -1,3 +1,3 @@
 package frc.robot.subsystems.arm;
 
-public class ArmIOHardware {}
+public class ArmIOHardware implements ArmIO {}

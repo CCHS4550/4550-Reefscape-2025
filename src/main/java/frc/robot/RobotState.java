@@ -24,9 +24,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
-// import frc.helpers.Vision.VisionData;
-// import frc.maps.Constants;
-import frc.robot.maps.Constants;
+import frc.maps.Constants;
 import frc.robot.subsystems.algae.AlgaeSubsystem;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
@@ -60,6 +58,7 @@ public class RobotState {
     // Initialize gyro
   public AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
 
+  
   private RobotState() {
 
     new Thread(
@@ -203,91 +202,91 @@ public class RobotState {
 
 
 
-  public synchronized void moduleEncodersInit(SwerveDriveSubsystem swerveDrive) {
+  public synchronized void moduleEncodersInit() {
 
     abs_Enc_FR_Offset_Entry =
         Shuffleboard.getTab("Encoders")
             .getLayout(absolute_encoders_offset_list.getTitle())
             .add(
-                swerveDrive.frontRight.getName(),
-                swerveDrive.frontRight.getAbsoluteEncoderRadiansOffset())
+                swerve.frontRight.getName(),
+                swerve.frontRight.getAbsoluteEncoderRadiansOffset())
             .getEntry();
     abs_Enc_FL_Offset_Entry =
         Shuffleboard.getTab("Encoders")
             .getLayout(absolute_encoders_offset_list.getTitle())
             .add(
-                swerveDrive.frontLeft.getName(),
-                swerveDrive.frontLeft.getAbsoluteEncoderRadiansOffset())
+              swerve.frontLeft.getName(),
+              swerve.frontLeft.getAbsoluteEncoderRadiansOffset())
             .getEntry();
     abs_Enc_BR_Offset_Entry =
         Shuffleboard.getTab("Encoders")
             .getLayout(absolute_encoders_offset_list.getTitle())
             .add(
-                swerveDrive.backRight.getName(),
-                swerveDrive.backRight.getAbsoluteEncoderRadiansOffset())
+              swerve.backRight.getName(),
+              swerve.backRight.getAbsoluteEncoderRadiansOffset())
             .getEntry();
     abs_Enc_BL_Offset_Entry =
         Shuffleboard.getTab("Encoders")
             .getLayout(absolute_encoders_offset_list.getTitle())
             .add(
-                swerveDrive.backLeft.getName(),
-                swerveDrive.backLeft.getAbsoluteEncoderRadiansOffset())
+              swerve.backLeft.getName(),
+                swerve.backLeft.getAbsoluteEncoderRadiansOffset())
             .getEntry();
 
     enc_FR_pos_Entry =
         Shuffleboard.getTab("Encoders")
             .getLayout(turn_encoders_positions.getTitle())
-            .add(swerveDrive.frontRight.getName(), swerveDrive.frontRight.getTurnPosition())
+            .add(swerve.frontRight.getName(), swerve.frontRight.getTurnPosition())
             .getEntry();
     enc_FL_pos_Entry =
         Shuffleboard.getTab("Encoders")
             .getLayout(turn_encoders_positions.getTitle())
-            .add(swerveDrive.frontLeft.getName(), swerveDrive.frontLeft.getTurnPosition())
+            .add(swerve.frontLeft.getName(), swerve.frontLeft.getTurnPosition())
             .getEntry();
     enc_BR_pos_Entry =
         Shuffleboard.getTab("Encoders")
             .getLayout(turn_encoders_positions.getTitle())
-            .add(swerveDrive.backRight.getName(), swerveDrive.backRight.getTurnPosition())
+            .add(swerve.backRight.getName(), swerve.backRight.getTurnPosition())
             .getEntry();
     enc_BL_pos_Entry =
         Shuffleboard.getTab("Encoders")
             .getLayout(turn_encoders_positions.getTitle())
-            .add(swerveDrive.backLeft.getName(), swerveDrive.backLeft.getTurnPosition())
+            .add(swerve.backLeft.getName(), swerve.backLeft.getTurnPosition())
             .getEntry();
 
     abs_Enc_FR_Raw_Entry =
         Shuffleboard.getTab("Encoders")
             .getLayout(absolute_encoders_no_offset_list.getTitle())
             .add(
-                swerveDrive.frontRight.getName(),
-                swerveDrive.frontRight.getAbsoluteEncoderRadiansNoOffset())
+              swerve.frontRight.getName(),
+              swerve.frontRight.getAbsoluteEncoderRadiansNoOffset())
             .getEntry();
     abs_Enc_FL_Raw_Entry =
         Shuffleboard.getTab("Encoders")
             .getLayout(absolute_encoders_no_offset_list.getTitle())
             .add(
-                swerveDrive.frontLeft.getName(),
-                swerveDrive.frontLeft.getAbsoluteEncoderRadiansNoOffset())
+              swerve.frontLeft.getName(),
+              swerve.frontLeft.getAbsoluteEncoderRadiansNoOffset())
             .getEntry();
     abs_Enc_BR_Raw_Entry =
         Shuffleboard.getTab("Encoders")
             .getLayout(absolute_encoders_no_offset_list.getTitle())
             .add(
-                swerveDrive.backRight.getName(),
-                swerveDrive.backRight.getAbsoluteEncoderRadiansNoOffset())
+              swerve.backRight.getName(),
+              swerve.backRight.getAbsoluteEncoderRadiansNoOffset())
             .getEntry();
     abs_Enc_BL_Raw_Entry =
         Shuffleboard.getTab("Encoders")
             .getLayout(absolute_encoders_no_offset_list.getTitle())
             .add(
-                swerveDrive.backLeft.getName(),
-                swerveDrive.backLeft.getAbsoluteEncoderRadiansNoOffset())
+              swerve.backLeft.getName(),
+              swerve.backLeft.getAbsoluteEncoderRadiansNoOffset())
             .getEntry();
   }
 
 
 
-  public synchronized void updateModuleEncoders(SwerveDriveSubsystem swerve) {
+  public synchronized void updateModuleEncoders() {
     abs_Enc_FR_Offset_Entry.setDouble(swerve.frontRight.getAbsoluteEncoderRadiansOffset());
     abs_Enc_FL_Offset_Entry.setDouble(swerve.frontLeft.getAbsoluteEncoderRadiansOffset());
     abs_Enc_BR_Offset_Entry.setDouble(swerve.backRight.getAbsoluteEncoderRadiansOffset());
@@ -307,7 +306,7 @@ public class RobotState {
 
 
   
-  public synchronized void updateModulePositions(SwerveDriveSubsystem swerve) {
+  public synchronized void updateModulePositions() {
 
             swerve.swerveModulePositions[0] =
         new SwerveModulePosition(

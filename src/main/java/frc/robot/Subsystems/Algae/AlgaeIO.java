@@ -2,6 +2,8 @@ package frc.robot.subsystems.algae;
 
 import org.littletonrobotics.junction.AutoLog;
 
+import frc.robot.subsystems.wrist.WristIO;
+
 public interface AlgaeIO {
   default void updateInputs(AlgaeIOInputs inputs) {}
 
@@ -10,6 +12,16 @@ public interface AlgaeIO {
   default void setWristvoltage(double voltage) {}
 
   default void setIntakeVoltage(double voltage) {}
+
+
+
+
+  @FunctionalInterface
+  interface IOFactory {
+    AlgaeIO create();
+  }
+  
+
 }
 
 @AutoLog
@@ -22,3 +34,6 @@ class AlgaeIOInputs {
   public double intakeAppliedVolts;
   public double intakeCurrentDrawAmps;
 }
+
+
+

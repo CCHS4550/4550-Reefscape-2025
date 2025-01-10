@@ -1,0 +1,69 @@
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
+
+package frc.robot.controlschemes;
+
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.subsystems.algae.AlgaeSubsystem;
+import frc.robot.subsystems.arm.ArmSubsystem;
+import frc.robot.subsystems.elevator.ElevatorSubsystem;
+import frc.robot.subsystems.intake.IntakeSubsystem;
+import frc.robot.subsystems.swervedrive.SwerveDriveSubsystem;
+import frc.robot.subsystems.wrist.WristSubsystem;
+
+
+/** Add your docs here. */
+public class CharacterizingScheme {
+
+  public static void configure(
+    SwerveDriveSubsystem swerve,
+    AlgaeSubsystem algae,
+    ArmSubsystem arm,
+    ElevatorSubsystem elevator,
+    IntakeSubsystem intake,
+    WristSubsystem wrist
+    CommandXboxController controller
+      ) {
+
+    configureButtons(
+        swerve,
+        algae,
+        arm,
+        elevator,
+        intake,
+        wrist,
+        controller,
+        );
+  }
+
+  public static void configureButtons(
+    SwerveDriveSubsystem swerve,
+    AlgaeSubsystem algae,
+    ArmSubsystem arm,
+    ElevatorSubsystem elevator,
+    IntakeSubsystem intake,
+    WristSubsystem wrist) {
+
+    // controller.a().onTrue(rightAscension.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    // controller.b().onTrue(rightAscension.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    // controller.x().onTrue(rightAscension.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    // controller.y().onTrue(rightAscension.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+
+    // controller.a().onTrue(declination.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    // controller.b().onTrue(declination.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    // controller.x().onTrue(declination.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    // controller.y().onTrue(declination.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+
+    // controller.a().onTrue(indexer.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    // controller.b().onTrue(indexer.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    // controller.x().onTrue(indexer.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    // controller.y().onTrue(indexer.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+
+    // controller.a().onTrue(swerveDrive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    // controller.b().onTrue(swerveDrive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    // controller.x().onTrue(swerveDrive.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    // controller.y().onTrue(swerveDrive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+  }
+}

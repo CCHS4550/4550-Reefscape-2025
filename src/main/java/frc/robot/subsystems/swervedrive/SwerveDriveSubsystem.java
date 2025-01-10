@@ -30,16 +30,25 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.helpers.CCMotorController;
+import frc.helpers.CCSparkMax;
+import frc.maps.Constants;
 import frc.robot.RobotState;
-import frc.robot.helpers.CCMotorController;
-import frc.robot.maps.Constants;
+
 import org.littletonrobotics.junction.Logger;
 
 /** Class for controlling a swerve drive chassis. Consists of 4 SwerveModules and a gyro. */
 public class SwerveDriveSubsystem extends SubsystemBase {
 
-  CCMotorController.MotorFactory motorFactory;
-  SwerveModuleIO.ModuleFactory moduleFactory;
+  public static SwerveDriveSubsystem mInstance;
+
+
+  private static CCMotorController.MotorFactory defaultMotorFactory = CCSparkMax::new;
+  private static SwerveModuleIO.ModuleFactory defaultModuleFactory = SwerveModuleIOHardware::new;
+
+
+  private CCMotorController.MotorFactory motorFactory;
+  private SwerveModuleIO.ModuleFactory moduleFactory;
 
   public final SwerveModuleIO frontRight =
     moduleFactory.create(
@@ -158,8 +167,26 @@ public class SwerveDriveSubsystem extends SubsystemBase {
 
   public Rotation2d initialAngle = new Rotation2d(0);
 
+
+  
+
+  /** Implementation of Singleton Pattern */
+  public static SwerveDriveSubsystem getInstance(CCMotorController.MotorFactory motorFactory, SwerveModuleIO.ModuleFactory moduleFactory) {
+    if (mInstance == null) {
+      mInstance = new SwerveDriveSubsystem(motorFactory, moduleFactory);
+    }
+    return mInstance;
+  }
+
+  public static SwerveDriveSubsystem getInstance() {
+    if (mInstance == null) {
+      mInstance = new SwerveDriveSubsystem(defaultMotorFactory, defaultModuleFactory);
+    }
+    return mInstance;
+  }
+
 /** Constructor for the Swerve Drive Subsystem. */
-    public SwerveDriveSubsystem(CCMotorController.MotorFactory motorFactory, SwerveModuleIO.ModuleFactory moduleFactory) {
+    private SwerveDriveSubsystem(CCMotorController.MotorFactory motorFactory, SwerveModuleIO.ModuleFactory moduleFactory) {
       this.motorFactory = motorFactory;
       this.moduleFactory = moduleFactory;
 
@@ -209,7 +236,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
                   Constants.SwerveConstants.TURN_RATE_LIMIT));
       turnPID.enableContinuousInput(-Math.PI, Math.PI);
   
-      RobotState.getInstance().moduleEncodersInit(this);
+      RobotState.getInstance().moduleEncodersInit();
     }
 
 
@@ -235,7 +262,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     // getAbsoluteEncoderoffsets();
     Logger.recordOutput("Actual moduleStates", getCurrentModuleStates());
 
-    RobotState.getInstance().updateModuleEncoders(this);
+    RobotState.getInstance().updateModuleEncoders();
   }
 
   /** Sets all 4 modules' drive and turn speeds to 0. */
