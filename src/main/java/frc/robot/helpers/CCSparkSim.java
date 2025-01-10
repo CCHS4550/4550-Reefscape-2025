@@ -195,6 +195,11 @@ public class CCSparkSim extends SparkMaxSim implements CCMotorController {
     return encoder.getPosition() * positionConversionFactorOne;
   }
 
+  @Override 
+  public SparkMaxAlternateEncoderSim getEncoder() {
+    return encoder;
+  }
+
   @Override
   public String getName() {
     return name;
@@ -205,10 +210,7 @@ public class CCSparkSim extends SparkMaxSim implements CCMotorController {
     return shortName;
   }
 
-  @Override 
-  public SparkMaxAlternateEncoderSim getEncoder() {
-    return encoder;
-  }
+
 
 
   @Override

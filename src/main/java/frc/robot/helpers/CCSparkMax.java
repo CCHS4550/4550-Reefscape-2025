@@ -202,6 +202,11 @@ public class CCSparkMax extends SparkMax implements CCMotorController {
     return encoder.getPosition() * positionConversionFactorOne;
   }
 
+  @Override 
+  public RelativeEncoder getEncoder() {
+    return encoder;
+  }
+
   @Override
   public String getName() {
     return name;
@@ -212,10 +217,7 @@ public class CCSparkMax extends SparkMax implements CCMotorController {
     return shortName;
   }
 
-  @Override 
-  public RelativeEncoder getEncoder() {
-    return encoder;
-  }
+
 
   @Override
   public void set(boolean stop, double speed) {

@@ -48,6 +48,11 @@ public interface CCMotorController {
     return 0;
   }
 
+  
+  default Object getEncoder() {
+    return null;
+  }
+
   default String getName() {
     return "No Given Name";
   }
@@ -56,23 +61,27 @@ public interface CCMotorController {
     return "No Given ShortName";
   }
 
+
   @AutoLog
   class MotorData {
     public double position = 0;
     public double setOutput = 0;
     public double velocity = 0;
+    
     public double voltage = 0;
+
+    public double speed = 0;
   }
 
-  public static <T> void createObject(ObjectFactory<T> factory) {
-    T obj = factory.create(); // Use the factory to create an object
-    System.out.println("Object created: " + obj);
-  }
+  // public static <T> void createObject(ObjectFactory<T> factory) {
+  //   T obj = factory.create(); // Use the factory to create an object
+  //   System.out.println("Object created: " + obj);
+  // }
 
-  @FunctionalInterface
-  interface ObjectFactory<T> {
-    T create(); // Abstract method to match no-arg constructor
-  }
+  // @FunctionalInterface
+  // interface ObjectFactory<T> {
+  //   T create(); // Abstract method to match no-arg constructor
+  // }
 
   @FunctionalInterface
   interface MotorFactory {
