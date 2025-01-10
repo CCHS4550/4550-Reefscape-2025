@@ -33,6 +33,10 @@ public interface CCMotorController {
     return 0;
   }
 
+  default double getRawVelocity() {
+    return 0;
+  }
+
   /* What you set it to. */
   default double getSpeed() {
     return 0;
@@ -45,6 +49,10 @@ public interface CCMotorController {
   default void setPosition(double pos) {}
 
   default double getPosition() {
+    return 0;
+  }
+
+  default double getRawPosition(){
     return 0;
   }
 

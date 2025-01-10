@@ -167,6 +167,14 @@ public class Constants {
   public static final int LED_PORT = 0;
   public static final int LED_LENGTH = 50;
 
+public static final int ALGAE_WRIST_ID = 0;
+
+public static final boolean ALGAE_WRIST_REVERSED = false;
+
+public static final int ALGAE_INTAKE_ID = 0;
+
+public static final boolean ALGAE_INTAKE_REVERSED = false;
+
   public static class SensorMiscConstants {
     public static final int BARREL_SENSOR = 0;
     public static final int YAW_SENSOR = 1;
