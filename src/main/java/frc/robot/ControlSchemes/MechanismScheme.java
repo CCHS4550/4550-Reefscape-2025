@@ -1,3 +1,5 @@
 package frc.robot.controlschemes;
 
-public class MechanismScheme {}
+public class MechanismScheme {
+    
+}
