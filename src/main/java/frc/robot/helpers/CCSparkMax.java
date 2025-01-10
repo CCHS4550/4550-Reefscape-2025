@@ -212,6 +212,11 @@ public class CCSparkMax extends SparkMax implements CCMotorController {
     return shortName;
   }
 
+  @Override 
+  public RelativeEncoder getEncoder() {
+    return encoder;
+  }
+
   @Override
   public void set(boolean stop, double speed) {
     if (!stop) super.set(speed);
