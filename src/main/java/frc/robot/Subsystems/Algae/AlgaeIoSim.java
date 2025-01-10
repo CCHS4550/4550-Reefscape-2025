@@ -1,3 +1,3 @@
-package frc.robot.subsystems.Algae;
+package frc.robot.subsystems.algae;
 
 public class AlgaeIoSim {}

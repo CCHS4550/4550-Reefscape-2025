@@ -2,20 +2,19 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems.DriveTrain;
+package frc.robot.subsystems.swervedrive;
 
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
-import java.util.Optional;
+
 
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -40,27 +39,138 @@ import org.littletonrobotics.junction.Logger;
 public class SwerveDriveSubsystem extends SubsystemBase {
 
   CCMotorController.MotorFactory motorFactory;
+  SwerveModuleIO.ModuleFactory moduleFactory;
 
-  // Initializing swerve modules. Must include full CCSparkMax object
-  // declarations.
+  public final SwerveModuleIO frontRight =
+    moduleFactory.create(
+          motorFactory.create(
+              "Front Right Drive",
+              "frd",
+              Constants.MotorConstants.FRONT_RIGHT_DRIVE,
+              MotorType.kBrushless,
+              IdleMode.kBrake,
+              Constants.MotorConstants.FRONT_RIGHT_DRIVE_REVERSE,
+              Constants.ConversionConstants.HORIZONTAL_DISTANCE_TRAVELLED_PER_MOTOR_REVOLUTION,
+              Constants.ConversionConstants.DRIVE_MOTOR_METERS_PER_SECOND_CONVERSION_FACTOR),
+          motorFactory.create(
+              "Front Right Turn",
+              "frt",
+              Constants.MotorConstants.FRONT_RIGHT_TURN,
+              MotorType.kBrushless,
+              IdleMode.kBrake,
+              Constants.MotorConstants.FRONT_RIGHT_TURN_REVERSE,
+              Constants.ConversionConstants.TURN_MOTOR_ROTATIONS_TO_WHEEL_ROTATIONS_RADIANS,
+              Constants.ConversionConstants.TURN_MOTOR_RADIANS_PER_SECOND),
+          Constants.SwerveConstants.FRONT_RIGHT_ABSOLUTE_ENCODER,
+          Constants.SwerveConstants.FRONT_RIGHT_ABSOLUTE_ENCODER_OFFSET,
+          "Front Right");
 
-    /** Constructor for the Swerve Drive Subsystem. */
-    public SwerveDriveSubsystem(CCMotorController.MotorFactory motorFactory) {
+  public final SwerveModuleIO frontLeft =
+    moduleFactory.create(
+        motorFactory.create(
+              "Front Left Drive",
+              "fld",
+              Constants.MotorConstants.FRONT_LEFT_DRIVE,
+              MotorType.kBrushless,
+              IdleMode.kBrake,
+              Constants.MotorConstants.FRONT_LEFT_DRIVE_REVERSE,
+              Constants.ConversionConstants.HORIZONTAL_DISTANCE_TRAVELLED_PER_MOTOR_REVOLUTION,
+              Constants.ConversionConstants.DRIVE_MOTOR_METERS_PER_SECOND_CONVERSION_FACTOR),
+        motorFactory.create(
+              "Front Left Turn",
+              "flt",
+              Constants.MotorConstants.FRONT_LEFT_TURN,
+              MotorType.kBrushless,
+              IdleMode.kBrake,
+              Constants.MotorConstants.FRONT_LEFT_TURN_REVERSE,
+              Constants.ConversionConstants.TURN_MOTOR_ROTATIONS_TO_WHEEL_ROTATIONS_RADIANS,
+              Constants.ConversionConstants.TURN_MOTOR_RADIANS_PER_SECOND),
+          Constants.SwerveConstants.FRONT_LEFT_ABSOLUTE_ENCODER,
+          Constants.SwerveConstants.FRONT_LEFT_ABSOLUTE_ENCODER_OFFSET,
+          "Front Left");
+
+  public final SwerveModuleIO backRight =
+    moduleFactory.create(
+        motorFactory.create(
+              "Back Right Drive",
+              "brd",
+              Constants.MotorConstants.BACK_RIGHT_DRIVE,
+              MotorType.kBrushless,
+              IdleMode.kBrake,
+              Constants.MotorConstants.BACK_RIGHT_DRIVE_REVERSE,
+              Constants.ConversionConstants.HORIZONTAL_DISTANCE_TRAVELLED_PER_MOTOR_REVOLUTION,
+              Constants.ConversionConstants.DRIVE_MOTOR_METERS_PER_SECOND_CONVERSION_FACTOR),
+        motorFactory.create(
+              "Back Right Turn",
+              "brt",
+              Constants.MotorConstants.BACK_RIGHT_TURN,
+              MotorType.kBrushless,
+              IdleMode.kBrake,
+              Constants.MotorConstants.BACK_RIGHT_TURN_REVERSE,
+              Constants.ConversionConstants.TURN_MOTOR_ROTATIONS_TO_WHEEL_ROTATIONS_RADIANS,
+              Constants.ConversionConstants.TURN_MOTOR_RADIANS_PER_SECOND),
+          Constants.SwerveConstants.BACK_RIGHT_ABSOLUTE_ENCODER,
+          Constants.SwerveConstants.BACK_RIGHT_ABSOLUTE_ENCODER_OFFSET,
+          "Back Right");
+
+  public final SwerveModuleIO backLeft =
+  moduleFactory.create(
+        motorFactory.create(
+              "Back Left Drive",
+              "bld",
+              Constants.MotorConstants.BACK_LEFT_DRIVE,
+              MotorType.kBrushless,
+              IdleMode.kBrake,
+              Constants.MotorConstants.BACK_LEFT_DRIVE_REVERSE,
+              Constants.ConversionConstants.HORIZONTAL_DISTANCE_TRAVELLED_PER_MOTOR_REVOLUTION,
+              Constants.ConversionConstants.DRIVE_MOTOR_METERS_PER_SECOND_CONVERSION_FACTOR),
+        motorFactory.create(
+              "Back Left Turn",
+              "blt",
+              Constants.MotorConstants.BACK_LEFT_TURN,
+              MotorType.kBrushless,
+              IdleMode.kBrake,
+              Constants.MotorConstants.BACK_LEFT_TURN_REVERSE,
+              Constants.ConversionConstants.TURN_MOTOR_ROTATIONS_TO_WHEEL_ROTATIONS_RADIANS,
+              Constants.ConversionConstants.TURN_MOTOR_RADIANS_PER_SECOND),
+          Constants.SwerveConstants.BACK_LEFT_ABSOLUTE_ENCODER,
+          Constants.SwerveConstants.BACK_LEFT_ABSOLUTE_ENCODER_OFFSET,
+          "Back Left");
+
+  // * Must be in the order FR, FL, BR, BL */
+  private SwerveModuleIO[] swerveModules =
+      new SwerveModuleIO[] {frontRight, frontLeft, backRight, backLeft};
+
+  public SwerveModuleState[] desiredModuleStates;
+
+  /** Module positions used for odometry */
+  public SwerveModulePosition[] swerveModulePositions = new SwerveModulePosition[4];
+
+
+  /* PID Controllers */
+  public PIDController xPID, yPID;
+  public PIDController turnPID;
+  public ProfiledPIDController turnPIDProfiled;
+  // ProfiledPIDController turnPID;
+
+  /** For old pathplanner */
+  public final PPHolonomicDriveController swerveFollower;
+
+  public Rotation2d initialAngle = new Rotation2d(0);
+
+/** Constructor for the Swerve Drive Subsystem. */
+    public SwerveDriveSubsystem(CCMotorController.MotorFactory motorFactory, SwerveModuleIO.ModuleFactory moduleFactory) {
       this.motorFactory = motorFactory;
+      this.moduleFactory = moduleFactory;
 
-      swerveModulePositionsReal[0] =
+      swerveModulePositions[0] =
           new SwerveModulePosition(0, new Rotation2d(frontRight.getAbsoluteEncoderRadiansOffset()));
-      swerveModulePositionsReal[1] =
+      swerveModulePositions[1] =
           new SwerveModulePosition(0, new Rotation2d(frontLeft.getAbsoluteEncoderRadiansOffset()));
-      swerveModulePositionsReal[2] =
+      swerveModulePositions[2] =
           new SwerveModulePosition(0, new Rotation2d(backRight.getAbsoluteEncoderRadiansOffset()));
-      swerveModulePositionsReal[3] =
+      swerveModulePositions[3] =
           new SwerveModulePosition(0, new Rotation2d(backLeft.getAbsoluteEncoderRadiansOffset()));
-  
-      swerveModulePositionsSim[0] = new SwerveModulePosition(0, new Rotation2d(0));
-      swerveModulePositionsSim[1] = new SwerveModulePosition(0, new Rotation2d(0));
-      swerveModulePositionsSim[2] = new SwerveModulePosition(0, new Rotation2d(0));
-      swerveModulePositionsSim[3] = new SwerveModulePosition(0, new Rotation2d(0));
   
       desiredModuleStates = new SwerveModuleState[4];
   
@@ -102,126 +212,6 @@ public class SwerveDriveSubsystem extends SubsystemBase {
       RobotState.getInstance().moduleEncodersInit(this);
     }
 
-  public final SwerveModule frontRight =
-      new SwerveModule(
-          motorFactory.create(
-              "Front Right Drive",
-              "frd",
-              Constants.MotorConstants.FRONT_RIGHT_DRIVE,
-              MotorType.kBrushless,
-              IdleMode.kBrake,
-              Constants.MotorConstants.FRONT_RIGHT_DRIVE_REVERSE,
-              Constants.ConversionConstants.HORIZONTAL_DISTANCE_TRAVELLED_PER_MOTOR_REVOLUTION,
-              Constants.ConversionConstants.DRIVE_MOTOR_METERS_PER_SECOND_CONVERSION_FACTOR),
-          motorFactory.create(
-              "Front Right Turn",
-              "frt",
-              Constants.MotorConstants.FRONT_RIGHT_TURN,
-              MotorType.kBrushless,
-              IdleMode.kBrake,
-              Constants.MotorConstants.FRONT_RIGHT_TURN_REVERSE,
-              Constants.ConversionConstants.TURN_MOTOR_ROTATIONS_TO_WHEEL_ROTATIONS_RADIANS,
-              Constants.ConversionConstants.TURN_MOTOR_RADIANS_PER_SECOND),
-          Constants.SwerveConstants.FRONT_RIGHT_ABSOLUTE_ENCODER,
-          Constants.SwerveConstants.FRONT_RIGHT_ABSOLUTE_ENCODER_OFFSET,
-          "Front Right");
-
-  public final SwerveModule frontLeft =
-      new SwerveModule(
-        motorFactory.create(
-              "Front Left Drive",
-              "fld",
-              Constants.MotorConstants.FRONT_LEFT_DRIVE,
-              MotorType.kBrushless,
-              IdleMode.kBrake,
-              Constants.MotorConstants.FRONT_LEFT_DRIVE_REVERSE,
-              Constants.ConversionConstants.HORIZONTAL_DISTANCE_TRAVELLED_PER_MOTOR_REVOLUTION,
-              Constants.ConversionConstants.DRIVE_MOTOR_METERS_PER_SECOND_CONVERSION_FACTOR),
-        motorFactory.create(
-              "Front Left Turn",
-              "flt",
-              Constants.MotorConstants.FRONT_LEFT_TURN,
-              MotorType.kBrushless,
-              IdleMode.kBrake,
-              Constants.MotorConstants.FRONT_LEFT_TURN_REVERSE,
-              Constants.ConversionConstants.TURN_MOTOR_ROTATIONS_TO_WHEEL_ROTATIONS_RADIANS,
-              Constants.ConversionConstants.TURN_MOTOR_RADIANS_PER_SECOND),
-          Constants.SwerveConstants.FRONT_LEFT_ABSOLUTE_ENCODER,
-          Constants.SwerveConstants.FRONT_LEFT_ABSOLUTE_ENCODER_OFFSET,
-          "Front Left");
-
-  public final SwerveModule backRight =
-      new SwerveModule(
-        motorFactory.create(
-              "Back Right Drive",
-              "brd",
-              Constants.MotorConstants.BACK_RIGHT_DRIVE,
-              MotorType.kBrushless,
-              IdleMode.kBrake,
-              Constants.MotorConstants.BACK_RIGHT_DRIVE_REVERSE,
-              Constants.ConversionConstants.HORIZONTAL_DISTANCE_TRAVELLED_PER_MOTOR_REVOLUTION,
-              Constants.ConversionConstants.DRIVE_MOTOR_METERS_PER_SECOND_CONVERSION_FACTOR),
-        motorFactory.create(
-              "Back Right Turn",
-              "brt",
-              Constants.MotorConstants.BACK_RIGHT_TURN,
-              MotorType.kBrushless,
-              IdleMode.kBrake,
-              Constants.MotorConstants.BACK_RIGHT_TURN_REVERSE,
-              Constants.ConversionConstants.TURN_MOTOR_ROTATIONS_TO_WHEEL_ROTATIONS_RADIANS,
-              Constants.ConversionConstants.TURN_MOTOR_RADIANS_PER_SECOND),
-          Constants.SwerveConstants.BACK_RIGHT_ABSOLUTE_ENCODER,
-          Constants.SwerveConstants.BACK_RIGHT_ABSOLUTE_ENCODER_OFFSET,
-          "Back Right");
-
-  public final SwerveModule backLeft =
-      new SwerveModule(
-        motorFactory.create(
-              "Back Left Drive",
-              "bld",
-              Constants.MotorConstants.BACK_LEFT_DRIVE,
-              MotorType.kBrushless,
-              IdleMode.kBrake,
-              Constants.MotorConstants.BACK_LEFT_DRIVE_REVERSE,
-              Constants.ConversionConstants.HORIZONTAL_DISTANCE_TRAVELLED_PER_MOTOR_REVOLUTION,
-              Constants.ConversionConstants.DRIVE_MOTOR_METERS_PER_SECOND_CONVERSION_FACTOR),
-        motorFactory.create(
-              "Back Left Turn",
-              "blt",
-              Constants.MotorConstants.BACK_LEFT_TURN,
-              MotorType.kBrushless,
-              IdleMode.kBrake,
-              Constants.MotorConstants.BACK_LEFT_TURN_REVERSE,
-              Constants.ConversionConstants.TURN_MOTOR_ROTATIONS_TO_WHEEL_ROTATIONS_RADIANS,
-              Constants.ConversionConstants.TURN_MOTOR_RADIANS_PER_SECOND),
-          Constants.SwerveConstants.BACK_LEFT_ABSOLUTE_ENCODER,
-          Constants.SwerveConstants.BACK_LEFT_ABSOLUTE_ENCODER_OFFSET,
-          "Back Left");
-
-  // * Must be in the order FR, FL, BR, BL */
-  private SwerveModule[] swerveModules =
-      new SwerveModule[] {frontRight, frontLeft, backRight, backLeft};
-
-  public SwerveModuleState[] desiredModuleStates;
-
-  /** Module positions used for odometry */
-  public SwerveModulePosition[] swerveModulePositionsReal = new SwerveModulePosition[4];
-
-  public SwerveModulePosition[] swerveModulePositionsSim = new SwerveModulePosition[4];
-
-  /* PID Controllers */
-  public PIDController xPID, yPID;
-  public PIDController turnPID;
-  public ProfiledPIDController turnPIDProfiled;
-  // ProfiledPIDController turnPID;
-
-  public final PPHolonomicDriveController swerveFollower;
-
-  // public final PPHolonomicDriveController swerveFollower1 = new PPHolonomicDriveController(xPID,
-  // yPID, turnPID);
-
-  public Rotation2d initialAngle = new Rotation2d(0);
-
 
   /**
    * Creates a new SwerveDrive object. Delays 1 second before setting gyro to 0 to account for gyro
@@ -243,9 +233,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
   public void periodic() {
 
     // getAbsoluteEncoderoffsets();
-
     Logger.recordOutput("Actual moduleStates", getCurrentModuleStates());
-    // Logger.recordOutput("Actual-S Rotation2d", RobotState.getInstance().getRotation2d());
 
     RobotState.getInstance().updateModuleEncoders(this);
   }
@@ -373,7 +361,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
    * @param volts
    */
   public void setDriveVoltages(Voltage volts) {
-    for (SwerveModule s : swerveModules) {
+    for (SwerveModuleIO s : swerveModules) {
       s.setTurnPosition(() -> 0);
       s.setDriveVoltage(volts.in(Volts));
     }
@@ -386,7 +374,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
 
   public void test(double driveSpeed, double turnSpeed) {
     backRight.driveAndTurn(driveSpeed, turnSpeed);
-    backRight.printEncoders();
+    // backRight.printEncoders();
   }
 
   public void printWorld() {

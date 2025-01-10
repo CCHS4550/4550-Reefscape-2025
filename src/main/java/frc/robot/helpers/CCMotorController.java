@@ -6,7 +6,7 @@ package frc.robot.helpers;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import javax.naming.spi.ObjectFactory;
+
 import org.littletonrobotics.junction.AutoLog;
 
 /** Add your docs here. */

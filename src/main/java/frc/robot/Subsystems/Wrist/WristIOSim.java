@@ -1,3 +1,3 @@
-package frc.robot.subsystems.Wrist;
+package frc.robot.subsystems.wrist;
 
 public class WristIOSim {}

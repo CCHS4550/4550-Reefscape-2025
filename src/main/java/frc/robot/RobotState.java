@@ -5,6 +5,8 @@
 package frc.robot;
 
 import com.studica.frc.AHRS;
+import com.studica.frc.AHRS.NavXComType;
+
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -25,7 +27,13 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 // import frc.helpers.Vision.VisionData;
 // import frc.maps.Constants;
 import frc.robot.maps.Constants;
-import frc.robot.subsystems.DriveTrain.SwerveDriveSubsystem;
+import frc.robot.subsystems.algae.AlgaeSubsystem;
+import frc.robot.subsystems.arm.ArmSubsystem;
+import frc.robot.subsystems.elevator.ElevatorSubsystem;
+import frc.robot.subsystems.intake.IntakeSubsystem;
+import frc.robot.subsystems.swervedrive.SwerveDriveSubsystem;
+import frc.robot.subsystems.wrist.WristSubsystem;
+
 import org.littletonrobotics.junction.Logger;
 // import org.photonvision.PhotonPoseEstimator;
 // import org.photonvision.PhotonUtils;
@@ -34,10 +42,6 @@ import org.littletonrobotics.junction.Logger;
 public class RobotState {
 
   public static RobotState instance;
-  // Initialize gyro
-  public AHRS gyro = new AHRS(SPI.Port.kMXP);
-
-  double angleSim = 0;
 
   public static RobotState getInstance() {
     if (instance == null) {
@@ -46,19 +50,58 @@ public class RobotState {
     return instance;
   }
 
+  SwerveDriveSubsystem swerve;
+  AlgaeSubsystem algae;
+  ArmSubsystem arm;
+  ElevatorSubsystem elevator;
+  IntakeSubsystem intake;
+  WristSubsystem wrist;
+
+    // Initialize gyro
+  public AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
+
+  private RobotState() {
+
+    new Thread(
+            () -> {
+              try {
+                Thread.sleep(1000);
+                zeroHeading();
+              } catch (Exception e) {
+              }
+            })
+        .start();
+  }
+
+  public void robotStateInit(
+  SwerveDriveSubsystem swerve,
+  AlgaeSubsystem algae,
+  ArmSubsystem arm,
+  ElevatorSubsystem elevator,
+  IntakeSubsystem intake,
+  WristSubsystem wrist) {
+    this.swerve = swerve;
+    this.algae = algae;
+    this.arm = arm;
+    this.elevator = elevator;
+    this.intake = intake;
+    this.wrist = wrist;
+
+  }
+
+
+  
   public final Field2d gameField = new Field2d();
 
   /** Technically pose ESTIMATES */
   public Pose2d lastPose = new Pose2d();
-
   public Pose2d currentPose = new Pose2d();
-  // public Pose2d simPose = new Pose2d();
 
-  // SwerveDriveOdometry odometer;
+
   public SwerveDrivePoseEstimator poseEstimator;
 //   public PhotonPoseEstimator photonPoseEstimator;
 
-  public final VisionData visionData = new VisionData();
+  // public final VisionData visionData = new VisionData();
 
   public void poseInit() {
 
@@ -66,17 +109,9 @@ public class RobotState {
         new SwerveDrivePoseEstimator(
             Constants.SwerveConstants.DRIVE_KINEMATICS,
             Rotation2d.fromDegrees(gyro.getAngle()).unaryMinus(),
-            swerve.swerveModulePositionsReal,
+            swerve.swerveModulePositions,
             new Pose2d(0, 0, new Rotation2d(0)));
 
-    if (RobotBase.isSimulation()) {
-      poseEstimator =
-          new SwerveDrivePoseEstimator(
-              Constants.SwerveConstants.DRIVE_KINEMATICS,
-              getRotation2d(),
-              swerve.swerveModulePositionsSim,
-              new Pose2d(0, 0, new Rotation2d(0)));
-    }
   }
 
   public synchronized void updateOdometryPose() {
@@ -87,18 +122,11 @@ public class RobotState {
     lastPose = currentPose;
 
     /** Update the SwerveDrivePoseEstimator with the Drivetrain encoders and such */
-    if (RobotBase.isReal()) {
       poseEstimator.updateWithTime(
           Timer.getFPGATimestamp(),
           getRotation2d(),
-          swerve.swerveModulePositionsReal);
-    } else if (RobotBase.isSimulation()) {
+          swerve.swerveModulePositions);
 
-      poseEstimator.updateWithTime(
-          Timer.getFPGATimestamp(),
-          getRotation2d(),
-          swerve.swerveModulePositionsSim);
-    }
 
     currentPose = getPose();
     Logger.recordOutput("Estimated Pose", getPose());
@@ -126,28 +154,23 @@ public class RobotState {
 
     /* Put all the subsystems on ShuffleBoard in their own "Subsystems" tab. */
     Shuffleboard.getTab("Subsystems").add("Swerve Drive", swerve);
-    // Shuffleboard.getTab("Subsystems").add("Indexing Subsystem", IndexingSubsystem.getInstance());
-    // Shuffleboard.getTab("Subsystems")
-    //     .add("Declination Subsystem", DeclinationSubsystem.getInstance());
-    // Shuffleboard.getTab("Subsystems").add("Pneumatics System", PneumaticsSystem.getInstance());
-    // Shuffleboard.getTab("Subsystems")
-    //     .add("Right Ascension Subsystem", RightAscensionSubsystem.getInstance());
-    // Shuffleboard.getTab("Subsystems").add("Aim Simulator", AimSimulator.getInstance());
-    // Shuffleboard.getTab("Subsystems").add("Lights", Lights.getInstance());
+    Shuffleboard.getTab("Subsystems").add("Algae", algae);
+    Shuffleboard.getTab("Subsystems").add("Arm", arm);
+    Shuffleboard.getTab("Subsystems").add("Elevator", elevator);
+    Shuffleboard.getTab("Subsystems").add("Wrist", wrist);
+    Shuffleboard.getTab("Subsystems").add("Intake", intake);
 
     /* Put the Pose Estimators on Dashboards */
     SmartDashboard.putData("Field", gameField);
-    // Shuffleboard.getTab("Tab 6").add(m_field_poseestimator);
   }
 
   public synchronized void updateDashboard() {
 
-    SmartDashboard.putNumber("X", poseEstimator.getEstimatedPosition().getX());
-    SmartDashboard.putNumber("Y", poseEstimator.getEstimatedPosition().getY());
-    SmartDashboard.putNumber(
-        "Rads", poseEstimator.getEstimatedPosition().getRotation().getRadians());
-    SmartDashboard.putNumber(
-        "Angle", poseEstimator.getEstimatedPosition().getRotation().getDegrees());
+    SmartDashboard.putNumber("Robot X Position", poseEstimator.getEstimatedPosition().getX());
+    SmartDashboard.putNumber("Robot Y Position", poseEstimator.getEstimatedPosition().getY());
+    SmartDashboard.putNumber("Robot Rads Angle", poseEstimator.getEstimatedPosition().getRotation().getRadians());
+    SmartDashboard.putNumber("Robot Degrees Angle", poseEstimator.getEstimatedPosition().getRotation().getDegrees());
+
   }
 
   public GenericEntry yActual, yGoal, xActual, xGoal, barrelActual, barrelGoal;
@@ -161,8 +184,7 @@ public class RobotState {
       abs_Enc_BR_Raw_Entry,
       abs_Enc_BL_Raw_Entry;
   private GenericEntry enc_FR_pos_Entry, enc_FL_pos_Entry, enc_BR_pos_Entry, enc_BL_pos_Entry;
-  // private GenericEntry enc_FR_vel_Entry, enc_FL_vel_Entry, enc_BR_vel_Entry,
-  // enc_BL_vel_Entry;
+
 
   // ShuffleBoardLayouts for putting encoders onto the board
   private ShuffleboardLayout absolute_encoders_offset_list =
@@ -179,11 +201,9 @@ public class RobotState {
           .getLayout("Turn Encoders Position(Rad)", BuiltInLayouts.kGrid)
           .withSize(2, 2);
 
-  public synchronized void moduleEncodersInit(SwerveDriveSubsystem swerveDrive) {
 
-    // IndexingSubsystem indexer,
-    // DeclinationSubsystem declination,
-    // PneumaticsSystem pneumatics,
+
+  public synchronized void moduleEncodersInit(SwerveDriveSubsystem swerveDrive) {
 
     abs_Enc_FR_Offset_Entry =
         Shuffleboard.getTab("Encoders")
@@ -265,36 +285,7 @@ public class RobotState {
             .getEntry();
   }
 
-  public synchronized void aimerShuffleBoardInit(
-    //   IndexingSubsystem indexer,
-    //   DeclinationSubsystem declination,
-    //   PneumaticsSystem pneumatics,
-    //   RightAscensionSubsystem rightAscension,
-    //   AimSimulator aimer
-      ) {
-    // yActual =
-    //     Shuffleboard.getTab("Aimer")
-    //         .add("Y Actual", declination.declination1.getPosition())
-    //         .getEntry();
 
-    // yGoal = Shuffleboard.getTab("Aimer").add("Y Goal", declination.getGoal().position).getEntry();
-
-    // xActual =
-    //     Shuffleboard.getTab("Aimer")
-    //         .add("X Actual", rightAscension.rightAscensionMotor.getPosition())
-    //         .getEntry();
-
-    // xGoal =
-    //     Shuffleboard.getTab("Aimer").add("X Goal", rightAscension.getGoal().position).getEntry();
-
-    // barrelActual =
-    //     Shuffleboard.getTab("Aimer")
-    //         .add("Actual Barrel Angle", indexer.indexMotor.getPosition())
-    //         .getEntry();
-
-    // barrelGoal =
-    //     Shuffleboard.getTab("Aimer").add("Goal Barrel Angle", aimer.barrelAngle).getEntry();
-  }
 
   public synchronized void updateModuleEncoders(SwerveDriveSubsystem swerve) {
     abs_Enc_FR_Offset_Entry.setDouble(swerve.frontRight.getAbsoluteEncoderRadiansOffset());
@@ -313,112 +304,29 @@ public class RobotState {
     enc_BL_pos_Entry.setDouble(swerve.backLeft.getTurnPosition());
   }
 
-  private double[] moduleDistanceSim = {0, 0, 0, 0};
 
-  // private SwerveModulePosition[] initialModulePositions = {
-  //   new SwerveModulePosition(),
-  //   new SwerveModulePosition(),
-  //   new SwerveModulePosition(),
-  //   new SwerveModulePosition(),
-  // };
-  // private SwerveModulePosition[] deltaModulePositions = {
-  //   new SwerveModulePosition(),
-  //   new SwerveModulePosition(),
-  //   new SwerveModulePosition(),
-  //   new SwerveModulePosition(),
-  // };
 
-  private double previousTime = Timer.getFPGATimestamp();
-
+  
   public synchronized void updateModulePositions(SwerveDriveSubsystem swerve) {
 
-            swerve.swerveModulePositionsReal[0] =
+            swerve.swerveModulePositions[0] =
         new SwerveModulePosition(
             swerve.frontRight.getDrivePosition(),
             new Rotation2d(swerve.frontRight.getTurnPosition()));
-            swerve.swerveModulePositionsReal[1] =
+            swerve.swerveModulePositions[1] =
         new SwerveModulePosition(
             swerve.frontLeft.getDrivePosition(),
             new Rotation2d(swerve.frontLeft.getTurnPosition()));
-            swerve.swerveModulePositionsReal[2] =
+            swerve.swerveModulePositions[2] =
         new SwerveModulePosition(
             swerve.backRight.getDrivePosition(),
             new Rotation2d(swerve.backRight.getTurnPosition()));
-            swerve.swerveModulePositionsReal[3] =
+            swerve.swerveModulePositions[3] =
         new SwerveModulePosition(
             swerve.backLeft.getDrivePosition(),
             new Rotation2d(swerve.backLeft.getTurnPosition()));
-
-    if (RobotBase.isSimulation()) {
-
-      // initialModulePositions = SwerveDrive.getInstance().swerveModulePositionsSim;
-      double currentTime = Timer.getFPGATimestamp();
-
-      double dt = currentTime - previousTime;
-      Logger.recordOutput("dt", dt);
-
-      moduleDistanceSim[0] +=
-      swerve.desiredModuleStates[0].speedMetersPerSecond * dt;
-      moduleDistanceSim[1] +=
-      swerve.desiredModuleStates[1].speedMetersPerSecond * dt;
-      moduleDistanceSim[2] +=
-      swerve.desiredModuleStates[2].speedMetersPerSecond * dt;
-      moduleDistanceSim[3] +=
-      swerve.desiredModuleStates[3].speedMetersPerSecond * dt;
-
-      swerve.swerveModulePositionsSim[0] =
-          new SwerveModulePosition(
-              moduleDistanceSim[0], swerve.desiredModuleStates[0].angle);
-              swerve.swerveModulePositionsSim[1] =
-          new SwerveModulePosition(
-              moduleDistanceSim[1], swerve.desiredModuleStates[1].angle);
-              swerve.swerveModulePositionsSim[2] =
-          new SwerveModulePosition(
-              moduleDistanceSim[2], swerve.desiredModuleStates[2].angle);
-              swerve.swerveModulePositionsSim[3] =
-          new SwerveModulePosition(
-              moduleDistanceSim[3], swerve.desiredModuleStates[3].angle);
-
-      // deltaModulePositions[0] =
-      //     new SwerveModulePosition(
-      //         SwerveDrive.getInstance().swerveModulePositionsSim[0].distanceMeters
-      //             - initialModulePositions[0].distanceMeters,
-      //         SwerveDrive.getInstance()
-      //             .swerveModulePositionsSim[0]
-      //             .angle
-      //             .minus(initialModulePositions[0].angle));
-      // deltaModulePositions[1] =
-      //     new SwerveModulePosition(
-      //         SwerveDrive.getInstance().swerveModulePositionsSim[1].distanceMeters
-      //             - initialModulePositions[1].distanceMeters,
-      //         SwerveDrive.getInstance()
-      //             .swerveModulePositionsSim[1]
-      //             .angle
-      //             .minus(initialModulePositions[1].angle));
-      // deltaModulePositions[2] =
-      //     new SwerveModulePosition(
-      //         SwerveDrive.getInstance().swerveModulePositionsSim[2].distanceMeters
-      //             - initialModulePositions[2].distanceMeters,
-      //         SwerveDrive.getInstance()
-      //             .swerveModulePositionsSim[2]
-      //             .angle
-      //             .minus(initialModulePositions[2].angle));
-      // deltaModulePositions[3] =
-      //     new SwerveModulePosition(
-      //         SwerveDrive.getInstance().swerveModulePositionsSim[3].distanceMeters
-      //             - initialModulePositions[3].distanceMeters,
-      //         SwerveDrive.getInstance()
-      //             .swerveModulePositionsSim[3]
-      //             .angle
-      //             .minus(initialModulePositions[3].angle));
-
-      // Logger.recordOutput("initialModulePositions", initialModulePositions);
-      // Logger.recordOutput(
-      //     "finalModulePositions", SwerveDrive.getInstance().swerveModulePositionsSim);
-
-      previousTime = currentTime;
     }
-  }
+  
 
   /** Pose Helper Methods */
 
@@ -457,11 +365,7 @@ public class RobotState {
     return getPose().plus(getTickFutureTransform().inverse());
   }
 
-//   /** Can use this for turret. */
-//   public Rotation2d getAngleBetweenCurrentAndTargetPose(Pose2d targetPose) {
-//     Rotation2d targetYaw = PhotonUtils.getYawToPose(getPose(), targetPose);
-//     return targetYaw;
-//   }
+
 
   /** Odometry */
 
@@ -471,11 +375,8 @@ public class RobotState {
    */
   public void setOdometry() {
     poseEstimator.resetPosition(
-        getRotation2d(), swerve.swerveModulePositionsReal, getPose());
-    if (RobotBase.isSimulation()) {
-      poseEstimator.resetPosition(
-          getRotation2d(), swerve.swerveModulePositionsSim, getPose());
-    }
+        getRotation2d(), swerve.swerveModulePositions, getPose());
+
   }
 
   /**
@@ -488,21 +389,13 @@ public class RobotState {
     poseEstimator.resetPosition(
         getRotation2d(),
         // pos.getRotation(),
-        swerve.swerveModulePositionsReal,
+        swerve.swerveModulePositions,
         pos);
 
-    if (RobotBase.isSimulation()) {
-      poseEstimator.resetPosition(
-          getRotation2d(),
-          // pos.getRotation(),
-          swerve.swerveModulePositionsSim,
-          pos);
-    }
   }
   /** Gyroscope Methods (NavX) */
   public void zeroHeading() {
     gyro.reset();
-    angleSim = 0;
     setOdometry(new Pose2d(getPose().getX(), getPose().getY(), new Rotation2d(0)));
   }
 
@@ -535,28 +428,7 @@ public class RobotState {
     return poseEstimator.getEstimatedPosition().getRotation().getRadians();
   }
 
-  /**
-   * Gets the Rotation2d value of the facing direction of the robot.
-   *
-   * @return The facing direction of the robot in Rotation2d format.
-   */
-  SwerveDriveWheelPositions previousPositions =
-      new SwerveDriveWheelPositions(
-          new SwerveModulePosition[] {
-            new SwerveModulePosition(),
-            new SwerveModulePosition(),
-            new SwerveModulePosition(),
-            new SwerveModulePosition()
-          });
 
-  SwerveDriveWheelPositions currentPositions =
-      new SwerveDriveWheelPositions(
-          new SwerveModulePosition[] {
-            new SwerveModulePosition(),
-            new SwerveModulePosition(),
-            new SwerveModulePosition(),
-            new SwerveModulePosition()
-          });
 
   /**
    * Specifically for the poseEstimator. Anywhere else, get the poseEstimator's estimated heading,
@@ -565,27 +437,6 @@ public class RobotState {
    * @return
    */
   public Rotation2d getRotation2d() {
-
-    if (RobotBase.isSimulation()) {
-
-      currentPositions =
-          new SwerveDriveWheelPositions(SwerveDrive.getInstance().swerveModulePositionsSim);
-
-      angleSim +=
-          Constants.SwerveConstants.DRIVE_KINEMATICS.toTwist2d(previousPositions, currentPositions)
-              .dtheta;
-
-      Logger.recordOutput("Sim angle", angleSim);
-      Logger.recordOutput("Sim Rotation2d", Rotation2d.fromRadians(angleSim));
-
-      previousPositions = currentPositions;
-
-      return Rotation2d.fromRadians(angleSim);
-    }
-
-    // System.out.println(simAngleReal);
-
-    // simulatedAngleRadians %= (Math.PI * 2);
 
     Logger.recordOutput("Gyro Rotation2d", gyro.getRotation2d());
     return gyro.getRotation2d();
@@ -596,18 +447,5 @@ public class RobotState {
     setOdometry(new Pose2d(getPose().getTranslation(), rotation2d));
   }
 
-  private RobotState() {
 
-    new Thread(
-            () -> {
-              try {
-                Thread.sleep(1000);
-                zeroHeading();
-              } catch (Exception e) {
-              }
-            })
-        .start();
-  }
-
-  public void periodic() {}
 }
