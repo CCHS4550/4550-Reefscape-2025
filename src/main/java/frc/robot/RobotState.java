@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.maps.Constants;
+<<<<<<< HEAD
 import frc.robot.subsystems.algae.AlgaeSubsystem;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
@@ -28,6 +29,14 @@ import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveDriveSubsystem;
 import frc.robot.subsystems.wrist.WristSubsystem;
 
+=======
+import frc.robot.Subsystems.Algae.AlgaeSubsystem;
+import frc.robot.Subsystems.Arm.ArmSubsystem;
+import frc.robot.Subsystems.Elevator.ElevatorSubsystem;
+import frc.robot.Subsystems.Intake.IntakeSubsystem;
+import frc.robot.Subsystems.Wrist.WristSubsystem;
+import frc.robot.Subsystems.swervedrive.SwerveDriveSubsystem;
+>>>>>>> 1a7ee7eeace158b15ff97382aa70d9cea22c89bb
 import org.littletonrobotics.junction.Logger;
 // import org.photonvision.PhotonPoseEstimator;
 // import org.photonvision.PhotonUtils;
