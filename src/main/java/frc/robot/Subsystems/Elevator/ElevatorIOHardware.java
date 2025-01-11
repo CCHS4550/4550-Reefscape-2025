@@ -5,23 +5,28 @@ import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.helpers.CCMotorController;
+import frc.maps.Constants;
 import frc.robot.subsystems.Wrist.WristSubsystem;
 
 import org.littletonrobotics.junction.Logger;
 
 public class ElevatorIOHardware implements ElevatorIO {
 
-  CCMotorController motor;
-  ProfiledPIDController pidController;
+  CCMotorController elevatorLeft;
+  CCMotorController elevatorRight;
+  ProfiledPIDController elevatorLeftPidController;
+  ProfiledPIDController elevatorRightPidController;
 
-  public ElevatorIOHardware(CCMotorController motor) {
-    this.motor = motor;
+  public ElevatorIOHardware(CCMotorController elevatorLeft, CCMotorController elevatorRight) {
+    this.elevatorLeft = elevatorLeft;
+    this.elevatorRight = elevatorRight;
 
-    pidController = new ProfiledPIDController(0, 0, 0, null);
+    elevatorLeftPidController = new ProfiledPIDController(0, 0, 0, new TrapezoidProfile(Constants.ElevatorConstants.));
   }
 
   @Override
