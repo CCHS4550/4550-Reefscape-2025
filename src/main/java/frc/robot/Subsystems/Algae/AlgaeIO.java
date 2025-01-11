@@ -1,4 +1,4 @@
-package frc.robot.subsystems.algae;
+package frc.robot.Subsystems.Algae;
 
 import edu.wpi.first.units.measure.Voltage;
 import frc.helpers.CCMotorController;
