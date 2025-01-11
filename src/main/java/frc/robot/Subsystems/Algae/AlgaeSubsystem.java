@@ -1,4 +1,4 @@
-package frc.robot.Subsystems.Algae;
+package frc.robot.subsystems.algae;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.helpers.CCMotorController;
 import frc.helpers.CCSparkMax;
 import frc.maps.Constants;
+import frc.robot.Subsystems.Algae.AlgaeIOInputsAutoLogged;
 
 public class AlgaeSubsystem extends SubsystemBase {
 

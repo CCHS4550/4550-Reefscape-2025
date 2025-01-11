@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems.swervedrive;
+package frc.robot.Subsystems.swervedrive;
 
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Seconds;
@@ -31,8 +31,6 @@ import frc.helpers.CCMotorController;
 import frc.helpers.CCSparkMax;
 import frc.maps.Constants;
 import frc.robot.RobotState;
-import frc.robot.Subsystems.swervedrive.SwerveModuleInputsAutoLogged;
-
 import org.littletonrobotics.junction.Logger;
 
 /** Class for controlling a swerve drive chassis. Consists of 4 SwerveModules and a gyro. */

@@ -1,3 +1,3 @@
-package frc.robot.Subsystems.climber;
+package frc.robot.subsystems.climber;
 
 public class ClimberIOSim implements ClimberIO {}

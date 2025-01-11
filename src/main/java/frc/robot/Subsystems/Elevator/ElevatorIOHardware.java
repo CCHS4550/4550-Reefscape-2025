@@ -1,4 +1,4 @@
-package frc.robot.Subsystems.Elevator;
+package frc.robot.subsystems.elevator;
 
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Seconds;
@@ -9,7 +9,8 @@ import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.helpers.CCMotorController;
-import frc.robot.Subsystems.Wrist.WristSubsystem;
+import frc.robot.subsystems.Wrist.WristSubsystem;
+
 import org.littletonrobotics.junction.Logger;
 
 public class ElevatorIOHardware implements ElevatorIO {
