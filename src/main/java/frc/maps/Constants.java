@@ -328,24 +328,24 @@ public class Constants {
    */
   public static class AprilTags {
     public static final AprilTagFieldLayout aprilTagFieldLayout =
-        AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
+        AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
 
-    public static int BLUE_SOURCE_LEFT = 1;
-    public static int BLUE_SOURCE_RIGHT = 2;
-    public static int RED_SPEAKER_BOTTOM = 3;
-    public static int RED_SPEAKER_TOP = 4;
-    public static int RED_AMP = 5;
-    public static int BLUE_AMP = 6;
-    public static int BLUE_SPEAKER_TOP = 7;
-    public static int BLUE_SPEAKER_BUTTON = 8;
-    public static int RED_SOURCE_LEFT = 9;
-    public static int RED_SOURCE_RIGHT = 10;
-    public static int RED_STAGE_BOTTOM = 11;
-    public static int RED_STAGE_TOP = 12;
-    public static int RED_STAGE_SIDE = 13;
-    public static int BLUE_STAGE_SIDE = 14;
-    public static int BLUE_STAGE_TOP = 15;
-    public static int BLUE_STAGE_BOTTOM = 16;
+    // public static int BLUE_SOURCE_LEFT = 1;
+    // public static int BLUE_SOURCE_RIGHT = 2;
+    // public static int RED_SPEAKER_BOTTOM = 3;
+    // public static int RED_SPEAKER_TOP = 4;
+    // public static int RED_AMP = 5;
+    // public static int BLUE_AMP = 6;
+    // public static int BLUE_SPEAKER_TOP = 7;
+    // public static int BLUE_SPEAKER_BUTTON = 8;
+    // public static int RED_SOURCE_LEFT = 9;
+    // public static int RED_SOURCE_RIGHT = 10;
+    // public static int RED_STAGE_BOTTOM = 11;
+    // public static int RED_STAGE_TOP = 12;
+    // public static int RED_STAGE_SIDE = 13;
+    // public static int BLUE_STAGE_SIDE = 14;
+    // public static int BLUE_STAGE_TOP = 15;
+    // public static int BLUE_STAGE_BOTTOM = 16;
   }
 
   public static class ElevatorConstants {

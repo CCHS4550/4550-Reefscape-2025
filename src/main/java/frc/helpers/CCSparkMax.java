@@ -54,8 +54,6 @@ public class CCSparkMax extends SparkMax implements CCMotorController {
     voltageConversionFactor = 12;
 
     super.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-
-    
   }
 
   //   public CCSparkMax(

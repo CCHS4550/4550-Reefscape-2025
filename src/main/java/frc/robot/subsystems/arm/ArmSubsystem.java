@@ -13,6 +13,21 @@ import frc.maps.Constants;
 
 public class ArmSubsystem extends SubsystemBase {
 
+  public enum ArmPositions {
+    // Placeholder Values
+    L1_FRONT(30),
+    L2L3_FRONT(45),
+    L4_BACK(110),
+    CORAL_STATION_FRONT(15),
+    CORAL_STATION_BACK(120);
+
+    private final double angleDegrees;
+
+    ArmPositions(double angleDegrees) {
+      this.angleDegrees = angleDegrees;
+    }
+  }
+
   /** Implementation of Singleton Pattern */
   public static ArmSubsystem mInstance;
 
@@ -56,21 +71,6 @@ public class ArmSubsystem extends SubsystemBase {
               Constants.MotorConstants.ARM_REVERSE,
               1,
               1));
-
-  public enum ArmPositions {
-    // Placeholder Values
-    L1_FRONT(30),
-    L2L3_FRONT(45),
-    L4_BACK(110),
-    CORAL_STATION_FRONT(15),
-    CORAL_STATION_BACK(120);
-
-    private final double angleDegrees;
-
-    ArmPositions(double angleDegrees) {
-      this.angleDegrees = angleDegrees;
-    }
-  }
 
   @Override
   public void periodic() {

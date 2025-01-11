@@ -1,6 +1,5 @@
 package frc.robot.controlschemes;
 
-
 import static edu.wpi.first.wpilibj2.command.Commands.runOnce;
 
 import edu.wpi.first.math.MathUtil;
@@ -165,7 +164,7 @@ public class SwerveDriveScheme {
             .withName("Swerve Controller Command"));
 
     configureButtons(
-      swerve,
+        swerve,
         //  shooter,
         //   indexer,
         //    port
@@ -252,4 +251,3 @@ public class SwerveDriveScheme {
     driveSpeedModifier = () -> 0.3;
   }
 }
-
