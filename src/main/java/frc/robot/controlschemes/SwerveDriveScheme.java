@@ -1,4 +1,4 @@
-package frc.robot.controlschemes;
+package frc.robot.ControlSchemes;
 
 import static edu.wpi.first.wpilibj2.command.Commands.runOnce;
 
@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.maps.Constants;
 import frc.robot.RobotState;
-import frc.robot.subsystems.swervedrive.SwerveDriveSubsystem;
+import frc.robot.Subsystems.swervedrive.SwerveDriveSubsystem;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 

@@ -1,4 +1,4 @@
-package frc.robot.subsystems.algae;
+package frc.robot.Subsystems.Algae;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;

@@ -1,4 +1,4 @@
-package frc.robot.subsystems.algae;
+package frc.robot.Subsystems.Algae;
 
 import frc.helpers.CCMotorController;
 

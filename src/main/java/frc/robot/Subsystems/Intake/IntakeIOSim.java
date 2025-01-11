@@ -1,4 +1,4 @@
-package frc.robot.subsystems.intake;
+package frc.robot.Subsystems.Intake;
 
 import frc.helpers.CCMotorController;
 

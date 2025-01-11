@@ -1,4 +1,4 @@
-package frc.robot.subsystems.climber;
+package frc.robot.Subsystems.climber;
 
 import edu.wpi.first.units.measure.Voltage;
 import frc.helpers.CCMotorController;
