@@ -5,7 +5,6 @@ import frc.helpers.CCMotorReplay;
 import frc.helpers.CCSparkMax;
 import frc.helpers.CCSparkSim;
 import frc.maps.Constants;
-import frc.robot.Subsystems.Superstructure;
 import frc.robot.Subsystems.Algae.AlgaeIOHardware;
 import frc.robot.Subsystems.Algae.AlgaeIOReplay;
 import frc.robot.Subsystems.Algae.AlgaeIOSim;
@@ -22,14 +21,15 @@ import frc.robot.Subsystems.Intake.IntakeIOHardware;
 import frc.robot.Subsystems.Intake.IntakeIOReplay;
 import frc.robot.Subsystems.Intake.IntakeIOSim;
 import frc.robot.Subsystems.Intake.IntakeSubsystem;
-import frc.robot.Subsystems.swervedrive.SwerveDriveSubsystem;
-import frc.robot.Subsystems.swervedrive.SwerveModuleIOHardware;
-import frc.robot.Subsystems.swervedrive.SwerveModuleIOReplay;
-import frc.robot.Subsystems.swervedrive.SwerveModuleIOSim;
+import frc.robot.Subsystems.Superstructure;
 import frc.robot.Subsystems.Wrist.WristIOHardware;
 import frc.robot.Subsystems.Wrist.WristIOReplay;
 import frc.robot.Subsystems.Wrist.WristIOSim;
 import frc.robot.Subsystems.Wrist.WristSubsystem;
+import frc.robot.Subsystems.swervedrive.SwerveDriveSubsystem;
+import frc.robot.Subsystems.swervedrive.SwerveModuleIOHardware;
+import frc.robot.Subsystems.swervedrive.SwerveModuleIOReplay;
+import frc.robot.Subsystems.swervedrive.SwerveModuleIOSim;
 
 public class RobotContainer {
 

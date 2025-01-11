@@ -1,4 +1,4 @@
-package frc.robot.subsystems.arm;
+package frc.robot.Subsystems.Arm;
 
 import edu.wpi.first.units.measure.Voltage;
 import frc.helpers.CCMotorController;
