@@ -16,20 +16,25 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   public enum ElevatorPositions {
     // Placeholder Values
-    STOW ( 0),
-    L1(30),
-    L2(30),
-    L3(40),
-    L4(110),
-    A1(30),
-    A2(40),
-    CORAL_STATION_FRONT(15),
-    CORAL_STATION_BACK(120);
+    STOW ( Constants.ElevatorConstants.elevatorPositions[0]),
+    L1(Constants.ElevatorConstants.elevatorPositions[1]),
+    L2(Constants.ElevatorConstants.elevatorPositions[2]),
+    L3(Constants.ElevatorConstants.elevatorPositions[3]),
+    L4(Constants.ElevatorConstants.elevatorPositions[4]),
+    A1(Constants.ElevatorConstants.elevatorPositions[5]),
+    A2(Constants.ElevatorConstants.elevatorPositions[6]),
+    CORAL_STATION(Constants.ElevatorConstants.elevatorPositions[7]),
+    PROCESSOR(Constants.ElevatorConstants.elevatorPositions[8]);
+    
 
     private final double heightMeters;
 
     ElevatorPositions(double heightMeters) {
       this.heightMeters = heightMeters;
+    }
+
+    public double getHeight(){
+      return heightMeters;
     }
 
   }
@@ -42,49 +47,59 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   CCMotorController.MotorFactory motorFactory;
   ElevatorIO.IOFactory ioFactory;
-  ElevatorPositions currentPosition;
-
-  ElevatorIOInputsAutoLogged elevatorInputs = new ElevatorIOInputsAutoLogged();
-
-  public static ElevatorSubsystem getInstance(
-      CCMotorController.MotorFactory motorFactory, ElevatorIO.IOFactory ioFactory) {
-    if (mInstance == null) {
-      mInstance = new ElevatorSubsystem(motorFactory, ioFactory);
-    }
-    return mInstance;
-  }
-
-  public static ElevatorSubsystem getInstance() {
-    if (mInstance == null) {
-      mInstance = new ElevatorSubsystem(defaultMotorFactory, defaultIoFactory);
-    }
-    return mInstance;
-  }
-
-  /** Creates a new WristSubsystem. */
-  private ElevatorSubsystem(
-      CCMotorController.MotorFactory motorFactory, ElevatorIO.IOFactory ioFactory) {
-    this.motorFactory = motorFactory;
-    this.ioFactory = ioFactory;
-  }
-
-  private final ElevatorIO io =
-      ioFactory.create(
-          motorFactory.create(
-              "elevatorMotor",
-              "elevator",
-              Constants.MotorConstants.ELEVATOR[0],
-              MotorType.kBrushless,
-              IdleMode.kBrake,
-              Constants.MotorConstants.ELEVATOR_REVERSE,
-              1,
-              1));
+  static ElevatorPositions currentPosition;
   
-  @Override
-  public void changeElevatorPosition(ElevatorPositions desiredPosition){
-    currentPositions = desiredPosition;
+    ElevatorIOInputsAutoLogged elevatorInputs = new ElevatorIOInputsAutoLogged();
+  
+    public static ElevatorSubsystem getInstance(
+        CCMotorController.MotorFactory motorFactory, ElevatorIO.IOFactory ioFactory) {
+      if (mInstance == null) {
+        mInstance = new ElevatorSubsystem(motorFactory, ioFactory);
+      }
+      return mInstance;
+    }
+  
+    public static ElevatorSubsystem getInstance() {
+      if (mInstance == null) {
+        mInstance = new ElevatorSubsystem(defaultMotorFactory, defaultIoFactory);
+      }
+      return mInstance;
+    }
+  
+    /** Creates a new WristSubsystem. */
+    private ElevatorSubsystem(
+        CCMotorController.MotorFactory motorFactory, ElevatorIO.IOFactory ioFactory) {
+      this.motorFactory = motorFactory;
+      this.ioFactory = ioFactory;
+    }
+  
+    private final ElevatorIO io =
+        ioFactory.create(
+            motorFactory.create(
+                "elevatorMotor",
+                "elevator",
+                Constants.MotorConstants.ELEVATOR[0],
+                MotorType.kBrushless,
+                IdleMode.kBrake,
+                Constants.MotorConstants.ELEVATOR_REVERSE,
+                1,
+                1));
+    
+    //@Override
+    public void changeElevatorPosition(ElevatorPositions desiredPosition){
+      currentPosition = desiredPosition;
+  
+    }
+  
+    public static  double heightToRotations (double height){
+      return height * 0.2982; // random value
+    }
+    public static double rotationsToHeight (double rotations){
+      return rotations * 0.8263;
+    }
+    public static ElevatorPositions gElevatorPosition(){
+      return currentPosition;
   }
-
   
 
   @Override

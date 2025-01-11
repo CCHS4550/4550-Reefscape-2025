@@ -349,8 +349,13 @@ public class Constants {
   }
 
   public static class ElevatorConstants {
-    public static double ELEVATOR_HEIGHT = 19.345;
-    public static double ELEVATOR_ANGLE = 0.611;
+    public static double [] elevatorPositions = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+    public static double elevatorMaxVelocity = 90;
+    public static double elevatorMaxAcceleration = 90;
+    public static double elevatorKP = 90;
+    public static double elevatorKI  = 90;
+    public static double elevatorKD = 90;
+
   }
 
   // safely divide
