@@ -46,24 +46,34 @@ public class CharacterizingScheme {
     IntakeSubsystem intake,
     WristSubsystem wrist) {
 
-    // controller.a().onTrue(rightAscension.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    // controller.b().onTrue(rightAscension.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    // controller.x().onTrue(rightAscension.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    // controller.y().onTrue(rightAscension.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    // controller.a().onTrue(algae.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    // controller.b().onTrue(algae.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    // controller.x().onTrue(algae.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    // controller.y().onTrue(algae.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-    // controller.a().onTrue(declination.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    // controller.b().onTrue(declination.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    // controller.x().onTrue(declination.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    // controller.y().onTrue(declination.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    // controller.a().onTrue(arm.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    // controller.b().onTrue(arm.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    // controller.x().onTrue(arm.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    // controller.y().onTrue(arm.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-    // controller.a().onTrue(indexer.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    // controller.b().onTrue(indexer.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    // controller.x().onTrue(indexer.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    // controller.y().onTrue(indexer.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    // controller.a().onTrue(elevator.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    // controller.b().onTrue(elevator.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    // controller.x().onTrue(elevator.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    // controller.y().onTrue(elevator.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-    // controller.a().onTrue(swerveDrive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    // controller.b().onTrue(swerveDrive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    // controller.x().onTrue(swerveDrive.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    // controller.y().onTrue(swerveDrive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    // controller.a().onTrue(intake.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    // controller.b().onTrue(intake.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    // controller.x().onTrue(intake.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    // controller.y().onTrue(intake.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    
+    // controller.a().onTrue(wrist.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    // controller.b().onTrue(wrist.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    // controller.x().onTrue(wrist.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    // controller.y().onTrue(wrist.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+
+    // controller.a().onTrue(swerve.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    // controller.b().onTrue(swerve.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    // controller.x().onTrue(swerve.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    // controller.y().onTrue(swerve.sysIdDynamic(SysIdRoutine.Direction.kReverse));
   }
 }
