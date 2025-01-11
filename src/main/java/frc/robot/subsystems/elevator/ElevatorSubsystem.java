@@ -16,9 +16,13 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   public enum ElevatorPositions {
     // Placeholder Values
-    L1_FRONT(30),
-    L2L3_FRONT(45),
-    L4_BACK(110),
+    STOW ( 0),
+    L1(30),
+    L2(30),
+    L3(40),
+    L4(110),
+    A1(30),
+    A2(40),
     CORAL_STATION_FRONT(15),
     CORAL_STATION_BACK(120);
 
@@ -38,6 +42,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   CCMotorController.MotorFactory motorFactory;
   ElevatorIO.IOFactory ioFactory;
+  ElevatorPositions currentPosition;
 
   ElevatorIOInputsAutoLogged elevatorInputs = new ElevatorIOInputsAutoLogged();
 
@@ -74,6 +79,13 @@ public class ElevatorSubsystem extends SubsystemBase {
               Constants.MotorConstants.ELEVATOR_REVERSE,
               1,
               1));
+  
+  @Override
+  public void changeElevatorPosition(ElevatorPositions desiredPosition){
+    currentPositions = desiredPosition;
+  }
+
+  
 
   @Override
   public void periodic() {

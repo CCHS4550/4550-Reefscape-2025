@@ -26,6 +26,8 @@ public interface ElevatorIO {
 
   public default void holdSetpoint(double setpoint) {}
 
+  public default void changeElevatorPosition(ElevatorPositions desiredPosition){}
+
   public default boolean atSetpoint() {
     return false;
   }
