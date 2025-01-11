@@ -9,6 +9,8 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -177,7 +179,7 @@ public class Constants {
 
     // Front to back
     public static final double WHEEL_BASE =
-        Units.inchesToMeters(24.750000); // from drive shaft to drive shaft. Previous was
+        Units.inchesToMeters(24.7500000000); // from drive shaft to drive shaft. Previous was
     // Right to Left                                                            // 27
     public static final double TRACK_WITDTH = Units.inchesToMeters(24.750000);
 
@@ -190,6 +192,8 @@ public class Constants {
             new Translation2d(WHEEL_BASE / 2, TRACK_WITDTH / 2),
             new Translation2d(-WHEEL_BASE / 2, -TRACK_WITDTH / 2),
             new Translation2d(-WHEEL_BASE / 2, TRACK_WITDTH / 2));
+
+    public static Pose2d INITIAL_POSE = new Pose2d ( 0,0, new Rotation2d(0)); // must be in meters!
   }
 
   public static class SensorMiscConstants {

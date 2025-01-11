@@ -25,6 +25,11 @@ public interface AlgaeIO {
 
   default void setIntakeVoltage(Voltage voltage) {}
 
+  default void wristToStow (){}
+
+  default void wristToIntake(){}
+  
+
   @FunctionalInterface
   interface IOFactory {
     AlgaeIO create(CCMotorController wrist, CCMotorController intake);

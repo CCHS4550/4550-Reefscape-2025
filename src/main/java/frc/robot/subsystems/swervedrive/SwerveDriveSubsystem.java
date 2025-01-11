@@ -48,6 +48,7 @@ import frc.helpers.CCSparkMax;
 import frc.maps.Constants;
 import frc.maps.Constants.SwerveConstants;
 import frc.robot.RobotState;
+import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.swervedrive.SwerveModuleInputsAutoLogged;
 import com.kauailabs.navx.frc.AHRS;
 
@@ -62,7 +63,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
   private Timer timer;
   private static CCMotorController.MotorFactory defaultMotorFactory = CCSparkMax::new;
   private static SwerveModuleIO.ModuleFactory defaultModuleFactory = SwerveModuleIOHardware::new;
-  private AHRS gyro = new AHRS(SPI.Port.kMXP);
+  private com.studica.frc.AHRS gyro = new AHRS(SPI.Port.kMXP);
   public PIDController chassisSpeedsXSPidController = new PIDController(0, 0, 0);
   public PIDController chassisSpeedsYSPidController = new PIDController(0, 0, 0);
   public PIDController chassisSpeedsThetaPidController = new PIDController (0,0,0);
@@ -213,7 +214,8 @@ public class SwerveDriveSubsystem extends SubsystemBase {
       CCMotorController.MotorFactory motorFactory, SwerveModuleIO.ModuleFactory moduleFactory) {
     this.motorFactory = motorFactory;
     this.moduleFactory = moduleFactory;
-    swerveDrivePoseEstimator = new SwerveDrivePoseEstimator(Constants.SwerveConstants.DRIVE_KINEMATICS, initialAngle, swerveModulePositions, null)
+    swerveDrivePoseEstimator = new SwerveDrivePoseEstimator(Constants.SwerveConstants.DRIVE_KINEMATICS, initialAngle, swerveModulePositions, Constants.SwerveConstants.INITIAL_POSE);
+    
     timer.start();
     swerveModulePositions[0] =
         new SwerveModulePosition(0, new Rotation2d(frontRight.getAbsoluteEncoderRadiansOffset()));
@@ -368,7 +370,8 @@ public class SwerveDriveSubsystem extends SubsystemBase {
   }
 
   public void updateSwerveDrivePoseEstimator(){
-    
+    swerveDrivePoseEstimator.updateWithTime(timer.getFPGATimestamp(), gyro.getRotation2d(), swerveModulePositions);
+    swerveDrivePoseEstimator.addVisionMeasurement(null, 0);
   }
 
   public ChassisSpeeds getFieldVelocity() {

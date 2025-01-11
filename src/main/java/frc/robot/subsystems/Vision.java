@@ -22,33 +22,34 @@ import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 public class Vision extends SubsystemBase{
-    AprilTagFieldLayout aprilTagFieldLayout = AprilTagFields.k2025Reefscape.loadAprilTagLayoutField();
-    public  PhotonCamera slimelight = new PhotonCamera ("slimelight");
-    slimelight.setDriverMode(true);
-    slimelight.setPipelineIndex(Constants.cameraOne.CAMERA_ONE_PIPELINE);
-    double pipelineLatency;
-    PhotonPoseEstimator photonPoseEstimator = new PhotonPoseEstimator (aprilTagFieldLayout, PoseStrategy.CLOSEST_TO_REFERENCE_POSE, slimelight, Constants.cameraOne.ROBOT_TO_CAM);
-    public Optional<EstimatedRobotPose> getEstimatedGlobalPose(Pose2d prevEstimatedRobotPose) {
-        photonPoseEstimator.setReferencePose(prevEstimatedRobotPose);
-        return photonPoseEstimator.update();
-    }
-
+    static AprilTagFieldLayout aprilTagFieldLayout = AprilTagFields.k2025Reefscape.loadAprilTagLayoutField();
+        public static  PhotonCamera slimelight = new PhotonCamera ("slimelight");
+                slimelight.setDriverMode(true);
+                slimelight.setPipelineIndex(Constants.cameraOne.CAMERA_ONE_PIPELINE);
+                double pipelineLatency;
+                static PhotonPoseEstimator photonPoseEstimator = new PhotonPoseEstimator (aprilTagFieldLayout, PoseStrategy.CLOSEST_TO_REFERENCE_POSE, slimelight, Constants.cameraOne.ROBOT_TO_CAM);
+        public Optional<EstimatedRobotPose> getEstimatedGlobalPose(Pose2d prevEstimatedRobotPose) {
+            photonPoseEstimator.setReferencePose(prevEstimatedRobotPose);
+            return photonPoseEstimator.update(slimelight.getLatestResult());
+        }
     
-
-    public PhotonPoseEstimator getPhotonPoseEstimator(){
-        return photonPoseEstimator;
-    }
-
-    public static double getEstimatedPose(){
-        return photonPoseEstimator.getEstimatedGlobalPose();
-    }
-
-    public static double getEstimatedPoseX(){
-        return photonPoseEstimator.getEstimatedGlobalPose().getX();
-    }
-
-    public static double getEstimatedPoseY(){
-        return photonPoseEstimator.getEstimatedGlobalPose().getY();
+        
+    
+        public PhotonPoseEstimator getPhotonPoseEstimator(){
+            return photonPoseEstimator;
+        }
+    
+        public static double getEstimatedPose(){
+            return photonPoseEstimator.getEstimatedGlobalPose();
+            
+        }
+    
+        public static double getEstimatedPoseX(){
+            return photonPoseEstimator.getEstimatedGlobalPose().getX();
+        }
+    
+        public static double getEstimatedPoseY(){
+            return photonPoseEstimator.getEstimatedGlobalPose().getY();
     }
 
     public static double getEstimatedPoseYaw(){
@@ -56,9 +57,9 @@ public class Vision extends SubsystemBase{
     }
 
     
-    Matrix<N3, N1> visionStdDevs ; //idk how tf i declare this
+    public static Matrix<N3, N1> visionStdDevs ; //idk how tf i declare this
 
-    public Matrix<N3, N1> getVisionStdDevs(){
+    public static Matrix<N3, N1> getVisionStdDevs(){
         return visionStdDevs;
     }
 

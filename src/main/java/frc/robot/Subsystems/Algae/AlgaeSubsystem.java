@@ -36,6 +36,15 @@ public class AlgaeSubsystem extends SubsystemBase {
     return mInstance;
   }
 
+  public enum AlgaeStates {
+    INTAKE(15.00),
+    STOW(0);
+    double wristEncoderPosition;
+    AlgaeStates (double wristEncoderPosition){
+      this.wristEncoderPosition = wristEncoderPosition;
+    }
+  }
+
   /** Creates a new WristSubsystem. */
   private AlgaeSubsystem(CCMotorController.MotorFactory motorFactory, AlgaeIO.IOFactory ioFactory) {
     this.motorFactory = motorFactory;
