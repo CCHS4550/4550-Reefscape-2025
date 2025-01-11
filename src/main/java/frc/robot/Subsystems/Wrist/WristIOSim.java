@@ -1,3 +1,8 @@
 package frc.robot.subsystems.wrist;
 
-public class WristIOSim implements WristIO {}
+import frc.helpers.CCMotorController;
+
+public class WristIOSim implements WristIO {
+
+  public WristIOSim(CCMotorController motor) {}
+}

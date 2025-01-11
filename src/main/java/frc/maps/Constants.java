@@ -1,20 +1,23 @@
 package frc.maps;
 
+import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.MetersPerSecond;
 
+import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Current;
 // import frc.helpers.AllianceFlipUtil;
 import edu.wpi.first.wpilibj.RobotBase;
 
@@ -98,9 +101,26 @@ public class Constants {
     public static final boolean BACK_LEFT_TURN_REVERSE = true;
     public static final double BACK_LEFT_TURN_ENCODER = 1;
 
-    public static final int RIGHT_ASCENSION = 10;
-    public static final int[] DECLINATION = {11, 12};
-    public static final int BARREL_ROTATION = 13;
+    public static final int ALGAE_WRIST = 10;
+    public static final boolean ALGAE_WRIST_REVERSE = false;
+
+    public static final int ALGAE_INTAKE = 11;
+    public static final boolean ALGAE_INTAKE_REVERSE = false;
+
+    public static final int CLIMBER = 12;
+    public static final boolean CLIMBER_REVERSE = false;
+
+    public static final int[] ELEVATOR = {13};
+    public static final boolean ELEVATOR_REVERSE = false;
+
+    public static final int ARM = 14;
+    public static final boolean ARM_REVERSE = false;
+
+    public static final int INTAKE = 15;
+    public static final boolean INTAKE_REVERSE = false;
+
+    public static final int WRIST = 16;
+    public static final boolean WRIST_REVERSE = false;
   }
 
   public static class SwerveConstants {
@@ -128,7 +148,6 @@ public class Constants {
     public static final double DRIVE_RATE_LIMIT = MAX_DRIVE_SPEED_METERS_PER_SECOND * 1.5;
     public static final double TURN_RATE_LIMIT = MAX_ANGULAR_SPEED_RADIANS_PER_SECOND;
 
-
     public static final PathConstraints AUTO_PATH_CONSTRAINTS =
         new PathConstraints(
             MAX_DRIVE_SPEED_METERS_PER_SECOND - 2,
@@ -136,8 +155,18 @@ public class Constants {
             MAX_ANGULAR_SPEED_RADIANS_PER_SECOND,
             TURN_RATE_LIMIT);
 
-    public static final RobotConfig config = new RobotConfig(null, null, null, null);
-
+    public static final RobotConfig config =
+        new RobotConfig(
+            100,
+            100,
+            new ModuleConfig(
+                Inches.of(2),
+                MetersPerSecond.of(SwerveConstants.MAX_DRIVE_SPEED_METERS_PER_SECOND_THEORETICAL),
+                1.0,
+                new DCMotor(12, 2.6, 105, 1.8, 594.39, 1),
+                Current.ofBaseUnits(90, Amps),
+                1),
+            SwerveConstants.TRACK_WITDTH);
 
     public static final TrapezoidProfile.Constraints thetaControlConstraints =
         new TrapezoidProfile.Constraints(MAX_ANGULAR_SPEED_RADIANS_PER_SECOND, TURN_RATE_LIMIT);
@@ -162,8 +191,6 @@ public class Constants {
             new Translation2d(-WHEEL_BASE / 2, -TRACK_WITDTH / 2),
             new Translation2d(-WHEEL_BASE / 2, TRACK_WITDTH / 2));
   }
-
-
 
   public static class SensorMiscConstants {
     public static final int BARREL_SENSOR = 0;
@@ -196,7 +223,6 @@ public class Constants {
     public static final double DECLINATION_KA = 0.0016397;
     public static final double DECLINATION_KG = 0.15212;
 
-
     public static final double RIGHT_ASCENSION_KS = 0;
     // -0.081946;
     public static final double RIGHT_ASCENSION_KV = 1.2324;
@@ -208,9 +234,7 @@ public class Constants {
     public static final double RIGHT_ASCENSION_KA_TEST = 0.00024605;
   }
 
-  public class FieldPositionConstants {
-
-  }
+  public class FieldPositionConstants {}
 
   public class MechanismPositions {
     public static double ELEVATOR_INTAKE = 0;
@@ -289,6 +313,7 @@ public class Constants {
             new Translation3d(Inches.of(9.3418), Inches.of(0), Inches.of(14.157)),
             new Rotation3d(0, Units.degreesToRadians(0), Units.degreesToRadians(0)));
   }
+
   public static class cameraTwo {
     public static final String CAMERA_ONE_NAME = "FrontCamera";
     public static final Transform3d ROBOT_TO_CAM =
@@ -322,8 +347,6 @@ public class Constants {
     public static int BLUE_STAGE_TOP = 15;
     public static int BLUE_STAGE_BOTTOM = 16;
   }
-
-
 
   public static class ElevatorConstants {
     public static double ELEVATOR_HEIGHT = 19.345;

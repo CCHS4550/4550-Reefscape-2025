@@ -13,6 +13,13 @@
 
 package frc.robot;
 
+import edu.wpi.first.net.PortForwarder;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.maps.Constants;
+// import frc.robot.autonomous.CustomAutoChooser;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -20,14 +27,6 @@ import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 import org.littletonrobotics.urcl.URCL;
-
-import edu.wpi.first.net.PortForwarder;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.maps.Constants;
-import frc.robot.autonomous.CustomAutoChooser;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -37,25 +36,21 @@ import frc.robot.autonomous.CustomAutoChooser;
  */
 public class Robot extends LoggedRobot {
 
-
   private RobotContainer robotContainer;
-  CustomAutoChooser autoChooser;
+  // CustomAutoChooser autoChooser;
 
   private boolean browningOut = false;
-
 
   public Robot() {}
 
   @Override
   public void robotInit() {
 
-
-    autoChooser = new CustomAutoChooser();
+    // autoChooser = new CustomAutoChooser();
 
     Constants.getCurrentMode();
 
     SmartDashboard.putBoolean("Browning Out?", browningOut);
-
 
     // Record metadata
     Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
@@ -97,7 +92,6 @@ public class Robot extends LoggedRobot {
         break;
     }
 
-    
     PortForwarder.add(5800, "photonvision.local", 5800);
 
     // Unofficial REV-Compatible Logger
@@ -113,7 +107,7 @@ public class Robot extends LoggedRobot {
   /** This function is called periodically during all modes. */
   @Override
   public void robotPeriodic() {
-    
+
     switch (Constants.currentMode) {
       case REAL:
         RobotState.getInstance().updateDashboard();
@@ -146,7 +140,6 @@ public class Robot extends LoggedRobot {
     // robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
-
   }
 
   /** This function is called once when the robot is disabled. */
@@ -162,7 +155,7 @@ public class Robot extends LoggedRobot {
   public void autonomousInit() {
     // AutoBuilderScheme.getPathPlannerAutoCommand().schedule();
     // AutoBuilderScheme.getCustomAuto().schedule();
-    autoChooser.getSelectedCustomCommand().schedule();
+    // autoChooser.getSelectedCustomCommand().schedule();
 
     System.out.println("Autonomous Routine Scheduled!");
   }

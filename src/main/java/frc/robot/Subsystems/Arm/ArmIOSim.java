@@ -1,3 +1,8 @@
 package frc.robot.subsystems.arm;
 
-public class ArmIOSim implements ArmIO{}
+import frc.helpers.CCMotorController;
+
+public class ArmIOSim implements ArmIO {
+
+  public ArmIOSim(CCMotorController motor) {}
+}

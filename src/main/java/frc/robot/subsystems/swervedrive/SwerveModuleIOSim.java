@@ -7,18 +7,13 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.Measure;
-import edu.wpi.first.units.VoltageUnit;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.AnalogEncoder;
 import edu.wpi.first.wpilibj.simulation.AnalogEncoderSim;
 import frc.helpers.CCMotorController;
 import frc.maps.Constants;
-
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
-
-import com.google.errorprone.annotations.OverridingMethodsMustInvokeSuper;
 
 /**
  * Class for controlling a swerve module. Each module has 2 motors, one for driving and one for
@@ -65,7 +60,6 @@ public class SwerveModuleIOSim implements SwerveModuleIO {
 
     this.absoluteEncoder = new AnalogEncoder(absoluteEncoderChannel);
     absoluteEncoderSim = new AnalogEncoderSim(absoluteEncoder);
-    
 
     this.absolutePosition = getAbsoluteEncoderDistance();
 
@@ -156,9 +150,7 @@ public class SwerveModuleIOSim implements SwerveModuleIO {
    */
   @Override
   public double getAbsoluteEncoderRadiansOffset() {
-    return Units.rotationsToRadians(absoluteEncoder.get())
-        - absoluteEncoderOffset
-        + Math.PI;
+    return Units.rotationsToRadians(absoluteEncoder.get()) - absoluteEncoderOffset + Math.PI;
   }
 
   /**
@@ -210,7 +202,6 @@ public class SwerveModuleIOSim implements SwerveModuleIO {
 
     Rotation2d encoderRotation = new Rotation2d(getState().angle.getRadians());
 
-
     desiredState.optimize(encoderRotation);
 
     // Minimizes side drift when driving
@@ -226,8 +217,7 @@ public class SwerveModuleIOSim implements SwerveModuleIO {
   @Override
   public void setDriveVelocity(double velocity) {
     // These are both in m/s
-    double driveOutput =
-        drivingPidController.calculate(driveMotor.getVelocity(), velocity);
+    double driveOutput = drivingPidController.calculate(driveMotor.getVelocity(), velocity);
     Logger.recordOutput("desired drivePID Output", driveOutput);
     // Feed forward
     double driveFF = driveFeedforward.calculate(velocity);
@@ -275,7 +265,6 @@ public class SwerveModuleIOSim implements SwerveModuleIO {
     turnMotor.setVoltageFromSpeed(turnSpeed);
   }
 
-  
   public void printEncoders() {
     System.out.println(
         name
@@ -286,7 +275,6 @@ public class SwerveModuleIOSim implements SwerveModuleIO {
             + "\n");
   }
 
-  
   public void resetAbsoluteEncoder() {
     absolutePosition = 0;
   }
@@ -335,6 +323,4 @@ public class SwerveModuleIOSim implements SwerveModuleIO {
     driveMotor.setVoltage(volts.in(Volts));
     // turnMotor.setVoltage(volts.in(Volts));
   }
-
-  
 }

@@ -8,8 +8,6 @@ import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
-
-
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
@@ -20,7 +18,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.units.VelocityUnit;
 import edu.wpi.first.units.VoltageUnit;
@@ -34,7 +31,6 @@ import frc.helpers.CCMotorController;
 import frc.helpers.CCSparkMax;
 import frc.maps.Constants;
 import frc.robot.RobotState;
-
 import org.littletonrobotics.junction.Logger;
 
 /** Class for controlling a swerve drive chassis. Consists of 4 SwerveModules and a gyro. */
@@ -42,16 +38,19 @@ public class SwerveDriveSubsystem extends SubsystemBase {
 
   public static SwerveDriveSubsystem mInstance;
 
-
   private static CCMotorController.MotorFactory defaultMotorFactory = CCSparkMax::new;
   private static SwerveModuleIO.ModuleFactory defaultModuleFactory = SwerveModuleIOHardware::new;
-
 
   private CCMotorController.MotorFactory motorFactory;
   private SwerveModuleIO.ModuleFactory moduleFactory;
 
+  SwerveModuleInputsAutoLogged frontRightInputs = new SwerveModuleInputsAutoLogged();
+  SwerveModuleInputsAutoLogged frontLeftInputs = new SwerveModuleInputsAutoLogged();
+  SwerveModuleInputsAutoLogged backRightInputs = new SwerveModuleInputsAutoLogged();
+  SwerveModuleInputsAutoLogged backLeftInputs = new SwerveModuleInputsAutoLogged();
+
   public final SwerveModuleIO frontRight =
-    moduleFactory.create(
+      moduleFactory.create(
           motorFactory.create(
               "Front Right Drive",
               "frd",
@@ -75,8 +74,8 @@ public class SwerveDriveSubsystem extends SubsystemBase {
           "Front Right");
 
   public final SwerveModuleIO frontLeft =
-    moduleFactory.create(
-        motorFactory.create(
+      moduleFactory.create(
+          motorFactory.create(
               "Front Left Drive",
               "fld",
               Constants.MotorConstants.FRONT_LEFT_DRIVE,
@@ -85,7 +84,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
               Constants.MotorConstants.FRONT_LEFT_DRIVE_REVERSE,
               Constants.ConversionConstants.HORIZONTAL_DISTANCE_TRAVELLED_PER_MOTOR_REVOLUTION,
               Constants.ConversionConstants.DRIVE_MOTOR_METERS_PER_SECOND_CONVERSION_FACTOR),
-        motorFactory.create(
+          motorFactory.create(
               "Front Left Turn",
               "flt",
               Constants.MotorConstants.FRONT_LEFT_TURN,
@@ -99,8 +98,8 @@ public class SwerveDriveSubsystem extends SubsystemBase {
           "Front Left");
 
   public final SwerveModuleIO backRight =
-    moduleFactory.create(
-        motorFactory.create(
+      moduleFactory.create(
+          motorFactory.create(
               "Back Right Drive",
               "brd",
               Constants.MotorConstants.BACK_RIGHT_DRIVE,
@@ -109,7 +108,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
               Constants.MotorConstants.BACK_RIGHT_DRIVE_REVERSE,
               Constants.ConversionConstants.HORIZONTAL_DISTANCE_TRAVELLED_PER_MOTOR_REVOLUTION,
               Constants.ConversionConstants.DRIVE_MOTOR_METERS_PER_SECOND_CONVERSION_FACTOR),
-        motorFactory.create(
+          motorFactory.create(
               "Back Right Turn",
               "brt",
               Constants.MotorConstants.BACK_RIGHT_TURN,
@@ -123,8 +122,8 @@ public class SwerveDriveSubsystem extends SubsystemBase {
           "Back Right");
 
   public final SwerveModuleIO backLeft =
-  moduleFactory.create(
-        motorFactory.create(
+      moduleFactory.create(
+          motorFactory.create(
               "Back Left Drive",
               "bld",
               Constants.MotorConstants.BACK_LEFT_DRIVE,
@@ -133,7 +132,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
               Constants.MotorConstants.BACK_LEFT_DRIVE_REVERSE,
               Constants.ConversionConstants.HORIZONTAL_DISTANCE_TRAVELLED_PER_MOTOR_REVOLUTION,
               Constants.ConversionConstants.DRIVE_MOTOR_METERS_PER_SECOND_CONVERSION_FACTOR),
-        motorFactory.create(
+          motorFactory.create(
               "Back Left Turn",
               "blt",
               Constants.MotorConstants.BACK_LEFT_TURN,
@@ -155,7 +154,6 @@ public class SwerveDriveSubsystem extends SubsystemBase {
   /** Module positions used for odometry */
   public SwerveModulePosition[] swerveModulePositions = new SwerveModulePosition[4];
 
-
   /* PID Controllers */
   public PIDController xPID, yPID;
   public PIDController turnPID;
@@ -167,11 +165,9 @@ public class SwerveDriveSubsystem extends SubsystemBase {
 
   public Rotation2d initialAngle = new Rotation2d(0);
 
-
-  
-
   /** Implementation of Singleton Pattern */
-  public static SwerveDriveSubsystem getInstance(CCMotorController.MotorFactory motorFactory, SwerveModuleIO.ModuleFactory moduleFactory) {
+  public static SwerveDriveSubsystem getInstance(
+      CCMotorController.MotorFactory motorFactory, SwerveModuleIO.ModuleFactory moduleFactory) {
     if (mInstance == null) {
       mInstance = new SwerveDriveSubsystem(motorFactory, moduleFactory);
     }
@@ -185,60 +181,60 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     return mInstance;
   }
 
-/** Constructor for the Swerve Drive Subsystem. */
-    private SwerveDriveSubsystem(CCMotorController.MotorFactory motorFactory, SwerveModuleIO.ModuleFactory moduleFactory) {
-      this.motorFactory = motorFactory;
-      this.moduleFactory = moduleFactory;
+  /** Constructor for the Swerve Drive Subsystem. */
+  private SwerveDriveSubsystem(
+      CCMotorController.MotorFactory motorFactory, SwerveModuleIO.ModuleFactory moduleFactory) {
+    this.motorFactory = motorFactory;
+    this.moduleFactory = moduleFactory;
 
-      swerveModulePositions[0] =
-          new SwerveModulePosition(0, new Rotation2d(frontRight.getAbsoluteEncoderRadiansOffset()));
-      swerveModulePositions[1] =
-          new SwerveModulePosition(0, new Rotation2d(frontLeft.getAbsoluteEncoderRadiansOffset()));
-      swerveModulePositions[2] =
-          new SwerveModulePosition(0, new Rotation2d(backRight.getAbsoluteEncoderRadiansOffset()));
-      swerveModulePositions[3] =
-          new SwerveModulePosition(0, new Rotation2d(backLeft.getAbsoluteEncoderRadiansOffset()));
-  
-      desiredModuleStates = new SwerveModuleState[4];
-  
-      desiredModuleStates[0] = new SwerveModuleState(0, new Rotation2d());
-      desiredModuleStates[1] = new SwerveModuleState(0, new Rotation2d());
-      desiredModuleStates[2] = new SwerveModuleState(0, new Rotation2d());
-      desiredModuleStates[3] = new SwerveModuleState(0, new Rotation2d());
-  
-      xPID = new PIDController(1, .1, 0);
-      yPID = new PIDController(1, .1, 0);
-  
-      turnPID = new PIDController(.05, .1, 0);
-  
-      swerveFollower =
-          new PPHolonomicDriveController(
-              new com.pathplanner.lib.config.PIDConstants(1, 0, 0),
-              new com.pathplanner.lib.config.PIDConstants(1, 0, 0),
-              .02);
-      // swerveFollower = new PPHolonomicDriveController(xPID, yPID, turnPID);
-  
-      // swerveFollower.setEnabled(true);
-      // xPID = new PIDController(1, 0, 0);
-      // yPID = new PIDController(1, 0, 0);
-  
-      // *TODO: Possibly research profiled PID
-      // turnPID = new ProfiledPIDController(0.5, 0, 0,
-      // RobotMap.thetaControllConstraints);
-  
-      turnPIDProfiled =
-          new ProfiledPIDController(
-              .7,
-              0,
-              0,
-              new Constraints(
-                  Constants.SwerveConstants.MAX_ANGULAR_SPEED_RADIANS_PER_SECOND,
-                  Constants.SwerveConstants.TURN_RATE_LIMIT));
-      turnPID.enableContinuousInput(-Math.PI, Math.PI);
-  
-      RobotState.getInstance().moduleEncodersInit();
-    }
+    swerveModulePositions[0] =
+        new SwerveModulePosition(0, new Rotation2d(frontRight.getAbsoluteEncoderRadiansOffset()));
+    swerveModulePositions[1] =
+        new SwerveModulePosition(0, new Rotation2d(frontLeft.getAbsoluteEncoderRadiansOffset()));
+    swerveModulePositions[2] =
+        new SwerveModulePosition(0, new Rotation2d(backRight.getAbsoluteEncoderRadiansOffset()));
+    swerveModulePositions[3] =
+        new SwerveModulePosition(0, new Rotation2d(backLeft.getAbsoluteEncoderRadiansOffset()));
 
+    desiredModuleStates = new SwerveModuleState[4];
+
+    desiredModuleStates[0] = new SwerveModuleState(0, new Rotation2d());
+    desiredModuleStates[1] = new SwerveModuleState(0, new Rotation2d());
+    desiredModuleStates[2] = new SwerveModuleState(0, new Rotation2d());
+    desiredModuleStates[3] = new SwerveModuleState(0, new Rotation2d());
+
+    xPID = new PIDController(1, .1, 0);
+    yPID = new PIDController(1, .1, 0);
+
+    turnPID = new PIDController(.05, .1, 0);
+
+    swerveFollower =
+        new PPHolonomicDriveController(
+            new com.pathplanner.lib.config.PIDConstants(1, 0, 0),
+            new com.pathplanner.lib.config.PIDConstants(1, 0, 0),
+            .02);
+    // swerveFollower = new PPHolonomicDriveController(xPID, yPID, turnPID);
+
+    // swerveFollower.setEnabled(true);
+    // xPID = new PIDController(1, 0, 0);
+    // yPID = new PIDController(1, 0, 0);
+
+    // *TODO: Possibly research profiled PID
+    // turnPID = new ProfiledPIDController(0.5, 0, 0,
+    // RobotMap.thetaControllConstraints);
+
+    turnPIDProfiled =
+        new ProfiledPIDController(
+            .7,
+            0,
+            0,
+            new Constraints(
+                Constants.SwerveConstants.MAX_ANGULAR_SPEED_RADIANS_PER_SECOND,
+                Constants.SwerveConstants.TURN_RATE_LIMIT));
+    turnPID.enableContinuousInput(-Math.PI, Math.PI);
+
+    RobotState.getInstance().moduleEncodersInit();
+  }
 
   /**
    * Creates a new SwerveDrive object. Delays 1 second before setting gyro to 0 to account for gyro
@@ -250,10 +246,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     System.out.println("frontLeft:" + frontLeft.getAbsoluteEncoderRadiansNoOffset());
     System.out.println("backRight:" + backRight.getAbsoluteEncoderRadiansNoOffset());
     System.out.println("backLeft:" + backLeft.getAbsoluteEncoderRadiansNoOffset());
-    
   }
-
-
 
   /** Returns the nearest speaker pose for for alliance color */
   @Override
@@ -351,7 +344,6 @@ public class SwerveDriveSubsystem extends SubsystemBase {
               VoltsPerSecond.of(1),
               Volts.of(3),
               Seconds.of(3),
-
               (state) ->
                   org.littletonrobotics.junction.Logger.recordOutput(
                       "SysIdTestState", state.toString())),

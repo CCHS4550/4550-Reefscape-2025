@@ -4,11 +4,12 @@
 
 package frc.robot.subsystems.arm;
 
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.helpers.CCMotorController;
 import frc.helpers.CCSparkMax;
-
-
+import frc.maps.Constants;
 
 public class ArmSubsystem extends SubsystemBase {
 
@@ -21,7 +22,10 @@ public class ArmSubsystem extends SubsystemBase {
   CCMotorController.MotorFactory motorFactory;
   ArmIO.IOFactory ioFactory;
 
-  public static ArmSubsystem getInstance(CCMotorController.MotorFactory motorFactory, ArmIO.IOFactory ioFactory) {
+  private final ArmIOInputsAutoLogged armInputs = new ArmIOInputsAutoLogged();
+
+  public static ArmSubsystem getInstance(
+      CCMotorController.MotorFactory motorFactory, ArmIO.IOFactory ioFactory) {
     if (mInstance == null) {
       mInstance = new ArmSubsystem(motorFactory, ioFactory);
     }
@@ -37,11 +41,21 @@ public class ArmSubsystem extends SubsystemBase {
 
   /** Creates a new WristSubsystem. */
   private ArmSubsystem(CCMotorController.MotorFactory motorFactory, ArmIO.IOFactory ioFactory) {
-      this.motorFactory = motorFactory;
-      this.ioFactory = ioFactory; 
-
+    this.motorFactory = motorFactory;
+    this.ioFactory = ioFactory;
   }
 
+  private final ArmIO io =
+      ioFactory.create(
+          motorFactory.create(
+              "armMotor",
+              "arm",
+              Constants.MotorConstants.ARM,
+              MotorType.kBrushless,
+              IdleMode.kBrake,
+              Constants.MotorConstants.ARM_REVERSE,
+              1,
+              1));
 
   public enum ArmPositions {
     // Placeholder Values
@@ -56,9 +70,7 @@ public class ArmSubsystem extends SubsystemBase {
     ArmPositions(double angleDegrees) {
       this.angleDegrees = angleDegrees;
     }
-
   }
-
 
   @Override
   public void periodic() {

@@ -3,9 +3,6 @@ package frc.helpers;
 import com.revrobotics.*;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-
-import frc.robot.helpers.MotorDataAutoLogged;
-
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 // Documention: https://codedocs.revrobotics.com/java/com/revrobotics/package-summary.html
@@ -57,6 +54,8 @@ public class CCSparkMax extends SparkMax implements CCMotorController {
     voltageConversionFactor = 12;
 
     super.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+    
   }
 
   //   public CCSparkMax(
@@ -205,7 +204,7 @@ public class CCSparkMax extends SparkMax implements CCMotorController {
     return encoder.getPosition() * positionConversionFactorOne;
   }
 
-  @Override 
+  @Override
   public RelativeEncoder getEncoder() {
     return encoder;
   }
@@ -219,8 +218,6 @@ public class CCSparkMax extends SparkMax implements CCMotorController {
   public String getShortName() {
     return shortName;
   }
-
-
 
   @Override
   public void set(boolean stop, double speed) {

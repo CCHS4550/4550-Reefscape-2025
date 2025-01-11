@@ -13,7 +13,6 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.system.plant.DCMotor;
-import frc.robot.helpers.MotorDataAutoLogged;
 
 /** Add your docs here. */
 public class CCSparkSim extends SparkMaxSim implements CCMotorController {
@@ -195,7 +194,7 @@ public class CCSparkSim extends SparkMaxSim implements CCMotorController {
     return encoder.getPosition() * positionConversionFactorOne;
   }
 
-  @Override 
+  @Override
   public SparkMaxAlternateEncoderSim getEncoder() {
     return encoder;
   }
@@ -209,9 +208,6 @@ public class CCSparkSim extends SparkMaxSim implements CCMotorController {
   public String getShortName() {
     return shortName;
   }
-
-
-
 
   @Override
   public void set(boolean stop, double speed) {

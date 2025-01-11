@@ -6,7 +6,6 @@ package frc.helpers;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-
 import org.littletonrobotics.junction.AutoLog;
 
 /** Add your docs here. */
@@ -52,11 +51,10 @@ public interface CCMotorController {
     return 0;
   }
 
-  default double getRawPosition(){
+  default double getRawPosition() {
     return 0;
   }
 
-  
   default Object getEncoder() {
     return null;
   }
@@ -69,18 +67,16 @@ public interface CCMotorController {
     return "No Given ShortName";
   }
 
-
   @AutoLog
   class MotorData {
     public double position = 0;
     public double setOutput = 0;
     public double velocity = 0;
-    
+
     public double voltage = 0;
 
     public double speed = 0;
   }
-  
 
   // public static <T> void createObject(ObjectFactory<T> factory) {
   //   T obj = factory.create(); // Use the factory to create an object
@@ -93,7 +89,7 @@ public interface CCMotorController {
   // }
 
   @FunctionalInterface
-  interface MotorFactory {
+  public interface MotorFactory {
     CCMotorController create(
         String name,
         String shortName,

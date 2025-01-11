@@ -4,13 +4,12 @@
 
 package frc.robot.subsystems.elevator;
 
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.helpers.CCMotorController;
 import frc.helpers.CCSparkMax;
-import frc.robot.subsystems.intake.IntakeIO;
-import frc.robot.subsystems.intake.IntakeIOHardware;
-import frc.robot.subsystems.intake.IntakeSubsystem;
-
+import frc.maps.Constants;
 
 public class ElevatorSubsystem extends SubsystemBase {
 
@@ -23,7 +22,10 @@ public class ElevatorSubsystem extends SubsystemBase {
   CCMotorController.MotorFactory motorFactory;
   ElevatorIO.IOFactory ioFactory;
 
-  public static ElevatorSubsystem getInstance(CCMotorController.MotorFactory motorFactory, ElevatorIO.IOFactory ioFactory) {
+  ElevatorIOInputsAutoLogged elevatorInputs = new ElevatorIOInputsAutoLogged();
+
+  public static ElevatorSubsystem getInstance(
+      CCMotorController.MotorFactory motorFactory, ElevatorIO.IOFactory ioFactory) {
     if (mInstance == null) {
       mInstance = new ElevatorSubsystem(motorFactory, ioFactory);
     }
@@ -38,11 +40,23 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   /** Creates a new WristSubsystem. */
-  private ElevatorSubsystem(CCMotorController.MotorFactory motorFactory, ElevatorIO.IOFactory ioFactory) {
-      this.motorFactory = motorFactory;
-      this.ioFactory = ioFactory; 
-
+  private ElevatorSubsystem(
+      CCMotorController.MotorFactory motorFactory, ElevatorIO.IOFactory ioFactory) {
+    this.motorFactory = motorFactory;
+    this.ioFactory = ioFactory;
   }
+
+  private final ElevatorIO io =
+      ioFactory.create(
+          motorFactory.create(
+              "elevatorMotor",
+              "elevator",
+              Constants.MotorConstants.ELEVATOR[0],
+              MotorType.kBrushless,
+              IdleMode.kBrake,
+              Constants.MotorConstants.ELEVATOR_REVERSE,
+              1,
+              1));
 
   @Override
   public void periodic() {

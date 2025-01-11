@@ -35,7 +35,8 @@
 //   /** Creates a new PointTowardsTag. */
 //   public PointTowardsTag() {
 //     // Only set once, so the target isn't updated.
-//     target = Optional.of(PhotonVision.getInstance().frontCamera.getLatestResult().getBestTarget());
+//     target =
+// Optional.of(PhotonVision.getInstance().frontCamera.getLatestResult().getBestTarget());
 
 //     if (target.isPresent()) {
 //       /** Initialize a temporary PoseEstimator that lasts for this command's length. It will */
@@ -44,7 +45,8 @@
 //               Constants.SwerveConstants.DRIVE_KINEMATICS,
 //               RobotState.getInstance().getPoseRotation2d(),
 //               SwerveDrive.getInstance().swerveModulePositionsReal,
-//               // This line below should set the initial pose to (0,0) with an angle of the angle of
+//               // This line below should set the initial pose to (0,0) with an angle of the angle
+// of
 //               // the AprilTag.
 
 //               // If theres a problem, I suspect it's probably here or wherever else getYaw() is
@@ -83,16 +85,20 @@
 
 //     // I'm not sure if we need to do all this, but it should make it relatively more accurate. By
 //     // doing this, we are combining swerve drive odometry with vision.
-//     // Lowkey vision should be accurate enough on its own but there should be no harm in adding more
+//     // Lowkey vision should be accurate enough on its own but there should be no harm in adding
+// more
 //     // data, since its all run through a Kalman Filter (google it!)
-//     // Actually now that I think about this, this is lowkey useless since the target is only defined
+//     // Actually now that I think about this, this is lowkey useless since the target is only
+// defined
 //     // once. We should only rely on swerve drive odometry.
 //     // poseRelativeToTargetEstimator.addVisionMeasurement(new Pose2d(new Translation2d(),
 //     // Rotation2d.fromDegrees(target.get().getYaw())), currentTime);
 
-//     // This is another place that might be a problem, as this is where the odometry is updated. We
+//     // This is another place that might be a problem, as this is where the odometry is updated.
+// We
 //     // have typically always used getRotation2dNegative() which has always worked fine.
-//     // I feel like this doesn't make much sense though but I'm a little scared to change it. If it
+//     // I feel like this doesn't make much sense though but I'm a little scared to change it. If
+// it
 //     // works, it works.
 //     poseRelativeToTargetEstimator.updateWithTime(
 //         currentTime,

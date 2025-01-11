@@ -1,11 +1,8 @@
 package frc.robot.subsystems.algae;
 
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-
 import edu.wpi.first.math.util.Units;
-import frc.maps.Constants;
-import frc.helpers.CCSparkMax;
+import edu.wpi.first.units.measure.Voltage;
+import frc.helpers.CCMotorController;
 
 public class AlgaeIOHardware implements AlgaeIO {
 
@@ -25,30 +22,34 @@ public class AlgaeIOHardware implements AlgaeIO {
   private static final double SHOULDER_VELOCITY_CONSTRAINT =
       WRIST_VELOCITY / WRIST_VELOCITY_COEFFICIENT;
 
-  private final CCSparkMax wrist;
-  private final CCSparkMax intake;
+  private final CCMotorController wrist;
+  private final CCMotorController intake;
 
-  public AlgaeIOHardware(){
-    wrist = new CCSparkMax("wrist", "wr", Constants.ALGAE_WRIST_ID, MotorType.kBrushless, IdleMode.kBrake, Constants.ALGAE_WRIST_REVERSED, 1.0, 1.0);
-    intake = new CCSparkMax("algae intake", "an", Constants.ALGAE_INTAKE_ID, MotorType.kBrushless, IdleMode.kBrake, Constants.ALGAE_INTAKE_REVERSED, 1.0, 1.0);
-  
+  public AlgaeIOHardware(CCMotorController wrist, CCMotorController intake) {
+    this.wrist = wrist;
+    this.intake = intake;
   }
-  @Override
-  public void updateInputs(AlgaeIOInputs inputs){
-    inputs.wristAngleRads = wrist.getRawPosition() * WRIST_POSITION_COEFFICIENT;
-    inputs.wristAppliedVolts = wrist.getBusVoltage() * wrist.getAppliedOutput(); //might just be get bus voltage
-    inputs.wristCurrentDrawAmps = wrist.getOutputCurrent();
-    inputs.wristAngularMomentum = wrist.getRawVelocity(); // probably have to do some math to this one, not in same units as example code
 
-    inputs.intakeAppliedVolts = intake.getBusVoltage() * intake.getAppliedOutput();
-    inputs.intakeCurrentDrawAmps = intake.getOutputCurrent();
-  }
   @Override
-  public void setWristvoltage(double speed){
-    wrist.setVoltageFromSpeed(speed);
+  public void updateInputs(AlgaeIOInputs inputs) {
+    // inputs.wristAngleRads = wrist.getRawPosition() * WRIST_POSITION_COEFFICIENT;
+    // inputs.wristAppliedVolts = wrist.getBusVoltage() * wrist.getAppliedOutput(); //might just be
+    // get bus voltage
+    // inputs.wristCurrentDrawAmps = wrist.getOutputCurrent();
+    // inputs.wristAngularMomentum = wrist.getRawVelocity(); // probably have to do some math to
+    // this one, not in same units as example code
+
+    // inputs.intakeAppliedVolts = intake.getBusVoltage() * intake.getAppliedOutput();
+    // inputs.intakeCurrentDrawAmps = intake.getOutputCurrent();
   }
+
   @Override
-  public void setIntakeVoltage(double speed){
-    intake.setVoltageFromSpeed(speed);
+  public void setWristVoltage(Voltage voltage) {
+    wrist.setVoltage(voltage.magnitude());
+  }
+
+  @Override
+  public void setIntakeVoltage(Voltage voltage) {
+    intake.setVoltage(voltage.magnitude());
   }
 }

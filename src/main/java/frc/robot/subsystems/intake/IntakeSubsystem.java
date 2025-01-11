@@ -4,13 +4,12 @@
 
 package frc.robot.subsystems.intake;
 
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.helpers.CCMotorController;
 import frc.helpers.CCSparkMax;
-import frc.robot.subsystems.wrist.WristIO;
-import frc.robot.subsystems.wrist.WristIOHardware;
-import frc.robot.subsystems.wrist.WristSubsystem;
-
+import frc.maps.Constants;
 
 public class IntakeSubsystem extends SubsystemBase {
 
@@ -23,7 +22,10 @@ public class IntakeSubsystem extends SubsystemBase {
   CCMotorController.MotorFactory motorFactory;
   IntakeIO.IOFactory ioFactory;
 
-  public static IntakeSubsystem getInstance(CCMotorController.MotorFactory motorFactory, IntakeIO.IOFactory ioFactory) {
+  IntakeIOInputsAutoLogged intakeInputs = new IntakeIOInputsAutoLogged();
+
+  public static IntakeSubsystem getInstance(
+      CCMotorController.MotorFactory motorFactory, IntakeIO.IOFactory ioFactory) {
     if (mInstance == null) {
       mInstance = new IntakeSubsystem(motorFactory, ioFactory);
     }
@@ -38,12 +40,23 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   /** Creates a new WristSubsystem. */
-  private IntakeSubsystem(CCMotorController.MotorFactory motorFactory, IntakeIO.IOFactory ioFactory) {
-      this.motorFactory = motorFactory;
-      this.ioFactory = ioFactory; 
-
-    
+  private IntakeSubsystem(
+      CCMotorController.MotorFactory motorFactory, IntakeIO.IOFactory ioFactory) {
+    this.motorFactory = motorFactory;
+    this.ioFactory = ioFactory;
   }
+
+  public final IntakeIO io =
+      ioFactory.create(
+          motorFactory.create(
+              "intakeMotor",
+              "intake",
+              Constants.MotorConstants.INTAKE,
+              MotorType.kBrushless,
+              IdleMode.kBrake,
+              Constants.MotorConstants.INTAKE_REVERSE,
+              1,
+              1));
 
   @Override
   public void periodic() {

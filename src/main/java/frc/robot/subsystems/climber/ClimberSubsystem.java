@@ -6,12 +6,10 @@ package frc.robot.subsystems.climber;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.helpers.CCMotorController;
 import frc.helpers.CCSparkMax;
-
-
+import frc.maps.Constants;
 
 public class ClimberSubsystem extends SubsystemBase {
 
@@ -24,7 +22,10 @@ public class ClimberSubsystem extends SubsystemBase {
   CCMotorController.MotorFactory motorFactory;
   ClimberIO.IOFactory ioFactory;
 
-  public static ClimberSubsystem getInstance(CCMotorController.MotorFactory motorFactory, ClimberIO.IOFactory ioFactory) {
+  private final ClimberIOInputsAutoLogged climberInputs = new ClimberIOInputsAutoLogged();
+
+  public static ClimberSubsystem getInstance(
+      CCMotorController.MotorFactory motorFactory, ClimberIO.IOFactory ioFactory) {
     if (mInstance == null) {
       mInstance = new ClimberSubsystem(motorFactory, ioFactory);
     }
@@ -39,25 +40,23 @@ public class ClimberSubsystem extends SubsystemBase {
   }
 
   /** Creates a new WristSubsystem. */
-  private ClimberSubsystem(CCMotorController.MotorFactory motorFactory, ClimberIO.IOFactory ioFactory) {
-      this.motorFactory = motorFactory;
-      this.ioFactory = ioFactory; 
-
+  private ClimberSubsystem(
+      CCMotorController.MotorFactory motorFactory, ClimberIO.IOFactory ioFactory) {
+    this.motorFactory = motorFactory;
+    this.ioFactory = ioFactory;
   }
 
-  private ClimberIO io = ioFactory.create(
-    motorFactory.create("Climber Motor", "climb", 
-    1, 
-    MotorType.kBrushless, 
-    IdleMode.kBrake, 
-    false, 
-    1, 
-    1));
-
-
-
-  
-
+  private ClimberIO io =
+      ioFactory.create(
+          motorFactory.create(
+              "Climber Motor",
+              "climb",
+              Constants.MotorConstants.CLIMBER,
+              MotorType.kBrushless,
+              IdleMode.kBrake,
+              Constants.MotorConstants.CLIMBER_REVERSE,
+              1,
+              1));
 
   @Override
   public void periodic() {

@@ -88,10 +88,8 @@ public class FollowPathCommand extends Command {
     double xSpeed = wantedState.linearVelocity * Math.cos(wantedHeading.getRadians());
     double ySpeed = wantedState.linearVelocity * Math.sin(wantedHeading.getRadians());
 
-    double xPID =
-        translationPID.calculate(currentPose.getX(), wantedState.pose.getX());
-    double yPID =
-        translationPID.calculate(currentPose.getY(), wantedState.pose.getY());
+    double xPID = translationPID.calculate(currentPose.getX(), wantedState.pose.getX());
+    double yPID = translationPID.calculate(currentPose.getY(), wantedState.pose.getY());
 
     double wantedRotationSpeeds =
         rotationPID.calculate(currentPose.getRotation().getRadians(), wantedHeading.getRadians());
@@ -113,8 +111,7 @@ public class FollowPathCommand extends Command {
     //     .swerveFollower
     //     .calculateRobotRelativeSpeeds(RobotState.getInstance().currentPose, wantedState);
 
-    Logger.recordOutput(
-        "wantedAutoPose", wantedState.pose);
+    Logger.recordOutput("wantedAutoPose", wantedState.pose);
 
     SwerveDriveSubsystem.getInstance().driveRobotRelative(chassisSpeeds);
     // SwerveDrive.getInstance().setModuleStates(moduleStates);

@@ -31,8 +31,6 @@ public class Superstructure extends SubsystemBase {
   SwerveDriveSubsystem swerve;
   WristSubsystem wrist;
 
-
-
   /** Creates a new Superstructure. */
   private Superstructure() {
     algae = AlgaeSubsystem.getInstance();
@@ -40,12 +38,13 @@ public class Superstructure extends SubsystemBase {
     elevator = ElevatorSubsystem.getInstance();
     intake = IntakeSubsystem.getInstance();
     swerve = SwerveDriveSubsystem.getInstance();
-    wrist = WristSubsystem.getInstance(); 
-
+    wrist = WristSubsystem.getInstance();
   }
 
-
-  /** Taken a whollle lot of inspiration from 2910 Jack-in-the-Bot's 2024 code and 1678 Citrus Circuit's 2023 Code. */
+  /**
+   * Taken a whollle lot of inspiration from 2910 Jack-in-the-Bot's 2024 code and 1678 Citrus
+   * Circuit's 2023 Code.
+   */
   public enum WantedSuperState {
     /** Idle pose, within frame perimeter. (Robot Starting Pose) */
     WITHIN_FRAME_PERIMETER_DEFAULT,
@@ -68,7 +67,6 @@ public class Superstructure extends SubsystemBase {
     /** Do anything to help robot get off the ground. */
     CLIMB_ASSIST
   }
-
 
   public enum CurrentSuperState {
     /** Idle pose, within frame perimeter. (Robot Starting Pose) */
@@ -97,16 +95,13 @@ public class Superstructure extends SubsystemBase {
   CurrentSuperState currentSuperState = CurrentSuperState.WITHIN_FRAME_PERIMETER_DEFAULT;
   CurrentSuperState previousSuperState = CurrentSuperState.WITHIN_FRAME_PERIMETER_DEFAULT;
 
-
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
 
     currentSuperState = handleStateTransitions();
     applyStates();
-
   }
-
 
   private CurrentSuperState handleStateTransitions() {
     previousSuperState = currentSuperState;
@@ -117,11 +112,11 @@ public class Superstructure extends SubsystemBase {
 
       case CORAL_STATION_BACK:
         currentSuperState = CurrentSuperState.CORAL_STATION_BACK;
-        break; 
+        break;
 
       case CORAL_STATION_FRONT:
         currentSuperState = CurrentSuperState.CORAL_STATION_FRONT;
-        break; 
+        break;
 
       case L1_FRONT:
         currentSuperState = CurrentSuperState.L1_FRONT;
@@ -129,7 +124,7 @@ public class Superstructure extends SubsystemBase {
 
       case L2_FRONT:
         currentSuperState = CurrentSuperState.L2_FRONT;
-        break; 
+        break;
 
       case L3_FRONT:
         currentSuperState = CurrentSuperState.L3_FRONT;
@@ -139,51 +134,47 @@ public class Superstructure extends SubsystemBase {
         currentSuperState = CurrentSuperState.L4_BACK;
         break;
 
-      /** On Second thought, climbing should not be part of the state machine. I believe it should be manual. */
-      // case CLIMB_PREPARING:
-      //   currentSuperState = CurrentSuperState.CLIMB_PREPARING;
-      //   break;
-      // case CLIMBING:
-      //   currentSuperState = CurrentSuperState.CLIMBING;
-      //   break;
-      // case CLIMB_ASSIST: 
-      //   currentSuperState = CurrentSuperState.CLIMB_ASSIST;
-      //   break;  
+        /**
+         * On Second thought, climbing should not be part of the state machine. I believe it should
+         * be manual.
+         */
+        // case CLIMB_PREPARING:
+        //   currentSuperState = CurrentSuperState.CLIMB_PREPARING;
+        //   break;
+        // case CLIMBING:
+        //   currentSuperState = CurrentSuperState.CLIMBING;
+        //   break;
+        // case CLIMB_ASSIST:
+        //   currentSuperState = CurrentSuperState.CLIMB_ASSIST;
+        //   break;
 
-      default: 
-      currentSuperState = currentSuperState.WITHIN_FRAME_PERIMETER_DEFAULT;
+      default:
+        currentSuperState = currentSuperState.WITHIN_FRAME_PERIMETER_DEFAULT;
     }
     return currentSuperState;
   }
 
   public void applyStates() {
-    switch(currentSuperState) {
+    switch (currentSuperState) {
       case WITHIN_FRAME_PERIMETER_DEFAULT:
-        
         break;
 
       case CORAL_STATION_BACK:
-        
-        break; 
+        break;
 
       case CORAL_STATION_FRONT:
-        
-        break; 
+        break;
 
       case L1_FRONT:
-        
         break;
 
       case L2_FRONT:
-        
-        break; 
+        break;
 
       case L3_FRONT:
-        
         break;
 
       case L4_BACK:
-        
         break;
     }
   }

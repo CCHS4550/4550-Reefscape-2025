@@ -4,16 +4,17 @@
 
 package frc.robot.subsystems.wrist;
 
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.helpers.CCMotorController;
 import frc.helpers.CCSparkMax;
-import frc.robot.subsystems.wrist.WristIO;
+import frc.maps.Constants;
 
 public class WristSubsystem extends SubsystemBase {
-  
+
   /** Implementation of Singleton Pattern */
   public static WristSubsystem mInstance;
-
 
   private static CCMotorController.MotorFactory defaultMotorFactory = CCSparkMax::new;
   private static WristIO.IOFactory defaultIoFactory = WristIOHardware::new;
@@ -21,13 +22,18 @@ public class WristSubsystem extends SubsystemBase {
   CCMotorController.MotorFactory motorFactory;
   WristIO.IOFactory ioFactory;
 
-  public static WristSubsystem getInstance(CCMotorController.MotorFactory motorFactory, WristIO.IOFactory ioFactory) {
+  WristIOInputsAutoLogged wristInputs = new WristIOInputsAutoLogged();
+
+  /** Singleton Practice */
+  public static WristSubsystem getInstance(
+      CCMotorController.MotorFactory motorFactory, WristIO.IOFactory ioFactory) {
     if (mInstance == null) {
       mInstance = new WristSubsystem(motorFactory, ioFactory);
     }
     return mInstance;
   }
 
+  /** Singleton Practice */
   public static WristSubsystem getInstance() {
     if (mInstance == null) {
       mInstance = new WristSubsystem(defaultMotorFactory, defaultIoFactory);
@@ -37,11 +43,21 @@ public class WristSubsystem extends SubsystemBase {
 
   /** Creates a new WristSubsystem. */
   private WristSubsystem(CCMotorController.MotorFactory motorFactory, WristIO.IOFactory ioFactory) {
-      this.motorFactory = motorFactory;
-      this.ioFactory = ioFactory; 
-
-    
+    this.motorFactory = motorFactory;
+    this.ioFactory = ioFactory;
   }
+
+  private final WristIO io =
+      ioFactory.create(
+          motorFactory.create(
+              "wristMotor",
+              "wrist",
+              Constants.MotorConstants.WRIST,
+              MotorType.kBrushless,
+              IdleMode.kBrake,
+              Constants.MotorConstants.WRIST_REVERSE,
+              1,
+              1));
 
   @Override
   public void periodic() {

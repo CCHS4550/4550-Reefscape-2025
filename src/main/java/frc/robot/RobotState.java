@@ -6,7 +6,6 @@ package frc.robot;
 
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
-
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -14,8 +13,6 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -23,7 +20,6 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import frc.maps.Constants;
 import frc.robot.subsystems.algae.AlgaeSubsystem;
 import frc.robot.subsystems.arm.ArmSubsystem;
@@ -31,7 +27,6 @@ import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveDriveSubsystem;
 import frc.robot.subsystems.wrist.WristSubsystem;
-
 import org.littletonrobotics.junction.Logger;
 // import org.photonvision.PhotonPoseEstimator;
 // import org.photonvision.PhotonUtils;
@@ -55,10 +50,9 @@ public class RobotState {
   IntakeSubsystem intake;
   WristSubsystem wrist;
 
-    // Initialize gyro
+  // Initialize gyro
   public AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
 
-  
   private RobotState() {
 
     new Thread(
@@ -73,32 +67,29 @@ public class RobotState {
   }
 
   public void robotStateInit(
-  SwerveDriveSubsystem swerve,
-  AlgaeSubsystem algae,
-  ArmSubsystem arm,
-  ElevatorSubsystem elevator,
-  IntakeSubsystem intake,
-  WristSubsystem wrist) {
+      SwerveDriveSubsystem swerve,
+      AlgaeSubsystem algae,
+      ArmSubsystem arm,
+      ElevatorSubsystem elevator,
+      IntakeSubsystem intake,
+      WristSubsystem wrist) {
     this.swerve = swerve;
     this.algae = algae;
     this.arm = arm;
     this.elevator = elevator;
     this.intake = intake;
     this.wrist = wrist;
-
   }
 
-
-  
   public final Field2d gameField = new Field2d();
 
   /** Technically pose ESTIMATES */
   public Pose2d lastPose = new Pose2d();
+
   public Pose2d currentPose = new Pose2d();
 
-
   public SwerveDrivePoseEstimator poseEstimator;
-//   public PhotonPoseEstimator photonPoseEstimator;
+  //   public PhotonPoseEstimator photonPoseEstimator;
 
   // public final VisionData visionData = new VisionData();
 
@@ -110,7 +101,6 @@ public class RobotState {
             Rotation2d.fromDegrees(gyro.getAngle()).unaryMinus(),
             swerve.swerveModulePositions,
             new Pose2d(0, 0, new Rotation2d(0)));
-
   }
 
   public synchronized void updateOdometryPose() {
@@ -121,30 +111,28 @@ public class RobotState {
     lastPose = currentPose;
 
     /** Update the SwerveDrivePoseEstimator with the Drivetrain encoders and such */
-      poseEstimator.updateWithTime(
-          Timer.getFPGATimestamp(),
-          getRotation2d(),
-          swerve.swerveModulePositions);
-
+    poseEstimator.updateWithTime(
+        Timer.getFPGATimestamp(), getRotation2d(), swerve.swerveModulePositions);
 
     currentPose = getPose();
     Logger.recordOutput("Estimated Pose", getPose());
     Logger.recordOutput("Estimated Angle", getPose().getRotation().getDegrees());
   }
 
-//   public void updateVisionPose() {
-//     /** Update the visionData to what the camera sees. */
-//     if (Robot.isReal()) {
-//       PhotonVision.getInstance().updateData(visionData, getPose());
+  //   public void updateVisionPose() {
+  //     /** Update the visionData to what the camera sees. */
+  //     if (Robot.isReal()) {
+  //       PhotonVision.getInstance().updateData(visionData, getPose());
 
-//       for (int i = 0; i < visionData.poseEstimates.size(); i++) {
-//         /** Add the Photonvision pose estimates */
-//         poseEstimator.addVisionMeasurement(visionData.poseEstimates.get(i), visionData.timestamp);
-//       }
-//     } else if (Robot.isSimulation()) {
-//       PhotonVision.getInstance().visionSim.update(getPose());
-//     }
-//   }
+  //       for (int i = 0; i < visionData.poseEstimates.size(); i++) {
+  //         /** Add the Photonvision pose estimates */
+  //         poseEstimator.addVisionMeasurement(visionData.poseEstimates.get(i),
+  // visionData.timestamp);
+  //       }
+  //     } else if (Robot.isSimulation()) {
+  //       PhotonVision.getInstance().visionSim.update(getPose());
+  //     }
+  //   }
 
   public synchronized void dashboardInit() {
 
@@ -167,9 +155,10 @@ public class RobotState {
 
     SmartDashboard.putNumber("Robot X Position", poseEstimator.getEstimatedPosition().getX());
     SmartDashboard.putNumber("Robot Y Position", poseEstimator.getEstimatedPosition().getY());
-    SmartDashboard.putNumber("Robot Rads Angle", poseEstimator.getEstimatedPosition().getRotation().getRadians());
-    SmartDashboard.putNumber("Robot Degrees Angle", poseEstimator.getEstimatedPosition().getRotation().getDegrees());
-
+    SmartDashboard.putNumber(
+        "Robot Rads Angle", poseEstimator.getEstimatedPosition().getRotation().getRadians());
+    SmartDashboard.putNumber(
+        "Robot Degrees Angle", poseEstimator.getEstimatedPosition().getRotation().getDegrees());
   }
 
   public GenericEntry yActual, yGoal, xActual, xGoal, barrelActual, barrelGoal;
@@ -183,7 +172,6 @@ public class RobotState {
       abs_Enc_BR_Raw_Entry,
       abs_Enc_BL_Raw_Entry;
   private GenericEntry enc_FR_pos_Entry, enc_FL_pos_Entry, enc_BR_pos_Entry, enc_BL_pos_Entry;
-
 
   // ShuffleBoardLayouts for putting encoders onto the board
   private ShuffleboardLayout absolute_encoders_offset_list =
@@ -200,37 +188,27 @@ public class RobotState {
           .getLayout("Turn Encoders Position(Rad)", BuiltInLayouts.kGrid)
           .withSize(2, 2);
 
-
-
   public synchronized void moduleEncodersInit() {
 
     abs_Enc_FR_Offset_Entry =
         Shuffleboard.getTab("Encoders")
             .getLayout(absolute_encoders_offset_list.getTitle())
-            .add(
-                swerve.frontRight.getName(),
-                swerve.frontRight.getAbsoluteEncoderRadiansOffset())
+            .add(swerve.frontRight.getName(), swerve.frontRight.getAbsoluteEncoderRadiansOffset())
             .getEntry();
     abs_Enc_FL_Offset_Entry =
         Shuffleboard.getTab("Encoders")
             .getLayout(absolute_encoders_offset_list.getTitle())
-            .add(
-              swerve.frontLeft.getName(),
-              swerve.frontLeft.getAbsoluteEncoderRadiansOffset())
+            .add(swerve.frontLeft.getName(), swerve.frontLeft.getAbsoluteEncoderRadiansOffset())
             .getEntry();
     abs_Enc_BR_Offset_Entry =
         Shuffleboard.getTab("Encoders")
             .getLayout(absolute_encoders_offset_list.getTitle())
-            .add(
-              swerve.backRight.getName(),
-              swerve.backRight.getAbsoluteEncoderRadiansOffset())
+            .add(swerve.backRight.getName(), swerve.backRight.getAbsoluteEncoderRadiansOffset())
             .getEntry();
     abs_Enc_BL_Offset_Entry =
         Shuffleboard.getTab("Encoders")
             .getLayout(absolute_encoders_offset_list.getTitle())
-            .add(
-              swerve.backLeft.getName(),
-                swerve.backLeft.getAbsoluteEncoderRadiansOffset())
+            .add(swerve.backLeft.getName(), swerve.backLeft.getAbsoluteEncoderRadiansOffset())
             .getEntry();
 
     enc_FR_pos_Entry =
@@ -257,34 +235,24 @@ public class RobotState {
     abs_Enc_FR_Raw_Entry =
         Shuffleboard.getTab("Encoders")
             .getLayout(absolute_encoders_no_offset_list.getTitle())
-            .add(
-              swerve.frontRight.getName(),
-              swerve.frontRight.getAbsoluteEncoderRadiansNoOffset())
+            .add(swerve.frontRight.getName(), swerve.frontRight.getAbsoluteEncoderRadiansNoOffset())
             .getEntry();
     abs_Enc_FL_Raw_Entry =
         Shuffleboard.getTab("Encoders")
             .getLayout(absolute_encoders_no_offset_list.getTitle())
-            .add(
-              swerve.frontLeft.getName(),
-              swerve.frontLeft.getAbsoluteEncoderRadiansNoOffset())
+            .add(swerve.frontLeft.getName(), swerve.frontLeft.getAbsoluteEncoderRadiansNoOffset())
             .getEntry();
     abs_Enc_BR_Raw_Entry =
         Shuffleboard.getTab("Encoders")
             .getLayout(absolute_encoders_no_offset_list.getTitle())
-            .add(
-              swerve.backRight.getName(),
-              swerve.backRight.getAbsoluteEncoderRadiansNoOffset())
+            .add(swerve.backRight.getName(), swerve.backRight.getAbsoluteEncoderRadiansNoOffset())
             .getEntry();
     abs_Enc_BL_Raw_Entry =
         Shuffleboard.getTab("Encoders")
             .getLayout(absolute_encoders_no_offset_list.getTitle())
-            .add(
-              swerve.backLeft.getName(),
-              swerve.backLeft.getAbsoluteEncoderRadiansNoOffset())
+            .add(swerve.backLeft.getName(), swerve.backLeft.getAbsoluteEncoderRadiansNoOffset())
             .getEntry();
   }
-
-
 
   public synchronized void updateModuleEncoders() {
     abs_Enc_FR_Offset_Entry.setDouble(swerve.frontRight.getAbsoluteEncoderRadiansOffset());
@@ -303,29 +271,24 @@ public class RobotState {
     enc_BL_pos_Entry.setDouble(swerve.backLeft.getTurnPosition());
   }
 
-
-
-  
   public synchronized void updateModulePositions() {
 
-            swerve.swerveModulePositions[0] =
+    swerve.swerveModulePositions[0] =
         new SwerveModulePosition(
             swerve.frontRight.getDrivePosition(),
             new Rotation2d(swerve.frontRight.getTurnPosition()));
-            swerve.swerveModulePositions[1] =
+    swerve.swerveModulePositions[1] =
         new SwerveModulePosition(
             swerve.frontLeft.getDrivePosition(),
             new Rotation2d(swerve.frontLeft.getTurnPosition()));
-            swerve.swerveModulePositions[2] =
+    swerve.swerveModulePositions[2] =
         new SwerveModulePosition(
             swerve.backRight.getDrivePosition(),
             new Rotation2d(swerve.backRight.getTurnPosition()));
-            swerve.swerveModulePositions[3] =
+    swerve.swerveModulePositions[3] =
         new SwerveModulePosition(
-            swerve.backLeft.getDrivePosition(),
-            new Rotation2d(swerve.backLeft.getTurnPosition()));
-    }
-  
+            swerve.backLeft.getDrivePosition(), new Rotation2d(swerve.backLeft.getTurnPosition()));
+  }
 
   /** Pose Helper Methods */
 
@@ -364,8 +327,6 @@ public class RobotState {
     return getPose().plus(getTickFutureTransform().inverse());
   }
 
-
-
   /** Odometry */
 
   /**
@@ -373,9 +334,7 @@ public class RobotState {
    * and Pose2d. Also used in AutonomousScheme.java
    */
   public void setOdometry() {
-    poseEstimator.resetPosition(
-        getRotation2d(), swerve.swerveModulePositions, getPose());
-
+    poseEstimator.resetPosition(getRotation2d(), swerve.swerveModulePositions, getPose());
   }
 
   /**
@@ -390,7 +349,6 @@ public class RobotState {
         // pos.getRotation(),
         swerve.swerveModulePositions,
         pos);
-
   }
   /** Gyroscope Methods (NavX) */
   public void zeroHeading() {
@@ -427,8 +385,6 @@ public class RobotState {
     return poseEstimator.getEstimatedPosition().getRotation().getRadians();
   }
 
-
-
   /**
    * Specifically for the poseEstimator. Anywhere else, get the poseEstimator's estimated heading,
    * or it'll mess things up.
@@ -445,6 +401,4 @@ public class RobotState {
   public void setRotation2d(Rotation2d rotation2d) {
     setOdometry(new Pose2d(getPose().getTranslation(), rotation2d));
   }
-
-
 }

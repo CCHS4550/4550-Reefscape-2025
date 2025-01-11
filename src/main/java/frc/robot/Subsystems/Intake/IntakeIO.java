@@ -1,11 +1,20 @@
 package frc.robot.subsystems.intake;
 
-import frc.robot.subsystems.wrist.WristIO;
+import edu.wpi.first.units.measure.Voltage;
+import frc.helpers.CCMotorController;
+import org.littletonrobotics.junction.AutoLog;
 
 public interface IntakeIO {
 
-    @FunctionalInterface
-    interface IOFactory {
-      IntakeIO create();
-    }
+  @AutoLog
+  class IntakeIOInputs {}
+
+  default void updateInputs(IntakeIOInputs inputs) {}
+
+  default void setVoltage(Voltage voltage) {}
+
+  @FunctionalInterface
+  interface IOFactory {
+    IntakeIO create(CCMotorController motor);
+  }
 }

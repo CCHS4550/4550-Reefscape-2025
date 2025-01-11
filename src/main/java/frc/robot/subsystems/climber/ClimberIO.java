@@ -1,20 +1,24 @@
 package frc.robot.subsystems.climber;
 
+import edu.wpi.first.units.measure.Voltage;
 import frc.helpers.CCMotorController;
+import org.littletonrobotics.junction.AutoLog;
 
 public interface ClimberIO {
 
-    default void winchDown() {}
+  @AutoLog
+  class ClimberIOInputs {}
 
-    default void winchUp() {}
+  default void updateInputs(ClimberIOInputs inputs) {}
 
+  default void winchDown() {}
 
-    @FunctionalInterface
-    interface IOFactory {
-      ClimberIO create(CCMotorController motor);
-    }
-    
-    
-} 
+  default void winchUp() {}
 
+  default void setVoltage(Voltage voltage) {}
 
+  @FunctionalInterface
+  interface IOFactory {
+    ClimberIO create(CCMotorController motor);
+  }
+}
