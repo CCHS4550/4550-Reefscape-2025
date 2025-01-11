@@ -97,9 +97,11 @@ public class ElevatorSubsystem extends SubsystemBase {
     public static double rotationsToHeight (double rotations){
       return rotations * 0.8263;
     }
-    public static ElevatorPositions gElevatorPosition(){
+    public static ElevatorPositions getElevatorPosition(){
       return currentPosition;
   }
+
+  
   
 
   @Override

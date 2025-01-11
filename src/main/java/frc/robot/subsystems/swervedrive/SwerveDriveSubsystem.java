@@ -8,20 +8,36 @@ import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
+import java.util.function.Supplier;
+
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.Timer;
+
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.path.PathPlannerPath;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.VelocityUnit;
 import edu.wpi.first.units.VoltageUnit;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -30,18 +46,27 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.helpers.CCMotorController;
 import frc.helpers.CCSparkMax;
 import frc.maps.Constants;
+import frc.maps.Constants.SwerveConstants;
 import frc.robot.RobotState;
-import frc.robot.Subsystems.swervedrive.SwerveModuleInputsAutoLogged;
+import frc.robot.subsystems.swervedrive.SwerveModuleInputsAutoLogged;
+import com.kauailabs.navx.frc.AHRS;
+
 
 import org.littletonrobotics.junction.Logger;
+import org.photonvision.targeting.PhotonTrackedTarget;
 
 /** Class for controlling a swerve drive chassis. Consists of 4 SwerveModules and a gyro. */
 public class SwerveDriveSubsystem extends SubsystemBase {
 
   public static SwerveDriveSubsystem mInstance;
-
+  private Timer timer;
   private static CCMotorController.MotorFactory defaultMotorFactory = CCSparkMax::new;
   private static SwerveModuleIO.ModuleFactory defaultModuleFactory = SwerveModuleIOHardware::new;
+  private AHRS gyro = new AHRS(SPI.Port.kMXP);
+  public PIDController chassisSpeedsXSPidController = new PIDController(0, 0, 0);
+  public PIDController chassisSpeedsYSPidController = new PIDController(0, 0, 0);
+  public PIDController chassisSpeedsThetaPidController = new PIDController (0,0,0);
+  private SwerveDrivePoseEstimator swerveDrivePoseEstimator;
 
   private CCMotorController.MotorFactory motorFactory;
   private SwerveModuleIO.ModuleFactory moduleFactory;
@@ -188,7 +213,8 @@ public class SwerveDriveSubsystem extends SubsystemBase {
       CCMotorController.MotorFactory motorFactory, SwerveModuleIO.ModuleFactory moduleFactory) {
     this.motorFactory = motorFactory;
     this.moduleFactory = moduleFactory;
-
+    swerveDrivePoseEstimator = new SwerveDrivePoseEstimator(Constants.SwerveConstants.DRIVE_KINEMATICS, initialAngle, swerveModulePositions, null)
+    timer.start();
     swerveModulePositions[0] =
         new SwerveModulePosition(0, new Rotation2d(frontRight.getAbsoluteEncoderRadiansOffset()));
     swerveModulePositions[1] =
@@ -236,6 +262,31 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     turnPID.enableContinuousInput(-Math.PI, Math.PI);
 
     RobotState.getInstance().moduleEncodersInit();
+
+    AutoBuilder.configure(
+      this::getPose, // Robot pose supplier
+      this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
+      this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+      (speeds, feedforwards) -> driveRobotRelative(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
+      new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
+              new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
+              new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
+      ),
+      config, // The robot configuration
+      () -> {
+        // Boolean supplier that controls when the path will be mirrored for the red alliance
+        // This will flip the path being followed to the red side of the field.
+        // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+
+        var alliance = DriverStation.getAlliance();
+        if (alliance.isPresent()) {
+          return alliance.get() == DriverStation.Alliance.Red;
+        }
+        return false;
+      },
+      this // Reference to this subsystem to set requirements
+);
+                
   }
 
   /**
@@ -316,6 +367,10 @@ public class SwerveDriveSubsystem extends SubsystemBase {
         RobotState.getInstance().getRotation2d());
   }
 
+  public void updateSwerveDrivePoseEstimator(){
+    
+  }
+
   public ChassisSpeeds getFieldVelocity() {
     // ChassisSpeeds has a method to convert from field-relative to robot-relative speeds,
     // but not the reverse.  However, because this transform is a simple rotation, negating the
@@ -364,6 +419,8 @@ public class SwerveDriveSubsystem extends SubsystemBase {
   public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
     return sysIdRoutine.quasistatic(direction);
   }
+
+  public void 
 
   /**
    * Used only in characterizing. Don't touch this.
@@ -434,4 +491,71 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     backRight.setDriveVelocity(speed);
     backLeft.setDriveVelocity(speed);
   }
+
+   public Command generatePathFindToPose(Pose2d targetPose) {
+                Command pathfindingCommand = AutoBuilder.pathfindToPose(
+                                targetPose,
+                                Constants.SwerveConstants.AUTO_PATH_CONSTRAINTS,
+                                0.0
+                );
+                return pathfindingCommand;
+        }
+
+        public Command pathFindToPathThenFollow(String pathName) {
+                PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
+                return AutoBuilder.pathfindThenFollowPath(path, new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI));
+        }
+
+  public double offsetToBestTagYaw(){
+        
+        var results = slimelight.getLatestResult();
+        PhotonTrackedTarget tag  = results.getBestTarget();
+
+        return tag.getYaw() - Units.rotationsToRadians(swerveDrivePoseEstimator.getEstimatedPosition().getRotation().getRadians());
+        // return tag.getYaw() - photonPoseEstimator.getEstimatedGlobalPosition().getYaw();
+    }
+
+    public void alignToTagChassisSpeeds(double targetYaw){
+        chassisSpeedsThetaPidController.setSetpoint(targetYaw);
+        while (chassisSpeedsThetaPidController.atSetpoint())
+        chassisSpeeds.omegaRadiansPerSecond =  chassisSpeedsThetaPidController.calculate(swerveDrivePoseEstimator.getEstimatedPosition().getRotation().getRadians(), targetYaw);
+        
+
+
+    }
+
+        private ChassisSpeeds angularPIDCalc(
+            Supplier<Rotation2d> desiredRotation) {
+        double pid = angularDrivePID.calculate(getAdjustedYaw(gyro.getAngle().getRadians()).getDegrees(), desiredRotation.get().getDegrees());
+
+        ChassisSpeeds speeds = new ChassisSpeeds(swerveDrivePoseEstimator.getEstimatedPosition().getX(), swerveDrivePoseEstimator.getEstimatedPosition().getY(),
+                MathUtil.clamp(
+                        chassisSpeedsThetaPidController.atSetpoint() ? 0 : pid + (Constants.SwerveConstants.angularDriveKS * Math.signum(pid)),
+                        -SwerveConstants.TURN_RATE_LIMIT, SwerveConstants.TURN_RATE_LIMIT));
+
+        return speeds;
+    }
+
+    public static double getAdjustedYaw(double angle){
+        while (angle > Math.PI){
+            angle -= 2*Math.PI;
+
+        }
+        while (angle < -Math.PI){
+            angle += 2*Math.PI;
+        }
+        return angle;
+    }
+
+    // public boolean atPoseSetpoint()
+    
+    public void pidToPose(Pose2d desiredPose){
+        double xSpeed = xPID.calculate(swerveDrivePoseEstimator.getEstimatedPosition().getX(), desiredPose.getX());
+        double ySpeed = yPID.calculate(swerveDrivePoseEstimator.getEstimatedPosition().getY(), desiredPose.getY());
+
+        
+
+    }
+
+  
 }

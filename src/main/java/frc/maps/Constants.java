@@ -308,6 +308,7 @@ public class Constants {
 
   public static class cameraOne {
     public static final String CAMERA_ONE_NAME = "FrontCamera";
+    public static final int CAMERA_ONE_PIPELINE = 9;
     public static final Transform3d ROBOT_TO_CAM =
         new Transform3d(
             new Translation3d(Inches.of(9.3418), Inches.of(0), Inches.of(14.157)),
