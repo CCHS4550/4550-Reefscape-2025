@@ -6,7 +6,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.helpers.CCMotorController;
 import frc.helpers.CCSparkMax;
 import frc.maps.Constants;
-import frc.robot.subsystems.algae.AlgaeIOInputsAutoLogged;
 
 public class AlgaeSubsystem extends SubsystemBase {
 
@@ -20,7 +19,6 @@ public class AlgaeSubsystem extends SubsystemBase {
   AlgaeIO.IOFactory ioFactory;
 
   private final AlgaeIOInputsAutoLogged algaeInputs = new AlgaeIOInputsAutoLogged();
-
 
   public static AlgaeSubsystem getInstance(
       CCMotorController.MotorFactory motorFactory, AlgaeIO.IOFactory ioFactory) {
@@ -41,11 +39,12 @@ public class AlgaeSubsystem extends SubsystemBase {
     INTAKE(15.00),
     STOW(0);
     double wristEncoderPosition;
-    AlgaeStates (double wristEncoderPosition){
+
+    AlgaeStates(double wristEncoderPosition) {
       this.wristEncoderPosition = wristEncoderPosition;
     }
 
-    public double getEncoderPosition(){
+    public double getEncoderPosition() {
       return wristEncoderPosition;
     }
   }
@@ -55,8 +54,6 @@ public class AlgaeSubsystem extends SubsystemBase {
     this.motorFactory = motorFactory;
     this.ioFactory = ioFactory;
   }
-  
-  
 
   public final AlgaeIO io =
       ioFactory.create(

@@ -2,10 +2,8 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems.vision;
+package frc.helpers.vision;
 
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -15,7 +13,6 @@ import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.maps.Constants;
 import frc.robot.RobotState;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -31,9 +28,8 @@ import org.photonvision.targeting.PhotonPipelineResult;
 
 public class PhotonVision extends SubsystemBase implements VisionIO {
 
-
-
-  public record Result(PhotonPipelineResult result, PhotonCamera camera) {};
+  public record Result(PhotonPipelineResult result, PhotonCamera camera) {}
+  ;
 
   public static PhotonVision mInstance;
 
@@ -43,7 +39,6 @@ public class PhotonVision extends SubsystemBase implements VisionIO {
     }
     return mInstance;
   }
-
 
   /* Create Camera */
   public PhotonCamera frontCamera;
@@ -61,7 +56,8 @@ public class PhotonVision extends SubsystemBase implements VisionIO {
   /** Creates a new Photonvision. */
   private PhotonVision() {
 
-    // This will take a bit of tweaking to get right. I'm fairly certain that remotehost is defined in the photonvision ui.
+    // This will take a bit of tweaking to get right. I'm fairly certain that remotehost is defined
+    // in the photonvision ui.
     PortForwarder.add(5800, "limelight2.local", 5800);
     PortForwarder.add(5801, "limelight3.local", 5801);
 
@@ -84,7 +80,8 @@ public class PhotonVision extends SubsystemBase implements VisionIO {
         frontCamera_photonEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
         backCamera_photonEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
 
-        photonEstimators = new PhotonPoseEstimator[] {frontCamera_photonEstimator, backCamera_photonEstimator};
+        photonEstimators =
+            new PhotonPoseEstimator[] {frontCamera_photonEstimator, backCamera_photonEstimator};
         break;
 
       case SIM:
@@ -111,13 +108,10 @@ public class PhotonVision extends SubsystemBase implements VisionIO {
       case REPLAY:
         break;
     }
-
-    
   }
 
   /**
-   * IMPORTANT METHOD! Main method
-   * for updating PhotonVision Data!
+   * IMPORTANT METHOD! Main method for updating PhotonVision Data!
    *
    * @param VisionData - This is a container object that stores all the data surrounding Vision.
    *     More information in Vision.java
@@ -167,14 +161,14 @@ public class PhotonVision extends SubsystemBase implements VisionIO {
    * @return An ArrayList with Pose2d objects.
    */
   public Pose2d[] getPoseEstimatesArray(
-      List<PhotonPipelineResult> results, 
-      PhotonPoseEstimator[] photonEstimator) {
+      List<PhotonPipelineResult> results, PhotonPoseEstimator[] photonEstimator) {
 
     List<Pose2d> estimates = new ArrayList<>();
 
     for (int i = 0; i < results.size(); i++) {
 
-      Optional<EstimatedRobotPose> estimatedPose = photonEstimator[i].update(frontCamera.getLatestResult());
+      Optional<EstimatedRobotPose> estimatedPose =
+          photonEstimator[i].update(frontCamera.getLatestResult());
       if (estimatedPose.isPresent()) {
         estimates.add(estimatedPose.get().estimatedPose.toPose2d());
       }

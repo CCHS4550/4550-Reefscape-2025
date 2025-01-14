@@ -3,7 +3,6 @@ package frc.robot.subsystems.elevator;
 import edu.wpi.first.units.measure.Voltage;
 import frc.helpers.CCMotorController;
 import frc.robot.subsystems.elevator.ElevatorSubsystem.ElevatorPositions;
-
 import org.littletonrobotics.junction.AutoLog;
 
 public interface ElevatorIO {
@@ -28,13 +27,13 @@ public interface ElevatorIO {
 
   public default void holdSetpoint(double setpoint) {}
 
-  public default void changeElevatorPosition(ElevatorPositions desiredPosition){}
+  public default void changeElevatorPosition(ElevatorPositions desiredPosition) {}
 
   public default boolean atSetpoint() {
     return false;
   }
-  
-  public default void changePosition(ElevatorPositions desiredPosition){}
+
+  public default void changePosition(ElevatorPositions desiredPosition) {}
 
   @FunctionalInterface
   interface IOFactory {

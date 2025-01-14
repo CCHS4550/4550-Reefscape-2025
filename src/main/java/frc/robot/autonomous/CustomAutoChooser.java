@@ -4,20 +4,13 @@
 
 package frc.robot.autonomous;
 
-import com.pathplanner.lib.path.PathPlannerPath;
-import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-
-// import frc.robot.RobotContainer;
 import frc.robot.RobotState;
-import frc.robot.autonomous.PathWrapper;
 
 /** Add your docs here. */
 public class CustomAutoChooser {
@@ -51,14 +44,12 @@ public class CustomAutoChooser {
           new PathWrapper.AutoFile("path5", false));
 
   /**
-   * This is what puts the options on Smart Dashboard, but instead of doing it by itself, we have
-to
+   * This is what puts the options on Smart Dashboard, but instead of doing it by itself, we have to
    * populate it manually.
    */
   private final SendableChooser<AutoRoutine> autoChooser = new SendableChooser<>();
 
   public CustomAutoChooser() {
-
 
     autoChooser.setDefaultOption("EMPTY", AutoRoutine.EMPTY);
     autoChooser.addOption("Auto 1 Name", AutoRoutine.AUTOROUTINE1);
@@ -90,9 +81,7 @@ to
   //     return chargingStationCommand.alongWith(homeArmCommand);
   // }
 
-
   public Command autoRoutine1() {
-    
 
     SequentialCommandGroup c = new SequentialCommandGroup();
     // Do not add file extensions!
@@ -131,7 +120,7 @@ to
         return autoRoutine3();
       case AUTOROUTINE4:
         return autoRoutine4();
-      case EMPTY: 
+      case EMPTY:
         return new InstantCommand();
       default:
         return new InstantCommand();
@@ -147,14 +136,14 @@ to
    */
   public static Command followChoreoTestCommand(String pathname, Rotation2d initialHeading) {
 
-
     return new SequentialCommandGroup(
         new InstantCommand(
             () ->
                 RobotState.getInstance()
                     .setOdometry(
                         PathWrapper.getPathPlannerPathfromChoreo(pathname)
-                            .getStartingHolonomicPose().get())),
+                            .getStartingHolonomicPose()
+                            .get())),
         new InstantCommand(() -> RobotState.getInstance().setRotation2d(initialHeading)),
         // new Pose2d(
         //     PathWrapper.getChoreoTrajectory(pathname)
@@ -164,15 +153,15 @@ to
         new FollowPathCommand(PathWrapper.getChoreoTrajectory(pathname)));
   }
 
-  public static Command followPathPlannerTestCommand(String pathname, Rotation2d initialHeading)
-{
+  public static Command followPathPlannerTestCommand(String pathname, Rotation2d initialHeading) {
     return new SequentialCommandGroup(
         new InstantCommand(
             () ->
                 RobotState.getInstance()
                     .setOdometry(
                         PathWrapper.getPathPlannerPathfromPath(pathname)
-                        .getStartingHolonomicPose().get())),
+                            .getStartingHolonomicPose()
+                            .get())),
         new InstantCommand(() -> RobotState.getInstance().setRotation2d(initialHeading)),
         new FollowPathCommand(PathWrapper.getPathPlannerTrajectory(pathname)));
   }

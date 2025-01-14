@@ -27,7 +27,7 @@ public class ArmSubsystem extends SubsystemBase {
       this.angleDegrees = angleDegrees;
     }
 
-    public double getAngle(){
+    public double getAngle() {
       return angleDegrees;
     }
   }

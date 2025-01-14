@@ -5,7 +5,6 @@
 package frc.robot.autonomous;
 
 import com.pathplanner.lib.trajectory.PathPlannerTrajectoryState;
-
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -16,7 +15,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.maps.Constants;
 import frc.robot.RobotState;
 import frc.robot.subsystems.swervedrive.SwerveDriveSubsystem;
-
 import java.util.Optional;
 import org.littletonrobotics.junction.Logger;
 import org.photonvision.PhotonUtils;
@@ -55,8 +53,15 @@ public class OrthogonalToTag extends Command {
      * negative according to that coordinate system and I'm just going to assume that this is common
      * for all cases.
      */
-    target = Optional.of(frc.robot.subsystems.vision.PhotonVision.getInstance().frontCamera.getLatestResult().getBestTarget());
-    targetAngle = Rotation2d.fromDegrees(-target.get().getBestCameraToTarget().getRotation().toRotation2d().getDegrees() - 180);
+    target =
+        Optional.of(
+            frc.helpers.vision.PhotonVision.getInstance()
+                .frontCamera
+                .getLatestResult()
+                .getBestTarget());
+    targetAngle =
+        Rotation2d.fromDegrees(
+            -target.get().getBestCameraToTarget().getRotation().toRotation2d().getDegrees() - 180);
 
     if (target.isPresent()) {
       /** Initialize a temporary PoseEstimator that lasts for this command's length. It will */

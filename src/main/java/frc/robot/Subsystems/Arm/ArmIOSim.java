@@ -1,4 +1,3 @@
-
 package frc.robot.subsystems.arm;
 
 import frc.helpers.CCMotorController;

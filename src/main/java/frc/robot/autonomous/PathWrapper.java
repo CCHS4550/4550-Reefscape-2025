@@ -4,7 +4,6 @@
 
 package frc.robot.autonomous;
 
-
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -15,19 +14,14 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.maps.Constants;
 import frc.robot.RobotState;
-import frc.robot.autonomous.CustomAutoChooser.AutoRoutine;
 import frc.robot.subsystems.swervedrive.SwerveDriveSubsystem;
-
 import java.io.IOException;
-
 import java.util.ArrayList;
-
 
 /** Add your docs here. */
 
 /** Largely inspired of off */
 public class PathWrapper {
-
 
   // This is what is input to the PathWrapper
   public record AutoFile(String fileName, boolean isChoreoTraj) {}
@@ -58,8 +52,7 @@ public class PathWrapper {
 
     initialTraj =
         files[0].isChoreoTraj
-            ? getChoreoTrajectoryAutoRoutine(files[0].fileName, new ChassisSpeeds(),
-initialHeading)
+            ? getChoreoTrajectoryAutoRoutine(files[0].fileName, new ChassisSpeeds(), initialHeading)
             : getPathPlannerTrajectoryAutoRoutine(
                 files[0].fileName, new ChassisSpeeds(), initialHeading);
 
@@ -78,9 +71,7 @@ initialHeading)
                 // Empty Chassis Speeds
                 new ChassisSpeeds(),
                 // Heading at the beginning of the path (End of the previous path)
-                getPathPlannerPathfromChoreo(files[i - 1].fileName)
-                    .getGoalEndState()
-                    .rotation()));
+                getPathPlannerPathfromChoreo(files[i - 1].fileName).getGoalEndState().rotation()));
       } else {
         followCommands.add(
             followPathPlanner(
@@ -89,16 +80,12 @@ initialHeading)
                 // Empty Chassis Speeds
                 new ChassisSpeeds(),
                 // Heading at the beginning of the path (End of the previous path)
-                getPathPlannerPathfromPath(files[i - 1].fileName)
-                    .getGoalEndState()
-                    .rotation()));
+                getPathPlannerPathfromPath(files[i - 1].fileName).getGoalEndState().rotation()));
       }
     }
   }
 
-
-
-public Command setInitialPose() {
+  public Command setInitialPose() {
     return new InstantCommand(() -> RobotState.getInstance().setOdometry(initialPose));
   }
 
@@ -138,13 +125,14 @@ public Command setInitialPose() {
 
   private PathPlannerTrajectory getChoreoTrajectoryAutoRoutine(
       String filename, ChassisSpeeds speeds, Rotation2d initialHeading) {
-    return getPathPlannerPathfromChoreo(filename).generateTrajectory(speeds, initialHeading, Constants.SwerveConstants.ROBOT_CONFIG);
-
+    return getPathPlannerPathfromChoreo(filename)
+        .generateTrajectory(speeds, initialHeading, Constants.SwerveConstants.ROBOT_CONFIG);
   }
 
   private PathPlannerTrajectory getPathPlannerTrajectoryAutoRoutine(
       String filename, ChassisSpeeds speeds, Rotation2d initialHeading) {
-    return getPathPlannerPathfromPath(filename).generateTrajectory(speeds, initialHeading, Constants.SwerveConstants.ROBOT_CONFIG);
+    return getPathPlannerPathfromPath(filename)
+        .generateTrajectory(speeds, initialHeading, Constants.SwerveConstants.ROBOT_CONFIG);
   }
 
   /** Helper Classes for general cases. */
@@ -154,9 +142,8 @@ public Command setInitialPose() {
         getPathPlannerPathfromChoreo(filename)
             .generateTrajectory(
                 SwerveDriveSubsystem.getInstance().getRobotRelativeSpeeds(),
-                RobotState.getInstance().getPoseRotation2d(), 
-                Constants.SwerveConstants.ROBOT_CONFIG)
-                );
+                RobotState.getInstance().getPoseRotation2d(),
+                Constants.SwerveConstants.ROBOT_CONFIG));
   }
 
   public static Command followPathPlanner(String filename) {
@@ -164,64 +151,51 @@ public Command setInitialPose() {
         getPathPlannerPathfromPath(filename)
             .generateTrajectory(
                 SwerveDriveSubsystem.getInstance().getRobotRelativeSpeeds(),
-                RobotState.getInstance().getPoseRotation2d(), 
-                Constants.SwerveConstants.ROBOT_CONFIG)
-                );
+                RobotState.getInstance().getPoseRotation2d(),
+                Constants.SwerveConstants.ROBOT_CONFIG));
   }
-
 
   public static PathPlannerTrajectory getChoreoTrajectory(String filename) {
     return getPathPlannerPathfromChoreo(filename)
         .generateTrajectory(
             new ChassisSpeeds(0, 0, 0),
-            getPathPlannerPathfromChoreo(filename)
-                .getStartingHolonomicPose()
-                .get().getRotation(), 
-                Constants.SwerveConstants.ROBOT_CONFIG);
+            getPathPlannerPathfromChoreo(filename).getStartingHolonomicPose().get().getRotation(),
+            Constants.SwerveConstants.ROBOT_CONFIG);
   }
 
   public static PathPlannerTrajectory getPathPlannerTrajectory(String filename) {
     return getPathPlannerPathfromPath(filename)
         .generateTrajectory(
             new ChassisSpeeds(0, 0, 0),
-            getPathPlannerPathfromPath(filename)
-            .getStartingHolonomicPose()
-            .get().getRotation(),
+            getPathPlannerPathfromPath(filename).getStartingHolonomicPose().get().getRotation(),
             Constants.SwerveConstants.ROBOT_CONFIG);
   }
 
-
   public static PathPlannerPath getPathPlannerPathfromPath(String filename) {
     try {
-        PathPlannerPath.fromPathFile(filename);
+      PathPlannerPath.fromPathFile(filename);
     } catch (IOException e) {
-    e.printStackTrace();
-    System.err.println("Error reading the path file" + filename);
+      e.printStackTrace();
+      System.err.println("Error reading the path file" + filename);
     } catch (org.json.simple.parser.ParseException e) {
-    e.printStackTrace();
-    System.err.println("Error parsing the path file" + filename);
+      e.printStackTrace();
+      System.err.println("Error parsing the path file" + filename);
     }
     // Return null or provide a default value
     return null;
-    }
+  }
 
   public static PathPlannerPath getPathPlannerPathfromChoreo(String filename) {
     try {
-        PathPlannerPath.fromChoreoTrajectory(filename);
+      PathPlannerPath.fromChoreoTrajectory(filename);
     } catch (IOException e) {
-    e.printStackTrace();
-    System.err.println("Error reading the path file" + filename);
+      e.printStackTrace();
+      System.err.println("Error reading the path file" + filename);
     } catch (org.json.simple.parser.ParseException e) {
-    e.printStackTrace();
-    System.err.println("Error parsing the path file" + filename);
+      e.printStackTrace();
+      System.err.println("Error parsing the path file" + filename);
     }
     // Return null or provide a default value
     return null;
-    }
-
-
-
-  
-
+  }
 }
-

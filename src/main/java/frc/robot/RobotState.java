@@ -20,17 +20,15 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.helpers.vision.PhotonVision;
 import frc.maps.Constants;
 import frc.robot.subsystems.algae.AlgaeSubsystem;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveDriveSubsystem;
-import frc.robot.subsystems.vision.PhotonVision;
 import frc.robot.subsystems.wrist.WristSubsystem;
-
 import org.littletonrobotics.junction.Logger;
-
 
 /** RobotState is used to retrieve information about the robot's state in other classes. */
 public class RobotState {
@@ -50,8 +48,6 @@ public class RobotState {
   ElevatorSubsystem elevator;
   IntakeSubsystem intake;
   WristSubsystem wrist;
-
-  
 
   // Initialize gyro
   public AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
@@ -93,7 +89,8 @@ public class RobotState {
 
   public SwerveDrivePoseEstimator poseEstimator;
 
-  public final frc.robot.subsystems.vision.VisionIOInputsAutoLogged visionInputs = new frc.robot.subsystems.vision.VisionIOInputsAutoLogged(); 
+  public final frc.helpers.vision.VisionIOInputsAutoLogged visionInputs =
+      new frc.helpers.vision.VisionIOInputsAutoLogged();
 
   public void poseInit() {
 
@@ -121,22 +118,19 @@ public class RobotState {
     Logger.recordOutput("Estimated Angle", getPose().getRotation().getDegrees());
   }
 
-    public void updateVisionPose() {
-      /** Update the visionData to what the camera sees. */
-      if (Robot.isReal()) {
-        PhotonVision.getInstance().updateInputs(visionInputs, getPose());
+  public void updateVisionPose() {
+    /** Update the visionData to what the camera sees. */
+    if (Robot.isReal()) {
+      PhotonVision.getInstance().updateInputs(visionInputs, getPose());
 
-        for (int i = 0; i < visionInputs.poseEstimates.length; i++) {
-          /** Add the Photonvision pose estimates */
-          poseEstimator.addVisionMeasurement(
-            visionInputs.poseEstimates[i],
-            visionInputs.timestamp);
-
-        }
-      } else if (Robot.isSimulation()) {
-        PhotonVision.getInstance().visionSim.update(getPose());
+      for (int i = 0; i < visionInputs.poseEstimates.length; i++) {
+        /** Add the Photonvision pose estimates */
+        poseEstimator.addVisionMeasurement(visionInputs.poseEstimates[i], visionInputs.timestamp);
       }
+    } else if (Robot.isSimulation()) {
+      PhotonVision.getInstance().visionSim.update(getPose());
     }
+  }
 
   public synchronized void dashboardInit() {
 

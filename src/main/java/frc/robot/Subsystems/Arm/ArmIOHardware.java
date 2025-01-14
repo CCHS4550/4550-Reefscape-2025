@@ -24,7 +24,9 @@ public class ArmIOHardware implements ArmIO {
   public ArmIOHardware(CCMotorController motor) {
     this.motor = motor;
 
-    pidController = new ProfiledPIDController(0, 0, 0, new TrapezoidProfile.Constraints(0,0)); // do something for this
+    pidController =
+        new ProfiledPIDController(
+            0, 0, 0, new TrapezoidProfile.Constraints(0, 0)); // do something for this
   }
 
   @Override
@@ -54,8 +56,9 @@ public class ArmIOHardware implements ArmIO {
     return sysIdRoutine.dynamic(direction);
   }
 
-  public void setRunPID(ArmPositions desiredPosition){
-    motor.set(pidController.calculate(motor.getPosition(), new State(desiredPosition.angleDegrees, 0)));
+  public void setRunPID(ArmPositions desiredPosition) {
+    motor.set(
+        pidController.calculate(motor.getPosition(), new State(desiredPosition.angleDegrees, 0)));
   }
 
   SysIdRoutine sysIdRoutine =

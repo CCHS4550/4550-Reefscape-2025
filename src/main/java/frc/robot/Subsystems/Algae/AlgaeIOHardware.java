@@ -1,8 +1,6 @@
 package frc.robot.subsystems.algae;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Voltage;
 import frc.helpers.CCMotorController;
@@ -57,15 +55,18 @@ public class AlgaeIOHardware implements AlgaeIO {
   public void setIntakeVoltage(Voltage voltage) {
     intake.setVoltage(voltage.magnitude());
   }
-@Override
-  public void wristToStow(){
-    wrist.set(wristPIDController.calculate(wrist.getPosition(), AlgaeSubsystem.AlgaeStates.STOW.getEncoderPosition()));
+
+  @Override
+  public void wristToStow() {
+    wrist.set(
+        wristPIDController.calculate(
+            wrist.getPosition(), AlgaeSubsystem.AlgaeStates.STOW.getEncoderPosition()));
   }
 
   @Override
-  public void wristToIntake(){
-    wrist.set(wristPIDController.calculate(wrist.getPosition(), AlgaeSubsystem.AlgaeStates.STOW.getEncoderPosition()));
+  public void wristToIntake() {
+    wrist.set(
+        wristPIDController.calculate(
+            wrist.getPosition(), AlgaeSubsystem.AlgaeStates.STOW.getEncoderPosition()));
   }
-
-  
 }

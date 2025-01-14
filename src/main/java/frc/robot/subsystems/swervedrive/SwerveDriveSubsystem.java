@@ -8,26 +8,17 @@ import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-import com.pathplanner.lib.path.PathConstraints;
-import com.pathplanner.lib.path.PathPlannerPath;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.VelocityUnit;
 import edu.wpi.first.units.VoltageUnit;
 import edu.wpi.first.units.measure.Voltage;
@@ -39,27 +30,19 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.helpers.CCMotorController;
 import frc.helpers.CCSparkMax;
 import frc.maps.Constants;
-import frc.maps.Constants.SwerveConstants;
 import frc.robot.RobotState;
-import frc.robot.subsystems.swervedrive.SwerveModuleInputsAutoLogged;
-
-
 import org.littletonrobotics.junction.Logger;
-import org.photonvision.targeting.PhotonTrackedTarget;
 
 /** Class for controlling a swerve drive chassis. Consists of 4 SwerveModules and a gyro. */
 public class SwerveDriveSubsystem extends SubsystemBase {
 
   public static SwerveDriveSubsystem mInstance;
 
-
   private static CCMotorController.MotorFactory defaultMotorFactory = CCSparkMax::new;
   private static SwerveModuleIO.ModuleFactory defaultModuleFactory = SwerveModuleIOHardware::new;
 
-
   private CCMotorController.MotorFactory motorFactory;
   private SwerveModuleIO.ModuleFactory moduleFactory;
-
 
   SwerveModuleInputsAutoLogged frontRightInputs = new SwerveModuleInputsAutoLogged();
   SwerveModuleInputsAutoLogged frontLeftInputs = new SwerveModuleInputsAutoLogged();
@@ -201,7 +184,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
       CCMotorController.MotorFactory motorFactory, SwerveModuleIO.ModuleFactory moduleFactory) {
     this.motorFactory = motorFactory;
     this.moduleFactory = moduleFactory;
-    
+
     swerveModulePositions[0] =
         new SwerveModulePosition(0, new Rotation2d(frontRight.getAbsoluteEncoderRadiansOffset()));
     swerveModulePositions[1] =
@@ -249,7 +232,6 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     turnPID.enableContinuousInput(-Math.PI, Math.PI);
 
     RobotState.getInstance().moduleEncodersInit();
-                
   }
 
   /**
@@ -329,7 +311,6 @@ public class SwerveDriveSubsystem extends SubsystemBase {
         RobotState.getInstance().getRotation2d());
   }
 
-
   public ChassisSpeeds getFieldVelocity() {
     // ChassisSpeeds has a method to convert from field-relative to robot-relative speeds,
     // but not the reverse.  However, because this transform is a simple rotation, negating the
@@ -378,7 +359,6 @@ public class SwerveDriveSubsystem extends SubsystemBase {
   public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
     return sysIdRoutine.quasistatic(direction);
   }
-
 
   /**
    * Used only in characterizing. Don't touch this.
@@ -450,18 +430,13 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     backLeft.setDriveVelocity(speed);
   }
 
-
-
-    public static double getAdjustedYaw(double angle){
-        while (angle > Math.PI){
-            angle -= 2*Math.PI;
-
-        }
-        while (angle < -Math.PI){
-            angle += 2*Math.PI;
-        }
-        return angle;
+  public static double getAdjustedYaw(double angle) {
+    while (angle > Math.PI) {
+      angle -= 2 * Math.PI;
     }
-
-  
+    while (angle < -Math.PI) {
+      angle += 2 * Math.PI;
+    }
+    return angle;
+  }
 }

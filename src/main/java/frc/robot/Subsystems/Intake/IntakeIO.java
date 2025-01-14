@@ -12,7 +12,6 @@ public interface IntakeIO {
   default void updateInputs(IntakeIOInputs inputs) {}
 
   default void setVoltage(Voltage voltage) {}
-  
 
   @FunctionalInterface
   interface IOFactory {

@@ -193,7 +193,7 @@ public class Constants {
             new Translation2d(-WHEEL_BASE / 2, -TRACK_WITDTH / 2),
             new Translation2d(-WHEEL_BASE / 2, TRACK_WITDTH / 2));
 
-    public static Pose2d INITIAL_POSE = new Pose2d ( 0,0, new Rotation2d(0)); // must be in meters!
+    public static Pose2d INITIAL_POSE = new Pose2d(0, 0, new Rotation2d(0)); // must be in meters!
   }
 
   public static class SensorMiscConstants {
@@ -354,13 +354,12 @@ public class Constants {
   }
 
   public static class ElevatorConstants {
-    public static double [] elevatorPositions = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+    public static double[] elevatorPositions = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     public static double elevatorMaxVelocity = 90;
     public static double elevatorMaxAcceleration = 90;
     public static double elevatorKP = 90;
-    public static double elevatorKI  = 90;
+    public static double elevatorKI = 90;
     public static double elevatorKD = 90;
-
   }
 
   // safely divide

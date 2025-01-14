@@ -30,10 +30,9 @@ public interface AlgaeIO {
 
   default void setIntakeVoltage(Voltage voltage) {}
 
-  default void wristToStow (){}
+  default void wristToStow() {}
 
-  default void wristToIntake(){}
-  
+  default void wristToIntake() {}
 
   @FunctionalInterface
   interface IOFactory {
