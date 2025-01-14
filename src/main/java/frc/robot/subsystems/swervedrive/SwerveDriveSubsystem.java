@@ -37,7 +37,6 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.VelocityUnit;
 import edu.wpi.first.units.VoltageUnit;
 import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -50,7 +49,6 @@ import frc.maps.Constants.SwerveConstants;
 import frc.robot.RobotState;
 import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.swervedrive.SwerveModuleInputsAutoLogged;
-import com.kauailabs.navx.frc.AHRS;
 
 
 import org.littletonrobotics.junction.Logger;
@@ -60,19 +58,23 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 public class SwerveDriveSubsystem extends SubsystemBase {
 
   public static SwerveDriveSubsystem mInstance;
+
   private Timer timer;
+
   private static CCMotorController.MotorFactory defaultMotorFactory = CCSparkMax::new;
   private static SwerveModuleIO.ModuleFactory defaultModuleFactory = SwerveModuleIOHardware::new;
-  private com.studica.frc.AHRS gyro = new AHRS(SPI.Port.kMXP);
+
   public PIDController chassisSpeedsXSPidController = new PIDController(0, 0, 0);
   public PIDController chassisSpeedsYSPidController = new PIDController(0, 0, 0);
   public PIDController chassisSpeedsThetaPidController = new PIDController (0,0,0);
+
   private SwerveDrivePoseEstimator swerveDrivePoseEstimator;
 
   private CCMotorController.MotorFactory motorFactory;
   private SwerveModuleIO.ModuleFactory moduleFactory;
+
   private ChassisSpeeds chassisSpeeds;
-  private SwerveDriveKinematics swerveDriveKinematics;
+
   SwerveModuleInputsAutoLogged frontRightInputs = new SwerveModuleInputsAutoLogged();
   SwerveModuleInputsAutoLogged frontLeftInputs = new SwerveModuleInputsAutoLogged();
   SwerveModuleInputsAutoLogged backRightInputs = new SwerveModuleInputsAutoLogged();
@@ -267,29 +269,30 @@ public class SwerveDriveSubsystem extends SubsystemBase {
 
     RobotState.getInstance().moduleEncodersInit();
 
-    AutoBuilder.configure(
-      this::getPose, // Robot pose supplier
-      this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
-      this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-      (speeds, feedforwards) -> driveRobotRelative(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
-      new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
-              new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
-              new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
-      ),
-      config, // The robot configuration
-      () -> {
-        // Boolean supplier that controls when the path will be mirrored for the red alliance
-        // This will flip the path being followed to the red side of the field.
-        // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+/** Alternate Auto Builer: Me personally, I'm not a fan. */
+//     AutoBuilder.configure(
+//       this::getPose, // Robot pose supplier
+//       this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
+//       this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+//       (speeds, feedforwards) -> driveRobotRelative(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
+//       new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
+//               new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
+//               new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
+//       ),
+//       config, // The robot configuration
+//       () -> {
+//         // Boolean supplier that controls when the path will be mirrored for the red alliance
+//         // This will flip the path being followed to the red side of the field.
+//         // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
 
-        var alliance = DriverStation.getAlliance();
-        if (alliance.isPresent()) {
-          return alliance.get() == DriverStation.Alliance.Red;
-        }
-        return false;
-      },
-      this // Reference to this subsystem to set requirements
-);
+//         var alliance = DriverStation.getAlliance();
+//         if (alliance.isPresent()) {
+//           return alliance.get() == DriverStation.Alliance.Red;
+//         }
+//         return false;
+//       },
+//       this // Reference to this subsystem to set requirements
+// );
                 
   }
 
@@ -359,13 +362,13 @@ public class SwerveDriveSubsystem extends SubsystemBase {
         };
     return states;
   }
-f
+
   public  Pose2d getEstimatedPose(){
     return swerveDrivePoseEstimator.getEstimatedPosition();
   }
 
-  public SwerveModuleState updateBasedOnChassisSpeeds(){
-    setModuleStates(SwerveDriveKinematics.toSwerveModuleStates(chassisSpeeds));
+  public void updateBasedOnChassisSpeeds(){
+    setModuleStates(Constants.SwerveConstants.DRIVE_KINEMATICS.toSwerveModuleStates(chassisSpeeds));
   }
 
   /*
@@ -432,7 +435,6 @@ f
     return sysIdRoutine.quasistatic(direction);
   }
 
-  public void 
 
   /**
    * Used only in characterizing. Don't touch this.
@@ -504,28 +506,28 @@ f
     backLeft.setDriveVelocity(speed);
   }
 
-   public Command generatePathFindToPose(Pose2d targetPose) {
-                Command pathfindingCommand = AutoBuilder.pathfindToPose(
-                                targetPose,
-                                Constants.SwerveConstants.AUTO_PATH_CONSTRAINTS,
-                                0.0
-                );
-                return pathfindingCommand;
-        }
+  //  public Command generatePathFindToPose(Pose2d targetPose) {
+  //               Command pathfindingCommand = AutoBuilder.pathfindToPose(
+  //                               targetPose,
+  //                               Constants.SwerveConstants.AUTO_PATH_CONSTRAINTS,
+  //                               0.0
+  //               );
+  //               return pathfindingCommand;
+  //       }
 
-        public Command pathFindToPathThenFollow(String pathName) {
-                PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
-                return AutoBuilder.pathfindThenFollowPath(path, new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI));
-        }
+  //       public Command pathFindToPathThenFollow(String pathName) {
+  //               PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
+  //               return AutoBuilder.pathfindThenFollowPath(path, new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI));
+  //       }
 
-  public double offsetToBestTagYaw(){
+  // public double offsetToBestTagYaw(){
         
-        var results = slimelight.getLatestResult();
-        PhotonTrackedTarget tag  = results.getBestTarget();
+  //       var results = slimelight.getLatestResult();
+  //       PhotonTrackedTarget tag  = results.getBestTarget();
 
-        return tag.getYaw() - Units.rotationsToRadians(swerveDrivePoseEstimator.getEstimatedPosition().getRotation().getRadians());
-        // return tag.getYaw() - photonPoseEstimator.getEstimatedGlobalPosition().getYaw();
-    }
+  //       return tag.getYaw() - Units.rotationsToRadians(swerveDrivePoseEstimator.getEstimatedPosition().getRotation().getRadians());
+  //       // return tag.getYaw() - photonPoseEstimator.getEstimatedGlobalPosition().getYaw();
+  //   }
 
     public void alignToTagChassisSpeeds(double targetYaw){
         chassisSpeedsThetaPidController.setSetpoint(targetYaw);
@@ -536,17 +538,17 @@ f
 
     }
 
-        private ChassisSpeeds angularPIDCalc(
-            Supplier<Rotation2d> desiredRotation) {
-        double pid = angularDrivePID.calculate(getAdjustedYaw(gyro.getRotation2d().getDegrees()), desiredRotation.get().getDegrees());
+    //     private ChassisSpeeds angularPIDCalc(
+    //         Supplier<Rotation2d> desiredRotation) {
+    //     double pid = angularDrivePID.calculate(getAdjustedYaw(gyro.getRotation2d().getDegrees()), desiredRotation.get().getDegrees());
 
-        ChassisSpeeds speeds = new ChassisSpeeds(swerveDrivePoseEstimator.getEstimatedPosition().getX(), swerveDrivePoseEstimator.getEstimatedPosition().getY(),
-                MathUtil.clamp(
-                        chassisSpeedsThetaPidController.atSetpoint() ? 0 : pid + (Constants.SwerveConstants.angularDriveKS * Math.signum(pid)),
-                        -SwerveConstants.TURN_RATE_LIMIT, SwerveConstants.TURN_RATE_LIMIT));
+    //     ChassisSpeeds speeds = new ChassisSpeeds(swerveDrivePoseEstimator.getEstimatedPosition().getX(), swerveDrivePoseEstimator.getEstimatedPosition().getY(),
+    //             MathUtil.clamp(
+    //                     chassisSpeedsThetaPidController.atSetpoint() ? 0 : pid + (Constants.SwerveConstants.angularDriveKS * Math.signum(pid)),
+    //                     -SwerveConstants.TURN_RATE_LIMIT, SwerveConstants.TURN_RATE_LIMIT));
 
-        return speeds;
-    }
+    //     return speeds;
+    // }
 
     public static double getAdjustedYaw(double angle){
         while (angle > Math.PI){

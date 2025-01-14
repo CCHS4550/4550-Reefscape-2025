@@ -112,8 +112,8 @@ public class Constants {
     public static final int CLIMBER = 12;
     public static final boolean CLIMBER_REVERSE = false;
 
-    public static final int[] ELEVATOR = {13};
-    public static final boolean ELEVATOR_REVERSE = false;
+    public static final int[] ELEVATOR = {13, 14};
+    public static final boolean[] ELEVATOR_REVERSE = {false, true};
 
     public static final int ARM = 14;
     public static final boolean ARM_REVERSE = false;

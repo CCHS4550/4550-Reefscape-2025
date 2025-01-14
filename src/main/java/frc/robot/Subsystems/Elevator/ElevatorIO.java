@@ -38,6 +38,6 @@ public interface ElevatorIO {
 
   @FunctionalInterface
   interface IOFactory {
-    ElevatorIO create(CCMotorController motor);
+    ElevatorIO create(CCMotorController elevatorLeft, CCMotorController elevatorRight);
   }
 }

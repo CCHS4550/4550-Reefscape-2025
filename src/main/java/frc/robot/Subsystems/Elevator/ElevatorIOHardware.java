@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.helpers.CCMotorController;
 import frc.maps.Constants;
-import frc.robot.subsystems.Wrist.WristSubsystem;
 import frc.robot.subsystems.elevator.ElevatorSubsystem.ElevatorPositions;
 
 import org.littletonrobotics.junction.Logger;
@@ -80,5 +79,5 @@ public class ElevatorIOHardware implements ElevatorIO {
           new SysIdRoutine.Mechanism(
               (voltage) -> setVoltage(voltage),
               null, // No log consumer, since data is recorded by URCL
-              WristSubsystem.getInstance()));
+              ElevatorSubsystem.getInstance()));
 }

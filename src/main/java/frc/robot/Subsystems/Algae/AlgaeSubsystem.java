@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.helpers.CCMotorController;
 import frc.helpers.CCSparkMax;
 import frc.maps.Constants;
-import frc.robot.Subsystems.Algae.AlgaeIOInputsAutoLogged;
+import frc.robot.subsystems.algae.AlgaeIOInputsAutoLogged;
 
 public class AlgaeSubsystem extends SubsystemBase {
 

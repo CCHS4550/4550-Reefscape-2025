@@ -54,7 +54,7 @@ public class ArmIOHardware implements ArmIO {
   }
 
   public void setToPosition (ArmPositions desiredPosition){
-    arm.set(pidController.calculate(arm.getPosition(), desiredPosition))
+    motor.set(pidController.calculate(motor.getPosition(), desiredPosition));
   }
 
   SysIdRoutine sysIdRoutine =

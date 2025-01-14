@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.helpers.CCMotorController;
 import frc.helpers.CCSparkMax;
 import frc.maps.Constants;
-import frc.robot.Subsystems.Intake.IntakeIOInputsAutoLogged;
+import frc.robot.subsystems.intake.IntakeIOInputsAutoLogged;
 
 public class IntakeSubsystem extends SubsystemBase {
 

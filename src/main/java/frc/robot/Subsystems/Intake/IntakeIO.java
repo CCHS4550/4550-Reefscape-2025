@@ -13,7 +13,6 @@ public interface IntakeIO {
 
   default void setVoltage(Voltage voltage) {}
   
-  default Command 
 
   @FunctionalInterface
   interface IOFactory {

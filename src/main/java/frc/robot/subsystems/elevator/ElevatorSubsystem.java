@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.helpers.CCMotorController;
 import frc.helpers.CCSparkMax;
 import frc.maps.Constants;
-import frc.robot.subsystems.Elevator.ElevatorIOInputsAutoLogged;
+import frc.robot.subsystems.elevator.ElevatorIOInputsAutoLogged;
 
 public class ElevatorSubsystem extends SubsystemBase {
 
@@ -76,12 +76,21 @@ public class ElevatorSubsystem extends SubsystemBase {
     private final ElevatorIO io =
         ioFactory.create(
             motorFactory.create(
-                "elevatorMotor",
-                "elevator",
+                "elevatorMotor1",
+                "elevator1",
                 Constants.MotorConstants.ELEVATOR[0],
                 MotorType.kBrushless,
                 IdleMode.kBrake,
-                Constants.MotorConstants.ELEVATOR_REVERSE,
+                Constants.MotorConstants.ELEVATOR_REVERSE[0],
+                1,
+                1),
+            motorFactory.create(
+                "elevatorMotor2",
+                "elevator2",
+                Constants.MotorConstants.ELEVATOR[1],
+                MotorType.kBrushless,
+                IdleMode.kBrake,
+                Constants.MotorConstants.ELEVATOR_REVERSE[1],
                 1,
                 1));
     
