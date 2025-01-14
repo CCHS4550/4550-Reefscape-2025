@@ -1,5 +1,5 @@
 
-package frc.robot.Subsystems.Arm;
+package frc.robot.subsystems.arm;
 
 import frc.helpers.CCMotorController;
 

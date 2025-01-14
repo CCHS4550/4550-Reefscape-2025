@@ -1,5 +1,6 @@
 package frc.robot.Subsystems.Algae;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
@@ -26,12 +27,12 @@ public class AlgaeIOHardware implements AlgaeIO {
 
   private final CCMotorController wrist;
   private final CCMotorController intake;
-  private ProfiledPIDController wristProfiledController;
+  private PIDController wristPIDController;
 
   public AlgaeIOHardware(CCMotorController wrist, CCMotorController intake) {
     this.wrist = wrist;
     this.intake = intake;
-    wristProfiledController = new ProfiledPIDController(5, 0, 0, new TrapezoidProfile.Constraints(WRIST_VELOCITY, WRIST_FAST_ACCELERATION_CONSTRAINT));
+    wristPIDController = new PIDController(5, 0, 0);
   }
 
   @Override
@@ -58,7 +59,12 @@ public class AlgaeIOHardware implements AlgaeIO {
   }
 @Override
   public void wristToStow(){
-    // wristProfiledController(wrist.getPosition())
+    wrist.set(wristPIDController.calculate(wrist.getPosition(), AlgaeSubsystem.AlgaeStates.STOW.getEncoderPosition()));
+  }
+
+  @Override
+  public void wristToIntake(){
+    wrist.set(wristPIDController.calculate(wrist.getPosition(), AlgaeSubsystem.AlgaeStates.STOW.getEncoderPosition()));
   }
 
   

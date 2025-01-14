@@ -15,4 +15,6 @@ public class IntakeIOHardware implements IntakeIO {
   public void setVoltage(Voltage voltage) {
     motor.setVoltage(voltage.magnitude());
   }
+
+  
 }

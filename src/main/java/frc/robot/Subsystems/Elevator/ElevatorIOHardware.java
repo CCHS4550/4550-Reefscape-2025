@@ -37,7 +37,7 @@ public class ElevatorIOHardware implements ElevatorIO {
     elevatorRight.setVoltage(voltage.magnitude());
   }
 
-  
+  @Override
   public void changePosition (ElevatorPositions desiredPosition){
    double currentHeight = ElevatorSubsystem.rotationsToHeight(elevatorLeft.getPosition());
    elevatorLeftPidController.calculate(elevatorLeft.getPosition(), ElevatorSubsystem.heightToRotations(desiredPosition.getHeight()));

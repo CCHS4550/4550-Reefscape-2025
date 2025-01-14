@@ -43,6 +43,10 @@ public class AlgaeSubsystem extends SubsystemBase {
     AlgaeStates (double wristEncoderPosition){
       this.wristEncoderPosition = wristEncoderPosition;
     }
+
+    public double getEncoderPosition(){
+      return wristEncoderPosition;
+    }
   }
 
   /** Creates a new WristSubsystem. */
@@ -50,6 +54,8 @@ public class AlgaeSubsystem extends SubsystemBase {
     this.motorFactory = motorFactory;
     this.ioFactory = ioFactory;
   }
+  
+  
 
   public final AlgaeIO io =
       ioFactory.create(

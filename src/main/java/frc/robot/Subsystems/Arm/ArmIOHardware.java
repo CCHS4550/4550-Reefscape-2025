@@ -1,15 +1,17 @@
-package frc.robot.Subsystems.Arm;
+package frc.robot.subsystems.arm;
 
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.helpers.CCMotorController;
-import frc.robot.Subsystems.Wrist.WristSubsystem;
+import frc.robot.subsystems.arm.ArmSubsystem.ArmPositions;
+import frc.robot.subsystems.wrist.WristSubsystem;
 import org.littletonrobotics.junction.Logger;
 
 public class ArmIOHardware implements ArmIO {
@@ -21,7 +23,7 @@ public class ArmIOHardware implements ArmIO {
   public ArmIOHardware(CCMotorController motor) {
     this.motor = motor;
 
-    pidController = new ProfiledPIDController(0, 0, 0, null);
+    pidController = new ProfiledPIDController(0, 0, 0, new TrapezoidProfile.Constraints(0,0)); // do something for this
   }
 
   @Override
@@ -49,6 +51,10 @@ public class ArmIOHardware implements ArmIO {
    */
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
     return sysIdRoutine.dynamic(direction);
+  }
+
+  public void setToPosition (ArmPositions desiredPosition){
+    arm.set(pidController.calculate(arm.getPosition(), desiredPosition))
   }
 
   SysIdRoutine sysIdRoutine =

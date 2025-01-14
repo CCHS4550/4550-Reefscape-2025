@@ -33,6 +33,8 @@ public interface ElevatorIO {
   public default boolean atSetpoint() {
     return false;
   }
+  
+  public default void changePosition(ElevatorPositions desiredPosition){}
 
   @FunctionalInterface
   interface IOFactory {

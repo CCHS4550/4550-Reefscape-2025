@@ -71,7 +71,8 @@ public class SwerveDriveSubsystem extends SubsystemBase {
 
   private CCMotorController.MotorFactory motorFactory;
   private SwerveModuleIO.ModuleFactory moduleFactory;
-
+  private ChassisSpeeds chassisSpeeds;
+  private SwerveDriveKinematics swerveDriveKinematics;
   SwerveModuleInputsAutoLogged frontRightInputs = new SwerveModuleInputsAutoLogged();
   SwerveModuleInputsAutoLogged frontLeftInputs = new SwerveModuleInputsAutoLogged();
   SwerveModuleInputsAutoLogged backRightInputs = new SwerveModuleInputsAutoLogged();
@@ -214,8 +215,9 @@ public class SwerveDriveSubsystem extends SubsystemBase {
       CCMotorController.MotorFactory motorFactory, SwerveModuleIO.ModuleFactory moduleFactory) {
     this.motorFactory = motorFactory;
     this.moduleFactory = moduleFactory;
-    swerveDrivePoseEstimator = new SwerveDrivePoseEstimator(Constants.SwerveConstants.DRIVE_KINEMATICS, initialAngle, swerveModulePositions, Constants.SwerveConstants.INITIAL_POSE);
     
+    swerveDrivePoseEstimator = new SwerveDrivePoseEstimator(Constants.SwerveConstants.DRIVE_KINEMATICS, initialAngle, swerveModulePositions, Constants.SwerveConstants.INITIAL_POSE);
+    chassisSpeeds = new ChassisSpeeds();
     timer.start();
     swerveModulePositions[0] =
         new SwerveModulePosition(0, new Rotation2d(frontRight.getAbsoluteEncoderRadiansOffset()));
@@ -337,7 +339,6 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     desiredModuleStates = desiredStates;
 
     boolean openLoop = false;
-
     SwerveDriveKinematics.desaturateWheelSpeeds(
         desiredStates, Constants.SwerveConstants.MAX_DRIVE_SPEED_METERS_PER_SECOND_THEORETICAL);
     Logger.recordOutput("SwerveModuleStates/SetpointsOptimized", desiredStates);
@@ -357,6 +358,14 @@ public class SwerveDriveSubsystem extends SubsystemBase {
           frontRight.getState(), frontLeft.getState(), backRight.getState(), backLeft.getState()
         };
     return states;
+  }
+f
+  public  Pose2d getEstimatedPose(){
+    return swerveDrivePoseEstimator.getEstimatedPosition();
+  }
+
+  public SwerveModuleState updateBasedOnChassisSpeeds(){
+    setModuleStates(SwerveDriveKinematics.toSwerveModuleStates(chassisSpeeds));
   }
 
   /*
@@ -529,7 +538,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
 
         private ChassisSpeeds angularPIDCalc(
             Supplier<Rotation2d> desiredRotation) {
-        double pid = angularDrivePID.calculate(getAdjustedYaw(gyro.getAngle().getRadians()).getDegrees(), desiredRotation.get().getDegrees());
+        double pid = angularDrivePID.calculate(getAdjustedYaw(gyro.getRotation2d().getDegrees()), desiredRotation.get().getDegrees());
 
         ChassisSpeeds speeds = new ChassisSpeeds(swerveDrivePoseEstimator.getEstimatedPosition().getX(), swerveDrivePoseEstimator.getEstimatedPosition().getY(),
                 MathUtil.clamp(
@@ -555,9 +564,13 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     public void pidToPose(Pose2d desiredPose){
         double xSpeed = xPID.calculate(swerveDrivePoseEstimator.getEstimatedPosition().getX(), desiredPose.getX());
         double ySpeed = yPID.calculate(swerveDrivePoseEstimator.getEstimatedPosition().getY(), desiredPose.getY());
+        
 
         
 
+    }
+    public void rotateChassis (){
+      
     }
 
   
