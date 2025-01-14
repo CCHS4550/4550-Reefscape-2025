@@ -157,7 +157,7 @@ public class Constants {
             MAX_ANGULAR_SPEED_RADIANS_PER_SECOND,
             TURN_RATE_LIMIT);
 
-    public static final RobotConfig config =
+    public static final RobotConfig ROBOT_CONFIG =
         new RobotConfig(
             100,
             100,
@@ -320,7 +320,7 @@ public class Constants {
   }
 
   public static class cameraTwo {
-    public static final String CAMERA_ONE_NAME = "FrontCamera";
+    public static final String CAMERA_TWO_NAME = "BackCamera";
     public static final Transform3d ROBOT_TO_CAM =
         new Transform3d(
             new Translation3d(Inches.of(9.3418), Inches.of(0), Inches.of(14.157)),

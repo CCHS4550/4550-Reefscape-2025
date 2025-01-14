@@ -21,7 +21,7 @@ public class ArmSubsystem extends SubsystemBase {
     CORAL_STATION_FRONT(15),
     CORAL_STATION_BACK(120);
 
-    private final double angleDegrees;
+    public final double angleDegrees;
 
     ArmPositions(double angleDegrees) {
       this.angleDegrees = angleDegrees;

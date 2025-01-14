@@ -5,21 +5,12 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-<<<<<<< HEAD
-import frc.robot.subsystems.Algae.AlgaeSubsystem;
-import frc.robot.subsystems.Arm.ArmSubsystem;
-import frc.robot.subsystems.Elevator.ElevatorSubsystem;
-import frc.robot.subsystems.Intake.IntakeSubsystem;
-import frc.robot.subsystems.Wrist.WristSubsystem;
+import frc.robot.subsystems.algae.AlgaeSubsystem;
+import frc.robot.subsystems.arm.ArmSubsystem;
+import frc.robot.subsystems.elevator.ElevatorSubsystem;
+import frc.robot.subsystems.intake.IntakeSubsystem;
+import frc.robot.subsystems.wrist.WristSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveDriveSubsystem;
-=======
-import frc.robot.Subsystems.Algae.AlgaeSubsystem;
-import frc.robot.Subsystems.Arm.ArmSubsystem;
-import frc.robot.Subsystems.Elevator.ElevatorSubsystem;
-import frc.robot.Subsystems.Intake.IntakeSubsystem;
-import frc.robot.Subsystems.Wrist.WristSubsystem;
-import frc.robot.Subsystems.swervedrive.SwerveDriveSubsystem;
->>>>>>> 1a7ee7eeace158b15ff97382aa70d9cea22c89bb
 
 public class Superstructure extends SubsystemBase {
 

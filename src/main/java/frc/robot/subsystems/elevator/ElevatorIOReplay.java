@@ -8,5 +8,5 @@ import frc.helpers.CCMotorController;
 
 /** Add your docs here. */
 public class ElevatorIOReplay implements ElevatorIO {
-  public ElevatorIOReplay(CCMotorController motor) {}
+  public ElevatorIOReplay(CCMotorController elevatorLeft, CCMotorController elevatorRight) {}
 }

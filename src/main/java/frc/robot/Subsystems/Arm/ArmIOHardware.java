@@ -6,6 +6,7 @@ import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -53,8 +54,8 @@ public class ArmIOHardware implements ArmIO {
     return sysIdRoutine.dynamic(direction);
   }
 
-  public void setToPosition (ArmPositions desiredPosition){
-    motor.set(pidController.calculate(motor.getPosition(), desiredPosition));
+  public void setRunPID(ArmPositions desiredPosition){
+    motor.set(pidController.calculate(motor.getPosition(), new State(desiredPosition.angleDegrees, 0)));
   }
 
   SysIdRoutine sysIdRoutine =

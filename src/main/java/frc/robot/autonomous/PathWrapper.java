@@ -1,180 +1,227 @@
-// // Copyright (c) FIRST and other WPILib contributors.
-// // Open Source Software; you can modify and/or share it under the terms of
-// // the WPILib BSD license file in the root directory of this project.
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
 
-// package frc.robot.autonomous;
+package frc.robot.autonomous;
 
-// import com.pathplanner.lib.config.RobotConfig;
-// import com.pathplanner.lib.path.PathPlannerPath;
-// import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
-// import edu.wpi.first.math.geometry.Pose2d;
-// import edu.wpi.first.math.geometry.Rotation2d;
-// import edu.wpi.first.math.kinematics.ChassisSpeeds;
-// import edu.wpi.first.wpilibj2.command.Command;
-// import edu.wpi.first.wpilibj2.command.InstantCommand;
-// import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-// import frc.robot.RobotState;
-// import frc.robot.subsystems.swervedrive.SwerveDriveSubsystem;
-// import java.util.ArrayList;
 
-// /** Add your docs here. */
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.maps.Constants;
+import frc.robot.RobotState;
+import frc.robot.autonomous.CustomAutoChooser.AutoRoutine;
+import frc.robot.subsystems.swervedrive.SwerveDriveSubsystem;
 
-// /** Largely inspired of off */
-// public class PathWrapper {
+import java.io.IOException;
 
-//   RobotConfig config = new RobotConfig(null, null, null, null)
+import java.util.ArrayList;
 
-//   // This is what is input to the PathWrapper
-//   public record AutoFile(String fileName, boolean isChoreoTraj) {}
 
-//   // This is what is created.
-//   // private record PathData(PathPlannerTrajectory trajectory, Command autoCommand) {}
+/** Add your docs here. */
 
-//   ArrayList<Command> followCommands = new ArrayList<>();
+/** Largely inspired of off */
+public class PathWrapper {
 
-//   PathPlannerTrajectory initialTraj;
-//   PathPlannerPath initialPath;
-//   Pose2d initialPose;
 
-//   /**
-//    * Wraps all the paths associated with an Autonomous routine inside a container object.
-//    *
-//    * @param autoRoutine The Auto Routine associated with these paths.
-//    * @param initialHeading The very first heading of the autonomous routine, probably 3.14.
-//    * @param files an AutoFiles array with all the auto files.
-//    */
-//   public PathWrapper(
-//       CustomAutoChooser.AutoRoutine autoRoutine, Rotation2d initialHeading, AutoFile... files) {
+  // This is what is input to the PathWrapper
+  public record AutoFile(String fileName, boolean isChoreoTraj) {}
 
-//     initialPath =
-//         files[0].isChoreoTraj
-//             ? PathPlannerPath.fromChoreoTrajectory(files[0].fileName)
-//             : PathPlannerPath.fromPathFile(files[0].fileName);
+  // This is what is created.
+  // private record PathData(PathPlannerTrajectory trajectory, Command autoCommand) {}
 
-//     initialTraj =
-//         files[0].isChoreoTraj
-//             ? getChoreoTrajectoryAutoRoutine(files[0].fileName, new ChassisSpeeds(),
-// initialHeading)
-//             : getPathPlannerTrajectoryAutoRoutine(
-//                 files[0].fileName, new ChassisSpeeds(), initialHeading);
+  ArrayList<Command> followCommands = new ArrayList<>();
 
-//     followCommands.add(followTrajectory(initialTraj));
+  PathPlannerTrajectory initialTraj;
+  PathPlannerPath initialPath;
+  Pose2d initialPose;
 
-//     initialPose = initialTraj.getInitialPose();
-//     //  initialPath.getPreviewStartingHolonomicPose();
+  /**
+   * Wraps all the paths associated with an Autonomous routine inside a container object.
+   *
+   * @param autoRoutine The Auto Routine associated with these paths.
+   * @param initialHeading The very first heading of the autonomous routine, probably 3.14.
+   * @param files an AutoFiles array with all the auto files.
+   */
+  public PathWrapper(
+      CustomAutoChooser.AutoRoutine autoRoutine, Rotation2d initialHeading, AutoFile... files) {
 
-//     for (int i = 1; i < files.length; i++) {
+    initialPath =
+        files[0].isChoreoTraj
+            ? getPathPlannerPathfromChoreo(files[0].fileName)
+            : getPathPlannerPathfromPath(files[0].fileName);
 
-//       if (files[i].isChoreoTraj) {
-//         followCommands.add(
-//             followChoreo(
-//                 // File name
-//                 files[i].fileName,
-//                 // Empty Chassis Speeds
-//                 new ChassisSpeeds(),
-//                 // Heading at the beginning of the path (End of the previous path)
-//                 PathPlannerPath.fromChoreoTrajectory(files[i - 1].fileName)
-//                     .getGoalEndState()
-//                     .rotation()));
-//       } else {
-//         followCommands.add(
-//             followPathPlanner(
-//                 // File name
-//                 files[i].fileName,
-//                 // Empty Chassis Speeds
-//                 new ChassisSpeeds(),
-//                 // Heading at the beginning of the path (End of the previous path)
-//                 PathPlannerPath.fromPathFile(files[i - 1].fileName)
-//                     .getGoalEndState()
-//                     .rotation()));
-//       }
-//     }
-//   }
+    initialTraj =
+        files[0].isChoreoTraj
+            ? getChoreoTrajectoryAutoRoutine(files[0].fileName, new ChassisSpeeds(),
+initialHeading)
+            : getPathPlannerTrajectoryAutoRoutine(
+                files[0].fileName, new ChassisSpeeds(), initialHeading);
 
-//   public Command setInitialPose() {
-//     return new InstantCommand(() -> RobotState.getInstance().setOdometry(initialPose));
-//   }
+    followCommands.add(followTrajectory(initialTraj));
 
-//   public Command getStartingCommand() {
-//     return followCommands.get(0);
-//   }
+    initialPose = initialTraj.getInitialPose();
+    //  initialPath.getPreviewStartingHolonomicPose();
 
-//   public Command getEndingCommand() {
-//     return followCommands.get((followCommands.size() - 1));
-//   }
+    for (int i = 1; i < files.length; i++) {
 
-//   public Command getFollowCommand(int index) {
-//     return followCommands.get(index);
-//   }
+      if (files[i].isChoreoTraj) {
+        followCommands.add(
+            followChoreo(
+                // File name
+                files[i].fileName,
+                // Empty Chassis Speeds
+                new ChassisSpeeds(),
+                // Heading at the beginning of the path (End of the previous path)
+                getPathPlannerPathfromChoreo(files[i - 1].fileName)
+                    .getGoalEndState()
+                    .rotation()));
+      } else {
+        followCommands.add(
+            followPathPlanner(
+                // File name
+                files[i].fileName,
+                // Empty Chassis Speeds
+                new ChassisSpeeds(),
+                // Heading at the beginning of the path (End of the previous path)
+                getPathPlannerPathfromPath(files[i - 1].fileName)
+                    .getGoalEndState()
+                    .rotation()));
+      }
+    }
+  }
 
-//   public Command getAllCommands() {
-//     SequentialCommandGroup allCommands = new SequentialCommandGroup();
-//     for (Command command : followCommands) {
-//       allCommands.addCommands(command);
-//     }
-//     return allCommands;
-//   }
 
-//   private Command followTrajectory(PathPlannerTrajectory traj) {
-//     return new FollowPathCommand(traj);
-//   }
 
-//   public Command followChoreo(String filename, ChassisSpeeds speeds, Rotation2d heading) {
+public Command setInitialPose() {
+    return new InstantCommand(() -> RobotState.getInstance().setOdometry(initialPose));
+  }
 
-//     return new FollowPathCommand(getChoreoTrajectoryAutoRoutine(filename, speeds, heading));
-//   }
+  public Command getStartingCommand() {
+    return followCommands.get(0);
+  }
 
-//   public Command followPathPlanner(String filename, ChassisSpeeds speeds, Rotation2d heading) {
+  public Command getEndingCommand() {
+    return followCommands.get((followCommands.size() - 1));
+  }
 
-//     return new FollowPathCommand(getPathPlannerTrajectoryAutoRoutine(filename, speeds, heading));
-//   }
+  public Command getFollowCommand(int index) {
+    return followCommands.get(index);
+  }
 
-//   private PathPlannerTrajectory getChoreoTrajectoryAutoRoutine(
-//       String filename, ChassisSpeeds speeds, Rotation2d initialHeading) {
+  public Command getAllCommands() {
+    SequentialCommandGroup allCommands = new SequentialCommandGroup();
+    for (Command command : followCommands) {
+      allCommands.addCommands(command);
+    }
+    return allCommands;
+  }
 
-//     return PathPlannerPath.fromChoreoTrajectory(filename).generateTrajectory(speeds,
-// initialHeading);
-//   }
+  private Command followTrajectory(PathPlannerTrajectory traj) {
+    return new FollowPathCommand(traj);
+  }
 
-//   private PathPlannerTrajectory getPathPlannerTrajectoryAutoRoutine(
-//       String filename, ChassisSpeeds speeds, Rotation2d initialHeading) {
+  public Command followChoreo(String filename, ChassisSpeeds speeds, Rotation2d heading) {
 
-//     return PathPlannerPath.fromPathFile(filename).generateTrajectory(speeds, initialHeading);
-//   }
+    return new FollowPathCommand(getChoreoTrajectoryAutoRoutine(filename, speeds, heading));
+  }
 
-//   /** Helper Classes for general cases. */
-//   public static Command followChoreo(String filename) {
+  public Command followPathPlanner(String filename, ChassisSpeeds speeds, Rotation2d heading) {
 
-//     return new FollowPathCommand(
-//         PathPlannerPath.fromChoreoTrajectory(filename)
-//             .generateTrajectory(
-//                 SwerveDriveSubsystem.getInstance().getRobotRelativeSpeeds(),
-//                 RobotState.getInstance().getPoseRotation2d()));
-//   }
+    return new FollowPathCommand(getPathPlannerTrajectoryAutoRoutine(filename, speeds, heading));
+  }
 
-//   public static Command followPathPlanner(String filename) {
-//     return new FollowPathCommand(
-//         PathPlannerPath.fromPathFile(filename)
-//             .generateTrajectory(
-//               SwerveDriveSubsystem.getInstance().getRobotRelativeSpeeds(),
-//                 RobotState.getInstance().getPoseRotation2d()));
-//   }
+  private PathPlannerTrajectory getChoreoTrajectoryAutoRoutine(
+      String filename, ChassisSpeeds speeds, Rotation2d initialHeading) {
+    return getPathPlannerPathfromChoreo(filename).generateTrajectory(speeds, initialHeading, Constants.SwerveConstants.ROBOT_CONFIG);
 
-//   public static PathPlannerTrajectory getChoreoTrajectory(String filename) {
-//     return PathPlannerPath.fromChoreoTrajectory(filename)
-//         .generateTrajectory(
-//             new ChassisSpeeds(0, 0, 0),
-//             PathPlannerPath.fromChoreoTrajectory(filename)
-//                 .getStartingHolonomicPose()
-//                 .get().getRotation());
-//   }
+  }
 
-//   public static PathPlannerTrajectory getPathPlannerTrajectory(String filename) {
-//     return PathPlannerPath.fromPathFile(filename)
-//         .generateTrajectory(
-//             new ChassisSpeeds(0, 0, 0),
-//             PathPlannerPath.fromPathFile(filename)
-//             .getStartingHolonomicPose()
-//             .get().getRotation());
-//   }
-// }
+  private PathPlannerTrajectory getPathPlannerTrajectoryAutoRoutine(
+      String filename, ChassisSpeeds speeds, Rotation2d initialHeading) {
+    return getPathPlannerPathfromPath(filename).generateTrajectory(speeds, initialHeading, Constants.SwerveConstants.ROBOT_CONFIG);
+  }
+
+  /** Helper Classes for general cases. */
+  public static Command followChoreo(String filename) {
+
+    return new FollowPathCommand(
+        getPathPlannerPathfromChoreo(filename)
+            .generateTrajectory(
+                SwerveDriveSubsystem.getInstance().getRobotRelativeSpeeds(),
+                RobotState.getInstance().getPoseRotation2d(), 
+                Constants.SwerveConstants.ROBOT_CONFIG)
+                );
+  }
+
+  public static Command followPathPlanner(String filename) {
+    return new FollowPathCommand(
+        getPathPlannerPathfromPath(filename)
+            .generateTrajectory(
+                SwerveDriveSubsystem.getInstance().getRobotRelativeSpeeds(),
+                RobotState.getInstance().getPoseRotation2d(), 
+                Constants.SwerveConstants.ROBOT_CONFIG)
+                );
+  }
+
+
+  public static PathPlannerTrajectory getChoreoTrajectory(String filename) {
+    return getPathPlannerPathfromChoreo(filename)
+        .generateTrajectory(
+            new ChassisSpeeds(0, 0, 0),
+            getPathPlannerPathfromChoreo(filename)
+                .getStartingHolonomicPose()
+                .get().getRotation(), 
+                Constants.SwerveConstants.ROBOT_CONFIG);
+  }
+
+  public static PathPlannerTrajectory getPathPlannerTrajectory(String filename) {
+    return getPathPlannerPathfromPath(filename)
+        .generateTrajectory(
+            new ChassisSpeeds(0, 0, 0),
+            getPathPlannerPathfromPath(filename)
+            .getStartingHolonomicPose()
+            .get().getRotation(),
+            Constants.SwerveConstants.ROBOT_CONFIG);
+  }
+
+
+  public static PathPlannerPath getPathPlannerPathfromPath(String filename) {
+    try {
+        PathPlannerPath.fromPathFile(filename);
+    } catch (IOException e) {
+    e.printStackTrace();
+    System.err.println("Error reading the path file" + filename);
+    } catch (org.json.simple.parser.ParseException e) {
+    e.printStackTrace();
+    System.err.println("Error parsing the path file" + filename);
+    }
+    // Return null or provide a default value
+    return null;
+    }
+
+  public static PathPlannerPath getPathPlannerPathfromChoreo(String filename) {
+    try {
+        PathPlannerPath.fromChoreoTrajectory(filename);
+    } catch (IOException e) {
+    e.printStackTrace();
+    System.err.println("Error reading the path file" + filename);
+    } catch (org.json.simple.parser.ParseException e) {
+    e.printStackTrace();
+    System.err.println("Error parsing the path file" + filename);
+    }
+    // Return null or provide a default value
+    return null;
+    }
+
+
+
+  
+
+}
+

@@ -4,8 +4,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.helpers.CCMotorReplay;
 import frc.helpers.CCSparkMax;
 import frc.helpers.CCSparkSim;
+import frc.helpers.PhotonVision;
 import frc.maps.Constants;
-<<<<<<< HEAD
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.algae.AlgaeIOHardware;
 import frc.robot.subsystems.algae.AlgaeIOReplay;
@@ -31,33 +31,6 @@ import frc.robot.subsystems.wrist.WristIOHardware;
 import frc.robot.subsystems.wrist.WristIOReplay;
 import frc.robot.subsystems.wrist.WristIOSim;
 import frc.robot.subsystems.wrist.WristSubsystem;
-=======
-import frc.robot.Subsystems.Algae.AlgaeIOHardware;
-import frc.robot.Subsystems.Algae.AlgaeIOReplay;
-import frc.robot.Subsystems.Algae.AlgaeIOSim;
-import frc.robot.Subsystems.Algae.AlgaeSubsystem;
-import frc.robot.Subsystems.Arm.ArmIOHardware;
-import frc.robot.Subsystems.Arm.ArmIOReplay;
-import frc.robot.Subsystems.Arm.ArmIOSim;
-import frc.robot.Subsystems.Arm.ArmSubsystem;
-import frc.robot.Subsystems.Elevator.ElevatorIOHardware;
-import frc.robot.Subsystems.Elevator.ElevatorIOReplay;
-import frc.robot.Subsystems.Elevator.ElevatorIOSim;
-import frc.robot.Subsystems.Elevator.ElevatorSubsystem;
-import frc.robot.Subsystems.Intake.IntakeIOHardware;
-import frc.robot.Subsystems.Intake.IntakeIOReplay;
-import frc.robot.Subsystems.Intake.IntakeIOSim;
-import frc.robot.Subsystems.Intake.IntakeSubsystem;
-import frc.robot.Subsystems.Superstructure;
-import frc.robot.Subsystems.Wrist.WristIOHardware;
-import frc.robot.Subsystems.Wrist.WristIOReplay;
-import frc.robot.Subsystems.Wrist.WristIOSim;
-import frc.robot.Subsystems.Wrist.WristSubsystem;
-import frc.robot.Subsystems.swervedrive.SwerveDriveSubsystem;
-import frc.robot.Subsystems.swervedrive.SwerveModuleIOHardware;
-import frc.robot.Subsystems.swervedrive.SwerveModuleIOReplay;
-import frc.robot.Subsystems.swervedrive.SwerveModuleIOSim;
->>>>>>> 1a7ee7eeace158b15ff97382aa70d9cea22c89bb
 
 public class RobotContainer {
 
@@ -68,6 +41,7 @@ public class RobotContainer {
   SwerveDriveSubsystem swerve;
   WristSubsystem wrist;
 
+  PhotonVision photonvision;
   Superstructure superstructure;
 
   /*
@@ -88,6 +62,8 @@ public class RobotContainer {
         intake = IntakeSubsystem.getInstance(CCSparkMax::new, IntakeIOHardware::new);
         wrist = WristSubsystem.getInstance(CCSparkMax::new, WristIOHardware::new);
 
+        photonvision = PhotonVision.getInstance();
+
         superstructure = Superstructure.getInstance();
 
         break;
@@ -100,6 +76,8 @@ public class RobotContainer {
         intake = IntakeSubsystem.getInstance(CCSparkSim::new, IntakeIOSim::new);
         wrist = WristSubsystem.getInstance(CCSparkSim::new, WristIOSim::new);
 
+        photonvision = PhotonVision.getInstance();
+        
         superstructure = Superstructure.getInstance();
 
         break;

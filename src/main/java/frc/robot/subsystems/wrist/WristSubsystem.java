@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.helpers.CCMotorController;
 import frc.helpers.CCSparkMax;
 import frc.maps.Constants;
-import frc.robot.subsystems.Wrist.WristIOInputsAutoLogged;
+import frc.robot.subsystems.wrist.WristIOInputsAutoLogged;
 
 public class WristSubsystem extends SubsystemBase {
 
