@@ -19,8 +19,8 @@ public interface VisionIO {
     public double timestamp = 0;
     public double[] timestampArray = new double[0];
 
-    public int[] camera1Targets = new int[0];
-    public int[] camera2Targets = new int[0];
+    // public int[] camera1Targets = new int[0];
+    // public int[] camera2Targets = new int[0];
     // public int[] camera3Targets = new int[0];
 
     public boolean hasEstimate = false;

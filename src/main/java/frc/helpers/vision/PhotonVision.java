@@ -15,7 +15,9 @@ import frc.maps.Constants;
 import frc.robot.RobotState;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.littletonrobotics.junction.Logger;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
@@ -28,8 +30,7 @@ import org.photonvision.targeting.PhotonPipelineResult;
 
 public class PhotonVision extends SubsystemBase implements VisionIO {
 
-  public record Result(PhotonPipelineResult result, PhotonCamera camera) {}
-  ;
+  public record Result(PhotonPipelineResult result, PhotonPoseEstimator poseEstimator) {}
 
   public static PhotonVision mInstance;
 
@@ -122,10 +123,17 @@ public class PhotonVision extends SubsystemBase implements VisionIO {
   public void updateInputs(VisionIOInputs inputs, Pose2d currentEstimate) {
 
     /* Only an array in case we use multiple cameras. */
-    List<PhotonPipelineResult> results = new ArrayList<PhotonPipelineResult>();
+    List<Map.Entry<PhotonPoseEstimator, PhotonPipelineResult>> results = new ArrayList<>();
 
-    results.addAll(frontCamera.getAllUnreadResults());
-    results.addAll(backCamera.getAllUnreadResults());
+    results.addAll(
+        frontCamera.getAllUnreadResults().stream()
+            .map(result -> Map.entry(frontCamera_photonEstimator, result))
+            .collect(Collectors.toList()));
+
+    results.addAll(
+        backCamera.getAllUnreadResults().stream()
+            .map(result -> Map.entry(backCamera_photonEstimator, result))
+            .collect(Collectors.toList()));
 
     // Resetting the poseEstimates every period?
     inputs.poseEstimates = new Pose2d[0];
@@ -136,12 +144,8 @@ public class PhotonVision extends SubsystemBase implements VisionIO {
     if (hasAnyTarget(results)) {
       // inputs.results = results;
 
-      inputs.poseEstimates = getPoseEstimatesArray(results, photonEstimators);
+      inputs.poseEstimates = getPoseEstimatesArray(results);
       inputs.hasEstimate = true;
-
-      int[][] cameraTargets = new int[][] {inputs.camera1Targets, inputs.camera2Targets};
-      inputs.camera1Targets = cameraTargets[0];
-      inputs.camera2Targets = cameraTargets[1];
 
     } else {
       inputs.timestamp = inputs.timestamp;
@@ -161,14 +165,14 @@ public class PhotonVision extends SubsystemBase implements VisionIO {
    * @return An ArrayList with Pose2d objects.
    */
   public Pose2d[] getPoseEstimatesArray(
-      List<PhotonPipelineResult> results, PhotonPoseEstimator[] photonEstimator) {
+      List<Map.Entry<PhotonPoseEstimator, PhotonPipelineResult>> results) {
 
     List<Pose2d> estimates = new ArrayList<>();
 
     for (int i = 0; i < results.size(); i++) {
 
       Optional<EstimatedRobotPose> estimatedPose =
-          photonEstimator[i].update(frontCamera.getLatestResult());
+          results.get(i).getKey().update(results.get(i).getValue());
       if (estimatedPose.isPresent()) {
         estimates.add(estimatedPose.get().estimatedPose.toPose2d());
       }
@@ -182,16 +186,18 @@ public class PhotonVision extends SubsystemBase implements VisionIO {
   //   return photonEstimator.update().get().targetsUsed;
   // }
 
-  public double estimateAverageTimestamp(List<PhotonPipelineResult> results) {
+  public double estimateAverageTimestamp(
+      List<Map.Entry<PhotonPoseEstimator, PhotonPipelineResult>> results) {
     double latestTimestamp = 0;
     int count = 0;
-    for (PhotonPipelineResult result : results) {
-      latestTimestamp = result.getTimestampSeconds();
+    for (Map.Entry<PhotonPoseEstimator, PhotonPipelineResult> result : results) {
+      latestTimestamp = result.getValue().getTimestampSeconds();
       count++;
     }
     return latestTimestamp / count;
   }
 
+  // broken should be
   public double[] getTimestampArray(PhotonPipelineResult[] results) {
     double[] timestamps = new double[results.length];
     for (int i = 0; i < results.length; i++) {
@@ -201,9 +207,9 @@ public class PhotonVision extends SubsystemBase implements VisionIO {
   }
 
   /** If any of the results have targets, then return true. */
-  public boolean hasAnyTarget(List<PhotonPipelineResult> results) {
-    for (PhotonPipelineResult result : results) {
-      if (result.hasTargets()) {
+  public boolean hasAnyTarget(List<Map.Entry<PhotonPoseEstimator, PhotonPipelineResult>> results) {
+    for (Map.Entry<PhotonPoseEstimator, PhotonPipelineResult> result : results) {
+      if (result.getValue().hasTargets()) {
         return true;
       }
     }
