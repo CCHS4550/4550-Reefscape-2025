@@ -20,15 +20,14 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.helpers.PhotonVision;
 import frc.maps.Constants;
 import frc.robot.subsystems.algae.AlgaeSubsystem;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveDriveSubsystem;
+import frc.robot.subsystems.vision.PhotonVision;
 import frc.robot.subsystems.wrist.WristSubsystem;
-import frc.helpers.VisionIO.VisionIOInputsAutoLogged;
 
 import org.littletonrobotics.junction.Logger;
 
@@ -94,7 +93,7 @@ public class RobotState {
 
   public SwerveDrivePoseEstimator poseEstimator;
 
-  public final VisionIOInputsAutoLogged visionInputs = new VisionIOInputsAutoLogged(); 
+  public final frc.robot.subsystems.vision.VisionIOInputsAutoLogged visionInputs = new frc.robot.subsystems.vision.VisionIOInputsAutoLogged(); 
 
   public void poseInit() {
 
@@ -125,12 +124,12 @@ public class RobotState {
     public void updateVisionPose() {
       /** Update the visionData to what the camera sees. */
       if (Robot.isReal()) {
-        PhotonVision.getInstance().updateData(visionInputs, getPose());
+        PhotonVision.getInstance().updateInputs(visionInputs, getPose());
 
-        for (int i = 0; i < visionInputs.poseEstimates.size(); i++) {
+        for (int i = 0; i < visionInputs.poseEstimates.length; i++) {
           /** Add the Photonvision pose estimates */
           poseEstimator.addVisionMeasurement(
-            visionInputs.poseEstimates.get(i),
+            visionInputs.poseEstimates[i],
             visionInputs.timestamp);
 
         }

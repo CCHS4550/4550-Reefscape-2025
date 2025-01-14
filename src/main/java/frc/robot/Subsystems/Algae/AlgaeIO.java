@@ -17,6 +17,11 @@ public interface AlgaeIO {
     public double intakeCurrentDrawAmps;
   }
 
+  @AutoLog
+  class testInputs {
+    public double create;
+  }
+
   default void updateInputs(AlgaeIOInputs inputs) {}
 
   default void setTargetWristAngle(double Angle) {}

@@ -55,7 +55,7 @@ public class OrthogonalToTag extends Command {
      * negative according to that coordinate system and I'm just going to assume that this is common
      * for all cases.
      */
-    target = Optional.of(frc.helpers.PhotonVision.getInstance().frontCamera.getLatestResult().getBestTarget());
+    target = Optional.of(frc.robot.subsystems.vision.PhotonVision.getInstance().frontCamera.getLatestResult().getBestTarget());
     targetAngle = Rotation2d.fromDegrees(-target.get().getBestCameraToTarget().getRotation().toRotation2d().getDegrees() - 180);
 
     if (target.isPresent()) {

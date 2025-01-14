@@ -2,14 +2,14 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.helpers;
+package frc.robot.subsystems.vision;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.littletonrobotics.junction.AutoLog;
-import org.littletonrobotics.junction.AutoLogOutput;
+
 
 /** Add your docs here. */
 
@@ -21,7 +21,7 @@ public interface VisionIO {
   /** This is a container class to contain all the vision data. */
   @AutoLog
   class VisionIOInputs {
-    public List<Pose2d> poseEstimates = new ArrayList<>();
+    public Pose2d[] poseEstimates = new Pose2d[0];
     public double timestamp = 0;
     public double[] timestampArray = new double[0];
 
@@ -30,6 +30,12 @@ public interface VisionIO {
     // public int[] camera3Targets = new int[0];
 
     public boolean hasEstimate = false;
+  }
+
+  @AutoLog
+  class Visiontest {
+    public double help;
+
   }
 
   /** Default method, defined in photonvision */

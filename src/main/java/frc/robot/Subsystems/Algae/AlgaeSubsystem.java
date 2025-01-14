@@ -21,6 +21,7 @@ public class AlgaeSubsystem extends SubsystemBase {
 
   private final AlgaeIOInputsAutoLogged algaeInputs = new AlgaeIOInputsAutoLogged();
 
+
   public static AlgaeSubsystem getInstance(
       CCMotorController.MotorFactory motorFactory, AlgaeIO.IOFactory ioFactory) {
     if (mInstance == null) {

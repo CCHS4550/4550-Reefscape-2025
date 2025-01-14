@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.helpers;
+package frc.robot.subsystems.vision;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -13,9 +13,9 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.helpers.VisionIO;
 import frc.maps.Constants;
 import frc.robot.RobotState;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -28,9 +28,10 @@ import org.photonvision.simulation.PhotonCameraSim;
 import org.photonvision.simulation.SimCameraProperties;
 import org.photonvision.simulation.VisionSystemSim;
 import org.photonvision.targeting.PhotonPipelineResult;
-import org.photonvision.targeting.PhotonTrackedTarget;
 
 public class PhotonVision extends SubsystemBase implements VisionIO {
+
+
 
   public record Result(PhotonPipelineResult result, PhotonCamera camera) {};
 
@@ -133,7 +134,7 @@ public class PhotonVision extends SubsystemBase implements VisionIO {
     results.addAll(backCamera.getAllUnreadResults());
 
     // Resetting the poseEstimates every period?
-    inputs.poseEstimates = new ArrayList<Pose2d>();
+    inputs.poseEstimates = new Pose2d[0];
 
     inputs.timestamp = estimateAverageTimestamp(results);
 
@@ -165,7 +166,7 @@ public class PhotonVision extends SubsystemBase implements VisionIO {
    *     result.
    * @return An ArrayList with Pose2d objects.
    */
-  public List<Pose2d> getPoseEstimatesArray(
+  public Pose2d[] getPoseEstimatesArray(
       List<PhotonPipelineResult> results, 
       PhotonPoseEstimator[] photonEstimator) {
 
@@ -180,7 +181,7 @@ public class PhotonVision extends SubsystemBase implements VisionIO {
       estimates.removeIf(pose -> pose == null);
     }
 
-    return estimates;
+    return estimates.toArray(new Pose2d[0]);
   }
 
   // public List<PhotonTrackedTarget> getTargetsList(PhotonPoseEstimator photonEstimator) {
