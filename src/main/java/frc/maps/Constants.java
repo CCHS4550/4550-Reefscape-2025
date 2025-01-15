@@ -197,10 +197,7 @@ public class Constants {
   }
 
   public static class SensorMiscConstants {
-    public static final int BARREL_SENSOR = 0;
-    public static final int YAW_SENSOR = 1;
-    public static final int LEDS = 2;
-    public static final int PITCH_LIMIT_SWITCH = 2;
+    public static final double ARM_THROUGHBORE_OFFSET = 1;
   }
 
   public class FeedForwardConstants {
@@ -216,26 +213,22 @@ public class Constants {
     // /* TODO SysId these values */
 
     // KS should be >= 0, so we'll override it to 0.
-    public static final double INDEX_KS = 0;
-    //  -10.806;
-    public static final double INDEX_KV = 2.0129;
-    public static final double INDEX_KA = 4.5878;
+    public static final double ELEVATOR_KS = 0;
+    public static final double ELEVATOR_KV = 2.0129;
+    public static final double ELEVATOR_KA = 4.5878;
 
     // conversion by 0.25 (Not Ideal)
-    public static final double DECLINATION_KS = 0.16328;
-    public static final double DECLINATION_KV = 0.0029191;
-    public static final double DECLINATION_KA = 0.0016397;
-    public static final double DECLINATION_KG = 0.15212;
+    public static final double ARM_KS = 0.16328;
+    public static final double ARM_KV = 0.0029191;
+    public static final double ARM_KA = 0.0016397;
+    public static final double ARM_KG = 0.15212;
 
-    public static final double RIGHT_ASCENSION_KS = 0;
-    // -0.081946;
-    public static final double RIGHT_ASCENSION_KV = 1.2324;
-    public static final double RIGHT_ASCENSION_KA = 0.63117;
+    public static final double WRIST_KS = 0.16328;
+    public static final double WRIST_KV = 0.0029191;
+    public static final double WRIST_KA = 0.0016397;
+    public static final double WRIST_KG = 0.15212;
 
-    // Free Running Motor
-    public static final double RIGHT_ASCENSION_KS_TEST = 0.076895;
-    public static final double RIGHT_ASCENSION_KV_TEST = 0.0019762;
-    public static final double RIGHT_ASCENSION_KA_TEST = 0.00024605;
+
   }
 
   public class FieldPositionConstants {}

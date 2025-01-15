@@ -6,6 +6,8 @@ package frc.robot.subsystems.arm;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.helpers.CCMotorController;
 import frc.helpers.CCSparkMax;
@@ -13,17 +15,18 @@ import frc.maps.Constants;
 
 public class ArmSubsystem extends SubsystemBase {
 
-  public enum ArmPositions {
+  public enum ArmState {
     // Placeholder Values
-    L1_FRONT(30),
-    L2L3_FRONT(45),
-    L4_BACK(110),
-    CORAL_STATION_FRONT(15),
-    CORAL_STATION_BACK(120);
+    DEFAULT_WITHINFRAME(Units.degreesToRadians(0)),
+    L1_FRONT(Units.degreesToRadians(30)),
+    L2L3_FRONT(Units.degreesToRadians(45)),
+    L4_BACK(Units.degreesToRadians(110)),
+    CORAL_STATION_FRONT(Units.degreesToRadians(15)),
+    CORAL_STATION_BACK(Units.degreesToRadians(120));
 
     public final double angleDegrees;
 
-    ArmPositions(double angleDegrees) {
+    ArmState(double angleDegrees) {
       this.angleDegrees = angleDegrees;
     }
 
@@ -31,6 +34,11 @@ public class ArmSubsystem extends SubsystemBase {
       return angleDegrees;
     }
   }
+
+  public ArmState previousState = ArmState.DEFAULT_WITHINFRAME;
+  public ArmState cuurrentState = ArmState.DEFAULT_WITHINFRAME;
+  public ArmState wantedState = ArmState.DEFAULT_WITHINFRAME;
+
 
   /** Implementation of Singleton Pattern */
   public static ArmSubsystem mInstance;
@@ -76,8 +84,21 @@ public class ArmSubsystem extends SubsystemBase {
               1,
               1));
 
+  
+    private void applyStates() {
+    }
+    private void handleStateTransitions() {
+      switch(wantedState) {
+        
+      }
+    }
+    
+
   @Override
   public void periodic() {
+    io.updateInputs(armInputs);
+    handleStateTransitions();
+
     // This method will be called once per scheduler run
   }
 }
