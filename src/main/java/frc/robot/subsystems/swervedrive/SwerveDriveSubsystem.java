@@ -439,4 +439,39 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     }
     return angle;
   }
+  //I think this is how follow path should be implemented
+  public Command pathCommandFollower(PathPlannerPath path) {
+    try{
+        return new pathCommandFollower(
+                path,
+                //I assume we have these 3 things or that we can implement them pretty easily
+                this::getPose, // Robot pose supplier
+                this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+                this::drive, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds, AND feedforwards
+                
+                new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
+                        new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
+                        new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
+                ),
+                Constants.ROBOT_CONFIG, // The robot configuration
+                // this is probably good but I was stupid and made my auto pathing system weird and I think it would break from this check
+                // () -> {
+                //   // Boolean supplier that controls when the path will be mirrored for the red alliance
+                //   // This will flip the path being followed to the red side of the field.
+                //   // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+
+                //   var alliance = DriverStation.getAlliance();
+                //   if (alliance.isPresent()) {
+                //     return alliance.get() == DriverStation.Alliance.Red;
+                //   }
+                //   return false;
+                // },
+                // this // Reference to this subsystem to set requirements
+        );
+    } catch (Exception e) {
+        DriverStation.reportError("Big oops: " + e.getMessage(), e.getStackTrace());
+        return Commands.none();
+    }
+  }
+
 }

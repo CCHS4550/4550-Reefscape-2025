@@ -67,7 +67,7 @@ public class Vision extends SubsystemBase{
     public static Matrix<N3, N1> getVisionStdDevs(){
         return visionStdDevs;
     }
-
+    //why does this exist?
     public double alignToSpeaker(boolean alliance){
     //    double currentRotationRadians= SwerveDrive.getAdjustedYaw(SwerveDrive.getSwerveDrivePoseEstimator().getEstimatedPosition().getRotation().getRadians());
        double xTransform;
