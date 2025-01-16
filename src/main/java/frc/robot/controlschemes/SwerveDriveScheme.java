@@ -256,10 +256,20 @@ public class SwerveDriveScheme {
         PathToCoral.goToCoral(
            PathToCoral.closestSideNum(
               RobotState.getInstance().getPose();
-              ,DriverStation.getAlliance()// I have alliance set to boolean within the auto but that should be an easy fix
            )
-          ,DriverStation.getAlliance()// I have alliance set to boolean within the auto but that should be an easy fix - also maybe not needed b/c auto flip
-          ,1 // left side of the reef
+          ,0 // left side of the reef
+        )
+      )
+    )
+  )
+  controller.leftBumper().onTrue(// change binding as needed
+    runOnce() -> FollowPathCommand(
+      pathToTrajectory.convertPathToTrajectory(
+        PathToCoral.goToCoral(
+           PathToCoral.closestSideNum(
+              RobotState.getInstance().getPose();
+           )
+          ,1 // right side of the reef
         )
       )
     )

@@ -16,15 +16,16 @@ import org.littletonrobotics.junction.Logger;
 import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonTrackedTarget;
 // so many of the imports are unused lmao
+// could also use this for algae removal auto align
 public class PathToCoral{
     // just uses position on the field to calculate closest side, could also use 
     // best april tag method with a check for it being the right ones but I think this is better b/c it doesn't need to have reef in los
-    // but also this has a big O notation of like 12 so idk it might be bad
-    public Pose2d closestSide(Pose2d pos, boolean alliance){
+    // but also this has a big O notation of like 6 so idk it might be bad
+    public Pose2d closestSide(Pose2d pos){
         Pose2d[] blueSideCoors = {}; // fill with the coordinates for the center of each wall on the blue reef
         Pose2d[] redSideCoors = {}; // same as above but with red
         Pose2d[] closestCoor;
-        if(alliance){
+        if(DriverStation.getAlliance().equals(DriverStation.Alliance.blue)){
             closestCoor = blueSideCoors[0];
             for(int i = 0; i < blueSideCoors.length; i++){
                 if(PhotonUtils.getDistanceToPose(pos, closestCoor) > PhotonUtils.getDistanceToPose(pos, blueSideCoors[i])){
@@ -44,12 +45,12 @@ public class PathToCoral{
     }
     // literally the same thing as above, execpt we dont technically need the detailed Pose 2d info on the center so im just returning a number to make some other steps easier
     // be sure to label what direction the numbers go around in.
-    public int closestSideNum(Pose2d pos, boolean alliance){
+    public int closestSideNum(Pose2d pos){
         Pose2d[] blueSideCoors = {}; // fill with the coordinates for the center of each wall on the blue reef
         Pose2d[] redSideCoors = {}; // same as above but with red
         Pose2d[] closestCoor;
         int hexNumber = 0;
-        if(alliance){
+        if(DriverStation.getAlliance().equals(DriverStation.Alliance.blue)){
             closestCoor = blueSideCoors[0]; // finds the shortest length of all the options on your alliance, definitely could be optimized but lowkey its not that bad rn, big O of 6 max
             for(int i = 0; i < blueSideCoors.length; i++){
                 if(PhotonUtils.getDistanceToPose(pos, closestCoor) > PhotonUtils.getDistanceToPose(pos, blueSideCoors[i])){
@@ -73,12 +74,12 @@ public class PathToCoral{
 
     // there is probably a way to calculate this rather than use a stupid amount of coordinates but I cannot be bothered to do that rn
     // also its just a bunch of if statements so big O is actually low
-    public PathPlannerPath goToCoral(int hexNumber, boolean alliance, int side){
+    public PathPlannerPath goToCoral(int hexNumber, int side){
         Pose2d[][] blueOffsets = {{}}; // 2d array, One axis represents which side it is according to hexnumber, the internal axis of 2 represents the coordinates of the offsets for each side. 6x2 array
         Pose2d[][] redOffsets = {{}}; // same thing but for red
         Pose2d targetPose;
         //just filters our goal pose into one pose2d
-        if (alliance){
+        if (DriverStation.getAlliance().equals(DriverStation.Alliance.blue)){
             targetPose = blueOffsets[hexNumber][side];
         }
         else{
