@@ -44,7 +44,7 @@ public class PathToCoral{
     }
     // literally the same thing as above, execpt we dont technically need the detailed Pose 2d info on the center so im just returning a number to make some other steps easier
     // be sure to label what direction the numbers go around in.
-    public int closestSide(Pose2d pos, boolean alliance){
+    public int closestSideNum(Pose2d pos, boolean alliance){
         Pose2d[] blueSideCoors = {}; // fill with the coordinates for the center of each wall on the blue reef
         Pose2d[] redSideCoors = {}; // same as above but with red
         Pose2d[] closestCoor;

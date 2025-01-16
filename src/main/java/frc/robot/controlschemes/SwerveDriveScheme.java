@@ -250,4 +250,18 @@ public class SwerveDriveScheme {
   private static void setSlowMode() {
     driveSpeedModifier = () -> 0.3;
   }
+  controller.rightBumper().onTrue(// change binding as needed
+    runOnce() -> FollowPathCommand(
+      pathToTrajectory.convertPathToTrajectory(
+        PathToCoral.goToCoral(
+           PathToCoral.closestSideNum(
+              RobotState.getInstance().getPose();
+              ,DriverStation.getAlliance()// I have alliance set to boolean within the auto but that should be an easy fix
+           )
+          ,DriverStation.getAlliance()// I have alliance set to boolean within the auto but that should be an easy fix - also maybe not needed b/c auto flip
+          ,1 // left side of the reef
+        )
+      )
+    )
+  )
 }
