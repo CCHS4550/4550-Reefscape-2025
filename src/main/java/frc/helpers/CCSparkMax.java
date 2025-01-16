@@ -50,7 +50,7 @@ public class CCSparkMax extends SparkMax implements CCMotorController {
     config.inverted(reverse).idleMode(idleMode);
 
     this.encoder = super.getEncoder();
-    this.alternateEncoder = super.getAlternateEncoder(); 
+    this.alternateEncoder = super.getAlternateEncoder();
 
     this.setPositionConversionFactor(positionConversionFactor);
     this.setVelocityConversionFactor(velocityConversionFactor);

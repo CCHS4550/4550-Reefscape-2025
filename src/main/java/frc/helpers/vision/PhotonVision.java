@@ -216,6 +216,28 @@ public class PhotonVision extends SubsystemBase implements VisionIO {
     return false;
   }
 
+  // public double alignToSpeaker(boolean alliance){
+  //   //    double currentRotationRadians=
+  // SwerveDrive.getAdjustedYaw(SwerveDrive.getSwerveDrivePoseEstimator().getEstimatedPosition().getRotation().getRadians());
+  //      double xTransform;
+  //      double yTransform;
+  //      double alignAngle;
+  //      // assume that you are facing the april tag, new fix in the works
+  //      if (alliance){
+  //       xTransform = Constants.AprilTags.aprilTagPoses[4].getX() -
+  // SwerveDriveSubsystem.getInstance().getSwerveDrivePoseEstimator().getEstimatedPosition().getX();
+  //       yTransform = Constants.AprilTags.aprilTagPoses[4].getY() -
+  // SwerveDrive.getSwerveDrivePoseEstimator().getEstimatedPosition().getY();
+  //       alignAngle = Math.atan2(xTransform, yTransform)+180;
+  //      }
+  //      else {
+  //       xTransform = Constants.AprilTags.aprilTagPoses[7].getX() -
+  // SwerveDrive.getSwerveDrivePoseEstimator().getEstimatedPosition().getX();
+  //       yTransform = Constants.AprilTags.aprilTagPoses[7].getY() -
+  // SwerveDrive.getSwerveDrivePoseEstimator().getEstimatedPosition().getY();
+  //       alignAngle = Math.atan2(xTransform, yTransform);
+  //      }
+
   /**
    * These methods below are kinda useless unless you have multiple cameras. check this out:
    * https://github.com/FRC1257/2024-Robot/blob/master/src/main/java/frc/robot/subsystems/vision/VisionIOPhoton.java#L152

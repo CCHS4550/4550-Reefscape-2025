@@ -1,15 +1,12 @@
 package frc.robot.subsystems.arm;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.helpers.CCMotorController;
 import frc.robot.subsystems.arm.ArmSubsystem.ArmState;
-
 import java.util.function.BooleanSupplier;
-
 import org.littletonrobotics.junction.AutoLog;
 
 public interface ArmIO {
@@ -37,13 +34,19 @@ public interface ArmIO {
 
   public default void holdAtState(ArmState goalState) {}
 
-  public default Command goToGoalState(State goalState, ArmSubsystem arm) { return new InstantCommand(); }
+  public default Command goToGoalState(State goalState, ArmSubsystem arm) {
+    return new InstantCommand();
+  }
 
   public default void setVoltage(Voltage voltage) {}
-  
-  public default double getVoltage() { return 0.0; }
 
-  public default double getPIDFFOutput(State goalState) { return 0.0; }
+  public default double getVoltage() {
+    return 0.0;
+  }
+
+  public default double getPIDFFOutput(State goalState) {
+    return 0.0;
+  }
 
   public default void stop() {}
 
@@ -51,7 +54,7 @@ public interface ArmIO {
     return () -> false;
   }
 
-      /**
+  /**
    * Gets the reading of the absolute encoder with offset.
    *
    * @return The value of the absolute encoder in radians with the offset applied.

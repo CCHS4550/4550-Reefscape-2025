@@ -227,8 +227,6 @@ public class Constants {
     public static final double WRIST_KV = 0.0029191;
     public static final double WRIST_KA = 0.0016397;
     public static final double WRIST_KG = 0.15212;
-
-
   }
 
   public class FieldPositionConstants {}

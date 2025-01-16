@@ -25,31 +25,30 @@
 // import org.photonvision.targeting.PhotonTrackedTarget;
 
 // public class Vision extends SubsystemBase{
-//     static AprilTagFieldLayout aprilTagFieldLayout = AprilTagFields.k2025Reefscape.loadAprilTagLayoutField();
+//     static AprilTagFieldLayout aprilTagFieldLayout =
+// AprilTagFields.k2025Reefscape.loadAprilTagLayoutField();
 //         public static  PhotonCamera slimelight = new PhotonCamera ("slimelight");
-                
+
 //                 double pipelineLatency;
-//                 static PhotonPoseEstimator photonPoseEstimator = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.CLOSEST_TO_REFERENCE_POSE, Constants.cameraOne.ROBOT_TO_CAM);
+//                 static PhotonPoseEstimator photonPoseEstimator = new
+// PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.CLOSEST_TO_REFERENCE_POSE,
+// Constants.cameraOne.ROBOT_TO_CAM);
 
-
-        
-    
-        
-    
 //         public PhotonPoseEstimator getPhotonPoseEstimator(){
-            
+
 //             return photonPoseEstimator;
 //         }
-    
+
 //         public  Optional<EstimatedRobotPose> getEstimatedPose(){
-//             return this.getEstimatedGlobalPose(SwerveDriveSubsystem.mInstance.getEstimatedPose());
-            
+//             return
+// this.getEstimatedGlobalPose(SwerveDriveSubsystem.mInstance.getEstimatedPose());
+
 //         }
-    
+
 //         public  double getEstimatedPoseX(){
 //             return this.getEstimatedPose().getX();
 //         }
-    
+
 //         public static double getEstimatedPoseY(){
 //             return photonPoseEstimator.getEstimatedGlobalPose().getY();
 //     }
@@ -58,7 +57,6 @@
 //         return photonPoseEstimator.getEstimatedGlobalPose().getRadians();
 //     }
 
-    
 //     public static Matrix<N3, N1> visionStdDevs ; //idk how tf i declare this
 
 //     public static Matrix<N3, N1> getVisionStdDevs(){
@@ -66,26 +64,27 @@
 //     }
 
 //     public double alignToSpeaker(boolean alliance){
-//     //    double currentRotationRadians= SwerveDrive.getAdjustedYaw(SwerveDrive.getSwerveDrivePoseEstimator().getEstimatedPosition().getRotation().getRadians());
+//     //    double currentRotationRadians=
+// SwerveDrive.getAdjustedYaw(SwerveDrive.getSwerveDrivePoseEstimator().getEstimatedPosition().getRotation().getRadians());
 //        double xTransform;
 //        double yTransform;
 //        double alignAngle;
 //        // assume that you are facing the april tag, new fix in the works
 //        if (alliance){
-//         xTransform = Constants.AprilTags.aprilTagPoses[4].getX() - SwerveDrive.getSwerveDrivePoseEstimator().getEstimatedPosition().getX();
-//         yTransform = Constants.AprilTags.aprilTagPoses[4].getY() - SwerveDrive.getSwerveDrivePoseEstimator().getEstimatedPosition().getY();
+//         xTransform = Constants.AprilTags.aprilTagPoses[4].getX() -
+// SwerveDrive.getSwerveDrivePoseEstimator().getEstimatedPosition().getX();
+//         yTransform = Constants.AprilTags.aprilTagPoses[4].getY() -
+// SwerveDrive.getSwerveDrivePoseEstimator().getEstimatedPosition().getY();
 //         alignAngle = Math.atan2(xTransform, yTransform)+180;
 //        }
 //        else {
-//         xTransform = Constants.AprilTags.aprilTagPoses[7].getX() - SwerveDrive.getSwerveDrivePoseEstimator().getEstimatedPosition().getX();
-//         yTransform = Constants.AprilTags.aprilTagPoses[7].getY() - SwerveDrive.getSwerveDrivePoseEstimator().getEstimatedPosition().getY();
+//         xTransform = Constants.AprilTags.aprilTagPoses[7].getX() -
+// SwerveDrive.getSwerveDrivePoseEstimator().getEstimatedPosition().getX();
+//         yTransform = Constants.AprilTags.aprilTagPoses[7].getY() -
+// SwerveDrive.getSwerveDrivePoseEstimator().getEstimatedPosition().getY();
 //         alignAngle = Math.atan2(xTransform, yTransform);
 //        }
-    
-       
 
-       
 //     }
-    
 
 // }

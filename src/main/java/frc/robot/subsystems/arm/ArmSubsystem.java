@@ -6,7 +6,6 @@ package frc.robot.subsystems.arm;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.helpers.CCMotorController;
@@ -24,21 +23,20 @@ public class ArmSubsystem extends SubsystemBase {
     CORAL_STATION_FRONT(Units.degreesToRadians(15)),
     CORAL_STATION_BACK(Units.degreesToRadians(120));
 
-    public final double angleDegrees;
+    public final double angleRadians;
 
-    ArmState(double angleDegrees) {
-      this.angleDegrees = angleDegrees;
+    ArmState(double angleRadians) {
+      this.angleRadians = angleRadians;
     }
 
     public double getAngle() {
-      return angleDegrees;
+      return angleRadians;
     }
   }
 
   public ArmState previousState = ArmState.DEFAULT_WITHINFRAME;
   public ArmState currentState = ArmState.DEFAULT_WITHINFRAME;
   public ArmState wantedState = ArmState.DEFAULT_WITHINFRAME;
-
 
   /** Implementation of Singleton Pattern */
   public static ArmSubsystem mInstance;
@@ -84,61 +82,60 @@ public class ArmSubsystem extends SubsystemBase {
               1,
               1));
 
-  
-    private void applyStates() {
-      switch(currentState) {
-        case DEFAULT_WITHINFRAME:
+  private void applyStates() {
+    switch (currentState) {
+      case DEFAULT_WITHINFRAME:
         io.holdAtState(ArmState.DEFAULT_WITHINFRAME);
-        
-        case L1_FRONT:
-        io.holdAtState(ArmState.L1_FRONT);
-        
-        case L2L3_FRONT:
-        io.holdAtState(ArmState.L2L3_FRONT);
-        
-        case L4_BACK:
-        io.holdAtState(ArmState.L4_BACK);
-        
-        case CORAL_STATION_FRONT:
-        io.holdAtState(ArmState.CORAL_STATION_FRONT);
-        
-        case CORAL_STATION_BACK:
-        io.holdAtState(ArmState.CORAL_STATION_BACK);
-        
-        default: 
-        io.holdAtState(ArmState.DEFAULT_WITHINFRAME);
-      }
-    }
-    private ArmState handleStateTransitions() {
-      previousState = currentState;
-      switch(wantedState) {
-        case DEFAULT_WITHINFRAME:
-        return ArmState.DEFAULT_WITHINFRAME;
-        
-        case L1_FRONT:
-        return ArmState.L1_FRONT;
-        
-        case L2L3_FRONT:
-        return ArmState.L2L3_FRONT;
-        
-        case L4_BACK:
-        return ArmState.L4_BACK;
-        
-        case CORAL_STATION_FRONT:
-        return ArmState.CORAL_STATION_FRONT;
-        
-        case CORAL_STATION_BACK:
-        return ArmState.CORAL_STATION_BACK;
-        
-        default: 
-        return ArmState.DEFAULT_WITHINFRAME;
-      }
-    }
 
-    public void setWantedState(ArmState wantedState) {
-        this.wantedState = wantedState;
+      case L1_FRONT:
+        io.holdAtState(ArmState.L1_FRONT);
+
+      case L2L3_FRONT:
+        io.holdAtState(ArmState.L2L3_FRONT);
+
+      case L4_BACK:
+        io.holdAtState(ArmState.L4_BACK);
+
+      case CORAL_STATION_FRONT:
+        io.holdAtState(ArmState.CORAL_STATION_FRONT);
+
+      case CORAL_STATION_BACK:
+        io.holdAtState(ArmState.CORAL_STATION_BACK);
+
+      default:
+        io.holdAtState(ArmState.DEFAULT_WITHINFRAME);
     }
-    
+  }
+
+  private ArmState handleStateTransitions() {
+    previousState = currentState;
+    switch (wantedState) {
+      case DEFAULT_WITHINFRAME:
+        return ArmState.DEFAULT_WITHINFRAME;
+
+      case L1_FRONT:
+        return ArmState.L1_FRONT;
+
+      case L2L3_FRONT:
+        return ArmState.L2L3_FRONT;
+
+      case L4_BACK:
+        return ArmState.L4_BACK;
+
+      case CORAL_STATION_FRONT:
+        return ArmState.CORAL_STATION_FRONT;
+
+      case CORAL_STATION_BACK:
+        return ArmState.CORAL_STATION_BACK;
+
+      default:
+        return ArmState.DEFAULT_WITHINFRAME;
+    }
+  }
+
+  public void setWantedState(ArmState wantedState) {
+    this.wantedState = wantedState;
+  }
 
   @Override
   public void periodic() {

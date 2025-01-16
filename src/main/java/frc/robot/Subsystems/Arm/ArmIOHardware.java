@@ -4,10 +4,8 @@ import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
-import java.util.function.BooleanSupplier;
-
+import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.math.controller.ArmFeedforward;
-import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
@@ -20,15 +18,13 @@ import frc.helpers.CCMotorController;
 import frc.maps.Constants;
 import frc.robot.subsystems.arm.ArmSubsystem.ArmState;
 import frc.robot.subsystems.wrist.WristSubsystem;
+import java.util.function.BooleanSupplier;
 import org.littletonrobotics.junction.Logger;
-
-import com.revrobotics.RelativeEncoder;
 
 public class ArmIOHardware implements ArmIO {
 
   CCMotorController motor;
   RelativeEncoder throughBore;
-
 
   ProfiledPIDController pidController;
   ArmFeedforward feedForward;
@@ -36,9 +32,7 @@ public class ArmIOHardware implements ArmIO {
   double pidOutput;
   double ffOutput;
 
-  
   State goalState;
-
 
   public ArmIOHardware(CCMotorController motor) {
     this.motor = motor;
@@ -48,62 +42,59 @@ public class ArmIOHardware implements ArmIO {
         new ProfiledPIDController(
             0, 0, 0, new TrapezoidProfile.Constraints(0, 0)); // do something for this
 
+    pidController.reset(throughBore.getPosition());
     // TODO Sysid
     feedForward = new ArmFeedforward(0, 0, 0, 0);
 
     goalState = new State(0, 0);
   }
 
-
   @Override
   public void updateInputs(ArmIOInputsAutoLogged inputs) {
     inputs.currentAngleDegrees = Units.radiansToDegrees(getAbsoluteEncoderRadiansNoOffset());
     inputs.currentAngleRadians = getAbsoluteEncoderRadiansOffset();
 
-
     inputs.pidOutput = this.pidOutput;
     inputs.ffOutput = this.ffOutput;
-    
+
     inputs.appliedVoltage = getVoltage();
 
     inputs.setpointAngleRadians = pidController.getSetpoint().position;
     inputs.setpointAngleDegrees = Units.radiansToDegrees(pidController.getSetpoint().position);
     inputs.setpointVelocity = pidController.getSetpoint().velocity;
-    
-    
+
     inputs.goalAngleRadians = goalState.position;
     inputs.goalAngleDegrees = Units.radiansToDegrees(goalState.position);
     inputs.goalVelocity = goalState.velocity;
-
   }
-
 
   @Override
   public void holdAtState(ArmState goalState) {
-    setVoltage(Volts.of(getPIDFFOutput(new State(Units.degreesToRadians(goalState.angleDegrees), 0))));
+    setVoltage(
+        Volts.of(getPIDFFOutput(new State(Units.degreesToRadians(goalState.getAngle()), 0))));
   }
 
-
   public Command goToGoalState(State goalState, ArmSubsystem arm) {
-    return new FunctionalCommand
-    (() -> {}, 
-    () -> setVoltage(Volts.of(getPIDFFOutput(goalState))), 
-    (end) -> stop(), 
-    atSetpoint(), 
-    arm);
+    return new FunctionalCommand(
+        () -> {},
+        () -> setVoltage(Volts.of(getPIDFFOutput(goalState))),
+        (end) -> stop(),
+        atSetpoint(),
+        arm);
   }
 
   /** Called continuously */
   @Override
   public double getPIDFFOutput(State goalState) {
 
-    this.goalState = goalState; 
+    this.goalState = goalState;
 
     pidOutput = pidController.calculate(getAbsoluteEncoderRadiansOffset(), goalState);
-    ffOutput = feedForward.calculate(pidController.getSetpoint().position, pidController.getSetpoint().velocity);
+    ffOutput =
+        feedForward.calculate(
+            pidController.getSetpoint().position, pidController.getSetpoint().velocity);
 
     return pidOutput + ffOutput;
-
   }
 
   @Override
@@ -111,10 +102,7 @@ public class ArmIOHardware implements ArmIO {
     return () -> Math.abs(getAbsoluteEncoderRadiansOffset()) <= 5.0;
   }
 
-
-
-
-    /**
+  /**
    * Gets the reading of the absolute encoder with offset.
    *
    * @return The value of the absolute encoder in radians with the offset applied.
@@ -123,7 +111,9 @@ public class ArmIOHardware implements ArmIO {
   //  MAKE 0 PARALLEL OFF THE GROUND; STANDARD UNIT CIRCLE NOTATION.
   @Override
   public double getAbsoluteEncoderRadiansOffset() {
-    return Units.rotationsToRadians(throughBore.getPosition()) - Constants.SensorMiscConstants.ARM_THROUGHBORE_OFFSET + Math.PI;
+    return Units.rotationsToRadians(throughBore.getPosition())
+        - Constants.SensorMiscConstants.ARM_THROUGHBORE_OFFSET
+        + Math.PI;
   }
 
   /**
@@ -135,7 +125,6 @@ public class ArmIOHardware implements ArmIO {
   public double getAbsoluteEncoderRadiansNoOffset() {
     return Units.rotationsToRadians(throughBore.getPosition());
   }
-
 
   @Override
   public void setVoltage(Voltage voltage) {
@@ -173,7 +162,6 @@ public class ArmIOHardware implements ArmIO {
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
     return sysIdRoutine.dynamic(direction);
   }
-
 
   SysIdRoutine sysIdRoutine =
       new SysIdRoutine(

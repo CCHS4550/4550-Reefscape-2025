@@ -4,7 +4,6 @@
 
 package frc.helpers;
 
-import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import org.littletonrobotics.junction.AutoLog;
@@ -59,6 +58,7 @@ public interface CCMotorController {
   default Object getEncoder() {
     return null;
   }
+
   default Object getAlternateEncoder() {
     return null;
   }
