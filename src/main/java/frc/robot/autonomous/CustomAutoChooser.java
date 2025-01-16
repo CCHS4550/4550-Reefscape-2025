@@ -37,11 +37,11 @@ public class CustomAutoChooser {
       new PathWrapper(
           AutoRoutine.AUTOROUTINE1,
           Rotation2d.fromRadians(Math.PI),
-          new PathWrapper.AutoFile("path1", false),
-          new PathWrapper.AutoFile("path2", false),
-          new PathWrapper.AutoFile("path3", false),
-          new PathWrapper.AutoFile("path4", false),
-          new PathWrapper.AutoFile("path5", false));
+          new PathWrapper.AutoFile("examplepath.1", false),
+          new PathWrapper.AutoFile("examplepath.2", false),
+          new PathWrapper.AutoFile("examplepath.3", false),
+          new PathWrapper.AutoFile("examplepath.4", false),
+          new PathWrapper.AutoFile("examplepath.5", false));
 
   /**
    * This is what puts the options on Smart Dashboard, but instead of doing it by itself, we have to
