@@ -269,7 +269,7 @@ public class SwerveDriveScheme {
            PathToCoral.closestSideNum(
               RobotState.getInstance().getPose();
            )
-          ,1 // right side of the reef
+          ,1 // right side of the reef  
         )
       )
     )
