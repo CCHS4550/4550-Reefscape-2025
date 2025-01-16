@@ -4,6 +4,7 @@
 
 package frc.helpers;
 
+import com.revrobotics.REVLibError;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import org.littletonrobotics.junction.AutoLog;
@@ -69,6 +70,10 @@ public interface CCMotorController {
 
   default String getShortName() {
     return "No Given ShortName";
+  }
+
+  default REVLibError getLastError() {
+    return null;
   }
 
   @AutoLog

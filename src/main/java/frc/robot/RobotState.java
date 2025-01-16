@@ -13,7 +13,6 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
@@ -51,6 +50,7 @@ public class RobotState {
 
   // Initialize gyro
   public AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
+  // private final Queue<Double> gyroContainer;
 
   private RobotState() {
 
@@ -78,6 +78,9 @@ public class RobotState {
     this.elevator = elevator;
     this.intake = intake;
     this.wrist = wrist;
+
+    // gyroContainer =
+    // RealOdometryThread.getInstance().registerInput(() -> getRotation2d().getRadians());
   }
 
   public final Field2d gameField = new Field2d();
@@ -110,8 +113,11 @@ public class RobotState {
     lastPose = currentPose;
 
     /** Update the SwerveDrivePoseEstimator with the Drivetrain encoders and such */
-    poseEstimator.updateWithTime(
-        Timer.getFPGATimestamp(), getRotation2d(), swerve.swerveModulePositions);
+    for (int i = 0; i < swerve.swerveModuleInputs[0].odometryTimestamps.length; i++) {
+
+      poseEstimator.updateWithTime(
+          getAverageTimestampArray()[i], getRotation2d(), getModulePositionArray()[i]);
+    }
 
     currentPose = getPose();
     Logger.recordOutput("Estimated Pose", getPose());
@@ -286,6 +292,51 @@ public class RobotState {
     swerve.swerveModulePositions[3] =
         new SwerveModulePosition(
             swerve.backLeft.getDrivePosition(), new Rotation2d(swerve.backLeft.getTurnPosition()));
+  }
+
+  public SwerveModulePosition[][] getModulePositionArray() {
+    int inputQuantity = swerve.swerveModuleInputs[0].odometryTimestamps.length;
+    SwerveModulePosition[][] positions = new SwerveModulePosition[inputQuantity][4];
+
+    for (int i = 0; i < inputQuantity; i++) {
+      positions[i][0] =
+          new SwerveModulePosition(
+              swerve.swerveModuleInputs[0].drivePositionRad,
+              swerve.swerveModuleInputs[0].turnPosition);
+      positions[i][1] =
+          new SwerveModulePosition(
+              swerve.swerveModuleInputs[1].drivePositionRad,
+              swerve.swerveModuleInputs[0].turnPosition);
+      positions[i][2] =
+          new SwerveModulePosition(
+              swerve.swerveModuleInputs[2].drivePositionRad,
+              swerve.swerveModuleInputs[0].turnPosition);
+      positions[i][3] =
+          new SwerveModulePosition(
+              swerve.swerveModuleInputs[3].drivePositionRad,
+              swerve.swerveModuleInputs[0].turnPosition);
+    }
+    return positions;
+  }
+
+  public double[] getAverageTimestampArray() {
+
+    int inputQuantity = swerve.swerveModuleInputs[0].odometryTimestamps.length;
+
+    double[] averages = new double[inputQuantity];
+
+    for (int i = 0; i < inputQuantity; i++) {
+      double average =
+          (swerve.swerveModuleInputs[0].odometryTimestamps[i]
+                  + swerve.swerveModuleInputs[1].odometryTimestamps[i]
+                  + swerve.swerveModuleInputs[2].odometryTimestamps[i]
+                  + swerve.swerveModuleInputs[3].odometryTimestamps[i])
+              / 4;
+
+      averages[i] = average;
+    }
+
+    return averages;
   }
 
   /** Pose Helper Methods */

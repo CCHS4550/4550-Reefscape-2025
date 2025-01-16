@@ -31,6 +31,8 @@ import frc.helpers.CCMotorController;
 import frc.helpers.CCSparkMax;
 import frc.maps.Constants;
 import frc.robot.RobotState;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import org.littletonrobotics.junction.Logger;
 
 /** Class for controlling a swerve drive chassis. Consists of 4 SwerveModules and a gyro. */
@@ -38,16 +40,23 @@ public class SwerveDriveSubsystem extends SubsystemBase {
 
   public static SwerveDriveSubsystem mInstance;
 
+  static final Lock odometryLock = new ReentrantLock();
+
   private static CCMotorController.MotorFactory defaultMotorFactory = CCSparkMax::new;
   private static SwerveModuleIO.ModuleFactory defaultModuleFactory = SwerveModuleIOHardware::new;
 
   private CCMotorController.MotorFactory motorFactory;
   private SwerveModuleIO.ModuleFactory moduleFactory;
 
-  SwerveModuleInputsAutoLogged frontRightInputs = new SwerveModuleInputsAutoLogged();
-  SwerveModuleInputsAutoLogged frontLeftInputs = new SwerveModuleInputsAutoLogged();
-  SwerveModuleInputsAutoLogged backRightInputs = new SwerveModuleInputsAutoLogged();
-  SwerveModuleInputsAutoLogged backLeftInputs = new SwerveModuleInputsAutoLogged();
+  public SwerveModuleInputsAutoLogged frontRightInputs = new SwerveModuleInputsAutoLogged();
+  public SwerveModuleInputsAutoLogged frontLeftInputs = new SwerveModuleInputsAutoLogged();
+  public SwerveModuleInputsAutoLogged backRightInputs = new SwerveModuleInputsAutoLogged();
+  public SwerveModuleInputsAutoLogged backLeftInputs = new SwerveModuleInputsAutoLogged();
+
+  public SwerveModuleInputsAutoLogged[] swerveModuleInputs =
+      new SwerveModuleInputsAutoLogged[] {
+        frontRightInputs, frontLeftInputs, backRightInputs, backLeftInputs
+      };
 
   public final SwerveModuleIO frontRight =
       moduleFactory.create(
@@ -185,6 +194,8 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     this.motorFactory = motorFactory;
     this.moduleFactory = moduleFactory;
 
+    RealOdometryThread.getInstance().start();
+
     swerveModulePositions[0] =
         new SwerveModulePosition(0, new Rotation2d(frontRight.getAbsoluteEncoderRadiansOffset()));
     swerveModulePositions[1] =
@@ -211,15 +222,6 @@ public class SwerveDriveSubsystem extends SubsystemBase {
             new com.pathplanner.lib.config.PIDConstants(1, 0, 0),
             new com.pathplanner.lib.config.PIDConstants(1, 0, 0),
             .02);
-    // swerveFollower = new PPHolonomicDriveController(xPID, yPID, turnPID);
-
-    // swerveFollower.setEnabled(true);
-    // xPID = new PIDController(1, 0, 0);
-    // yPID = new PIDController(1, 0, 0);
-
-    // *TODO: Possibly research profiled PID
-    // turnPID = new ProfiledPIDController(0.5, 0, 0,
-    // RobotMap.thetaControllConstraints);
 
     turnPIDProfiled =
         new ProfiledPIDController(
@@ -234,6 +236,17 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     RobotState.getInstance().moduleEncodersInit();
   }
 
+  @Override
+  public void periodic() {
+
+    for (int i = 0; i < swerveModules.length; i++) {
+      swerveModules[i].updateInputs(swerveModuleInputs[i]);
+    }
+
+    Logger.recordOutput("Actual moduleStates", getCurrentModuleStates());
+    RobotState.getInstance().updateModuleEncoders();
+  }
+
   /**
    * Creates a new SwerveDrive object. Delays 1 second before setting gyro to 0 to account for gyro
    * calibration time.
@@ -244,16 +257,6 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     System.out.println("frontLeft:" + frontLeft.getAbsoluteEncoderRadiansNoOffset());
     System.out.println("backRight:" + backRight.getAbsoluteEncoderRadiansNoOffset());
     System.out.println("backLeft:" + backLeft.getAbsoluteEncoderRadiansNoOffset());
-  }
-
-  /** Returns the nearest speaker pose for for alliance color */
-  @Override
-  public void periodic() {
-
-    // getAbsoluteEncoderoffsets();
-    Logger.recordOutput("Actual moduleStates", getCurrentModuleStates());
-
-    RobotState.getInstance().updateModuleEncoders();
   }
 
   /** Sets all 4 modules' drive and turn speeds to 0. */

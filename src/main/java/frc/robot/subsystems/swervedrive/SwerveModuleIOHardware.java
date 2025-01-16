@@ -1,6 +1,6 @@
 package frc.robot.subsystems.swervedrive;
 
-import static edu.wpi.first.units.Units.*;
+import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -11,6 +11,7 @@ import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.AnalogEncoder;
 import frc.helpers.CCMotorController;
 import frc.maps.Constants;
+import java.util.Queue;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
@@ -35,8 +36,12 @@ public class SwerveModuleIOHardware implements SwerveModuleIO {
   private AnalogEncoder absoluteEncoder;
   private double absoluteEncoderOffset;
   private String name;
-
   private double absolutePosition;
+
+  // Queue inputs from odometry thread
+  private final Queue<Double> timestampContainer;
+  private final Queue<Double> drivePositionContainer;
+  private final Queue<Double> turnPositionContainer;
 
   // adjust absoluteEncoderChannel to possibly be absoluteEncoderAnalogInput
   /**
@@ -78,6 +83,30 @@ public class SwerveModuleIOHardware implements SwerveModuleIO {
 
     this.name = name;
     resetEncoders();
+
+    // Create odometry queues
+    timestampContainer = RealOdometryThread.getInstance().makeTimestampContainer();
+    drivePositionContainer =
+        RealOdometryThread.getInstance().registerInput(driveMotor, () -> getDrivePosition());
+    turnPositionContainer =
+        RealOdometryThread.getInstance().registerInput(turnMotor, () -> getTurnPosition());
+  }
+
+  @Override
+  public void updateInputs(SwerveModuleInputs inputs) {
+
+    // Update odometry inputs
+    inputs.odometryTimestamps =
+        timestampContainer.stream().mapToDouble((Double value) -> value).toArray();
+    inputs.odometryDrivePositionsRad =
+        drivePositionContainer.stream().mapToDouble((Double value) -> value).toArray();
+    inputs.odometryTurnPositions =
+        turnPositionContainer.stream()
+            .map((Double value) -> new Rotation2d(value))
+            .toArray(Rotation2d[]::new);
+    timestampContainer.clear();
+    drivePositionContainer.clear();
+    turnPositionContainer.clear();
   }
 
   /**
@@ -213,6 +242,7 @@ public class SwerveModuleIOHardware implements SwerveModuleIO {
 
   @Override
   public void setDriveVelocity(double velocity) {
+
     // These are both in m/s
     double driveOutput = drivingPidController.calculate(driveMotor.getVelocity(), velocity);
     Logger.recordOutput("desired drivePID Output", driveOutput);

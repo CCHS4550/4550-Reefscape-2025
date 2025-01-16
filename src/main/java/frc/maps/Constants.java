@@ -194,6 +194,9 @@ public class Constants {
             new Translation2d(-WHEEL_BASE / 2, TRACK_WITDTH / 2));
 
     public static Pose2d INITIAL_POSE = new Pose2d(0, 0, new Rotation2d(0)); // must be in meters!
+
+    /** This is important! This is the frequency at which odometry data is updated. */
+    public static final double ODOMETRY_FREQUENCY = 100;
   }
 
   public static class SensorMiscConstants {

@@ -137,6 +137,12 @@ public class CCSparkMax extends SparkMax implements CCMotorController {
   }
 
   @Override
+  public REVLibError getLastError() {
+    // TODO Auto-generated method stub
+    return super.getLastError();
+  }
+
+  @Override
   public double getVoltage() {
     return realMotor.voltage;
   }
