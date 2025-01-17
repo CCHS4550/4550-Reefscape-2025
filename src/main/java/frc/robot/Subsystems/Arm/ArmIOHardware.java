@@ -1,4 +1,4 @@
-package frc.robot.subsystems.arm;
+package frc.robot.subsystems.Arm;
 
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Seconds;
@@ -11,8 +11,8 @@ import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.helpers.CCMotorController;
-import frc.robot.subsystems.arm.ArmSubsystem.ArmPositions;
-import frc.robot.subsystems.wrist.WristSubsystem;
+import frc.robot.subsystems.Arm.ArmSubsystem.ArmPositions;
+import frc.robot.subsystems.Wrist.WristSubsystem;
 import org.littletonrobotics.junction.Logger;
 
 public class ArmIOHardware implements ArmIO {
