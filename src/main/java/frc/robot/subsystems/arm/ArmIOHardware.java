@@ -111,8 +111,8 @@ public class ArmIOHardware implements ArmIO {
   //  MAKE 0 PARALLEL OFF THE GROUND; STANDARD UNIT CIRCLE NOTATION.
   @Override
   public double getAbsoluteEncoderRadiansOffset() {
-    return Units.rotationsToRadians(throughBore.getPosition())
-        - Constants.SensorMiscConstants.ARM_THROUGHBORE_OFFSET
+    return (throughBore.getPosition())
+        - Constants.ArmConstants.ARM_THROUGHBORE_OFFSET
         + Math.PI;
   }
 
@@ -123,7 +123,7 @@ public class ArmIOHardware implements ArmIO {
    */
   @Override
   public double getAbsoluteEncoderRadiansNoOffset() {
-    return Units.rotationsToRadians(throughBore.getPosition());
+    return (throughBore.getPosition());
   }
 
   @Override

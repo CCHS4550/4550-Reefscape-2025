@@ -154,6 +154,8 @@ public class WristSubsystem extends SubsystemBase {
   public void periodic() {
     io.updateInputs(wristInputs);
     currentState = handleStateTransitions();
+    applyStates();
+
     // This method will be called once per scheduler run
   }
 }

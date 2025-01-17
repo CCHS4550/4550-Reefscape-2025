@@ -82,8 +82,8 @@ public class ArmSubsystem extends SubsystemBase {
               MotorType.kBrushless,
               IdleMode.kBrake,
               Constants.MotorConstants.ARM_REVERSE,
-              Constants.ConversionConstants.ARM_MOTOR_ROTATIONS_TO_ARM_ROTATIONS_RADIANS,
-              Constants.ConversionConstants.ARM_MOTOR_RADIANS_PER_SECOND_CONVERSION_FACTOR));
+              Constants.ArmConstants.ARM_MOTOR_ROTATIONS_TO_ARM_ROTATIONS_RADIANS,
+              Constants.ArmConstants.ARM_MOTOR_RADIANS_PER_SECOND_CONVERSION_FACTOR));
 
   private void applyStates() {
     switch (currentState) {
@@ -153,6 +153,8 @@ public class ArmSubsystem extends SubsystemBase {
   public void periodic() {
     io.updateInputs(armInputs);
     currentState = handleStateTransitions();
+    applyStates();
+
 
     // This method will be called once per scheduler run
   }

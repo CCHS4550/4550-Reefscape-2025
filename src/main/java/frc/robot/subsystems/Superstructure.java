@@ -143,6 +143,7 @@ public class Superstructure extends SubsystemBase {
         elevator.setWantedState(ElevatorState.L4_BACK);
         wrist.setWantedState(WristState.L4_BACK);
         break;
+      default: 
     }
   }
 

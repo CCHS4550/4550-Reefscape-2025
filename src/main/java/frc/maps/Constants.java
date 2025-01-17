@@ -74,26 +74,11 @@ public class Constants {
     public static final double DRIVE_MOTOR_METERS_PER_SECOND_CONVERSION_FACTOR =
         HORIZONTAL_DISTANCE_TRAVELLED_PER_MOTOR_REVOLUTION / 60.0;
 
-    /** Arm */
-    public static final double ARM_MOTOR_ROTATIONS_TO_ARM_ROTATIONS = 1.0;
 
-    public static final double ARM_MOTOR_ROTATIONS_TO_ARM_ROTATIONS_RADIANS =
-        Units.rotationsToRadians(ARM_MOTOR_ROTATIONS_TO_ARM_ROTATIONS);
 
-    public static final double ARM_MOTOR_RADIANS_PER_SECOND_CONVERSION_FACTOR =
-        ARM_MOTOR_ROTATIONS_TO_ARM_ROTATIONS_RADIANS / 60;
 
-    /** Elevator */
-    public static final double ELEVATOR_MOTOR_ROTATIONS_TO_AXLE_ROTATIONS = 1.0;
 
-    // How many rotations of the main axle to 1 meter of elevation
-    public static final double AXLE_ROTATION_TO_HEIGHT_METERS = 1.0;
-
-    public static final double HEIGHT_METERS_PER_ELEVATOR_MOTOR_ROTATIONS =
-        ELEVATOR_MOTOR_ROTATIONS_TO_AXLE_ROTATIONS * AXLE_ROTATION_TO_HEIGHT_METERS;
-
-    public static final double ELEVATOR_MOTOR_METERS_PER_SECOND_CONVERSION_FACTOR =
-        HEIGHT_METERS_PER_ELEVATOR_MOTOR_ROTATIONS / 60;
+    /** Wrist */
   }
 
   public static class MotorConstants {
@@ -146,7 +131,6 @@ public class Constants {
     public static final boolean INTAKE_REVERSE = false;
 
     public static final int WRIST = 16;
-    public static final boolean WRIST_REVERSE = false;
   }
 
   public static class SwerveConstants {
@@ -223,11 +207,63 @@ public class Constants {
     public static final double ODOMETRY_FREQUENCY = 100;
   }
 
-  public static class SensorMiscConstants {
+  
+  public static class ArmConstants {
+
+    public static final double ARM_MOTOR_ROTATIONS_TO_ARM_ROTATIONS = 1.0;
+
+    public static final double ARM_MOTOR_ROTATIONS_TO_ARM_ROTATIONS_RADIANS =
+        Units.rotationsToRadians(ARM_MOTOR_ROTATIONS_TO_ARM_ROTATIONS);
+
+    public static final double ARM_MOTOR_RADIANS_PER_SECOND_CONVERSION_FACTOR =
+        ARM_MOTOR_ROTATIONS_TO_ARM_ROTATIONS_RADIANS / 60;
+
+
     public static final double ARM_THROUGHBORE_OFFSET = 1.0;
-    public static final double ELEVATOR_THROUGHBORE_OFFSET = 1.0;
-    public static final double WRIST_THROUGHBORE_OFFSET = 1.0;
+
   }
+
+  public static class ElevatorConstants {
+
+    public static final double ELEVATOR_MOTOR_ROTATIONS_TO_AXLE_ROTATIONS = 1.0;
+
+    // How many rotations of the main axle to 1 meter of elevation
+    public static final double AXLE_ROTATION_TO_HEIGHT_METERS = 1.0;
+
+    public static final double HEIGHT_METERS_PER_ELEVATOR_MOTOR_ROTATIONS =
+        ELEVATOR_MOTOR_ROTATIONS_TO_AXLE_ROTATIONS * AXLE_ROTATION_TO_HEIGHT_METERS;
+
+    public static final double ELEVATOR_MOTOR_METERS_PER_SECOND_CONVERSION_FACTOR =
+        HEIGHT_METERS_PER_ELEVATOR_MOTOR_ROTATIONS / 60;
+
+
+    public static final double ELEVATOR_THROUGHBORE_OFFSET = 1.0;
+
+    public static double[] elevatorPositions = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    public static double elevatorMaxVelocity = 90;
+    public static double elevatorMaxAcceleration = 90;
+    public static double elevatorKP = 90;
+    public static double elevatorKI = 90;
+    public static double elevatorKD = 90;
+  }
+
+  public static class WristConstants {
+
+    public static final double WRIST_MOTOR_ROTATIONS_TO_WRIST_ROTATIONS = 1.0;
+
+    public static final double WRIST_MOTOR_ROTATIONS_TO_WRIST_ROTATIONS_RADIANS =
+        Units.rotationsToRadians(WRIST_MOTOR_ROTATIONS_TO_WRIST_ROTATIONS);
+
+    public static final double WRIST_MOTOR_RADIANS_PER_SECOND_CONVERSION_FACTOR =
+    WRIST_MOTOR_ROTATIONS_TO_WRIST_ROTATIONS_RADIANS / 60;
+
+    public static final double WRIST_THROUGHBORE_OFFSET = 1.0;
+
+
+    public static boolean WRIST_REVERSE = false;
+
+  }
+
 
   public class FeedForwardConstants {
 
@@ -316,20 +352,6 @@ public class Constants {
     public static final double ZERO = 0.15;
   }
 
-  // public static class Vision {
-  //   public static final String CAMERA_NAME = "FrontCamera";
-  //   // Cam mounted facing forward, half a meter forward of center, half a meter up
-  //   // from center.
-
-  //   // The layout of the AprilTags on the field
-
-  //   // The standard deviations of our vision estimated poses, which affect
-  //   // correction rate
-  //   // (Fake values. Experiment and determine estimation noise on an actual robot.)
-  //   public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(4, 4, 8);
-  //   public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
-  // }
-
   public static class cameraOne {
     public static final String CAMERA_ONE_NAME = "FrontCamera";
     public static final int CAMERA_ONE_PIPELINE = 9;
@@ -373,14 +395,6 @@ public class Constants {
     // public static int BLUE_STAGE_BOTTOM = 16;
   }
 
-  public static class ElevatorConstants {
-    public static double[] elevatorPositions = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    public static double elevatorMaxVelocity = 90;
-    public static double elevatorMaxAcceleration = 90;
-    public static double elevatorKP = 90;
-    public static double elevatorKI = 90;
-    public static double elevatorKD = 90;
-  }
 
   // safely divide
   public double safeDivision(double numerator, double denominator) {

@@ -86,8 +86,8 @@ public class ElevatorSubsystem extends SubsystemBase {
               MotorType.kBrushless,
               IdleMode.kBrake,
               Constants.MotorConstants.ELEVATOR_REVERSE[0],
-              Constants.ConversionConstants.HEIGHT_METERS_PER_ELEVATOR_MOTOR_ROTATIONS,
-              Constants.ConversionConstants.ELEVATOR_MOTOR_METERS_PER_SECOND_CONVERSION_FACTOR),
+              Constants.ElevatorConstants.HEIGHT_METERS_PER_ELEVATOR_MOTOR_ROTATIONS,
+              Constants.ElevatorConstants.ELEVATOR_MOTOR_METERS_PER_SECOND_CONVERSION_FACTOR),
           motorFactory.create(
               "elevatorMotor2",
               "elevator2",
@@ -95,8 +95,8 @@ public class ElevatorSubsystem extends SubsystemBase {
               MotorType.kBrushless,
               IdleMode.kBrake,
               Constants.MotorConstants.ELEVATOR_REVERSE[1],
-              Constants.ConversionConstants.HEIGHT_METERS_PER_ELEVATOR_MOTOR_ROTATIONS,
-              Constants.ConversionConstants.ELEVATOR_MOTOR_METERS_PER_SECOND_CONVERSION_FACTOR));
+              Constants.ElevatorConstants.HEIGHT_METERS_PER_ELEVATOR_MOTOR_ROTATIONS,
+              Constants.ElevatorConstants.ELEVATOR_MOTOR_METERS_PER_SECOND_CONVERSION_FACTOR));
 
   private void applyStates() {
     switch (currentState) {
@@ -169,6 +169,8 @@ public class ElevatorSubsystem extends SubsystemBase {
   public void periodic() {
     io.updateInputs(elevatorInputs);
     currentState = handleStateTransitions();
+    applyStates();
+
 
     // This method will be called once per scheduler run
   }
