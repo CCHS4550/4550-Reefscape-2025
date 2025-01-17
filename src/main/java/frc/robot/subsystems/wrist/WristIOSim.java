@@ -1,4 +1,4 @@
-package frc.robot.subsystems.wrist;
+package frc.robot.subsystems.Wrist;
 
 import frc.helpers.CCMotorController;
 
