@@ -7,10 +7,13 @@ package frc.robot.subsystems.wrist;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.helpers.CCMotorController;
 import frc.helpers.CCSparkMax;
 import frc.maps.Constants;
+import frc.robot.subsystems.Superstructure.WantedSuperState;
 
 public class WristSubsystem extends SubsystemBase {
 
@@ -139,13 +142,16 @@ public class WristSubsystem extends SubsystemBase {
     this.wantedState = wantedState;
   }
 
+  public Command setWantedStateCommand(WristState wantedSuperState) {
+    return new InstantCommand(() -> setWantedState(wantedSuperState));
+  }
+
   public WristState getWantedState() {
     return wantedState;
   }
 
   @Override
   public void periodic() {
-
     io.updateInputs(wristInputs);
     currentState = handleStateTransitions();
     // This method will be called once per scheduler run

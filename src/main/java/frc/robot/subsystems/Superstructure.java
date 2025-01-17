@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.algae.AlgaeSubsystem;
 import frc.robot.subsystems.arm.ArmSubsystem;
@@ -13,6 +15,7 @@ import frc.robot.subsystems.elevator.ElevatorSubsystem.ElevatorState;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveDriveSubsystem;
 import frc.robot.subsystems.wrist.WristSubsystem;
+import frc.robot.subsystems.wrist.WristSubsystem.WristState;
 
 public class Superstructure extends SubsystemBase {
 
@@ -97,6 +100,52 @@ public class Superstructure extends SubsystemBase {
   CurrentSuperState currentSuperState = CurrentSuperState.WITHIN_FRAME_PERIMETER_DEFAULT;
   CurrentSuperState previousSuperState = CurrentSuperState.WITHIN_FRAME_PERIMETER_DEFAULT;
 
+  public void applyStates() {
+    switch (currentSuperState) {
+      case WITHIN_FRAME_PERIMETER_DEFAULT:
+        arm.setWantedState(ArmState.DEFAULT_WITHINFRAME);
+        elevator.setWantedState(ElevatorState.DEFAULT_WITHINFRAME);
+        wrist.setWantedState(WristState.DEFAULT_WITHINFRAME);
+        break;
+
+      case CORAL_STATION_BACK:
+        arm.setWantedState(ArmState.CORAL_STATION_BACK);
+        elevator.setWantedState(ElevatorState.CORAL_STATION_BACK);
+        wrist.setWantedState(WristState.CORAL_STATION_BACK);
+        break;
+
+      case CORAL_STATION_FRONT:
+        arm.setWantedState(ArmState.CORAL_STATION_FRONT);
+        elevator.setWantedState(ElevatorState.CORAL_STATION_FRONT);
+        wrist.setWantedState(WristState.CORAL_STATION_FRONT);
+        break;
+
+      case L1_FRONT:
+        arm.setWantedState(ArmState.L1_FRONT);
+        elevator.setWantedState(ElevatorState.L1_FRONT);
+        wrist.setWantedState(WristState.L1_FRONT);
+        break;
+
+      case L2_FRONT:
+        arm.setWantedState(ArmState.L2L3_FRONT);
+        elevator.setWantedState(ElevatorState.L2_FRONT);
+        wrist.setWantedState(WristState.L2L3_FRONT);
+        break;
+
+      case L3_FRONT:
+        arm.setWantedState(ArmState.L2L3_FRONT);
+        elevator.setWantedState(ElevatorState.L3_FRONT);
+        wrist.setWantedState(WristState.L2L3_FRONT);
+        break;
+
+      case L4_BACK:
+        arm.setWantedState(ArmState.L4_BACK);
+        elevator.setWantedState(ElevatorState.L4_BACK);
+        wrist.setWantedState(WristState.L4_BACK);
+        break;
+    }
+  }
+
   private CurrentSuperState handleStateTransitions() {
     previousSuperState = currentSuperState;
     switch (wantedSuperState) {
@@ -148,43 +197,16 @@ public class Superstructure extends SubsystemBase {
     return currentSuperState;
   }
 
-  public void applyStates() {
-    switch (currentSuperState) {
-      case WITHIN_FRAME_PERIMETER_DEFAULT:
-        arm.setWantedState(ArmState.DEFAULT_WITHINFRAME);
-        elevator.setWantedState(ElevatorState.DEFAULT_WITHINFRAME);
-        break;
+  public void setWantedSuperstate(WantedSuperState wantedSuperState) {
+    this.wantedSuperState = wantedSuperState;
+  }
 
-      case CORAL_STATION_BACK:
-        arm.setWantedState(ArmState.CORAL_STATION_BACK);
-        elevator.setWantedState(ElevatorState.CORAL_STATION_BACK);
-        break;
-
-      case CORAL_STATION_FRONT:
-        arm.setWantedState(ArmState.CORAL_STATION_FRONT);
-        elevator.setWantedState(ElevatorState.CORAL_STATION_FRONT);
-        break;
-
-      case L1_FRONT:
-        arm.setWantedState(ArmState.L1_FRONT);
-        elevator.setWantedState(ElevatorState.L1_FRONT);
-        break;
-
-      case L2_FRONT:
-        arm.setWantedState(ArmState.L2L3_FRONT);
-        elevator.setWantedState(ElevatorState.L2_FRONT);
-        break;
-
-      case L3_FRONT:
-        arm.setWantedState(ArmState.L2L3_FRONT);
-        elevator.setWantedState(ElevatorState.L3_FRONT);
-        break;
-
-      case L4_BACK:
-        arm.setWantedState(ArmState.L4_BACK);
-        elevator.setWantedState(ElevatorState.L4_BACK);
-        break;
+  public Command setWantedSuperstateCommand(WantedSuperState wantedSuperState) {
+        return new InstantCommand(() -> setWantedSuperstate(wantedSuperState));
     }
+
+  public WantedSuperState getWantedSuperstate() {
+    return wantedSuperState;
   }
 
   @Override

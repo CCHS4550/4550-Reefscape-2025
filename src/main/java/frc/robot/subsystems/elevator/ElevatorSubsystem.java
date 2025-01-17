@@ -6,10 +6,14 @@ package frc.robot.subsystems.elevator;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.helpers.CCMotorController;
 import frc.helpers.CCSparkMax;
 import frc.maps.Constants;
+import frc.robot.subsystems.wrist.WristSubsystem.WristState;
 
 public class ElevatorSubsystem extends SubsystemBase {
 
@@ -152,6 +156,10 @@ public class ElevatorSubsystem extends SubsystemBase {
   public void setWantedState(ElevatorState wantedState) {
     this.wantedState = wantedState;
   }
+  public Command setWantedStateCommand(ElevatorState wantedSuperState) {
+    return new InstantCommand(() -> setWantedState(wantedSuperState));
+  }
+
 
   public ElevatorState getElevatorState() {
     return currentState;
