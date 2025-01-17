@@ -25,8 +25,8 @@ import edu.wpi.first.wpilibj.RobotBase;
 
 public class Constants {
 
+  // Might be more specific than this.
   public static final double WHEEL_CIRCUMFRENCE = Units.inchesToMeters(4 * Math.PI);
-
 
   public static Mode currentMode = Mode.REAL;
 
@@ -60,17 +60,40 @@ public class Constants {
     // How many radians the wheel pivots for one full rotation of the turn motor
     public static final double TURN_MOTOR_ROTATIONS_TO_WHEEL_ROTATIONS_RADIANS =
         Units.rotationsToRadians(TURN_MOTOR_ROTATIONS_TO_WHEEL_ROTATIONS);
+
     public static final double TURN_MOTOR_RADIANS_PER_SECOND =
         TURN_MOTOR_ROTATIONS_TO_WHEEL_ROTATIONS_RADIANS / 60.0;
 
-    // 6.75 rotations of the drive motor to one spin of the wheel
-    public static final double DRIVE_MOTOR_ROTATIONS_TO_WHEEL_ROTATIONS = 1.0 / 6.75;
+    // 5.36 rotations of the drive motor to one spin of the wheel (L3+)
+    // 5.9 rotations of the drive motor to one spin of the wheel (L2+)
+    public static final double DRIVE_MOTOR_ROTATIONS_TO_WHEEL_ROTATIONS = 1.0 / 5.36;
     // horizontal distance travelled by one motor rotation
     public static final double HORIZONTAL_DISTANCE_TRAVELLED_PER_MOTOR_REVOLUTION =
         WHEEL_CIRCUMFRENCE * DRIVE_MOTOR_ROTATIONS_TO_WHEEL_ROTATIONS;
 
     public static final double DRIVE_MOTOR_METERS_PER_SECOND_CONVERSION_FACTOR =
         HORIZONTAL_DISTANCE_TRAVELLED_PER_MOTOR_REVOLUTION / 60.0;
+
+    /** Arm */
+    public static final double ARM_MOTOR_ROTATIONS_TO_ARM_ROTATIONS = 1.0;
+
+    public static final double ARM_MOTOR_ROTATIONS_TO_ARM_ROTATIONS_RADIANS =
+        Units.rotationsToRadians(ARM_MOTOR_ROTATIONS_TO_ARM_ROTATIONS);
+
+    public static final double ARM_MOTOR_RADIANS_PER_SECOND_CONVERSION_FACTOR =
+        ARM_MOTOR_ROTATIONS_TO_ARM_ROTATIONS_RADIANS / 60;
+
+    /** Elevator */
+    public static final double ELEVATOR_MOTOR_ROTATIONS_TO_AXLE_ROTATIONS = 1.0;
+
+    // How many rotations of the main axle to 1 meter of elevation
+    public static final double AXLE_ROTATION_TO_HEIGHT_METERS = 1.0;
+
+    public static final double HEIGHT_METERS_PER_ELEVATOR_MOTOR_ROTATIONS =
+        ELEVATOR_MOTOR_ROTATIONS_TO_AXLE_ROTATIONS * AXLE_ROTATION_TO_HEIGHT_METERS;
+
+    public static final double ELEVATOR_MOTOR_METERS_PER_SECOND_CONVERSION_FACTOR =
+        HEIGHT_METERS_PER_ELEVATOR_MOTOR_ROTATIONS / 60;
   }
 
   public static class MotorConstants {
@@ -201,7 +224,9 @@ public class Constants {
   }
 
   public static class SensorMiscConstants {
-    public static final double ARM_THROUGHBORE_OFFSET = 1;
+    public static final double ARM_THROUGHBORE_OFFSET = 1.0;
+    public static final double ELEVATOR_THROUGHBORE_OFFSET = 1.0;
+    public static final double WRIST_THROUGHBORE_OFFSET = 1.0;
   }
 
   public class FeedForwardConstants {

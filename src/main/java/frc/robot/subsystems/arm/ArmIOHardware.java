@@ -51,7 +51,7 @@ public class ArmIOHardware implements ArmIO {
 
   @Override
   public void updateInputs(ArmIOInputsAutoLogged inputs) {
-    inputs.currentAngleDegrees = Units.radiansToDegrees(getAbsoluteEncoderRadiansNoOffset());
+    inputs.currentAngleDegrees = Units.radiansToDegrees(getAbsoluteEncoderRadiansOffset());
     inputs.currentAngleRadians = getAbsoluteEncoderRadiansOffset();
 
     inputs.pidOutput = this.pidOutput;

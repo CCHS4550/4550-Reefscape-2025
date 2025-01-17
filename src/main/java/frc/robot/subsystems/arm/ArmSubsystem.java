@@ -79,8 +79,8 @@ public class ArmSubsystem extends SubsystemBase {
               MotorType.kBrushless,
               IdleMode.kBrake,
               Constants.MotorConstants.ARM_REVERSE,
-              1,
-              1));
+              Constants.ConversionConstants.ARM_MOTOR_ROTATIONS_TO_ARM_ROTATIONS_RADIANS,
+              Constants.ConversionConstants.ARM_MOTOR_RADIANS_PER_SECOND_CONVERSION_FACTOR));
 
   private void applyStates() {
     switch (currentState) {
@@ -135,6 +135,10 @@ public class ArmSubsystem extends SubsystemBase {
 
   public void setWantedState(ArmState wantedState) {
     this.wantedState = wantedState;
+  }
+
+  public ArmState getWantedState() {
+    return wantedState;
   }
 
   @Override

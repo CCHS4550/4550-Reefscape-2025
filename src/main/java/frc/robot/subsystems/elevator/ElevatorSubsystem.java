@@ -13,21 +13,21 @@ import frc.maps.Constants;
 
 public class ElevatorSubsystem extends SubsystemBase {
 
-  public enum ElevatorPositions {
+  public enum ElevatorState {
     // Placeholder Values
-    STOW(Constants.ElevatorConstants.elevatorPositions[0]),
-    L1(Constants.ElevatorConstants.elevatorPositions[1]),
-    L2(Constants.ElevatorConstants.elevatorPositions[2]),
-    L3(Constants.ElevatorConstants.elevatorPositions[3]),
-    L4(Constants.ElevatorConstants.elevatorPositions[4]),
+    DEFAULT_WITHINFRAME(Constants.ElevatorConstants.elevatorPositions[0]),
+    L1_FRONT(Constants.ElevatorConstants.elevatorPositions[1]),
+    L2_FRONT(Constants.ElevatorConstants.elevatorPositions[2]),
+    L3_FRONT(Constants.ElevatorConstants.elevatorPositions[3]),
+    L4_BACK(Constants.ElevatorConstants.elevatorPositions[4]),
     A1(Constants.ElevatorConstants.elevatorPositions[5]),
     A2(Constants.ElevatorConstants.elevatorPositions[6]),
-    CORAL_STATION(Constants.ElevatorConstants.elevatorPositions[7]),
-    PROCESSOR(Constants.ElevatorConstants.elevatorPositions[8]);
+    CORAL_STATION_FRONT(Constants.ElevatorConstants.elevatorPositions[7]),
+    CORAL_STATION_BACK(Constants.ElevatorConstants.elevatorPositions[8]);
 
     private final double heightMeters;
 
-    ElevatorPositions(double heightMeters) {
+    ElevatorState(double heightMeters) {
       this.heightMeters = heightMeters;
     }
 
@@ -35,6 +35,10 @@ public class ElevatorSubsystem extends SubsystemBase {
       return heightMeters;
     }
   }
+
+  public ElevatorState previousState = ElevatorState.DEFAULT_WITHINFRAME;
+  public ElevatorState currentState = ElevatorState.DEFAULT_WITHINFRAME;
+  public ElevatorState wantedState = ElevatorState.DEFAULT_WITHINFRAME;
 
   /** Implementation of Singleton Pattern */
   public static ElevatorSubsystem mInstance;
@@ -44,7 +48,6 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   CCMotorController.MotorFactory motorFactory;
   ElevatorIO.IOFactory ioFactory;
-  static ElevatorPositions currentPosition;
 
   ElevatorIOInputsAutoLogged elevatorInputs = new ElevatorIOInputsAutoLogged();
 
@@ -79,8 +82,8 @@ public class ElevatorSubsystem extends SubsystemBase {
               MotorType.kBrushless,
               IdleMode.kBrake,
               Constants.MotorConstants.ELEVATOR_REVERSE[0],
-              1,
-              1),
+              Constants.ConversionConstants.HEIGHT_METERS_PER_ELEVATOR_MOTOR_ROTATIONS,
+              Constants.ConversionConstants.ELEVATOR_MOTOR_METERS_PER_SECOND_CONVERSION_FACTOR),
           motorFactory.create(
               "elevatorMotor2",
               "elevator2",
@@ -88,28 +91,77 @@ public class ElevatorSubsystem extends SubsystemBase {
               MotorType.kBrushless,
               IdleMode.kBrake,
               Constants.MotorConstants.ELEVATOR_REVERSE[1],
-              1,
-              1));
+              Constants.ConversionConstants.HEIGHT_METERS_PER_ELEVATOR_MOTOR_ROTATIONS,
+              Constants.ConversionConstants.ELEVATOR_MOTOR_METERS_PER_SECOND_CONVERSION_FACTOR));
 
-  // @Override
-  public void changeElevatorPosition(ElevatorPositions desiredPosition) {
-    currentPosition = desiredPosition;
+  private void applyStates() {
+    switch (currentState) {
+      case DEFAULT_WITHINFRAME:
+        io.holdAtState(ElevatorState.DEFAULT_WITHINFRAME);
+
+      case L1_FRONT:
+        io.holdAtState(ElevatorState.L1_FRONT);
+
+      case L2_FRONT:
+        io.holdAtState(ElevatorState.L2_FRONT);
+      case L3_FRONT:
+        io.holdAtState(ElevatorState.L3_FRONT);
+
+      case L4_BACK:
+        io.holdAtState(ElevatorState.L4_BACK);
+
+      case CORAL_STATION_FRONT:
+        io.holdAtState(ElevatorState.CORAL_STATION_FRONT);
+
+      case CORAL_STATION_BACK:
+        io.holdAtState(ElevatorState.CORAL_STATION_BACK);
+
+      default:
+        io.holdAtState(ElevatorState.DEFAULT_WITHINFRAME);
+    }
   }
 
-  public static double heightToRotations(double height) {
-    return height * 0.2982; // random value
+  private ElevatorState handleStateTransitions() {
+    previousState = currentState;
+    switch (wantedState) {
+      case DEFAULT_WITHINFRAME:
+        return ElevatorState.DEFAULT_WITHINFRAME;
+
+      case L1_FRONT:
+        return ElevatorState.L1_FRONT;
+
+      case L2_FRONT:
+        return ElevatorState.L2_FRONT;
+      case L3_FRONT:
+        return ElevatorState.L3_FRONT;
+
+      case L4_BACK:
+        return ElevatorState.L4_BACK;
+
+      case CORAL_STATION_FRONT:
+        return ElevatorState.CORAL_STATION_FRONT;
+
+      case CORAL_STATION_BACK:
+        return ElevatorState.CORAL_STATION_BACK;
+
+      default:
+        return ElevatorState.DEFAULT_WITHINFRAME;
+    }
   }
 
-  public static double rotationsToHeight(double rotations) {
-    return rotations * 0.8263;
+  public void setWantedState(ElevatorState wantedState) {
+    this.wantedState = wantedState;
   }
 
-  public static ElevatorPositions getElevatorPosition() {
-    return currentPosition;
+  public ElevatorState getElevatorState() {
+    return currentState;
   }
 
   @Override
   public void periodic() {
+    io.updateInputs(elevatorInputs);
+    currentState = handleStateTransitions();
+
     // This method will be called once per scheduler run
   }
 }

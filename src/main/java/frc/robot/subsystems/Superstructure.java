@@ -9,6 +9,7 @@ import frc.robot.subsystems.algae.AlgaeSubsystem;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.arm.ArmSubsystem.ArmState;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
+import frc.robot.subsystems.elevator.ElevatorSubsystem.ElevatorState;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveDriveSubsystem;
 import frc.robot.subsystems.wrist.WristSubsystem;
@@ -96,14 +97,6 @@ public class Superstructure extends SubsystemBase {
   CurrentSuperState currentSuperState = CurrentSuperState.WITHIN_FRAME_PERIMETER_DEFAULT;
   CurrentSuperState previousSuperState = CurrentSuperState.WITHIN_FRAME_PERIMETER_DEFAULT;
 
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-
-    currentSuperState = handleStateTransitions();
-    applyStates();
-  }
-
   private CurrentSuperState handleStateTransitions() {
     previousSuperState = currentSuperState;
     switch (wantedSuperState) {
@@ -159,25 +152,46 @@ public class Superstructure extends SubsystemBase {
     switch (currentSuperState) {
       case WITHIN_FRAME_PERIMETER_DEFAULT:
         arm.setWantedState(ArmState.DEFAULT_WITHINFRAME);
+        elevator.setWantedState(ElevatorState.DEFAULT_WITHINFRAME);
         break;
 
       case CORAL_STATION_BACK:
+        arm.setWantedState(ArmState.CORAL_STATION_BACK);
+        elevator.setWantedState(ElevatorState.CORAL_STATION_BACK);
         break;
 
       case CORAL_STATION_FRONT:
+        arm.setWantedState(ArmState.CORAL_STATION_FRONT);
+        elevator.setWantedState(ElevatorState.CORAL_STATION_FRONT);
         break;
 
       case L1_FRONT:
+        arm.setWantedState(ArmState.L1_FRONT);
+        elevator.setWantedState(ElevatorState.L1_FRONT);
         break;
 
       case L2_FRONT:
+        arm.setWantedState(ArmState.L2L3_FRONT);
+        elevator.setWantedState(ElevatorState.L2_FRONT);
         break;
 
       case L3_FRONT:
+        arm.setWantedState(ArmState.L2L3_FRONT);
+        elevator.setWantedState(ElevatorState.L3_FRONT);
         break;
 
       case L4_BACK:
+        arm.setWantedState(ArmState.L4_BACK);
+        elevator.setWantedState(ElevatorState.L4_BACK);
         break;
     }
+  }
+
+  @Override
+  public void periodic() {
+    // This method will be called once per scheduler run
+
+    currentSuperState = handleStateTransitions();
+    applyStates();
   }
 }
