@@ -1,4 +1,4 @@
-package frc.robot.subsystems.wrist;
+package frc.robot.subsystems.Wrist;
 
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Seconds;

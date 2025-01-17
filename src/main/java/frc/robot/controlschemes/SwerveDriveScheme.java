@@ -1,4 +1,4 @@
-package frc.robot.controlschemes;
+package frc.robot.controlSchemes;
 
 import static edu.wpi.first.wpilibj2.command.Commands.runOnce;
 
@@ -6,6 +6,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -13,6 +14,9 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.maps.Constants;
 import frc.robot.RobotState;
+import frc.robot.autonomous.pathToTrajectory;
+import frc.robot.autonomous.FollowPathCommand;
+import frc.robot.autonomous.PathToCoral;
 import frc.robot.subsystems.swervedrive.SwerveDriveSubsystem;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
@@ -224,6 +228,34 @@ public class SwerveDriveScheme {
     //     .rightTrigger()
     //     .onTrue(runOnce(() -> setSlowMode()))
     //     .onFalse(runOnce(() -> setNormalMode()));
+    controller.rightBumper().onTrue(// change binding as needed
+    new FollowPathCommand(
+      pathToTrajectory.convertPathToTrajectory(
+        PathToCoral.goToCoral(
+           PathToCoral.closestSideNum(
+              RobotState.getInstance().getPose()
+           )
+          ,0 // left side of the reef
+        ),
+        SwerveDriveSubsystem.getInstance().getRobotRelativeSpeeds(),
+        RobotState.getInstance().getRotation2d()
+      )
+    )
+  );
+  controller.leftBumper().onTrue(// change binding as needed
+    new FollowPathCommand(
+      pathToTrajectory.convertPathToTrajectory(
+        PathToCoral.goToCoral(
+           PathToCoral.closestSideNum(
+              RobotState.getInstance().getPose()
+           )
+          ,1 // right side of the reef  
+        ),
+        SwerveDriveSubsystem.getInstance().getRobotRelativeSpeeds(),
+        RobotState.getInstance().getRotation2d()
+      )
+    )
+  );
   }
 
   /** Toggle field centric and robot centric driving. */

@@ -15,8 +15,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotState;
 import frc.robot.subsystems.swervedrive.SwerveDriveSubsystem;
-import org.littletonrobotics.junction.Logger;
 
+import org.littletonrobotics.junction.Logger;
 public class FollowPathCommand extends Command {
 
   Timer timer = new Timer();
