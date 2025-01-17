@@ -5,14 +5,27 @@ import frc.helpers.CCMotorController;
 
 public class IntakeIOHardware implements IntakeIO {
 
-  CCMotorController motor;
+  CCMotorController innerMotor;
+  CCMotorController outerMotor;
 
-  public IntakeIOHardware(CCMotorController motor) {
-    this.motor = motor;
+  public IntakeIOHardware(CCMotorController innerMotor, CCMotorController outerMotor) {
+    this.innerMotor = innerMotor;
+    this.outerMotor = outerMotor;
   }
 
   @Override
-  public void setVoltage(Voltage voltage) {
-    motor.setVoltage(voltage.magnitude());
+  public void updateInputs(IntakeIOInputs inputs) {
+    inputs.appliedInnerVoltage = innerMotor.getVoltage();
+    inputs.appliedOuterVoltagae = outerMotor.getVoltage();
+  }
+
+  @Override
+  public void setInnerVoltage(Voltage voltage) {
+    innerMotor.setVoltage(voltage.magnitude());
+  }
+
+  @Override
+  public void setOuterVoltage(Voltage voltage) {
+    outerMotor.setVoltage(voltage.magnitude());
   }
 }

@@ -74,10 +74,6 @@ public class Constants {
     public static final double DRIVE_MOTOR_METERS_PER_SECOND_CONVERSION_FACTOR =
         HORIZONTAL_DISTANCE_TRAVELLED_PER_MOTOR_REVOLUTION / 60.0;
 
-
-
-
-
     /** Wrist */
   }
 
@@ -127,8 +123,8 @@ public class Constants {
     public static final int ARM = 14;
     public static final boolean ARM_REVERSE = false;
 
-    public static final int INTAKE = 15;
-    public static final boolean INTAKE_REVERSE = false;
+    public static final int[] INTAKE = {15, 16};
+    public static final boolean[] INTAKE_REVERSE = {false, true};
 
     public static final int WRIST = 16;
   }
@@ -207,7 +203,6 @@ public class Constants {
     public static final double ODOMETRY_FREQUENCY = 100;
   }
 
-  
   public static class ArmConstants {
 
     public static final double ARM_MOTOR_ROTATIONS_TO_ARM_ROTATIONS = 1.0;
@@ -218,9 +213,7 @@ public class Constants {
     public static final double ARM_MOTOR_RADIANS_PER_SECOND_CONVERSION_FACTOR =
         ARM_MOTOR_ROTATIONS_TO_ARM_ROTATIONS_RADIANS / 60;
 
-
     public static final double ARM_THROUGHBORE_OFFSET = 1.0;
-
   }
 
   public static class ElevatorConstants {
@@ -235,7 +228,6 @@ public class Constants {
 
     public static final double ELEVATOR_MOTOR_METERS_PER_SECOND_CONVERSION_FACTOR =
         HEIGHT_METERS_PER_ELEVATOR_MOTOR_ROTATIONS / 60;
-
 
     public static final double ELEVATOR_THROUGHBORE_OFFSET = 1.0;
 
@@ -255,15 +247,12 @@ public class Constants {
         Units.rotationsToRadians(WRIST_MOTOR_ROTATIONS_TO_WRIST_ROTATIONS);
 
     public static final double WRIST_MOTOR_RADIANS_PER_SECOND_CONVERSION_FACTOR =
-    WRIST_MOTOR_ROTATIONS_TO_WRIST_ROTATIONS_RADIANS / 60;
+        WRIST_MOTOR_ROTATIONS_TO_WRIST_ROTATIONS_RADIANS / 60;
 
     public static final double WRIST_THROUGHBORE_OFFSET = 1.0;
 
-
     public static boolean WRIST_REVERSE = false;
-
   }
-
 
   public class FeedForwardConstants {
 
@@ -394,7 +383,6 @@ public class Constants {
     // public static int BLUE_STAGE_TOP = 15;
     // public static int BLUE_STAGE_BOTTOM = 16;
   }
-
 
   // safely divide
   public double safeDivision(double numerator, double denominator) {

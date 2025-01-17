@@ -120,7 +120,7 @@ public class ElevatorIOHardware implements ElevatorIO {
 
   @Override
   public double getAbsoluteHeightMetersOffset() {
-    return throughBore.getPosition() * Constants.ElevatorConstants.AXLE_ROTATION_TO_HEIGHT_METERS
+    return (throughBore.getPosition() * Constants.ElevatorConstants.AXLE_ROTATION_TO_HEIGHT_METERS)
         - Constants.ElevatorConstants.ELEVATOR_THROUGHBORE_OFFSET;
   }
 

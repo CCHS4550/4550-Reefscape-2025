@@ -143,7 +143,7 @@ public class Superstructure extends SubsystemBase {
         elevator.setWantedState(ElevatorState.L4_BACK);
         wrist.setWantedState(WristState.L4_BACK);
         break;
-      default: 
+      default:
     }
   }
 
@@ -203,8 +203,8 @@ public class Superstructure extends SubsystemBase {
   }
 
   public Command setWantedSuperstateCommand(WantedSuperState wantedSuperState) {
-        return new InstantCommand(() -> setWantedSuperstate(wantedSuperState));
-    }
+    return new InstantCommand(() -> setWantedSuperstate(wantedSuperState));
+  }
 
   public WantedSuperState getWantedSuperstate() {
     return wantedSuperState;

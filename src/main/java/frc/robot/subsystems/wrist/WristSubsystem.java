@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.helpers.CCMotorController;
 import frc.helpers.CCSparkMax;
 import frc.maps.Constants;
-import frc.robot.subsystems.Superstructure.WantedSuperState;
 
 public class WristSubsystem extends SubsystemBase {
 
@@ -83,7 +82,7 @@ public class WristSubsystem extends SubsystemBase {
               Constants.MotorConstants.WRIST,
               MotorType.kBrushless,
               IdleMode.kBrake,
-              Constants.MotorConstants.WRIST_REVERSE,
+              Constants.WristConstants.WRIST_REVERSE,
               1,
               1));
 

@@ -7,14 +7,21 @@ import org.littletonrobotics.junction.AutoLog;
 public interface IntakeIO {
 
   @AutoLog
-  class IntakeIOInputs {}
+  class IntakeIOInputs {
+    public double appliedInnerVoltage = 0.0;
+    public double appliedOuterVoltagae = 0.0;
+
+    public boolean hasCoral = false;
+  }
 
   default void updateInputs(IntakeIOInputs inputs) {}
 
-  default void setVoltage(Voltage voltage) {}
+  default void setOuterVoltage(Voltage voltage) {}
+
+  default void setInnerVoltage(Voltage voltage) {}
 
   @FunctionalInterface
   interface IOFactory {
-    IntakeIO create(CCMotorController motor);
+    IntakeIO create(CCMotorController innerMotor, CCMotorController outerMotor);
   }
 }

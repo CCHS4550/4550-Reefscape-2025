@@ -8,5 +8,5 @@ import frc.helpers.CCMotorController;
 
 /** Add your docs here. */
 public class IntakeIOReplay implements IntakeIO {
-  public IntakeIOReplay(CCMotorController motor) {}
+  public IntakeIOReplay(CCMotorController innerMotor, CCMotorController outerMotor) {}
 }

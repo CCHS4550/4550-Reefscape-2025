@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.helpers.CCMotorController;
 import frc.helpers.CCSparkMax;
 import frc.maps.Constants;
-import frc.robot.subsystems.wrist.WristSubsystem.WristState;
 
 public class ArmSubsystem extends SubsystemBase {
 
@@ -144,7 +143,6 @@ public class ArmSubsystem extends SubsystemBase {
     return new InstantCommand(() -> setWantedState(wantedSuperState));
   }
 
-
   public ArmState getWantedState() {
     return wantedState;
   }
@@ -154,7 +152,6 @@ public class ArmSubsystem extends SubsystemBase {
     io.updateInputs(armInputs);
     currentState = handleStateTransitions();
     applyStates();
-
 
     // This method will be called once per scheduler run
   }
