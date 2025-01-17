@@ -1,8 +1,8 @@
-package frc.robot.subsystems.Elevator;
+package frc.robot.subsystems.elevator;
 
 import edu.wpi.first.units.measure.Voltage;
 import frc.helpers.CCMotorController;
-import frc.robot.subsystems.Elevator.ElevatorSubsystem.ElevatorPositions;
+import frc.robot.subsystems.elevator.ElevatorSubsystem.ElevatorPositions;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface ElevatorIO {
