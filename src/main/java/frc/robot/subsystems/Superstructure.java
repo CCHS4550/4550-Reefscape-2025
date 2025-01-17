@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.algae.AlgaeSubsystem;
 import frc.robot.subsystems.arm.ArmSubsystem;
+import frc.robot.subsystems.arm.ArmSubsystem.ArmState;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveDriveSubsystem;
@@ -157,6 +158,7 @@ public class Superstructure extends SubsystemBase {
   public void applyStates() {
     switch (currentSuperState) {
       case WITHIN_FRAME_PERIMETER_DEFAULT:
+        arm.setWantedState(ArmState.DEFAULT_WITHINFRAME);
         break;
 
       case CORAL_STATION_BACK:
