@@ -6,6 +6,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -237,7 +238,7 @@ public class SwerveDriveScheme {
           ,0 // left side of the reef
         ),
         SwerveDriveSubsystem.getInstance().getRobotRelativeSpeeds(),
-        
+        RobotState.getInstance().getRotation2d()
       )
     )
   );
@@ -249,7 +250,9 @@ public class SwerveDriveScheme {
               RobotState.getInstance().getPose()
            )
           ,1 // right side of the reef  
-        )
+        ),
+        SwerveDriveSubsystem.getInstance().getRobotRelativeSpeeds(),
+        RobotState.getInstance().getRotation2d()
       )
     )
   );
