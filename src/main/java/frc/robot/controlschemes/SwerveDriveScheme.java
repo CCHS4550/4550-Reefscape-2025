@@ -24,9 +24,9 @@ import java.util.function.DoubleSupplier;
  * Control scheme for swerve drive. Includes movement, the toggle between field centric and robot
  * centric, and a button to zero the gyro.
  */
-public class SwerveDriveScheme {
+public class SwerveDriveScheme{
 
-  // private static CommandXboxController controller;
+  //private static CommandXboxController controller;
   private static boolean fieldCentric = true;
   private static boolean orientationLocked = false;
   private static double orientationLockAngle;

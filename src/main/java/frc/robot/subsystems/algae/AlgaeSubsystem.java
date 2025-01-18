@@ -2,10 +2,15 @@ package frc.robot.subsystems.algae;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.helpers.CCMotorController;
 import frc.helpers.CCSparkMax;
 import frc.maps.Constants;
+
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Voltage;
 
 public class AlgaeSubsystem extends SubsystemBase {
 
@@ -75,4 +80,10 @@ public class AlgaeSubsystem extends SubsystemBase {
               Constants.MotorConstants.ALGAE_WRIST_REVERSE,
               1.0,
               1.0));
+  public Command wristUp(){
+      return this.runEnd(
+        ()->{},
+        ()->{}
+      );
+  }
 }

@@ -66,11 +66,11 @@ public class Superstructure extends SubsystemBase {
     /** Position to Score L4 */
     L4_BACK,
     /** In position to climb */
-    CLIMB_PREPARING,
+    CLIMB_PREPARING
     /** Climber actively working */
-    CLIMBING,
+   // CLIMBING,
     /** Do anything to help robot get off the ground. */
-    CLIMB_ASSIST
+    //CLIMB_ASSIST
   }
 
   public enum CurrentSuperState {
@@ -89,11 +89,11 @@ public class Superstructure extends SubsystemBase {
     /** Position to Score L4 */
     L4_BACK,
     /** In position to climb */
-    CLIMB_PREPARING,
+    CLIMB_PREPARING
     /** Climber actively working */
-    CLIMBING,
+    //CLIMBING,
     /** Do anything to help robot get off the ground. */
-    CLIMB_ASSIST
+    //CLIMB_ASSIST
   }
 
   WantedSuperState wantedSuperState = WantedSuperState.WITHIN_FRAME_PERIMETER_DEFAULT;
@@ -182,8 +182,8 @@ public class Superstructure extends SubsystemBase {
          * On Second thought, climbing should not be part of the state machine. I believe it should
          * be manual.
          */
-        // case CLIMB_PREPARING:
-        //   currentSuperState = CurrentSuperState.CLIMB_PREPARING;
+      case CLIMB_PREPARING:
+        currentSuperState = CurrentSuperState.CLIMB_PREPARING;
         //   break;
         // case CLIMBING:
         //   currentSuperState = CurrentSuperState.CLIMBING;

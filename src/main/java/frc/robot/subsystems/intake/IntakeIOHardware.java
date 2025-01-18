@@ -1,6 +1,7 @@
 package frc.robot.subsystems.intake;
 
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.helpers.CCMotorController;
 
 public class IntakeIOHardware implements IntakeIO {
@@ -26,6 +27,11 @@ public class IntakeIOHardware implements IntakeIO {
 
   @Override
   public void setOuterVoltage(Voltage voltage) {
+    outerMotor.setVoltage(voltage.magnitude());
+  }
+  @Override
+  public void setAllVoltage(Voltage voltage){
+    innerMotor.setVoltage(voltage.magnitude());
     outerMotor.setVoltage(voltage.magnitude());
   }
 }

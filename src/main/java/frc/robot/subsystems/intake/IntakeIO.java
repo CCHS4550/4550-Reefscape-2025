@@ -20,6 +20,8 @@ public interface IntakeIO {
 
   default void setInnerVoltage(Voltage voltage) {}
 
+  default void setAllVoltage(Voltage voltage) {}
+
   @FunctionalInterface
   interface IOFactory {
     IntakeIO create(CCMotorController innerMotor, CCMotorController outerMotor);
