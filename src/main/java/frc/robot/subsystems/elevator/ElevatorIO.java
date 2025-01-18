@@ -11,8 +11,8 @@ import org.littletonrobotics.junction.AutoLog;
 
 public interface ElevatorIO {
 
-  @AutoLog
-  class ElevatorIOInputs {
+    @AutoLog
+    class ElevatorIOInputs {
     public double currentPositionRotations = 0.0;
 
     public double pidOutput = 0.0;

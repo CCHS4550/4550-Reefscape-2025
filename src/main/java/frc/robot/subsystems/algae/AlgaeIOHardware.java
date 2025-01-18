@@ -1,5 +1,5 @@
-package frc.robot.subsystems.algae;
-
+package frc.robot.subystems.Algae;
+import frc.robot.subsystems.Algae.AlgaeSubsystem;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Voltage;
@@ -69,4 +69,31 @@ public class AlgaeIOHardware implements AlgaeIO {
         wristPIDController.calculate(
             wrist.getPosition(), AlgaeSubsystem.AlgaeStates.STOW.getEncoderPosition()));
   }
+
+  public void wristToState (AlgaeStates algaeState){
+    
+    wrist.set( 
+      wristPIDController.calculate(
+        wrist.getPosition(), algaeState.getEncoderPosition()
+      )
+    );
+  }
+
+  public boolean wristAtSetpoint (){
+    return wristPIDController.atSetpoint() || (wrist.getPosition() <= wristPIDController.getSetpoint() + 1 && wrist.getPosition() >= wristPIDController.getSetpoint() -1);
+  }
+
+  public Command setWristCommand (AlgaeStates algaeState, AlgaeSubsystem algae){
+    return new FunctionalCommand (()-> {}, () - > wristToState(algaeState), () - > setWristVoltage(0), ()-> wristAtSetpoint(), algae);
+  
+  
+}
+
+public Command intakeAlgaeCommand (){
+  return this.runEnd (()-> setIntakeVoltage(3.65), () -> setIntakeVoltage(0));
+}
+
+public Command intakeAlgaeForTime (double time ){
+  return this.run (()-> setIntakeVoltage(3.65)).withTimeout(time);
+}
 }

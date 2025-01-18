@@ -172,4 +172,6 @@ public class ArmIOHardware implements ArmIO {
               (voltage) -> setVoltage(voltage),
               null, // No log consumer, since data is recorded by URCL
               WristSubsystem.getInstance()));
+
+    
 }
