@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems.wrist;
 
+import static edu.wpi.first.units.Units.Volts;
+
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import edu.wpi.first.math.util.Units;
@@ -156,5 +158,23 @@ public class WristSubsystem extends SubsystemBase {
     applyStates();
 
     // This method will be called once per scheduler run
+  }
+  public Command wristUp() {
+    return this.startEnd(
+        () -> {
+          io.setVoltage(Volts.of(5.0));
+        },
+        () -> {
+          io.setVoltage(Volts.of(0.0));
+        });
+  }
+  public Command wristDown() {
+    return this.startEnd(
+        () -> {
+          io.setVoltage(Volts.of(-5.0));
+        },
+        () -> {
+          io.setVoltage(Volts.of(0.0));
+        });
   }
 }

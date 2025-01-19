@@ -4,8 +4,12 @@
 
 package frc.robot.subsystems.climber;
 
+import static edu.wpi.first.units.Units.Volts;
+
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.helpers.CCMotorController;
 import frc.helpers.CCSparkMax;
@@ -61,5 +65,23 @@ public class ClimberSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+  }
+  public Command climberUp() {
+    return this.startEnd(
+        () -> {
+          io.winchUp();
+        },
+        () -> {
+          io.setVoltage(Volts.of(0.0));
+        });
+  }
+  public Command climberDown() {
+    return this.startEnd(
+        () -> {
+          io.winchDown();
+        },
+        () -> {
+          io.setVoltage(Volts.of(0.0));
+        });
   }
 }

@@ -17,7 +17,8 @@ public class PathToCoral {
   // it doesn't need to have reef in los
   // but also this has a big O notation of like 6 so idk it might be bad
   public static Pose2d closestSide(Pose2d pos) {
-    Pose2d[] blueSideCoors = {}; // fill with the coordinates for the center of each wall on the blue
+    Pose2d[]
+        blueSideCoors = {}; // fill with the coordinates for the center of each wall on the blue
     // reef
     Pose2d[] redSideCoors = {}; // same as above but with red
     Pose2d closestCoor;
@@ -79,7 +80,9 @@ public class PathToCoral {
   // cannot be bothered to do that rn
   // also its just a bunch of if statements so big O is actually low
   public static PathPlannerPath goToCoral(int hexNumber, int side) {
-    Pose2d[][] blueOffsets = {{}}; // 2d array, One axis represents which side it is according to hexnumber, the internal axis
+    Pose2d[][] blueOffsets = {
+      {}
+    }; // 2d array, One axis represents which side it is according to hexnumber, the internal axis
     // of 2 represents the coordinates of the offsets for each side. 6x2 array
     Pose2d[][] redOffsets = {{}}; // same thing but for red
     Pose2d targetPose;

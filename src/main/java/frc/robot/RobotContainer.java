@@ -6,6 +6,8 @@ import frc.helpers.CCSparkMax;
 import frc.helpers.CCSparkSim;
 import frc.helpers.vision.PhotonVision;
 import frc.maps.Constants;
+import frc.robot.controlschemes.autoMechScheme;
+import frc.robot.controlschemes.teleOpMechScheme;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.algae.AlgaeIOHardware;
 import frc.robot.subsystems.algae.AlgaeIOReplay;
@@ -15,6 +17,7 @@ import frc.robot.subsystems.arm.ArmIOHardware;
 import frc.robot.subsystems.arm.ArmIOReplay;
 import frc.robot.subsystems.arm.ArmIOSim;
 import frc.robot.subsystems.arm.ArmSubsystem;
+import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.elevator.ElevatorIOHardware;
 import frc.robot.subsystems.elevator.ElevatorIOReplay;
 import frc.robot.subsystems.elevator.ElevatorIOSim;
@@ -40,6 +43,7 @@ public class RobotContainer {
   IntakeSubsystem intake;
   SwerveDriveSubsystem swerve;
   WristSubsystem wrist;
+  ClimberSubsystem climber;
 
   PhotonVision photonvision;
   Superstructure superstructure;
@@ -48,11 +52,11 @@ public class RobotContainer {
    * Initialize controllers.
    */
   CommandXboxController primaryController = new CommandXboxController(0);
-  CommandXboxController secondaryController = new CommandXboxController(1);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-
+    teleOpMechScheme.configure(intake, arm, elevator, wrist, algae, climber, 2);
+    autoMechScheme.configure(intake, arm, elevator, wrist, algae, superstructure, 3);
     switch (Constants.currentMode) {
       case REAL:
         swerve = SwerveDriveSubsystem.getInstance(CCSparkMax::new, SwerveModuleIOHardware::new);

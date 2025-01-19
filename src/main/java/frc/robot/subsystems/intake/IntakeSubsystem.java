@@ -5,15 +5,11 @@
 package frc.robot.subsystems.intake;
 
 import static edu.wpi.first.units.Units.Volts;
-import static edu.wpi.first.wpilibj2.command.Commands.parallel;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-
-import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.helpers.CCMotorController;
 import frc.helpers.CCSparkMax;
@@ -175,16 +171,24 @@ public class IntakeSubsystem extends SubsystemBase {
     applyStates();
     // This method will be called once per scheduler run
   }
-  public Command intake(){
-      return this.runEnd(
-        ()->{io.setAllVoltage(Volts.of(5.0));},
-        ()->{io.setAllVoltage(Volts.of(0.0));}
-      );
+
+  public Command intake() {
+    return this.startEnd(
+        () -> {
+          io.setAllVoltage(Volts.of(5.0));
+        },
+        () -> {
+          io.setAllVoltage(Volts.of(0.0));
+        });
   }
-  public Command outtake(){
-    return this.runEnd(
-      ()->{io.setAllVoltage(Volts.of(-5.0));},
-      ()->{io.setAllVoltage(Volts.of(0.0));}
-    );
-  } 
+
+  public Command outtake() {
+    return this.startEnd(
+        () -> {
+          io.setAllVoltage(Volts.of(-5.0));
+        },
+        () -> {
+          io.setAllVoltage(Volts.of(0.0));
+        });
+  }
 }

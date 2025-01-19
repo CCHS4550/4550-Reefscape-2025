@@ -68,9 +68,9 @@ public class Superstructure extends SubsystemBase {
     /** In position to climb */
     CLIMB_PREPARING
     /** Climber actively working */
-   // CLIMBING,
+    // CLIMBING,
     /** Do anything to help robot get off the ground. */
-    //CLIMB_ASSIST
+    // CLIMB_ASSIST
   }
 
   public enum CurrentSuperState {
@@ -91,9 +91,9 @@ public class Superstructure extends SubsystemBase {
     /** In position to climb */
     CLIMB_PREPARING
     /** Climber actively working */
-    //CLIMBING,
+    // CLIMBING,
     /** Do anything to help robot get off the ground. */
-    //CLIMB_ASSIST
+    // CLIMB_ASSIST
   }
 
   WantedSuperState wantedSuperState = WantedSuperState.WITHIN_FRAME_PERIMETER_DEFAULT;
@@ -142,6 +142,12 @@ public class Superstructure extends SubsystemBase {
         arm.setWantedState(ArmState.L4_BACK);
         elevator.setWantedState(ElevatorState.L4_BACK);
         wrist.setWantedState(WristState.L4_BACK);
+        break;
+      case CLIMB_PREPARING:  //IMPORTANT!!!! TODO - add in the positions these need to be in before we climb
+        // arm.setWantedState(ArmState.CLIMB_PREPARING);
+        // elevator.setWantedState(ElevatorState.CLIMB_PREPARING);
+        // wrist.setWantedState(ElevatorState.CLIMB_PREPARING);
+        // algae.setWantedState(ElevatorState.CLIMB_PREPARING);
         break;
       default:
     }

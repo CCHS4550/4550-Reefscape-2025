@@ -1,5 +1,7 @@
 package frc.robot.subsystems.climber;
 
+import static edu.wpi.first.units.Units.Volts;
+
 import edu.wpi.first.units.measure.Voltage;
 import frc.helpers.CCMotorController;
 
@@ -23,6 +25,6 @@ public class ClimberIOHardware implements ClimberIO {
 
   @Override
   public void setVoltage(Voltage volts) {
-    winchMotor.setVoltage(3, 60);
+    winchMotor.setVoltage(volts.magnitude(), 60);
   }
 }

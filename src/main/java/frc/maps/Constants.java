@@ -254,6 +254,10 @@ public class Constants {
     public static boolean WRIST_REVERSE = false;
   }
 
+  public static class algaeConstants {
+    
+  }
+
   public class FeedForwardConstants {
 
     // TODO Do sysid to get values

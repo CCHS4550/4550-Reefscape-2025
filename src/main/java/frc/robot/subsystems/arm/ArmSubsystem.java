@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems.arm;
 
+import static edu.wpi.first.units.Units.Volts;
+
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import edu.wpi.first.math.util.Units;
@@ -154,5 +156,23 @@ public class ArmSubsystem extends SubsystemBase {
     applyStates();
 
     // This method will be called once per scheduler run
+  }
+  public Command armUp() {
+    return this.startEnd(
+        () -> {
+          io.setVoltage(Volts.of(5.0));
+        },
+        () -> {
+          io.setVoltage(Volts.of(0.0));
+        });
+  }
+  public Command armDown() {
+    return this.startEnd(
+        () -> {
+          io.setVoltage(Volts.of(-5.0));
+        },
+        () -> {
+          io.setVoltage(Volts.of(0.0));
+        });
   }
 }
