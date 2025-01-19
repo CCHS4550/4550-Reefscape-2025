@@ -5,27 +5,19 @@ import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.Waypoint;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DriverStation;
-import frc.robot.subsystems.Superstructure;
-
 import java.util.List;
-import java.util.function.BooleanSupplier;
-import java.util.function.IntSupplier;
-
 import org.photonvision.PhotonUtils;
 // so many of the imports are unused lmao
 // could also use this for algae removal auto align
 
-public class PathToCoral {
+public class pathToIntake{
   // just uses position on the field to calculate closest side, could also use
   // best april tag method with a check for it being the right ones but I think this is better b/c
-  // it doesn't need to have reef in los
+  // it doesn't need to have hps in los
   // but also this has a big O notation of like 6 so idk it might be bad
   public static Pose2d closestSide(Pose2d pos) {
-    Pose2d[]
-        blueSideCoors = {}; // fill with the coordinates for the center of each wall on the blue
-    // reef
+    Pose2d[]blueSideCoors = {}; // fill with the coordinates for the center of each wall on the blue hps
     Pose2d[] redSideCoors = {}; // same as above but with red
     Pose2d closestCoor;
     if (DriverStation.getAlliance().equals(DriverStation.Alliance.Blue)) {
@@ -51,22 +43,18 @@ public class PathToCoral {
   // the center so im just returning a number to make some other steps easier
   // be sure to label what direction the numbers go around in.
   public static int closestSideNum(Pose2d pos) {
-    Pose2d[]
-        blueSideCoors = {}; // fill with the coordinates for the center of each wall on the blue
-    // reef
+    Pose2d[]blueSideCoors = {}; // fill with the coordinates for the center of each wall on the blue hps
     Pose2d[] redSideCoors = {}; // same as above but with red
     Pose2d closestCoor;
-    int hexNumber = 0;
+    int sideNumber = 0;
     if (DriverStation.getAlliance().equals(DriverStation.Alliance.Blue)) {
-      closestCoor =
-          blueSideCoors[
-              0]; // finds the shortest length of all the options on your alliance, definitely could
+      closestCoor = blueSideCoors[0]; // finds the shortest length of all the options on your alliance, definitely could
       // be optimized but lowkey its not that bad rn, big O of 6 max
       for (int i = 0; i < blueSideCoors.length; i++) {
         if (PhotonUtils.getDistanceToPose(pos, closestCoor)
             > PhotonUtils.getDistanceToPose(pos, blueSideCoors[i])) {
           closestCoor = blueSideCoors[i];
-          hexNumber = i;
+          sideNumber = i;
         }
       }
     } else {
@@ -75,36 +63,27 @@ public class PathToCoral {
         if (PhotonUtils.getDistanceToPose(pos, closestCoor)
             > PhotonUtils.getDistanceToPose(pos, redSideCoors[i])) {
           closestCoor = redSideCoors[i];
-          hexNumber = i;
+          sideNumber = i;
         }
       }
     }
-    return hexNumber;
+    return sideNumber;
   }
 
   // there is probably a way to calculate this rather than use a stupid amount of coordinates but I
   // cannot be bothered to do that rn
   // also its just a bunch of if statements so big O is actually low
-  public static PathPlannerPath goToCoral(int hexNumber, int side) {
-    Pose2d[][] blueOffsets = {
-      {}
-    }; // 2d array, One axis represents which side it is according to hexnumber, the internal axis
-    // of 2 represents the coordinates of the offsets for each side. 6x2 array
+  public static PathPlannerPath goToIntake(int sideNumber, int side) {
+    Pose2d[][] blueOffsets = {{}}; // 2d array, One axis represents which side it is according to sidenumber, the internal axis
+    // of 2 represents the coordinates of the offsets for each side. 2x2 array
     Pose2d[][] redOffsets = {{}}; // same thing but for red
     Pose2d targetPose;
     // just filters our goal pose into one pose2d
     if (DriverStation.getAlliance().equals(DriverStation.Alliance.Blue)) {
-      targetPose = blueOffsets[hexNumber][side];
+      targetPose = blueOffsets[sideNumber][side];
     } else {
-      targetPose = redOffsets[hexNumber][side];
+      targetPose = redOffsets[sideNumber][side];
     }
-    //IMPORTANT!!! TODO - add widget in shuffleboard that shows which rotation type we are on
-    if(Superstructure.getInstance().getWantedSuperstate().equals(Superstructure.WantedSuperState.L4_BACK) || // unsure which version to check, also unsure if I should check current superstate too
-        Superstructure.getInstance().getWantedSuperstate().equals(Superstructure.CurrentSuperState.L4_BACK)
-      ){
-        targetPose.times(-1);
-      }
-
     // Create a list of waypoints from poses. Each pose represents one waypoint.
     // The rotation component of the pose should be the direction of travel. Do not use holonomic
     // rotation.
