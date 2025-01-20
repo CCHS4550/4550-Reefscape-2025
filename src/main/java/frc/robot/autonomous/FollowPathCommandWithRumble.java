@@ -20,11 +20,13 @@ import frc.robot.RobotState;
 import frc.robot.subsystems.swervedrive.SwerveDriveSubsystem;
 import org.littletonrobotics.junction.Logger;
 
-public class FollowPathCommand extends Command {
+public class FollowPathCommandWithRumble extends Command {
 
   Timer timer = new Timer();
 
   PathPlannerTrajectory trajectory;
+
+  CommandXboxController controller;
 
   Pose2d currentPose;
 
@@ -47,9 +49,10 @@ public class FollowPathCommand extends Command {
    *
    * @param trajectory the PathPlannerTrajectory
    */
-  public FollowPathCommand(PathPlannerTrajectory trajectory) {
+  public FollowPathCommandWithRumble(PathPlannerTrajectory trajectory, CommandXboxController controller) {
 
     this.trajectory = trajectory;
+    this.controller = controller;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(SwerveDriveSubsystem.getInstance());
   }
@@ -120,6 +123,7 @@ public class FollowPathCommand extends Command {
   public void end(boolean interrupted) {
     this.timer.stop();
     SwerveDriveSubsystem.getInstance().stopModules();
+    OI.setRumble(0, 0.5);
   }
 
   // Returns true when the command should end.
