@@ -10,6 +10,7 @@ import com.studica.frc.AHRS.NavXComType;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
@@ -27,6 +28,8 @@ import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.swervedrive.RealOdometryThread;
 import frc.robot.subsystems.swervedrive.SwerveDriveSubsystem;
 import frc.robot.subsystems.wrist.WristSubsystem;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Queue;
 import org.littletonrobotics.junction.Logger;
 
@@ -52,10 +55,13 @@ public class RobotState {
   /** Module positions used for odometry */
   public SwerveModulePosition[] swerveModulePositions = new SwerveModulePosition[4];
 
+  private SwerveModulePosition[] previousSwerveModulePositions = new SwerveModulePosition[4];
+
   // Initialize gyro
   public AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
   private final Queue<Double> gyroContainer;
   public Rotation2d[] gyroAngle = new Rotation2d[] {};
+  public List<Rotation2d> gyroAnglePlusDeltas = new ArrayList<>();
 
   private RobotState() {
 
@@ -99,6 +105,8 @@ public class RobotState {
     swerveModulePositions[3] =
         new SwerveModulePosition(
             0, new Rotation2d(swerve.backLeft.getAbsoluteEncoderRadiansOffset()));
+
+    previousSwerveModulePositions = swerveModulePositions;
   }
 
   public final Field2d gameField = new Field2d();
@@ -131,6 +139,8 @@ public class RobotState {
             .toArray(Rotation2d[]::new);
     gyroContainer.clear();
 
+    addModuleDeltas();
+
     gameField.setRobotPose(getPose());
 
     lastPose = currentPose;
@@ -141,7 +151,8 @@ public class RobotState {
     /** Update the SwerveDrivePoseEstimator with the Drivetrain encoders and such */
     for (int i = 0; i < sampleCount; i++) {
 
-      poseEstimator.updateWithTime(sampleTimestamps[i], gyroAngle[i], getModulePositionArray()[i]);
+      poseEstimator.updateWithTime(
+          sampleTimestamps[i], gyroAnglePlusDeltas.get(i), getModulePositionArray()[i]);
     }
 
     currentPose = getPose();
@@ -323,8 +334,26 @@ public class RobotState {
               swerve.swerveModuleInputs[3].odometryDrivePositionsMeters[i],
               swerve.swerveModuleInputs[3].odometryTurnPositions[i]);
     }
+    swerveModulePositions = positions[sampleCount - 1];
 
     return positions;
+  }
+
+  public synchronized void addModuleDeltas() {
+    gyroAnglePlusDeltas.clear();
+
+    SwerveModulePosition[] previousPositions = swerveModulePositions;
+
+    for (int i = 0; i < gyroAngle.length; i++) {
+      SwerveModulePosition[] samplePositions = getModulePositionArray()[i];
+
+      Twist2d deltas =
+          Constants.SwerveConstants.DRIVE_KINEMATICS.toTwist2d(previousPositions, samplePositions);
+
+      gyroAnglePlusDeltas.add(gyroAngle[i].plus(Rotation2d.fromRadians(deltas.dtheta)));
+
+      previousPositions = samplePositions;
+    }
   }
 
   public synchronized void updateModulePositions() {
