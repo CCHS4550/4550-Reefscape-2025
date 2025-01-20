@@ -99,10 +99,7 @@ public class ElevatorIOHardware implements ElevatorIO {
     this.goalState = goalState;
 
     pidOutput = elevatorPidController.calculate(getAbsoluteHeightMetersOffset(), goalState);
-    ffOutput =
-        elevatorFeedForward.calculate(
-            elevatorPidController.getSetpoint().position,
-            elevatorPidController.getSetpoint().velocity);
+    ffOutput = elevatorFeedForward.calculate(elevatorPidController.getSetpoint().velocity);
 
     return pidOutput + ffOutput;
   }

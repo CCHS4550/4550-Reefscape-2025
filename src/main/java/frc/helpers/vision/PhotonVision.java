@@ -67,7 +67,6 @@ public class PhotonVision extends SubsystemBase implements VisionIO {
 
     switch (Constants.currentMode) {
       case REAL:
-
         frontCamera_photonEstimator =
             new PhotonPoseEstimator(
                 Constants.AprilTags.aprilTagFieldLayout,
@@ -88,7 +87,6 @@ public class PhotonVision extends SubsystemBase implements VisionIO {
         break;
 
       case SIM:
-
         visionSim = new VisionSystemSim("main");
         visionSim.addAprilTags(Constants.AprilTags.aprilTagFieldLayout);
 
@@ -117,8 +115,8 @@ public class PhotonVision extends SubsystemBase implements VisionIO {
   /**
    * IMPORTANT METHOD! Main method for updating PhotonVision Inputs!
    *
-   * @param inputs - This is a container object that stores all the data surrounding Vision.
-   *     More information in Vision.java
+   * @param inputs - This is a container object that stores all the data surrounding Vision. More
+   *     information in Vision.java
    * @param currentEstimate - This is where the robot thinks it is at this moment, before it updates
    *     itself through the SwerveDrivePoseEstimator.
    */
@@ -152,7 +150,6 @@ public class PhotonVision extends SubsystemBase implements VisionIO {
     } else {
       inputs.timestamp = inputs.timestamp;
       inputs.hasEstimate = false;
-
     }
   }
 
@@ -174,8 +171,7 @@ public class PhotonVision extends SubsystemBase implements VisionIO {
 
     for (Map.Entry<PhotonPoseEstimator, PhotonPipelineResult> result : results) {
 
-      Optional<EstimatedRobotPose> estimatedPose =
-          result.getKey().update(result.getValue());
+      Optional<EstimatedRobotPose> estimatedPose = result.getKey().update(result.getValue());
       if (estimatedPose.isPresent()) {
         estimates.add(estimatedPose.get().estimatedPose.toPose2d());
       }
@@ -185,7 +181,6 @@ public class PhotonVision extends SubsystemBase implements VisionIO {
 
     return estimates.toArray(new Pose2d[0]);
   }
-
 
   public double estimateAverageTimestamp(
       List<Map.Entry<PhotonPoseEstimator, PhotonPipelineResult>> results) {
@@ -198,7 +193,6 @@ public class PhotonVision extends SubsystemBase implements VisionIO {
     return latestTimestamp / count;
   }
 
-
   /** If any of the results have targets, then return true. */
   public boolean hasAnyTarget(List<Map.Entry<PhotonPoseEstimator, PhotonPipelineResult>> results) {
     for (Map.Entry<PhotonPoseEstimator, PhotonPipelineResult> result : results) {
@@ -208,7 +202,6 @@ public class PhotonVision extends SubsystemBase implements VisionIO {
     }
     return false;
   }
-
 
   @Override
   public void periodic() {

@@ -4,11 +4,9 @@
 
 package frc.robot;
 
+import choreo.util.ChoreoAllianceFlipUtil;
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
-
-import choreo.Choreo;
-import choreo.util.ChoreoAllianceFlipUtil;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -430,14 +428,13 @@ public class RobotState {
 
   public synchronized void setOdometryAllianceFlip(Pose2d pos) {
     if (Constants.isBlue()) return;
-    
+
     poseEstimator.resetPosition(
         ChoreoAllianceFlipUtil.flip(getRotation2d()),
         swerveModulePositions,
         ChoreoAllianceFlipUtil.flip(pos));
     return;
   }
-
 
   /** Gyroscope Methods (NavX) */
   public synchronized void zeroHeading() {

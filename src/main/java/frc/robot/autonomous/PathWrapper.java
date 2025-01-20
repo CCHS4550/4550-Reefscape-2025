@@ -86,7 +86,7 @@ public class PathWrapper {
   }
 
   public Command setInitialPose() {
-    return new InstantCommand(() -> RobotState.getInstance().setOdometryAllianceFlip(initialPose));
+    return new InstantCommand(() -> RobotState.getInstance().setOdometry(initialPose));
   }
 
   public Command getStartingCommand() {
@@ -109,35 +109,64 @@ public class PathWrapper {
     return allCommands;
   }
 
-  private Command followTrajectory(PathPlannerTrajectory traj) {
-    return new FollowPathCommand(traj);
-  }
-
-  public Command followChoreo(String filename, ChassisSpeeds speeds, Rotation2d heading) {
+  /** Primary Follow Commands */
+  public static Command followChoreo(String filename, ChassisSpeeds speeds, Rotation2d heading) {
 
     return new FollowPathCommand(getChoreoTrajectoryAutoRoutine(filename, speeds, heading));
   }
 
-  public Command followPathPlanner(String filename, ChassisSpeeds speeds, Rotation2d heading) {
+  public static Command followPathPlanner(
+      String filename, ChassisSpeeds speeds, Rotation2d heading) {
 
     return new FollowPathCommand(getPathPlannerTrajectoryAutoRoutine(filename, speeds, heading));
   }
 
-  private PathPlannerTrajectory getChoreoTrajectoryAutoRoutine(
+  /** Get the PathPlannerTrajectory from a particular PathPlannerPath */
+  private static PathPlannerTrajectory getChoreoTrajectoryAutoRoutine(
       String filename, ChassisSpeeds speeds, Rotation2d initialHeading) {
     return getPathPlannerPathfromChoreo(filename)
         .generateTrajectory(speeds, initialHeading, Constants.SwerveConstants.ROBOT_CONFIG);
   }
 
-  private PathPlannerTrajectory getPathPlannerTrajectoryAutoRoutine(
+  private static PathPlannerTrajectory getPathPlannerTrajectoryAutoRoutine(
       String filename, ChassisSpeeds speeds, Rotation2d initialHeading) {
     return getPathPlannerPathfromPath(filename)
         .generateTrajectory(speeds, initialHeading, Constants.SwerveConstants.ROBOT_CONFIG);
   }
 
-  /** Helper Classes for general cases. */
-  public static Command followChoreo(String filename) {
+  /** Get PathPlannerPath from files */
+  public static PathPlannerPath getPathPlannerPathfromPath(String filename) {
+    try {
+      return flipIfNecessary(PathPlannerPath.fromPathFile(filename));
+    } catch (IOException e) {
+      e.printStackTrace();
+      System.err.println("Error reading the path file" + filename);
+    } catch (org.json.simple.parser.ParseException e) {
+      e.printStackTrace();
+      System.err.println("Error parsing the path file" + filename);
+    }
+    return null;
+  }
 
+  public static PathPlannerPath getPathPlannerPathfromChoreo(String filename) {
+    try {
+      return flipIfNecessary(PathPlannerPath.fromChoreoTrajectory(filename));
+    } catch (IOException e) {
+      e.printStackTrace();
+      System.err.println("Error reading the path file" + filename);
+    } catch (org.json.simple.parser.ParseException e) {
+      e.printStackTrace();
+      System.err.println("Error parsing the path file" + filename);
+    }
+    return null;
+  }
+
+  public static PathPlannerPath flipIfNecessary(PathPlannerPath path) {
+    return Constants.isBlue() ? path : path.flipPath();
+  }
+
+  /** Helper Classes for general cases outside this class. */
+  public static Command followChoreo(String filename) {
     return new FollowPathCommand(
         getPathPlannerPathfromChoreo(filename)
             .generateTrajectory(
@@ -171,31 +200,7 @@ public class PathWrapper {
             Constants.SwerveConstants.ROBOT_CONFIG);
   }
 
-  public static PathPlannerPath getPathPlannerPathfromPath(String filename) {
-    try {
-      PathPlannerPath.fromPathFile(filename);
-    } catch (IOException e) {
-      e.printStackTrace();
-      System.err.println("Error reading the path file" + filename);
-    } catch (org.json.simple.parser.ParseException e) {
-      e.printStackTrace();
-      System.err.println("Error parsing the path file" + filename);
-    }
-    // Return null or provide a default value
-    return null;
-  }
-
-  public static PathPlannerPath getPathPlannerPathfromChoreo(String filename) {
-    try {
-      PathPlannerPath.fromChoreoTrajectory(filename);
-    } catch (IOException e) {
-      e.printStackTrace();
-      System.err.println("Error reading the path file" + filename);
-    } catch (org.json.simple.parser.ParseException e) {
-      e.printStackTrace();
-      System.err.println("Error parsing the path file" + filename);
-    }
-    // Return null or provide a default value
-    return null;
+  private static Command followTrajectory(PathPlannerTrajectory traj) {
+    return new FollowPathCommand(traj);
   }
 }

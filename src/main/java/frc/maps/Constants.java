@@ -21,8 +21,8 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.RobotBase;
 
 public class Constants {
 
@@ -58,11 +58,7 @@ public class Constants {
     } else if (RobotBase.isSimulation()) {
       currentMode = Mode.SIM;
     }
-
   }
-
-
-
 
   public static class ConversionConstants {
 
