@@ -133,13 +133,15 @@ public class RobotState {
 
   public synchronized void updateOdometryPose() {
 
+    /** Send the high frequency odometry to an array */
     gyroAngle =
         gyroContainer.stream()
             .map((Double value) -> new Rotation2d(value))
             .toArray(Rotation2d[]::new);
     gyroContainer.clear();
 
-    addModuleDeltas();
+    /** Only just found out this method is basically useless unless your gyro has disconnected. Too tired to explain it rn. */
+    // addModuleDeltas();
 
     gameField.setRobotPose(getPose());
 
@@ -334,6 +336,7 @@ public class RobotState {
               swerve.swerveModuleInputs[3].odometryDrivePositionsMeters[i],
               swerve.swerveModuleInputs[3].odometryTurnPositions[i]);
     }
+
     swerveModulePositions = positions[sampleCount - 1];
 
     return positions;
