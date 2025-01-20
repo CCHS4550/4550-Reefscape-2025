@@ -197,7 +197,7 @@ public class SwerveDriveScheme {
                         .poseEstimator
                         .resetPosition(
                             RobotState.getInstance().getRotation2d(),
-                            SwerveDriveSubsystem.getInstance().swerveModulePositions,
+                            RobotState.getInstance().swerveModulePositions,
                             new Pose2d())));
 
     controller.a().onTrue(runOnce(() -> RobotState.getInstance().zeroHeading()));

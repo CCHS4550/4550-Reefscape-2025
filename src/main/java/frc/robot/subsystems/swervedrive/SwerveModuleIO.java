@@ -11,8 +11,8 @@ public interface SwerveModuleIO {
   @AutoLog
   class SwerveModuleInputs {
 
-    public double drivePositionRad = 0.0;
-    public double driveVelocityRadPerSec = 0.0;
+    public double drivePositionMeters = 0.0;
+    public double driveVelocityMetersPerSec = 0.0;
     public double driveAppliedVolts = 0.0;
     public double driveCurrentAmps = 0.0;
 
@@ -24,7 +24,7 @@ public interface SwerveModuleIO {
 
     // This is the final product of the RealOdometryThread.
     public double[] odometryTimestamps = new double[] {};
-    public double[] odometryDrivePositionsRad = new double[] {};
+    public double[] odometryDrivePositionsMeters = new double[] {};
     public Rotation2d[] odometryTurnPositions = new Rotation2d[] {};
   }
 

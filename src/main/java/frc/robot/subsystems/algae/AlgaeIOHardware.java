@@ -4,10 +4,7 @@ import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
-import org.littletonrobotics.junction.Logger;
-
 import edu.wpi.first.math.controller.ArmFeedforward;
-import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -15,14 +12,11 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.helpers.CCMotorController;
 import frc.maps.Constants;
 import frc.robot.subsystems.algae.AlgaeSubsystem.AlgaeStates;
-import frc.robot.subsystems.arm.ArmSubsystem;
-import frc.robot.subsystems.arm.ArmSubsystem.ArmState;
-import frc.robot.subsystems.wrist.WristSubsystem;
+import org.littletonrobotics.junction.Logger;
 
 public class AlgaeIOHardware implements AlgaeIO {
 
@@ -99,11 +93,13 @@ public class AlgaeIOHardware implements AlgaeIO {
     inputs.goalAngleDegrees = Units.radiansToDegrees(goalState.position);
     inputs.goalVelocity = goalState.velocity;
   }
+
   @Override
-  public void holdAtState(AlgaeStates goalState){
+  public void holdAtState(AlgaeStates goalState) {
     setWristVoltage(
         Volts.of(getPIDFFOutput(new State(Units.degreesToRadians(goalState.getAngle()), 0))));
   }
+
   @Override
   public double getPIDFFOutput(State goalState) {
 
@@ -126,8 +122,9 @@ public class AlgaeIOHardware implements AlgaeIO {
   public void setIntakeVoltage(Voltage voltage) {
     intake.setVoltage(voltage.magnitude());
   }
+
   @Override
-  public double getWristVoltage(){
+  public double getWristVoltage() {
     return wrist.getVoltage();
   }
 
@@ -144,13 +141,13 @@ public class AlgaeIOHardware implements AlgaeIO {
         wristPIDController.calculate(
             wrist.getPosition(), AlgaeSubsystem.AlgaeStates.STOW.getAngle()));
   }
+
   @Override
-  public double getAngleRads(){
+  public double getAngleRads() {
     return wrist.getPosition() * WRIST_POSITION_COEFFICIENT;
   }
 
-
-    /** SYSID METHODS */
+  /** SYSID METHODS */
 
   /**
    * Used only in characterizing. Don't touch this.
@@ -183,5 +180,4 @@ public class AlgaeIOHardware implements AlgaeIO {
               (voltage) -> setWristVoltage(voltage),
               null, // No log consumer, since data is recorded by URCL
               AlgaeSubsystem.getInstance()));
-
 }

@@ -2,12 +2,8 @@ package frc.robot.subsystems.algae;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.helpers.CCMotorController;
 import frc.robot.subsystems.algae.AlgaeSubsystem.AlgaeStates;
-import frc.robot.subsystems.arm.ArmSubsystem;
-
 import org.littletonrobotics.junction.AutoLog;
 
 public interface AlgaeIO {
@@ -43,13 +39,13 @@ public interface AlgaeIO {
 
   default void setWristVoltage(Voltage voltage) {}
 
-  default double getWristVoltage(){
+  default double getWristVoltage() {
     return 0.0;
   }
 
   default void setIntakeVoltage(Voltage voltage) {}
 
-  default double getAngleRads(){
+  default double getAngleRads() {
     return 0.0;
   }
 

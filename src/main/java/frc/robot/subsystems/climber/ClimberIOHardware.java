@@ -1,7 +1,5 @@
 package frc.robot.subsystems.climber;
 
-import static edu.wpi.first.units.Units.Volts;
-
 import edu.wpi.first.units.measure.Voltage;
 import frc.helpers.CCMotorController;
 

@@ -6,11 +6,12 @@ package frc.robot;
 
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
+
+import choreo.Choreo;
+import choreo.util.ChoreoAllianceFlipUtil;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
@@ -25,8 +26,10 @@ import frc.robot.subsystems.algae.AlgaeSubsystem;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.intake.IntakeSubsystem;
+import frc.robot.subsystems.swervedrive.RealOdometryThread;
 import frc.robot.subsystems.swervedrive.SwerveDriveSubsystem;
 import frc.robot.subsystems.wrist.WristSubsystem;
+import java.util.Queue;
 import org.littletonrobotics.junction.Logger;
 
 /** RobotState is used to retrieve information about the robot's state in other classes. */
@@ -48,9 +51,13 @@ public class RobotState {
   IntakeSubsystem intake;
   WristSubsystem wrist;
 
+  /** Module positions used for odometry */
+  public SwerveModulePosition[] swerveModulePositions = new SwerveModulePosition[4];
+
   // Initialize gyro
   public AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
-  // private final Queue<Double> gyroContainer;
+  private final Queue<Double> gyroContainer;
+  public Rotation2d[] gyroAngle = new Rotation2d[] {};
 
   private RobotState() {
 
@@ -63,6 +70,9 @@ public class RobotState {
               }
             })
         .start();
+
+    gyroContainer =
+        RealOdometryThread.getInstance().registerInput(() -> getRotation2d().getRadians());
   }
 
   public void robotStateInit(
@@ -79,8 +89,18 @@ public class RobotState {
     this.intake = intake;
     this.wrist = wrist;
 
-    // gyroContainer =
-    // RealOdometryThread.getInstance().registerInput(() -> getRotation2d().getRadians());
+    swerveModulePositions[0] =
+        new SwerveModulePosition(
+            0, new Rotation2d(swerve.frontRight.getAbsoluteEncoderRadiansOffset()));
+    swerveModulePositions[1] =
+        new SwerveModulePosition(
+            0, new Rotation2d(swerve.frontLeft.getAbsoluteEncoderRadiansOffset()));
+    swerveModulePositions[2] =
+        new SwerveModulePosition(
+            0, new Rotation2d(swerve.backRight.getAbsoluteEncoderRadiansOffset()));
+    swerveModulePositions[3] =
+        new SwerveModulePosition(
+            0, new Rotation2d(swerve.backLeft.getAbsoluteEncoderRadiansOffset()));
   }
 
   public final Field2d gameField = new Field2d();
@@ -95,28 +115,35 @@ public class RobotState {
   public final frc.helpers.vision.VisionIOInputsAutoLogged visionInputs =
       new frc.helpers.vision.VisionIOInputsAutoLogged();
 
-  public void poseInit() {
+  public synchronized void poseInit() {
 
     poseEstimator =
         new SwerveDrivePoseEstimator(
             Constants.SwerveConstants.DRIVE_KINEMATICS,
-            Rotation2d.fromDegrees(gyro.getAngle()).unaryMinus(),
-            swerve.swerveModulePositions,
+            getRotation2d(),
+            swerveModulePositions,
             new Pose2d(0, 0, new Rotation2d(0)));
   }
 
   public synchronized void updateOdometryPose() {
 
+    gyroAngle =
+        gyroContainer.stream()
+            .map((Double value) -> new Rotation2d(value))
+            .toArray(Rotation2d[]::new);
+    gyroContainer.clear();
+
     gameField.setRobotPose(getPose());
-    // Logger.recordOutput("REAL Pose", getPose());
 
     lastPose = currentPose;
 
-    /** Update the SwerveDrivePoseEstimator with the Drivetrain encoders and such */
-    for (int i = 0; i < swerve.swerveModuleInputs[0].odometryTimestamps.length; i++) {
+    double sampleCount = swerve.swerveModuleInputs[0].odometryTimestamps.length;
+    double[] sampleTimestamps = swerve.swerveModuleInputs[0].odometryTimestamps;
 
-      poseEstimator.updateWithTime(
-          getAverageTimestampArray()[i], getRotation2d(), getModulePositionArray()[i]);
+    /** Update the SwerveDrivePoseEstimator with the Drivetrain encoders and such */
+    for (int i = 0; i < sampleCount; i++) {
+
+      poseEstimator.updateWithTime(sampleTimestamps[i], gyroAngle[i], getModulePositionArray()[i]);
     }
 
     currentPose = getPose();
@@ -124,7 +151,7 @@ public class RobotState {
     Logger.recordOutput("Estimated Angle", getPose().getRotation().getDegrees());
   }
 
-  public void updateVisionPose() {
+  public synchronized void updateVisionPose() {
     /** Update the visionData to what the camera sees. */
     if (Robot.isReal()) {
       PhotonVision.getInstance().updateInputs(visionInputs, getPose());
@@ -275,51 +302,52 @@ public class RobotState {
     enc_BL_pos_Entry.setDouble(swerve.backLeft.getTurnPosition());
   }
 
-  public synchronized void updateModulePositions() {
+  public synchronized SwerveModulePosition[][] getModulePositionArray() {
 
-    swerve.swerveModulePositions[0] =
+    int sampleCount = swerve.swerveModuleInputs[0].odometryTimestamps.length;
+    SwerveModulePosition[][] positions = new SwerveModulePosition[sampleCount][4];
+
+    for (int i = 0; i < sampleCount; i++) {
+      positions[i][0] =
+          new SwerveModulePosition(
+              swerve.swerveModuleInputs[0].odometryDrivePositionsMeters[i],
+              swerve.swerveModuleInputs[0].odometryTurnPositions[i]);
+      positions[i][1] =
+          new SwerveModulePosition(
+              swerve.swerveModuleInputs[1].odometryDrivePositionsMeters[i],
+              swerve.swerveModuleInputs[1].odometryTurnPositions[i]);
+      positions[i][2] =
+          new SwerveModulePosition(
+              swerve.swerveModuleInputs[2].odometryDrivePositionsMeters[i],
+              swerve.swerveModuleInputs[2].odometryTurnPositions[i]);
+      positions[i][3] =
+          new SwerveModulePosition(
+              swerve.swerveModuleInputs[3].odometryDrivePositionsMeters[i],
+              swerve.swerveModuleInputs[3].odometryTurnPositions[i]);
+    }
+
+    return positions;
+  }
+
+  public synchronized void updateModulePositions() {
+    swerveModulePositions[0] =
         new SwerveModulePosition(
             swerve.frontRight.getDrivePosition(),
             new Rotation2d(swerve.frontRight.getTurnPosition()));
-    swerve.swerveModulePositions[1] =
+    swerveModulePositions[1] =
         new SwerveModulePosition(
             swerve.frontLeft.getDrivePosition(),
             new Rotation2d(swerve.frontLeft.getTurnPosition()));
-    swerve.swerveModulePositions[2] =
+    swerveModulePositions[2] =
         new SwerveModulePosition(
             swerve.backRight.getDrivePosition(),
             new Rotation2d(swerve.backRight.getTurnPosition()));
-    swerve.swerveModulePositions[3] =
+    swerveModulePositions[3] =
         new SwerveModulePosition(
             swerve.backLeft.getDrivePosition(), new Rotation2d(swerve.backLeft.getTurnPosition()));
   }
 
-  public SwerveModulePosition[][] getModulePositionArray() {
-    int inputQuantity = swerve.swerveModuleInputs[0].odometryTimestamps.length;
-    SwerveModulePosition[][] positions = new SwerveModulePosition[inputQuantity][4];
-
-    for (int i = 0; i < inputQuantity; i++) {
-      positions[i][0] =
-          new SwerveModulePosition(
-              swerve.swerveModuleInputs[0].drivePositionRad,
-              swerve.swerveModuleInputs[0].turnPosition);
-      positions[i][1] =
-          new SwerveModulePosition(
-              swerve.swerveModuleInputs[1].drivePositionRad,
-              swerve.swerveModuleInputs[0].turnPosition);
-      positions[i][2] =
-          new SwerveModulePosition(
-              swerve.swerveModuleInputs[2].drivePositionRad,
-              swerve.swerveModuleInputs[0].turnPosition);
-      positions[i][3] =
-          new SwerveModulePosition(
-              swerve.swerveModuleInputs[3].drivePositionRad,
-              swerve.swerveModuleInputs[0].turnPosition);
-    }
-    return positions;
-  }
-
-  public double[] getAverageTimestampArray() {
+  public synchronized double[] getAverageTimestampArray() {
 
     int inputQuantity = swerve.swerveModuleInputs[0].odometryTimestamps.length;
 
@@ -347,7 +375,7 @@ public class RobotState {
    *
    * @return The Pose2d of the robot.
    */
-  public Pose2d getPose() {
+  public synchronized Pose2d getPose() {
     return poseEstimator.getEstimatedPosition();
   }
 
@@ -357,24 +385,24 @@ public class RobotState {
   //   return photonPoseEstimator.update();
   // }
 
-  public void printPos2d() {
+  public synchronized void printPos2d() {
     System.out.println(poseEstimator.getEstimatedPosition());
   }
 
   // Returns the estimated transformation over the next tick (The change in
   // position)
-  private Transform2d getTickFutureTransform() {
-    return new Transform2d(
-        new Translation2d(
-            swerve.getFieldVelocity().vxMetersPerSecond * 0.02,
-            swerve.getFieldVelocity().vyMetersPerSecond * 0.02),
-        new Rotation2d(0.0));
-  }
+  // private Transform2d getTickFutureTransform() {
+  //   return new Transform2d(
+  //       new Translation2d(
+  //           swerve.getFieldVelocity().vxMetersPerSecond * 0.02,
+  //           swerve.getFieldVelocity().vyMetersPerSecond * 0.02),
+  //       new Rotation2d(0.0));
+  // }
 
-  // Returns the estimated robot position a tick from the current time (Theoretically?)
-  private Pose2d getFutureTickPose() {
-    return getPose().plus(getTickFutureTransform().inverse());
-  }
+  // // Returns the estimated robot position a tick from the current time (Theoretically?)
+  // private Pose2d getFutureTickPose() {
+  //   return getPose().plus(getTickFutureTransform().inverse());
+  // }
 
   /** Odometry */
 
@@ -382,8 +410,8 @@ public class RobotState {
    * Resets the odometer readings using the gyro, SwerveModulePositions (defined in constructor),
    * and Pose2d. Also used in AutonomousScheme.java
    */
-  public void setOdometry() {
-    poseEstimator.resetPosition(getRotation2d(), swerve.swerveModulePositions, getPose());
+  public synchronized void setOdometry() {
+    poseEstimator.resetPosition(getRotation2d(), swerveModulePositions, getPose());
   }
 
   /**
@@ -392,24 +420,36 @@ public class RobotState {
    *
    * @param pos the Pose2d to set the odometry
    */
-  public void setOdometry(Pose2d pos) {
+  public synchronized void setOdometry(Pose2d pos) {
     poseEstimator.resetPosition(
         getRotation2d(),
         // pos.getRotation(),
-        swerve.swerveModulePositions,
+        swerveModulePositions,
         pos);
   }
+
+  public synchronized void setOdometryAllianceFlip(Pose2d pos) {
+    if (Constants.isBlue()) return;
+    
+    poseEstimator.resetPosition(
+        ChoreoAllianceFlipUtil.flip(getRotation2d()),
+        swerveModulePositions,
+        ChoreoAllianceFlipUtil.flip(pos));
+    return;
+  }
+
+
   /** Gyroscope Methods (NavX) */
-  public void zeroHeading() {
+  public synchronized void zeroHeading() {
     gyro.reset();
     setOdometry(new Pose2d(getPose().getX(), getPose().getY(), new Rotation2d(0)));
   }
 
-  public double getPitch() {
+  public synchronized double getPitch() {
     return gyro.getPitch() - 1.14;
   }
 
-  public double getRoll() {
+  public synchronized double getRoll() {
     return gyro.getRoll();
   }
 
@@ -418,19 +458,19 @@ public class RobotState {
    *
    * @return The facing direction of the gyro, between -360 and 360 degrees.
    */
-  public double getHeading() {
+  public synchronized double getHeading() {
     return Math.IEEEremainder(gyro.getYaw(), 360);
   }
 
-  public Rotation2d getPoseRotation2d() {
+  public synchronized Rotation2d getPoseRotation2d() {
     return poseEstimator.getEstimatedPosition().getRotation();
   }
 
-  public double getPoseAngleDegrees() {
+  public synchronized double getPoseAngleDegrees() {
     return poseEstimator.getEstimatedPosition().getRotation().getDegrees();
   }
 
-  public double getPoseAngleRadians() {
+  public synchronized double getPoseAngleRadians() {
     return poseEstimator.getEstimatedPosition().getRotation().getRadians();
   }
 
@@ -440,14 +480,14 @@ public class RobotState {
    *
    * @return
    */
-  public Rotation2d getRotation2d() {
+  public synchronized Rotation2d getRotation2d() {
 
     Logger.recordOutput("Gyro Rotation2d", gyro.getRotation2d());
     return gyro.getRotation2d();
     // .plus(Rotation2d.fromRadians(Math.PI));
   }
 
-  public void setRotation2d(Rotation2d rotation2d) {
+  public synchronized void setRotation2d(Rotation2d rotation2d) {
     setOdometry(new Pose2d(getPose().getTranslation(), rotation2d));
   }
 }

@@ -157,6 +157,7 @@ public class ArmSubsystem extends SubsystemBase {
 
     // This method will be called once per scheduler run
   }
+
   public Command armUp() {
     return this.startEnd(
         () -> {
@@ -166,6 +167,7 @@ public class ArmSubsystem extends SubsystemBase {
           io.setVoltage(Volts.of(0.0));
         });
   }
+
   public Command armDown() {
     return this.startEnd(
         () -> {

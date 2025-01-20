@@ -67,6 +67,7 @@ public class PhotonVision extends SubsystemBase implements VisionIO {
 
     switch (Constants.currentMode) {
       case REAL:
+
         frontCamera_photonEstimator =
             new PhotonPoseEstimator(
                 Constants.AprilTags.aprilTagFieldLayout,
@@ -83,9 +84,11 @@ public class PhotonVision extends SubsystemBase implements VisionIO {
 
         photonEstimators =
             new PhotonPoseEstimator[] {frontCamera_photonEstimator, backCamera_photonEstimator};
+
         break;
 
       case SIM:
+
         visionSim = new VisionSystemSim("main");
         visionSim.addAprilTags(Constants.AprilTags.aprilTagFieldLayout);
 
@@ -112,9 +115,9 @@ public class PhotonVision extends SubsystemBase implements VisionIO {
   }
 
   /**
-   * IMPORTANT METHOD! Main method for updating PhotonVision Data!
+   * IMPORTANT METHOD! Main method for updating PhotonVision Inputs!
    *
-   * @param VisionData - This is a container object that stores all the data surrounding Vision.
+   * @param inputs - This is a container object that stores all the data surrounding Vision.
    *     More information in Vision.java
    * @param currentEstimate - This is where the robot thinks it is at this moment, before it updates
    *     itself through the SwerveDrivePoseEstimator.
@@ -142,7 +145,6 @@ public class PhotonVision extends SubsystemBase implements VisionIO {
 
     /** If you have a target, then update the poseEstimate ArrayList to equal that. */
     if (hasAnyTarget(results)) {
-      // inputs.results = results;
 
       inputs.poseEstimates = getPoseEstimatesArray(results);
       inputs.hasEstimate = true;
@@ -150,6 +152,7 @@ public class PhotonVision extends SubsystemBase implements VisionIO {
     } else {
       inputs.timestamp = inputs.timestamp;
       inputs.hasEstimate = false;
+
     }
   }
 
@@ -169,22 +172,20 @@ public class PhotonVision extends SubsystemBase implements VisionIO {
 
     List<Pose2d> estimates = new ArrayList<>();
 
-    for (int i = 0; i < results.size(); i++) {
+    for (Map.Entry<PhotonPoseEstimator, PhotonPipelineResult> result : results) {
 
       Optional<EstimatedRobotPose> estimatedPose =
-          results.get(i).getKey().update(results.get(i).getValue());
+          result.getKey().update(result.getValue());
       if (estimatedPose.isPresent()) {
         estimates.add(estimatedPose.get().estimatedPose.toPose2d());
       }
-      estimates.removeIf(pose -> pose == null);
     }
+
+    estimates.removeIf(pose -> pose == null);
 
     return estimates.toArray(new Pose2d[0]);
   }
 
-  // public List<PhotonTrackedTarget> getTargetsList(PhotonPoseEstimator photonEstimator) {
-  //   return photonEstimator.update().get().targetsUsed;
-  // }
 
   public double estimateAverageTimestamp(
       List<Map.Entry<PhotonPoseEstimator, PhotonPipelineResult>> results) {
@@ -197,14 +198,6 @@ public class PhotonVision extends SubsystemBase implements VisionIO {
     return latestTimestamp / count;
   }
 
-  // broken should be
-  public double[] getTimestampArray(PhotonPipelineResult[] results) {
-    double[] timestamps = new double[results.length];
-    for (int i = 0; i < results.length; i++) {
-      timestamps[i] = results[i].getTimestampSeconds();
-    }
-    return timestamps;
-  }
 
   /** If any of the results have targets, then return true. */
   public boolean hasAnyTarget(List<Map.Entry<PhotonPoseEstimator, PhotonPipelineResult>> results) {
@@ -216,47 +209,6 @@ public class PhotonVision extends SubsystemBase implements VisionIO {
     return false;
   }
 
-  // public double alignToSpeaker(boolean alliance){
-  //   //    double currentRotationRadians=
-  // SwerveDrive.getAdjustedYaw(SwerveDrive.getSwerveDrivePoseEstimator().getEstimatedPosition().getRotation().getRadians());
-  //      double xTransform;
-  //      double yTransform;
-  //      double alignAngle;
-  //      // assume that you are facing the april tag, new fix in the works
-  //      if (alliance){
-  //       xTransform = Constants.AprilTags.aprilTagPoses[4].getX() -
-  // SwerveDriveSubsystem.getInstance().getSwerveDrivePoseEstimator().getEstimatedPosition().getX();
-  //       yTransform = Constants.AprilTags.aprilTagPoses[4].getY() -
-  // SwerveDrive.getSwerveDrivePoseEstimator().getEstimatedPosition().getY();
-  //       alignAngle = Math.atan2(xTransform, yTransform)+180;
-  //      }
-  //      else {
-  //       xTransform = Constants.AprilTags.aprilTagPoses[7].getX() -
-  // SwerveDrive.getSwerveDrivePoseEstimator().getEstimatedPosition().getX();
-  //       yTransform = Constants.AprilTags.aprilTagPoses[7].getY() -
-  // SwerveDrive.getSwerveDrivePoseEstimator().getEstimatedPosition().getY();
-  //       alignAngle = Math.atan2(xTransform, yTransform);
-  //      }
-
-  /**
-   * These methods below are kinda useless unless you have multiple cameras. check this out:
-   * https://github.com/FRC1257/2024-Robot/blob/master/src/main/java/frc/robot/subsystems/vision/VisionIOPhoton.java#L152
-   */
-  // private PhotonPoseEstimator[] getAprilTagEstimators(Pose2d currentEstimate) {
-
-  //       camera1_photonPoseEstimator.setReferencePose(currentEstimate);
-
-  //       return new PhotonPoseEstimator[] { camera1_photonPoseEstimator };
-  //   }
-
-  // private PhotonPipelineResult[] getAprilTagResults() {
-
-  //       PhotonPipelineResult camera1_result = getLatestResult(camera1);
-
-  //       // printStuff("cam1", cam1_result);
-
-  //       return new PhotonPipelineResult[] { camera1_result };
-  //   }
 
   @Override
   public void periodic() {

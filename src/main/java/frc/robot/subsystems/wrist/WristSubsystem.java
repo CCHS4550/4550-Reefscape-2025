@@ -159,6 +159,7 @@ public class WristSubsystem extends SubsystemBase {
 
     // This method will be called once per scheduler run
   }
+
   public Command wristUp() {
     return this.startEnd(
         () -> {
@@ -168,6 +169,7 @@ public class WristSubsystem extends SubsystemBase {
           io.setVoltage(Volts.of(0.0));
         });
   }
+
   public Command wristDown() {
     return this.startEnd(
         () -> {

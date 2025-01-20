@@ -69,7 +69,7 @@ public class OrthogonalToTag extends Command {
           new SwerveDrivePoseEstimator(
               Constants.SwerveConstants.DRIVE_KINEMATICS,
               RobotState.getInstance().getPoseRotation2d(),
-              SwerveDriveSubsystem.getInstance().swerveModulePositions,
+              RobotState.getInstance().swerveModulePositions,
               // This line below should set the initial pose to (0,0) with an angle of the angle of
               // the AprilTag.
 
@@ -127,7 +127,7 @@ public class OrthogonalToTag extends Command {
     poseRelativeToTargetEstimator.updateWithTime(
         currentTime,
         RobotState.getInstance().getPoseRotation2d(),
-        SwerveDriveSubsystem.getInstance().swerveModulePositions);
+        RobotState.getInstance().swerveModulePositions);
 
     // We only want the angle, not the translation because we only want to rotate, so we set the
     // pose to (0,0) with the angle of the AprilTag.

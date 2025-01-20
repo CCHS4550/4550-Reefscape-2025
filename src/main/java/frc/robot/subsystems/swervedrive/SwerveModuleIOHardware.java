@@ -98,7 +98,7 @@ public class SwerveModuleIOHardware implements SwerveModuleIO {
     // Update odometry inputs
     inputs.odometryTimestamps =
         timestampContainer.stream().mapToDouble((Double value) -> value).toArray();
-    inputs.odometryDrivePositionsRad =
+    inputs.odometryDrivePositionsMeters =
         drivePositionContainer.stream().mapToDouble((Double value) -> value).toArray();
     inputs.odometryTurnPositions =
         turnPositionContainer.stream()

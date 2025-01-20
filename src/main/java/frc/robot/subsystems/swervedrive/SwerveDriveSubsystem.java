@@ -16,7 +16,6 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.units.VelocityUnit;
@@ -160,9 +159,6 @@ public class SwerveDriveSubsystem extends SubsystemBase {
 
   public SwerveModuleState[] desiredModuleStates;
 
-  /** Module positions used for odometry */
-  public SwerveModulePosition[] swerveModulePositions = new SwerveModulePosition[4];
-
   /* PID Controllers */
   public PIDController xPID, yPID;
   public PIDController turnPID;
@@ -195,15 +191,6 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     this.moduleFactory = moduleFactory;
 
     RealOdometryThread.getInstance().start();
-
-    swerveModulePositions[0] =
-        new SwerveModulePosition(0, new Rotation2d(frontRight.getAbsoluteEncoderRadiansOffset()));
-    swerveModulePositions[1] =
-        new SwerveModulePosition(0, new Rotation2d(frontLeft.getAbsoluteEncoderRadiansOffset()));
-    swerveModulePositions[2] =
-        new SwerveModulePosition(0, new Rotation2d(backRight.getAbsoluteEncoderRadiansOffset()));
-    swerveModulePositions[3] =
-        new SwerveModulePosition(0, new Rotation2d(backLeft.getAbsoluteEncoderRadiansOffset()));
 
     desiredModuleStates = new SwerveModuleState[4];
 

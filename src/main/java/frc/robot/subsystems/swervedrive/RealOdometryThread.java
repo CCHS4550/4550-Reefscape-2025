@@ -71,7 +71,7 @@ public class RealOdometryThread {
     }
   }
 
-  /** Registers a Spark signal to be read from the thread. */
+  /** Registers a MotorController signal to be read from the thread. */
   public Queue<Double> registerInput(CCMotorController motor, DoubleSupplier signal) {
     Queue<Double> queue = new ArrayBlockingQueue<>(20);
     SwerveDriveSubsystem.odometryLock.lock();

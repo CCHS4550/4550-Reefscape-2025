@@ -6,6 +6,8 @@ package frc.robot.autonomous;
 
 import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
 import com.pathplanner.lib.trajectory.PathPlannerTrajectoryState;
+import com.pathplanner.lib.util.DriveFeedforwards;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -13,6 +15,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.maps.Constants;
 import frc.robot.RobotState;
 import frc.robot.subsystems.swervedrive.SwerveDriveSubsystem;
 import org.littletonrobotics.junction.Logger;
@@ -51,11 +54,6 @@ public class FollowPathCommand extends Command {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(SwerveDriveSubsystem.getInstance());
 
-    // RobotState.getInstance()
-    //     .setOdometry(
-    //         new Pose2d(
-    //             trajectory.getInitialState().positionMeters,
-    // trajectory.getInitialState().heading));
   }
 
   // Called when the command is initially scheduled.
@@ -68,7 +66,10 @@ public class FollowPathCommand extends Command {
     timer.reset();
     timer.start();
 
+
     lastState = trajectory.getInitialState();
+
+    
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -82,10 +83,14 @@ public class FollowPathCommand extends Command {
 
     /** Get the state of the robot at this current time in the path. */
     PathPlannerTrajectoryState wantedState = trajectory.sample(currentTime);
+
+    Pose2d wantedPose = Constants.isBlue() ? wantedState.pose : wantedState.flip().pose;
     Rotation2d wantedHeading = wantedState.heading;
+
 
     double xSpeed = wantedState.linearVelocity * Math.cos(wantedHeading.getRadians());
     double ySpeed = wantedState.linearVelocity * Math.sin(wantedHeading.getRadians());
+    
 
     double xPID = translationPID.calculate(currentPose.getX(), wantedState.pose.getX());
     double yPID = translationPID.calculate(currentPose.getY(), wantedState.pose.getY());
@@ -98,6 +103,7 @@ public class FollowPathCommand extends Command {
     Logger.recordOutput("wantedRotationSpeeds", wantedRotationSpeeds);
 
     /** Add alliance transform! */
+    
 
     /** Create a ChassisSpeeds object to represent how the robot should be moving at this time. */
     ChassisSpeeds chassisSpeeds =

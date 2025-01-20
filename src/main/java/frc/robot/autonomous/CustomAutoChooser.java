@@ -86,6 +86,7 @@ public class CustomAutoChooser {
     SequentialCommandGroup c = new SequentialCommandGroup();
     // Do not add file extensions!
 
+    c.addCommands(pathWrapper1.setInitialPose());
     c.addCommands(pathWrapper1.getStartingCommand());
     c.addCommands(pathWrapper1.getFollowCommand(1));
     c.addCommands(pathWrapper1.getFollowCommand(2));

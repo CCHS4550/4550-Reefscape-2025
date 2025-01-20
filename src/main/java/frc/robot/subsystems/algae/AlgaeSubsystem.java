@@ -4,16 +4,13 @@ import static edu.wpi.first.units.Units.Volts;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.helpers.CCMotorController;
 import frc.helpers.CCSparkMax;
 import frc.maps.Constants;
-import frc.robot.subsystems.arm.ArmSubsystem.ArmState;
 
 public class AlgaeSubsystem extends SubsystemBase {
 
@@ -44,8 +41,8 @@ public class AlgaeSubsystem extends SubsystemBase {
   }
 
   public enum AlgaeStates {
-    INTAKE(Units.degreesToRadians(15)), //I have no idea what the right value is for this
-    PROCESSOR(Units.degreesToRadians(30)), //I have no idea what the right value is for this
+    INTAKE(Units.degreesToRadians(15)), // I have no idea what the right value is for this
+    PROCESSOR(Units.degreesToRadians(30)), // I have no idea what the right value is for this
     STOW(Units.degreesToRadians(0));
 
     public final double angleRadians;
@@ -58,6 +55,7 @@ public class AlgaeSubsystem extends SubsystemBase {
       return angleRadians;
     }
   }
+
   public AlgaeStates previousState = AlgaeStates.STOW;
   public AlgaeStates currentState = AlgaeStates.STOW;
   public AlgaeStates wantedState = AlgaeStates.STOW;
@@ -88,8 +86,8 @@ public class AlgaeSubsystem extends SubsystemBase {
               Constants.MotorConstants.ALGAE_WRIST_REVERSE,
               1.0,
               1.0));
-  
-  private void applyStates(){
+
+  private void applyStates() {
     switch (currentState) {
       case STOW:
         io.holdAtState(AlgaeStates.STOW);
@@ -102,17 +100,17 @@ public class AlgaeSubsystem extends SubsystemBase {
     }
   }
 
-  private AlgaeStates handleStateTransitions(){
+  private AlgaeStates handleStateTransitions() {
     previousState = currentState;
     switch (wantedState) {
-    case STOW:
-      return AlgaeStates.STOW;
-    case INTAKE:
-      return AlgaeStates.INTAKE;
-    case PROCESSOR:
-     return AlgaeStates.PROCESSOR;
-    default:
-      return AlgaeStates.STOW;
+      case STOW:
+        return AlgaeStates.STOW;
+      case INTAKE:
+        return AlgaeStates.INTAKE;
+      case PROCESSOR:
+        return AlgaeStates.PROCESSOR;
+      default:
+        return AlgaeStates.STOW;
     }
   }
 
@@ -134,29 +132,44 @@ public class AlgaeSubsystem extends SubsystemBase {
     currentState = handleStateTransitions();
     applyStates();
   }
-    // This method will be called once per scheduler run
+  // This method will be called once per scheduler run
   public Command wristUp() {
     return this.startEnd(
-      () -> {io.setWristVoltage(Volts.of(5.0));}, //change this later
-      () -> {io.setWristVoltage(Volts.of(0.0));}
-      );
+        () -> {
+          io.setWristVoltage(Volts.of(5.0));
+        }, // change this later
+        () -> {
+          io.setWristVoltage(Volts.of(0.0));
+        });
   }
+
   public Command wristDown() {
     return this.startEnd(
-      () -> {io.setWristVoltage(Volts.of(-5.0));}, //change this later
-      () -> {io.setWristVoltage(Volts.of(0.0));}
-      );
+        () -> {
+          io.setWristVoltage(Volts.of(-5.0));
+        }, // change this later
+        () -> {
+          io.setWristVoltage(Volts.of(0.0));
+        });
   }
+
   public Command outtake() {
     return this.startEnd(
-      () -> {io.setIntakeVoltage(Volts.of(5.0));}, //change this later
-      () -> {io.setIntakeVoltage(Volts.of(0.0));}
-      );
+        () -> {
+          io.setIntakeVoltage(Volts.of(5.0));
+        }, // change this later
+        () -> {
+          io.setIntakeVoltage(Volts.of(0.0));
+        });
   }
+
   public Command intake() {
     return this.startEnd(
-      () -> {io.setIntakeVoltage(Volts.of(5.0));}, //change this later
-      () -> {io.setIntakeVoltage(Volts.of(0.0));}
-      );
+        () -> {
+          io.setIntakeVoltage(Volts.of(5.0));
+        }, // change this later
+        () -> {
+          io.setIntakeVoltage(Volts.of(0.0));
+        });
   }
 }

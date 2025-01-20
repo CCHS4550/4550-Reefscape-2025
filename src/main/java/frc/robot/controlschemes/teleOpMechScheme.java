@@ -33,10 +33,12 @@ public class teleOpMechScheme {
       int port) {
     teleOpBoard.button(1).whileTrue(intake.intake()); // intake, also rebind buttons
     teleOpBoard.button(2).whileTrue(intake.outtake()); // outtake, also rebind buttons
-    teleOpBoard.button(3).whileTrue(algae.wristUp()); //move algae wrist up, also rebind buttons
-    teleOpBoard.button(4).whileTrue(algae.wristDown()); //move algae wrist down, also rebind buttons
-    teleOpBoard.button(5).whileTrue(algae.intake()); //intake algae, also rebind buttons
-    teleOpBoard.button(6).whileTrue(algae.outtake()); //outtake algae, also rebind buttons
+    teleOpBoard.button(3).whileTrue(algae.wristUp()); // move algae wrist up, also rebind buttons
+    teleOpBoard
+        .button(4)
+        .whileTrue(algae.wristDown()); // move algae wrist down, also rebind buttons
+    teleOpBoard.button(5).whileTrue(algae.intake()); // intake algae, also rebind buttons
+    teleOpBoard.button(6).whileTrue(algae.outtake()); // outtake algae, also rebind buttons
     teleOpBoard.button(9).whileTrue(arm.armUp()); // arm up, also rebind buttons
     teleOpBoard.button(10).whileTrue(arm.armDown()); // arm down, also rebind buttons
     teleOpBoard.button(9).whileTrue(wrist.wristUp()); // wrist up, also rebind buttons

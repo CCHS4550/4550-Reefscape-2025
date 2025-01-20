@@ -8,8 +8,6 @@ import static edu.wpi.first.units.Units.Volts;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-
-import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -175,6 +173,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     // This method will be called once per scheduler run
   }
+
   public Command elevatorUp() {
     return this.startEnd(
         () -> {
@@ -184,6 +183,7 @@ public class ElevatorSubsystem extends SubsystemBase {
           io.setVoltage(Volts.of(0.0));
         });
   }
+
   public Command elevatorDown() {
     return this.startEnd(
         () -> {

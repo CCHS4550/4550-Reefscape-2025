@@ -86,7 +86,7 @@ public class PathWrapper {
   }
 
   public Command setInitialPose() {
-    return new InstantCommand(() -> RobotState.getInstance().setOdometry(initialPose));
+    return new InstantCommand(() -> RobotState.getInstance().setOdometryAllianceFlip(initialPose));
   }
 
   public Command getStartingCommand() {

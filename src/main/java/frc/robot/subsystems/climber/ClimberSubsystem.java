@@ -8,7 +8,6 @@ import static edu.wpi.first.units.Units.Volts;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.helpers.CCMotorController;
@@ -66,6 +65,7 @@ public class ClimberSubsystem extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
   }
+
   public Command climberUp() {
     return this.startEnd(
         () -> {
@@ -75,6 +75,7 @@ public class ClimberSubsystem extends SubsystemBase {
           io.setVoltage(Volts.of(0.0));
         });
   }
+
   public Command climberDown() {
     return this.startEnd(
         () -> {

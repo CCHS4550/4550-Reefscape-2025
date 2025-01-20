@@ -20,8 +20,9 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Current;
-// import frc.helpers.AllianceFlipUtil;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 public class Constants {
 
@@ -41,6 +42,16 @@ public class Constants {
     REPLAY
   }
 
+  // public static DriverStation.Alliance currentAlliance = Alliance.Blue;
+
+  public static boolean isBlue() {
+    boolean isBlue = true;
+    if (DriverStation.getAlliance().isPresent()) {
+      isBlue = DriverStation.getAlliance().get() == Alliance.Blue ? true : false;
+    }
+    return isBlue;
+  }
+
   public static void getCurrentMode() {
     if (RobotBase.isReal()) {
       currentMode = Mode.REAL;
@@ -48,8 +59,10 @@ public class Constants {
       currentMode = Mode.SIM;
     }
 
-    // return currentMode;
   }
+
+
+
 
   public static class ConversionConstants {
 
@@ -254,9 +267,7 @@ public class Constants {
     public static boolean WRIST_REVERSE = false;
   }
 
-  public static class algaeConstants {
-    
-  }
+  public static class algaeConstants {}
 
   public class FeedForwardConstants {
 
