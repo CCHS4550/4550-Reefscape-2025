@@ -8,15 +8,23 @@ import static edu.wpi.first.units.Units.Volts;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.helpers.CCMotorController;
 import frc.helpers.CCSparkMax;
+import frc.helpers.Elastic;
+import frc.helpers.OI;
+import frc.helpers.Elastic.Notification.NotificationLevel;
 import frc.maps.Constants;
+import frc.robot.subsystems.intake.IntakeIO.IntakeIOInputs;
 
 public class IntakeSubsystem extends SubsystemBase {
 
+  public double lastDetectedBeamBreakTimestamp;
+  
   public enum IntakeState {
     IDLE,
     INTAKING_FRONT,
@@ -163,6 +171,13 @@ public class IntakeSubsystem extends SubsystemBase {
   public IntakeState getElevatorState() {
     return currentState;
   }
+  
+  public void lastDetectedBeamBreakTimestamp(){
+    if(intakeInputs.beamBreakVoltage < 1.0){
+      lastDetectedBeamBreakTimestamp = Timer.getFPGATimestamp();
+    }
+    else{lastDetectedBeamBreakTimestamp = 9999999999999.9*999999.9;} // auto return a stupid high double so the math wont lead to a false positive
+  }
 
   @Override
   public void periodic() {
@@ -170,6 +185,16 @@ public class IntakeSubsystem extends SubsystemBase {
     currentState = handleStateTransitions();
     applyStates();
     // This method will be called once per scheduler run
+    if (Timer.getFPGATimestamp() - lastDetectedBeamBreakTimestamp > 0.25) {
+      OI.setRumble(0,0.5);
+      Elastic.Notification notification = new Elastic.Notification();
+      Elastic.sendNotification(notification
+        .withLevel(NotificationLevel.INFO)
+        .withTitle("Piece intaken")
+        .withDescription("Piece intaken")
+        .withDisplaySeconds(3.0));
+    lastDetectedBeamBreakTimestamp = 999999999999.999999 * 99999999.99999;
+      }
   }
 
   public Command intake() {

@@ -55,8 +55,8 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    teleOpMechScheme.configure(intake, arm, elevator, wrist, algae, climber, 2);
-    autoMechScheme.configure(intake, arm, elevator, wrist, algae, superstructure, 3);
+    teleOpMechScheme.configure(intake, arm, elevator, wrist, algae, climber, 1);
+    autoMechScheme.configure(intake, arm, elevator, wrist, algae, superstructure, 2);
     switch (Constants.currentMode) {
       case REAL:
         swerve = SwerveDriveSubsystem.getInstance(CCSparkMax::new, SwerveModuleIOHardware::new);
