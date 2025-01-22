@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.maps.Constants;
 import frc.robot.RobotState;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -27,10 +28,12 @@ import org.photonvision.simulation.PhotonCameraSim;
 import org.photonvision.simulation.SimCameraProperties;
 import org.photonvision.simulation.VisionSystemSim;
 import org.photonvision.targeting.PhotonPipelineResult;
+import org.photonvision.targeting.PhotonTrackedTarget;
 
 public class PhotonVision extends SubsystemBase implements VisionIO {
 
-  public record Result(PhotonPipelineResult result, PhotonPoseEstimator poseEstimator) {}
+
+  public List<PhotonPipelineResult> pipelineResults = new ArrayList<>();
 
   public static PhotonVision mInstance;
 
@@ -42,15 +45,15 @@ public class PhotonVision extends SubsystemBase implements VisionIO {
   }
 
   /* Create Camera */
-  public PhotonCamera frontCamera;
-  public PhotonCamera backCamera;
+  public PhotonCamera leftCamera;
+  public PhotonCamera rightCamera;
 
   public VisionSystemSim visionSim;
 
   /* Camera 1 PhotonPoseEstimator. */
-  public PhotonPoseEstimator frontCamera_photonEstimator;
+  public PhotonPoseEstimator leftCamera_photonEstimator;
   /* Camera 2 PhotonPoseEstimator. */
-  public PhotonPoseEstimator backCamera_photonEstimator;
+  public PhotonPoseEstimator rightCamera_photonEstimator;
 
   PhotonPoseEstimator[] photonEstimators;
 
@@ -62,27 +65,27 @@ public class PhotonVision extends SubsystemBase implements VisionIO {
     PortForwarder.add(5800, "limelight2.local", 5800);
     PortForwarder.add(5801, "limelight3.local", 5801);
 
-    frontCamera = new PhotonCamera(Constants.cameraOne.CAMERA_ONE_NAME);
-    backCamera = new PhotonCamera(Constants.cameraTwo.CAMERA_TWO_NAME);
+    leftCamera = new PhotonCamera(Constants.cameraOne.CAMERA_ONE_NAME);
+    rightCamera = new PhotonCamera(Constants.cameraTwo.CAMERA_TWO_NAME);
 
     switch (Constants.currentMode) {
       case REAL:
-        frontCamera_photonEstimator =
+        leftCamera_photonEstimator =
             new PhotonPoseEstimator(
                 Constants.AprilTags.aprilTagFieldLayout,
                 PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
                 Constants.cameraOne.ROBOT_TO_CAM);
-        backCamera_photonEstimator =
+        rightCamera_photonEstimator =
             new PhotonPoseEstimator(
                 Constants.AprilTags.aprilTagFieldLayout,
                 PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
                 Constants.cameraTwo.ROBOT_TO_CAM);
 
-        frontCamera_photonEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
-        backCamera_photonEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
+        leftCamera_photonEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
+        rightCamera_photonEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
 
         photonEstimators =
-            new PhotonPoseEstimator[] {frontCamera_photonEstimator, backCamera_photonEstimator};
+            new PhotonPoseEstimator[] {leftCamera_photonEstimator, rightCamera_photonEstimator};
 
         break;
 
@@ -94,7 +97,7 @@ public class PhotonVision extends SubsystemBase implements VisionIO {
         cameraProp.setCalibration(320, 240, Rotation2d.fromDegrees(62.5));
         cameraProp.setFPS(40);
 
-        PhotonCameraSim cameraSim = new PhotonCameraSim(frontCamera, cameraProp);
+        PhotonCameraSim cameraSim = new PhotonCameraSim(leftCamera, cameraProp);
 
         // Our camera is mounted 0.1 meters forward and 0.5 meters up from the robot pose,
         // (Robot pose is considered the center of rotation at the floor level, or Z = 0)
@@ -127,14 +130,20 @@ public class PhotonVision extends SubsystemBase implements VisionIO {
     List<Map.Entry<PhotonPoseEstimator, PhotonPipelineResult>> results = new ArrayList<>();
 
     results.addAll(
-        frontCamera.getAllUnreadResults().stream()
-            .map(result -> Map.entry(frontCamera_photonEstimator, result))
+        leftCamera.getAllUnreadResults().stream()
+            .map(result -> Map.entry(leftCamera_photonEstimator, result))
             .collect(Collectors.toList()));
 
     results.addAll(
-        backCamera.getAllUnreadResults().stream()
-            .map(result -> Map.entry(backCamera_photonEstimator, result))
+        rightCamera.getAllUnreadResults().stream()
+            .map(result -> Map.entry(rightCamera_photonEstimator, result))
             .collect(Collectors.toList()));
+
+    pipelineResults.clear();
+    pipelineResults = (results.stream().map(result -> result.getValue()).collect(Collectors.toList()));
+
+    inputs.timestampArray = results.stream().mapToDouble(result -> result.getValue().getTimestampSeconds()).toArray();
+    
 
     // Resetting the poseEstimates every period?
     inputs.poseEstimates = new Pose2d[0];
@@ -152,6 +161,7 @@ public class PhotonVision extends SubsystemBase implements VisionIO {
       inputs.hasEstimate = false;
     }
   }
+
 
   /**
    * Only needed if there are multiple cameras, but used in this situation nonetheless.
@@ -171,15 +181,30 @@ public class PhotonVision extends SubsystemBase implements VisionIO {
 
     for (Map.Entry<PhotonPoseEstimator, PhotonPipelineResult> result : results) {
 
+      
+
       Optional<EstimatedRobotPose> estimatedPose = result.getKey().update(result.getValue());
       if (estimatedPose.isPresent()) {
         estimates.add(estimatedPose.get().estimatedPose.toPose2d());
       }
+
     }
 
     estimates.removeIf(pose -> pose == null);
 
     return estimates.toArray(new Pose2d[0]);
+  }
+
+  public List<PhotonPipelineResult> condensePipelineResults() {
+
+    List<Integer> fudicialIDList = new ArrayList<>();
+    for (PhotonPipelineResult result : pipelineResults) {
+      fudicialIDList.add(result.getBestTarget().fiducialId);
+    }
+    pipelineResults.removeIf(result -> result.getBestTarget().getFiducialId() != getPlurality(fudicialIDList));
+
+    return pipelineResults;
+    
   }
 
   public double estimateAverageTimestamp(
@@ -201,6 +226,28 @@ public class PhotonVision extends SubsystemBase implements VisionIO {
       }
     }
     return false;
+  }
+
+  public static int getPlurality(List<Integer> list) {
+        // Map to store the frequency of each element
+    Map<Integer, Integer> frequencyMap = new HashMap<>();
+
+    // Count occurrences of each element
+    for (Integer item : list) {
+        frequencyMap.put(item, frequencyMap.getOrDefault(item, 0) + 1);
+    }
+
+        // Find the element with the highest frequency
+    Integer plurality = null;
+    int maxCount = 0;
+    for (Map.Entry<Integer, Integer> entry : frequencyMap.entrySet()) {
+        if (entry.getValue() > maxCount) {
+            maxCount = entry.getValue();
+            plurality = entry.getKey();
+        }
+    }
+
+    return (int) plurality;
   }
 
   @Override

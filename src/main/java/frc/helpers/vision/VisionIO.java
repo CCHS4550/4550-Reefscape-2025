@@ -6,6 +6,7 @@ package frc.helpers.vision;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import org.littletonrobotics.junction.AutoLog;
+import org.photonvision.targeting.PhotonTrackedTarget;
 
 /** Add your docs here. */
 
@@ -19,6 +20,7 @@ public interface VisionIO {
     public double timestamp = 0;
     public double[] timestampArray = new double[0];
 
+    
     // public int[] camera1Targets = new int[0];
     // public int[] camera2Targets = new int[0];
     // public int[] camera3Targets = new int[0];

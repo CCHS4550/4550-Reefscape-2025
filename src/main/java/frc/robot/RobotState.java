@@ -172,7 +172,7 @@ public class RobotState {
 
       for (int i = 0; i < visionInputs.poseEstimates.length; i++) {
         /** Add the Photonvision pose estimates */
-        poseEstimator.addVisionMeasurement(visionInputs.poseEstimates[i], visionInputs.timestamp);
+        poseEstimator.addVisionMeasurement(visionInputs.poseEstimates[i], visionInputs.timestampArray[i]);
       }
     } else if (Robot.isSimulation()) {
       PhotonVision.getInstance().visionSim.update(getPose());

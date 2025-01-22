@@ -12,19 +12,25 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.helpers.vision.PhotonVision;
 import frc.maps.Constants;
 import frc.robot.RobotState;
 import frc.robot.subsystems.swervedrive.SwerveDriveSubsystem;
+
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
 import org.littletonrobotics.junction.Logger;
 import org.photonvision.PhotonUtils;
+import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 public class OrthogonalToTag extends Command {
 
-  Optional<PhotonTrackedTarget> target;
-  Rotation2d targetAngle;
-  Pose2d currentPose;
+  List<PhotonTrackedTarget> targets;
+  List<Rotation2d> targetAngles;
+  Pose2d currentRelativePose;
   PathPlannerTrajectoryState targetState;
 
   SwerveDrivePoseEstimator poseRelativeToTargetEstimator;
@@ -40,7 +46,6 @@ public class OrthogonalToTag extends Command {
    */
   public OrthogonalToTag() {
 
-    // Only set once, so the target isn't updated.
 
     /**
      * Quick explanation if any of y'all are curious: getBestCameraToTarget() returns a Transform3d
@@ -53,17 +58,15 @@ public class OrthogonalToTag extends Command {
      * negative according to that coordinate system and I'm just going to assume that this is common
      * for all cases.
      */
-    target =
-        Optional.of(
-            frc.helpers.vision.PhotonVision.getInstance()
-                .frontCamera
-                .getLatestResult()
-                .getBestTarget());
-    targetAngle =
-        Rotation2d.fromDegrees(
-            -target.get().getBestCameraToTarget().getRotation().toRotation2d().getDegrees() - 180);
+    targets = PhotonVision.getInstance().pipelineResults.stream().map(result -> result.getBestTarget()).collect(Collectors.toList());
+    targetAngles = targets.stream().map(target -> Rotation2d.fromDegrees(
+      -(target.
+      getBestCameraToTarget().
+      getRotation().
+      toRotation2d().
+      getDegrees() - 180))).collect(Collectors.toList());
 
-    if (target.isPresent()) {
+    // if (targets.isPresent()) {
       /** Initialize a temporary PoseEstimator that lasts for this command's length. It will */
       poseRelativeToTargetEstimator =
           new SwerveDrivePoseEstimator(
@@ -80,7 +83,7 @@ public class OrthogonalToTag extends Command {
               // I subtracted it from 90 because if you really really really think about it then you
               // need the complementary angle?
               new Pose2d(0, 0, targetAngle));
-    }
+    
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(SwerveDriveSubsystem.getInstance());
   }
@@ -92,7 +95,7 @@ public class OrthogonalToTag extends Command {
     timer.reset();
     timer.start();
 
-    if (target.isPresent()) {
+    // if (target.isPresent()) {
       currentPose = poseRelativeToTargetEstimator.getEstimatedPosition();
       targetState = new PathPlannerTrajectoryState();
 
@@ -101,7 +104,7 @@ public class OrthogonalToTag extends Command {
       // Set the target rotation to 0.
       targetState.heading = Rotation2d.fromDegrees(0);
     }
-  }
+  // }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
@@ -162,4 +165,7 @@ public class OrthogonalToTag extends Command {
         < 2);
     // || target.isEmpty();
   }
+
+
+
 }
