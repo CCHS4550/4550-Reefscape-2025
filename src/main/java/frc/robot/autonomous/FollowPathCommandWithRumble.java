@@ -49,7 +49,8 @@ public class FollowPathCommandWithRumble extends Command {
    *
    * @param trajectory the PathPlannerTrajectory
    */
-  public FollowPathCommandWithRumble(PathPlannerTrajectory trajectory, CommandXboxController controller) {
+  public FollowPathCommandWithRumble(
+      PathPlannerTrajectory trajectory, CommandXboxController controller) {
 
     this.trajectory = trajectory;
     this.controller = controller;

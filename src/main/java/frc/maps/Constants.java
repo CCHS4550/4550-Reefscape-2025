@@ -403,7 +403,8 @@ public class Constants {
     double dividend = numerator / denominator;
     return dividend;
   }
-  public static int beamBrakePort(){
-    return 0; //fill with actual port the beam brake is in
+
+  public static int beamBrakePort() {
+    return 0; // fill with actual port the beam brake is in
   }
 }

@@ -8,10 +8,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.subsystems.Superstructure;
-
 import java.util.ArrayList;
 import java.util.List;
-import org.photonvision.PhotonUtils;
 // so many of the imports are unused lmao
 // could also use this for algae removal auto align
 
@@ -21,28 +19,29 @@ public class PathToCoral {
   // it doesn't need to have reef in los
   // but also this has a big O notation of like 6 so idk it might be bad
   public static Pose2d closestSide(Pose2d pos, int side) {
-    List<Pose2d> blueLeftSideCoors = new ArrayList<>(); // fill with the coordinates for the lefts offset of the blue reef\
-    List<Pose2d> blueRightSideCoors = new ArrayList<>(); // fill with the coordinates for the right offset of the blue reef
+    List<Pose2d> blueLeftSideCoors =
+        new ArrayList<>(); // fill with the coordinates for the lefts offset of the blue reef\
+    List<Pose2d> blueRightSideCoors =
+        new ArrayList<>(); // fill with the coordinates for the right offset of the blue reef
     List<Pose2d> redRightSideCoors = new ArrayList<>();
     List<Pose2d> redLeftSideCoors = new ArrayList<>(); // same as above but with red
     Pose2d closestCoor;
-    if(side == 0){ // left side
+    if (side == 0) { // left side
       if (DriverStation.getAlliance().equals(DriverStation.Alliance.Blue)) {
         closestCoor = pos.nearest(blueLeftSideCoors);
-       }
-      else {
+      } else {
+        closestCoor = pos.nearest(redLeftSideCoors);
+      }
+    } else {
+      if (DriverStation.getAlliance().equals(DriverStation.Alliance.Blue)) {
+        closestCoor = pos.nearest(blueLeftSideCoors);
+      } else {
         closestCoor = pos.nearest(redLeftSideCoors);
       }
     }
-    else{
-      if (DriverStation.getAlliance().equals(DriverStation.Alliance.Blue)) {
-        closestCoor = pos.nearest(blueLeftSideCoors);
-       }
-      else {
-        closestCoor = pos.nearest(redLeftSideCoors);
-      }
-    }
-    if(Superstructure.getInstance().getWantedSuperstate().equals(Superstructure.WantedSuperState.L4_BACK)){
+    if (Superstructure.getInstance()
+        .getWantedSuperstate()
+        .equals(Superstructure.WantedSuperState.L4_BACK)) {
       Rotation2d closestRotation = new Rotation2d(closestCoor.getRotation().getRadians() * -1);
       closestCoor = new Pose2d(closestCoor.getTranslation(), closestRotation);
     }

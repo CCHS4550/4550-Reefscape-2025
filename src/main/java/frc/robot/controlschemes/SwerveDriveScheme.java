@@ -14,13 +14,10 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.helpers.ControlScheme;
 import frc.maps.Constants;
 import frc.robot.RobotState;
-import frc.robot.autonomous.FollowPathCommand;
 import frc.robot.autonomous.FollowPathCommandWithRumble;
 import frc.robot.autonomous.PathToCoral;
 import frc.robot.autonomous.pathToTrajectory;
 import frc.robot.subsystems.swervedrive.SwerveDriveSubsystem;
-
-import java.lang.ModuleLayer.Controller;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
@@ -28,7 +25,7 @@ import java.util.function.DoubleSupplier;
  * Control scheme for swerve drive. Includes movement, the toggle between field centric and robot
  * centric, and a button to zero the gyro.
  */
-public class SwerveDriveScheme implements ControlScheme{
+public class SwerveDriveScheme implements ControlScheme {
 
   // private static CommandXboxController controller;
   private static boolean fieldCentric = true;
@@ -231,29 +228,28 @@ public class SwerveDriveScheme implements ControlScheme{
     //     .rightTrigger()
     //     .onTrue(runOnce(() -> setSlowMode()))
     //     .onFalse(runOnce(() -> setNormalMode()));
-    controller.leftStick().onTrue(
-        new FollowPathCommandWithRumble(
-          pathToTrajectory.convertPathToTrajectory(
-            PathToCoral.goToCoral(
-              PathToCoral.closestSide(
-               RobotState.getInstance().getPose(), 0)),
-            SwerveDriveSubsystem.getInstance().getRobotRelativeSpeeds(),
-            RobotState.getInstance().getRotation2d()
-          )
-        , controller));
+    controller
+        .leftStick()
+        .onTrue(
+            new FollowPathCommandWithRumble(
+                pathToTrajectory.convertPathToTrajectory(
+                    PathToCoral.goToCoral(
+                        PathToCoral.closestSide(RobotState.getInstance().getPose(), 0)),
+                    SwerveDriveSubsystem.getInstance().getRobotRelativeSpeeds(),
+                    RobotState.getInstance().getRotation2d()),
+                controller));
 
-
-     controller.rightStick().onTrue(
-        new FollowPathCommandWithRumble(
-          pathToTrajectory.convertPathToTrajectory(
-            PathToCoral.goToCoral(
-              PathToCoral.closestSide(
-                 RobotState.getInstance().getPose(), 1)),
-              SwerveDriveSubsystem.getInstance().getRobotRelativeSpeeds(),
-              RobotState.getInstance().getRotation2d()
-            )
-          , controller));
-       }
+    controller
+        .rightStick()
+        .onTrue(
+            new FollowPathCommandWithRumble(
+                pathToTrajectory.convertPathToTrajectory(
+                    PathToCoral.goToCoral(
+                        PathToCoral.closestSide(RobotState.getInstance().getPose(), 1)),
+                    SwerveDriveSubsystem.getInstance().getRobotRelativeSpeeds(),
+                    RobotState.getInstance().getRotation2d()),
+                controller));
+  }
   /** Toggle field centric and robot centric driving. */
   private static void toggleFieldCentric() {
     fieldCentric = !fieldCentric;
