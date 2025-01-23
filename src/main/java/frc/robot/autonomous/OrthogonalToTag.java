@@ -4,12 +4,15 @@
 
 package frc.robot.autonomous;
 
+import static edu.wpi.first.units.Units.Meter;
+
 import com.pathplanner.lib.trajectory.PathPlannerTrajectoryState;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.helpers.vision.PhotonVision;
@@ -29,6 +32,8 @@ public class OrthogonalToTag extends Command {
 
   List<PhotonTrackedTarget> targets;
   Rotation2d targetAngle;
+  double targetX;
+  double targetY;
 
   Pose2d currentRelativePose;
   PathPlannerTrajectoryState targetState;
@@ -57,7 +62,10 @@ public class OrthogonalToTag extends Command {
      * negative according to that coordinate system and I'm just going to assume that this is common
      * for all cases.
      */
-    targetAngle = getAverageAngle(getOrthogonalAngleList());
+    targetAngle = getAverageAngle(getOrthogonalTransformList());
+    targetX = getAverageX(getOrthogonalTransformList());
+    targetY = getAverageY(getOrthogonalTransformList());
+
     // if (targets.isPresent()) {
     /** Initialize a temporary PoseEstimator that lasts for this command's length. It will */
     poseRelativeToTargetEstimator =
@@ -92,9 +100,7 @@ public class OrthogonalToTag extends Command {
     currentRelativePose = poseRelativeToTargetEstimator.getEstimatedPosition();
     targetState = new PathPlannerTrajectoryState();
 
-    targetState.pose =
-        new Pose2d(
-            Math.cos(targetAngle.getRadians()), Math.sin(targetAngle.getRadians()), targetAngle);
+    targetState.pose = new Pose2d(targetX, targetY, targetAngle);
     targetState.heading = targetAngle;
   }
   // }
@@ -103,11 +109,14 @@ public class OrthogonalToTag extends Command {
   @Override
   public void execute() {
 
-    targetAngle = getAverageAngle(getOrthogonalAngleList());
+    targetAngle = getAverageAngle(getOrthogonalTransformList());
+    targetX = getAverageX(getOrthogonalTransformList());
+    targetY = getAverageY(getOrthogonalTransformList());
 
     targetState.pose =
         new Pose2d(
             Math.cos(targetAngle.getRadians()), Math.sin(targetAngle.getRadians()), targetAngle);
+
     targetState.heading = targetAngle;
 
     Logger.recordOutput("OrthogonalToTag/targetPose", targetState.pose);
@@ -162,7 +171,54 @@ public class OrthogonalToTag extends Command {
     // || target.isEmpty();
   }
 
-  public Rotation2d getAverageAngle(List<Rotation2d> angleList) {
+  public double getAverageX(List<Transform3d> transform3dList) {
+
+    List<Distance> distanceList = new ArrayList<>();
+
+    for (Transform3d transform3d : transform3dList) {
+      Distance orthogonalAngle = transform3d.getMeasureX();
+      distanceList.add(orthogonalAngle);
+    }
+
+    int distanceCount = distanceList.size();
+
+    double totalDistance = 0;
+
+    for (int i = 0; i < distanceCount; i++) {
+      totalDistance += distanceList.get(i).in(Meter);
+    }
+    return (totalDistance / distanceCount);
+  }
+
+  public double getAverageY(List<Transform3d> transform3dList) {
+
+    List<Distance> distanceList = new ArrayList<>();
+
+    for (Transform3d transform3d : transform3dList) {
+      Distance orthogonalAngle = transform3d.getMeasureY();
+      distanceList.add(orthogonalAngle);
+    }
+
+    int distanceCount = distanceList.size();
+
+    double totalDistance = 0;
+
+    for (int i = 0; i < distanceCount; i++) {
+      totalDistance += distanceList.get(i).in(Meter);
+    }
+    return (totalDistance / distanceCount);
+  }
+
+  public Rotation2d getAverageAngle(List<Transform3d> transform3dList) {
+
+    List<Rotation2d> angleList = new ArrayList<>();
+
+    for (Transform3d transform3d : transform3dList) {
+      Rotation2d orthogonalAngle =
+          Rotation2d.fromDegrees(transform3d.getRotation().toRotation2d().getDegrees() - 180);
+      angleList.add(orthogonalAngle);
+    }
+
     int angleCount = angleList.size();
 
     double totalAngle = 0;
@@ -173,9 +229,9 @@ public class OrthogonalToTag extends Command {
     return Rotation2d.fromDegrees(totalAngle / angleCount);
   }
 
-  public List<Rotation2d> getOrthogonalAngleList() {
+  public List<Transform3d> getOrthogonalTransformList() {
 
-    List<Rotation2d> angles = new ArrayList<>();
+    List<Transform3d> angles = new ArrayList<>();
 
     for (Map.Entry<PhotonPoseEstimator, PhotonPipelineResult> result :
         PhotonVision.getInstance().condensedResults) {
@@ -186,10 +242,7 @@ public class OrthogonalToTag extends Command {
               .getRobotToCameraTransform()
               .plus(result.getValue().getBestTarget().getBestCameraToTarget());
 
-      Rotation2d orthogonalAngle =
-          Rotation2d.fromDegrees(transformVector.getRotation().toRotation2d().getDegrees() - 180);
-
-      angles.add(orthogonalAngle);
+      angles.add(transformVector);
     }
 
     return angles;
