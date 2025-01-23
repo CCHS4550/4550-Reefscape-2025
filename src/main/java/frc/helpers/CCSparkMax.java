@@ -10,10 +10,13 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 
 public class CCSparkMax extends SparkMax implements CCMotorController {
 
+  SparkMaxConfig config;
   private String name;
   private String shortName;
   private RelativeEncoder encoder;
   private RelativeEncoder alternateEncoder;
+  AlternateEncoderConfig encoderConfig;
+
   private double voltageConversionFactor;
   private double velocityConversionFactorOne = 1.0;
   private double positionConversionFactorOne = 1.0;
@@ -47,11 +50,13 @@ public class CCSparkMax extends SparkMax implements CCMotorController {
     super(deviceID, motorType);
     this.name = name;
     this.shortName = shortName;
-    SparkMaxConfig config = new SparkMaxConfig();
+
+    config = new SparkMaxConfig();
     config.inverted(reverse).idleMode(idleMode);
 
-    AlternateEncoderConfig encoderConfig = new AlternateEncoderConfig();
+    encoderConfig = new AlternateEncoderConfig();
     encoderConfig.positionConversionFactor(positionConversionFactor);
+    encoderConfig.velocityConversionFactor(velocityConversionFactor);
     encoderConfig.setSparkMaxDataPortConfig();
     config.apply(encoderConfig);
 
@@ -162,7 +167,7 @@ public class CCSparkMax extends SparkMax implements CCMotorController {
   @Override
   public double getVelocity() {
 
-    return encoder.getVelocity() * velocityConversionFactorOne;
+    return encoder.getVelocity();
   }
 
   @Override
@@ -182,8 +187,8 @@ public class CCSparkMax extends SparkMax implements CCMotorController {
    */
   @Override
   public void setPositionConversionFactor(double factor) {
-    // encoder.setPositionConversionFactor(factor);
-    positionConversionFactorOne = factor;
+    encoderConfig.positionConversionFactor(factor);
+    config.apply(encoderConfig);
   }
 
   /**
@@ -193,8 +198,8 @@ public class CCSparkMax extends SparkMax implements CCMotorController {
    */
   @Override
   public void setVelocityConversionFactor(double factor) {
-    // encoder.setVelocityConversionFactor(factor);
-    velocityConversionFactorOne = factor;
+    encoderConfig.velocityConversionFactor(factor);
+    config.apply(encoderConfig);
   }
 
   /**
@@ -214,7 +219,7 @@ public class CCSparkMax extends SparkMax implements CCMotorController {
    */
   @Override
   public double getPosition() {
-    return encoder.getPosition() * positionConversionFactorOne;
+    return encoder.getPosition();
   }
 
   @Override

@@ -97,6 +97,7 @@ public class CCSparkSim extends SparkMaxSim implements CCMotorController {
 
     AlternateEncoderConfig encoderConfig = new AlternateEncoderConfig();
     encoderConfig.positionConversionFactor(positionConversionFactor);
+    encoderConfig.velocityConversionFactor(velocityConversionFactor);
     encoderConfig.setSparkMaxDataPortConfig();
     config.apply(encoderConfig);
 

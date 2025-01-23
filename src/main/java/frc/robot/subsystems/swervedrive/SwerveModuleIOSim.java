@@ -2,6 +2,7 @@ package frc.robot.subsystems.swervedrive;
 
 import static edu.wpi.first.units.Units.Volts;
 
+import com.revrobotics.sim.SparkMaxAlternateEncoderSim;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -63,6 +64,7 @@ public class SwerveModuleIOSim implements SwerveModuleIO {
     this.turnMotor = turnMotor;
 
     this.absoluteEncoder = new AnalogEncoderSim(new AnalogEncoder(absoluteEncoderChannel));
+    this.absoluteEncoder.set(0);
 
     this.absolutePosition = getAbsoluteEncoderDistance();
 
@@ -117,7 +119,8 @@ public class SwerveModuleIOSim implements SwerveModuleIO {
    */
   @Override
   public double getDrivePosition() {
-    return driveMotor.getPosition(); // should be in meters?
+    return ((SparkMaxAlternateEncoderSim) driveMotor.getAlternateEncoder())
+        .getVelocity(); // should be in meters?
   }
 
   //   public SparkAnalogSensor getDriveAnalog() {
@@ -245,7 +248,7 @@ public class SwerveModuleIOSim implements SwerveModuleIO {
   @Override
   public void setDriveVelocity(double velocity) {
 
-    driveMotor.setVelocity(velocity);
+    ((SparkMaxAlternateEncoderSim) driveMotor.getAlternateEncoder()).setVelocity(velocity);
 
     // These are both in m/s
     double driveOutput = drivingPidController.calculate(driveMotor.getVelocity(), velocity);
@@ -261,7 +264,7 @@ public class SwerveModuleIOSim implements SwerveModuleIO {
   @Override
   public void setTurnPosition(DoubleSupplier angle) {
 
-    turnMotor.setPosition(angle.getAsDouble());
+    // absoluteEncoder.set(angle.getAsDouble());
 
     double turnOutput =
         turningPIDController.calculate(getAbsoluteEncoderRadiansOffset(), angle.getAsDouble());
