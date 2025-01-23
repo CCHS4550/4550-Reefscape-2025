@@ -55,7 +55,11 @@ public class RobotState {
   /** Module positions used for odometry */
   public SwerveModulePosition[] swerveModulePositions = new SwerveModulePosition[4];
 
-  private SwerveModulePosition[] previousSwerveModulePositions = new SwerveModulePosition[4];
+  public SwerveModulePosition[] previousSwerveModulePositions = new SwerveModulePosition[4];
+
+  public int sampleCount = swerve.swerveModuleInputs[0].odometryTimestamps.length;
+  public double[] sampleTimestamps = swerve.swerveModuleInputs[0].odometryTimestamps;
+  public SwerveModulePosition[][] swerveModulePositionsArray = getModulePositionArray();
 
   // Initialize gyro
   public AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
@@ -150,14 +154,15 @@ public class RobotState {
 
     lastPose = currentPose;
 
-    double sampleCount = swerve.swerveModuleInputs[0].odometryTimestamps.length;
-    double[] sampleTimestamps = swerve.swerveModuleInputs[0].odometryTimestamps;
+    sampleCount = swerve.swerveModuleInputs[0].odometryTimestamps.length;
+    sampleTimestamps = swerve.swerveModuleInputs[0].odometryTimestamps;
+    swerveModulePositionsArray = getModulePositionArray();
 
     /** Update the SwerveDrivePoseEstimator with the Drivetrain encoders and such */
     for (int i = 0; i < sampleCount; i++) {
 
       poseEstimator.updateWithTime(
-          sampleTimestamps[i], gyroAnglePlusDeltas.get(i), getModulePositionArray()[i]);
+          sampleTimestamps[i], gyroAngle[i], swerveModulePositionsArray[i]);
     }
 
     currentPose = getPose();
@@ -172,7 +177,8 @@ public class RobotState {
 
       for (int i = 0; i < visionInputs.poseEstimates.length; i++) {
         /** Add the Photonvision pose estimates */
-        poseEstimator.addVisionMeasurement(visionInputs.poseEstimates[i], visionInputs.timestampArray[i]);
+        poseEstimator.addVisionMeasurement(
+            visionInputs.poseEstimates[i], visionInputs.timestampArray[i]);
       }
     } else if (Robot.isSimulation()) {
       PhotonVision.getInstance().visionSim.update(getPose());

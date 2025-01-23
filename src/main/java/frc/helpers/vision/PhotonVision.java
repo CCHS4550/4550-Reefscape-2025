@@ -28,12 +28,12 @@ import org.photonvision.simulation.PhotonCameraSim;
 import org.photonvision.simulation.SimCameraProperties;
 import org.photonvision.simulation.VisionSystemSim;
 import org.photonvision.targeting.PhotonPipelineResult;
-import org.photonvision.targeting.PhotonTrackedTarget;
 
 public class PhotonVision extends SubsystemBase implements VisionIO {
 
-
-  public List<PhotonPipelineResult> pipelineResults = new ArrayList<>();
+  public List<Map.Entry<PhotonPoseEstimator, PhotonPipelineResult>> results = new ArrayList<>();
+  public List<Map.Entry<PhotonPoseEstimator, PhotonPipelineResult>> condensedResults =
+      new ArrayList<>();
 
   public static PhotonVision mInstance;
 
@@ -127,7 +127,7 @@ public class PhotonVision extends SubsystemBase implements VisionIO {
   public void updateInputs(VisionIOInputs inputs, Pose2d currentEstimate) {
 
     /* Only an array in case we use multiple cameras. */
-    List<Map.Entry<PhotonPoseEstimator, PhotonPipelineResult>> results = new ArrayList<>();
+    results.clear();
 
     results.addAll(
         leftCamera.getAllUnreadResults().stream()
@@ -139,11 +139,11 @@ public class PhotonVision extends SubsystemBase implements VisionIO {
             .map(result -> Map.entry(rightCamera_photonEstimator, result))
             .collect(Collectors.toList()));
 
-    pipelineResults.clear();
-    pipelineResults = (results.stream().map(result -> result.getValue()).collect(Collectors.toList()));
+    condensedResults = results;
+    condensedResults = condensePipelineResults();
 
-    inputs.timestampArray = results.stream().mapToDouble(result -> result.getValue().getTimestampSeconds()).toArray();
-    
+    inputs.timestampArray =
+        results.stream().mapToDouble(result -> result.getValue().getTimestampSeconds()).toArray();
 
     // Resetting the poseEstimates every period?
     inputs.poseEstimates = new Pose2d[0];
@@ -161,7 +161,6 @@ public class PhotonVision extends SubsystemBase implements VisionIO {
       inputs.hasEstimate = false;
     }
   }
-
 
   /**
    * Only needed if there are multiple cameras, but used in this situation nonetheless.
@@ -181,13 +180,10 @@ public class PhotonVision extends SubsystemBase implements VisionIO {
 
     for (Map.Entry<PhotonPoseEstimator, PhotonPipelineResult> result : results) {
 
-      
-
       Optional<EstimatedRobotPose> estimatedPose = result.getKey().update(result.getValue());
       if (estimatedPose.isPresent()) {
         estimates.add(estimatedPose.get().estimatedPose.toPose2d());
       }
-
     }
 
     estimates.removeIf(pose -> pose == null);
@@ -195,16 +191,17 @@ public class PhotonVision extends SubsystemBase implements VisionIO {
     return estimates.toArray(new Pose2d[0]);
   }
 
-  public List<PhotonPipelineResult> condensePipelineResults() {
+  public List<Map.Entry<PhotonPoseEstimator, PhotonPipelineResult>> condensePipelineResults() {
 
     List<Integer> fudicialIDList = new ArrayList<>();
-    for (PhotonPipelineResult result : pipelineResults) {
-      fudicialIDList.add(result.getBestTarget().fiducialId);
+    for (Map.Entry<PhotonPoseEstimator, PhotonPipelineResult> condensedResult : condensedResults) {
+      fudicialIDList.add(condensedResult.getValue().getBestTarget().fiducialId);
     }
-    pipelineResults.removeIf(result -> result.getBestTarget().getFiducialId() != getPlurality(fudicialIDList));
+    condensedResults.removeIf(
+        result ->
+            result.getValue().getBestTarget().getFiducialId() != getPlurality(fudicialIDList));
 
-    return pipelineResults;
-    
+    return condensedResults;
   }
 
   public double estimateAverageTimestamp(
@@ -229,22 +226,22 @@ public class PhotonVision extends SubsystemBase implements VisionIO {
   }
 
   public static int getPlurality(List<Integer> list) {
-        // Map to store the frequency of each element
+    // Map to store the frequency of each element
     Map<Integer, Integer> frequencyMap = new HashMap<>();
 
     // Count occurrences of each element
     for (Integer item : list) {
-        frequencyMap.put(item, frequencyMap.getOrDefault(item, 0) + 1);
+      frequencyMap.put(item, frequencyMap.getOrDefault(item, 0) + 1);
     }
 
-        // Find the element with the highest frequency
+    // Find the element with the highest frequency
     Integer plurality = null;
     int maxCount = 0;
     for (Map.Entry<Integer, Integer> entry : frequencyMap.entrySet()) {
-        if (entry.getValue() > maxCount) {
-            maxCount = entry.getValue();
-            plurality = entry.getKey();
-        }
+      if (entry.getValue() > maxCount) {
+        maxCount = entry.getValue();
+        plurality = entry.getKey();
+      }
     }
 
     return (int) plurality;

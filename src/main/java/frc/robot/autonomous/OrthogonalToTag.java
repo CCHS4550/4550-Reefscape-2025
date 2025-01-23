@@ -8,7 +8,7 @@ import com.pathplanner.lib.trajectory.PathPlannerTrajectoryState;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -16,12 +16,11 @@ import frc.helpers.vision.PhotonVision;
 import frc.maps.Constants;
 import frc.robot.RobotState;
 import frc.robot.subsystems.swervedrive.SwerveDriveSubsystem;
-
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
+import java.util.Map;
 import org.littletonrobotics.junction.Logger;
+import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
@@ -29,7 +28,8 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 public class OrthogonalToTag extends Command {
 
   List<PhotonTrackedTarget> targets;
-  List<Rotation2d> targetAngles;
+  Rotation2d targetAngle;
+
   Pose2d currentRelativePose;
   PathPlannerTrajectoryState targetState;
 
@@ -46,7 +46,6 @@ public class OrthogonalToTag extends Command {
    */
   public OrthogonalToTag() {
 
-
     /**
      * Quick explanation if any of y'all are curious: getBestCameraToTarget() returns a Transform3d
      * object, that represents the transformation vector you can apply to the camera which will
@@ -58,32 +57,26 @@ public class OrthogonalToTag extends Command {
      * negative according to that coordinate system and I'm just going to assume that this is common
      * for all cases.
      */
-    targets = PhotonVision.getInstance().pipelineResults.stream().map(result -> result.getBestTarget()).collect(Collectors.toList());
-    targetAngles = targets.stream().map(target -> Rotation2d.fromDegrees(
-      -(target.
-      getBestCameraToTarget().
-      getRotation().
-      toRotation2d().
-      getDegrees() - 180))).collect(Collectors.toList());
-
+    targetAngle = getAverageAngle(getOrthogonalAngleList());
     // if (targets.isPresent()) {
-      /** Initialize a temporary PoseEstimator that lasts for this command's length. It will */
-      poseRelativeToTargetEstimator =
-          new SwerveDrivePoseEstimator(
-              Constants.SwerveConstants.DRIVE_KINEMATICS,
-              RobotState.getInstance().getPoseRotation2d(),
-              RobotState.getInstance().swerveModulePositions,
-              // This line below should set the initial pose to (0,0) with an angle of the angle of
-              // the AprilTag.
+    /** Initialize a temporary PoseEstimator that lasts for this command's length. It will */
+    poseRelativeToTargetEstimator =
+        new SwerveDrivePoseEstimator(
+            Constants.SwerveConstants.DRIVE_KINEMATICS,
+            RobotState.getInstance().getPoseRotation2d(),
+            RobotState.getInstance().swerveModulePositions,
+            // This line below should set the initial pose to (0,0) with an angle of the angle of
+            // the AprilTag.
 
-              // If theres a problem, I suspect it's probably here or wherever else getYaw() is
-              // called to define the robots pose.
-              // It might be negative but theoretically it shouldn't based on the way that
-              // Photonvision creates a coordinate system from the Apriltag.
-              // I subtracted it from 90 because if you really really really think about it then you
-              // need the complementary angle?
-              new Pose2d(0, 0, targetAngle));
-    
+            // If theres a problem, I suspect it's probably here or wherever else getYaw() is
+            // called to define the robots pose.
+            // It might be negative but theoretically it shouldn't based on the way that
+            // Photonvision creates a coordinate system from the Apriltag.
+            // I subtracted it from 90 because if you really really really think about it then you
+            // need the complementary angle?
+
+            new Pose2d(0, 0, new Rotation2d()));
+
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(SwerveDriveSubsystem.getInstance());
   }
@@ -96,23 +89,30 @@ public class OrthogonalToTag extends Command {
     timer.start();
 
     // if (target.isPresent()) {
-      currentPose = poseRelativeToTargetEstimator.getEstimatedPosition();
-      targetState = new PathPlannerTrajectoryState();
+    currentRelativePose = poseRelativeToTargetEstimator.getEstimatedPosition();
+    targetState = new PathPlannerTrajectoryState();
 
-      //  Set target state to (0,0) so it shouldn't move around.
-      targetState.pose = new Pose2d();
-      // Set the target rotation to 0.
-      targetState.heading = Rotation2d.fromDegrees(0);
-    }
+    targetState.pose =
+        new Pose2d(
+            Math.cos(targetAngle.getRadians()), Math.sin(targetAngle.getRadians()), targetAngle);
+    targetState.heading = targetAngle;
+  }
   // }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
 
-    Logger.recordOutput("AprilTag Yaw", target.get().getYaw());
-    Logger.recordOutput("AprilTag Yaw 2", targetAngle);
-    double currentTime = timer.get();
+    targetAngle = getAverageAngle(getOrthogonalAngleList());
+
+    targetState.pose =
+        new Pose2d(
+            Math.cos(targetAngle.getRadians()), Math.sin(targetAngle.getRadians()), targetAngle);
+    targetState.heading = targetAngle;
+
+    Logger.recordOutput("OrthogonalToTag/targetPose", targetState.pose);
+    Logger.recordOutput(
+        "OrthogonalToTag/currentPose", poseRelativeToTargetEstimator.getEstimatedPosition());
 
     // I'm not sure if we need to do all this, but it should make it relatively more accurate. By
     // doing this, we are combining swerve drive odometry with vision.
@@ -127,17 +127,16 @@ public class OrthogonalToTag extends Command {
     // have typically always used getRotation2dNegative() which has always worked fine.
     // I feel like this doesn't make much sense though but I'm a little scared to change it. If it
     // works, it works.
-    poseRelativeToTargetEstimator.updateWithTime(
-        currentTime,
-        RobotState.getInstance().getPoseRotation2d(),
-        RobotState.getInstance().swerveModulePositions);
+    for (int i = 0; i < RobotState.getInstance().sampleCount; i++) {
+      poseRelativeToTargetEstimator.updateWithTime(
+          RobotState.getInstance().sampleTimestamps[i],
+          RobotState.getInstance().gyroAngle[i],
+          RobotState.getInstance().swerveModulePositionsArray[i]);
+    }
 
     // We only want the angle, not the translation because we only want to rotate, so we set the
     // pose to (0,0) with the angle of the AprilTag.
-    currentPose =
-        new Pose2d(
-            new Translation2d(),
-            poseRelativeToTargetEstimator.getEstimatedPosition().getRotation());
+    currentRelativePose = poseRelativeToTargetEstimator.getEstimatedPosition();
 
     ChassisSpeeds chassisSpeeds =
         SwerveDriveSubsystem.getInstance()
@@ -145,7 +144,7 @@ public class OrthogonalToTag extends Command {
             // .calculateRobotRelativeSpeeds(new Pose2d(0, 0,
             // RobotState.getInstance().getAngleBetweenCurrentAndTargetPose(new Pose2d(0,
             // 0,Rotation2d.fromDegrees(target.getYaw())))), new State());
-            .calculateRobotRelativeSpeeds(currentPose, targetState);
+            .calculateRobotRelativeSpeeds(currentRelativePose, targetState);
     // Convert chassis speeds to individual module states
 
     SwerveDriveSubsystem.getInstance().driveRobotRelative(chassisSpeeds);
@@ -158,14 +157,41 @@ public class OrthogonalToTag extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (Math.abs(
-            PhotonUtils.getYawToPose(
-                    currentPose, new Pose2d(new Translation2d(), targetState.heading))
-                .getDegrees())
+    return (Math.abs(PhotonUtils.getYawToPose(currentRelativePose, targetState.pose).getDegrees())
         < 2);
     // || target.isEmpty();
   }
 
+  public Rotation2d getAverageAngle(List<Rotation2d> angleList) {
+    int angleCount = angleList.size();
 
+    double totalAngle = 0;
 
+    for (int i = 0; i < angleCount; i++) {
+      totalAngle += angleList.get(i).getDegrees();
+    }
+    return Rotation2d.fromDegrees(totalAngle / angleCount);
+  }
+
+  public List<Rotation2d> getOrthogonalAngleList() {
+
+    List<Rotation2d> angles = new ArrayList<>();
+
+    for (Map.Entry<PhotonPoseEstimator, PhotonPipelineResult> result :
+        PhotonVision.getInstance().condensedResults) {
+
+      Transform3d transformVector =
+          result
+              .getKey()
+              .getRobotToCameraTransform()
+              .plus(result.getValue().getBestTarget().getBestCameraToTarget());
+
+      Rotation2d orthogonalAngle =
+          Rotation2d.fromDegrees(transformVector.getRotation().toRotation2d().getDegrees() - 180);
+
+      angles.add(orthogonalAngle);
+    }
+
+    return angles;
+  }
 }
