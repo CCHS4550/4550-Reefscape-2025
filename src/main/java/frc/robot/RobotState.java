@@ -13,6 +13,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
@@ -57,9 +58,9 @@ public class RobotState {
 
   public SwerveModulePosition[] previousSwerveModulePositions = new SwerveModulePosition[4];
 
-  public int sampleCount = swerve.swerveModuleInputs[0].odometryTimestamps.length;
-  public double[] sampleTimestamps = swerve.swerveModuleInputs[0].odometryTimestamps;
-  public SwerveModulePosition[][] swerveModulePositionsArray = getModulePositionArray();
+  public int sampleCount;
+  public double[] sampleTimestamps;
+  public SwerveModulePosition[][] swerveModulePositionsArray;
 
   // Initialize gyro
   public AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
@@ -154,15 +155,23 @@ public class RobotState {
 
     lastPose = currentPose;
 
-    sampleCount = swerve.swerveModuleInputs[0].odometryTimestamps.length;
-    sampleTimestamps = swerve.swerveModuleInputs[0].odometryTimestamps;
-    swerveModulePositionsArray = getModulePositionArray();
+    if (swerve.swerveModuleInputs[0].odometryTimestamps.length > 0) {
+      sampleCount = swerve.swerveModuleInputs[0].odometryTimestamps.length;
+      sampleTimestamps = swerve.swerveModuleInputs[0].odometryTimestamps;
+      swerveModulePositionsArray = getModulePositionArray();
 
-    /** Update the SwerveDrivePoseEstimator with the Drivetrain encoders and such */
-    for (int i = 0; i < sampleCount; i++) {
+      /** Update the SwerveDrivePoseEstimator with the Drivetrain encoders and such */
+      for (int i = 0; i < sampleCount; i++) {
 
+        poseEstimator.updateWithTime(
+            sampleTimestamps[i], gyroAngle[i], swerveModulePositionsArray[i]);
+        Logger.recordOutput("High Frequency Gyro Angle", gyroAngle[i]);
+        Logger.recordOutput("High Frequency Odometry Positions", swerveModulePositionsArray[i]);
+      }
+
+    } else {
       poseEstimator.updateWithTime(
-          sampleTimestamps[i], gyroAngle[i], swerveModulePositionsArray[i]);
+          Timer.getFPGATimestamp(), getPoseRotation2d(), swerveModulePositions);
     }
 
     currentPose = getPose();
@@ -346,7 +355,7 @@ public class RobotState {
               swerve.swerveModuleInputs[3].odometryTurnPositions[i]);
     }
 
-    swerveModulePositions = positions[sampleCount - 1];
+    swerveModulePositions = positions[sampleCount];
 
     return positions;
   }
@@ -384,6 +393,8 @@ public class RobotState {
     swerveModulePositions[3] =
         new SwerveModulePosition(
             swerve.backLeft.getDrivePosition(), new Rotation2d(swerve.backLeft.getTurnPosition()));
+
+    Logger.recordOutput("modulePositions", swerveModulePositions);
   }
 
   public synchronized double[] getAverageTimestampArray() {

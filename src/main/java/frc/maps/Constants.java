@@ -129,13 +129,13 @@ public class Constants {
     public static final int[] ELEVATOR = {13, 14};
     public static final boolean[] ELEVATOR_REVERSE = {false, true};
 
-    public static final int ARM = 14;
+    public static final int ARM = 15;
     public static final boolean ARM_REVERSE = false;
 
-    public static final int[] INTAKE = {15, 16};
+    public static final int[] INTAKE = {16, 17};
     public static final boolean[] INTAKE_REVERSE = {false, true};
 
-    public static final int WRIST = 16;
+    public static final int WRIST = 18;
   }
 
   public static class SwerveConstants {
@@ -181,7 +181,7 @@ public class Constants {
                 new DCMotor(12, 2.6, 105, 1.8, 594.39, 1),
                 Current.ofBaseUnits(90, Amps),
                 1),
-            SwerveConstants.TRACK_WITDTH);
+            SwerveConstants.TRACK_WIDTH);
 
     public static final TrapezoidProfile.Constraints thetaControlConstraints =
         new TrapezoidProfile.Constraints(MAX_ANGULAR_SPEED_RADIANS_PER_SECOND, TURN_RATE_LIMIT);
@@ -194,17 +194,17 @@ public class Constants {
     public static final double WHEEL_BASE =
         Units.inchesToMeters(24.7500000000); // from drive shaft to drive shaft. Previous was
     // Right to Left                                                            // 27
-    public static final double TRACK_WITDTH = Units.inchesToMeters(24.750000);
+    public static final double TRACK_WIDTH = Units.inchesToMeters(24.750000);
 
     public static final double RADIUS = Math.sqrt(2) * (WHEEL_BASE / 2);
 
     /** FR FL BR BL. Same as order of swerve module states */
     public static final SwerveDriveKinematics DRIVE_KINEMATICS =
         new SwerveDriveKinematics(
-            new Translation2d(WHEEL_BASE / 2, -TRACK_WITDTH / 2),
-            new Translation2d(WHEEL_BASE / 2, TRACK_WITDTH / 2),
-            new Translation2d(-WHEEL_BASE / 2, -TRACK_WITDTH / 2),
-            new Translation2d(-WHEEL_BASE / 2, TRACK_WITDTH / 2));
+            new Translation2d(WHEEL_BASE / 2, -TRACK_WIDTH / 2),
+            new Translation2d(WHEEL_BASE / 2, TRACK_WIDTH / 2),
+            new Translation2d(-WHEEL_BASE / 2, -TRACK_WIDTH / 2),
+            new Translation2d(-WHEEL_BASE / 2, TRACK_WIDTH / 2));
 
     public static Pose2d INITIAL_POSE = new Pose2d(0, 0, new Rotation2d(0)); // must be in meters!
 

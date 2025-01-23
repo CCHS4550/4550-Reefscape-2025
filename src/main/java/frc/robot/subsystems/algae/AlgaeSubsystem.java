@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.helpers.CCMotorController;
-import frc.helpers.CCSparkMax;
+import frc.helpers.CCSparkSim;
 import frc.maps.Constants;
 
 public class AlgaeSubsystem extends SubsystemBase {
@@ -17,8 +17,10 @@ public class AlgaeSubsystem extends SubsystemBase {
   /** Implementation of Singleton Pattern */
   public static AlgaeSubsystem mInstance;
 
-  private static CCMotorController.MotorFactory defaultMotorFactory = CCSparkMax::new;
-  private static AlgaeIO.IOFactory defaultIoFactory = AlgaeIOHardware::new;
+  private final AlgaeIO io;
+
+  private static CCMotorController.MotorFactory defaultMotorFactory = CCSparkSim::new;
+  private static AlgaeIO.IOFactory defaultIoFactory = AlgaeIOSim::new;
 
   CCMotorController.MotorFactory motorFactory;
   AlgaeIO.IOFactory ioFactory;
@@ -64,28 +66,28 @@ public class AlgaeSubsystem extends SubsystemBase {
   private AlgaeSubsystem(CCMotorController.MotorFactory motorFactory, AlgaeIO.IOFactory ioFactory) {
     this.motorFactory = motorFactory;
     this.ioFactory = ioFactory;
-  }
 
-  public final AlgaeIO io =
-      ioFactory.create(
-          motorFactory.create(
-              "algaeWristMotor",
-              "algaeWrist",
-              Constants.MotorConstants.ALGAE_WRIST,
-              MotorType.kBrushless,
-              IdleMode.kBrake,
-              Constants.MotorConstants.ALGAE_WRIST_REVERSE,
-              1.0,
-              1.0),
-          motorFactory.create(
-              "algaeIntakeMotor",
-              "algaeIntake",
-              Constants.MotorConstants.ALGAE_INTAKE,
-              MotorType.kBrushless,
-              IdleMode.kBrake,
-              Constants.MotorConstants.ALGAE_WRIST_REVERSE,
-              1.0,
-              1.0));
+    this.io =
+        ioFactory.create(
+            this.motorFactory.create(
+                "algaeWristMotor",
+                "algaeWrist",
+                Constants.MotorConstants.ALGAE_WRIST,
+                MotorType.kBrushless,
+                IdleMode.kBrake,
+                Constants.MotorConstants.ALGAE_WRIST_REVERSE,
+                1.0,
+                1.0),
+            this.motorFactory.create(
+                "algaeIntakeMotor",
+                "algaeIntake",
+                Constants.MotorConstants.ALGAE_INTAKE,
+                MotorType.kBrushless,
+                IdleMode.kBrake,
+                Constants.MotorConstants.ALGAE_WRIST_REVERSE,
+                1.0,
+                1.0));
+  }
 
   private void applyStates() {
     switch (currentState) {

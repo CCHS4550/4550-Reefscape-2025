@@ -6,10 +6,12 @@ package frc.helpers;
 
 import com.revrobotics.sim.SparkMaxAlternateEncoderSim;
 import com.revrobotics.sim.SparkMaxSim;
+import com.revrobotics.sim.SparkRelativeEncoderSim;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.AlternateEncoderConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -27,7 +29,7 @@ public class CCSparkSim extends SparkMaxSim implements CCMotorController {
 
   private String name;
   private String shortName;
-  private SparkMaxAlternateEncoderSim encoder;
+  private SparkRelativeEncoderSim encoder;
   private double voltageConversionFactor;
   private double velocityConversionFactorOne = 1.0;
   private double positionConversionFactorOne = 1.0;
@@ -45,7 +47,15 @@ public class CCSparkSim extends SparkMaxSim implements CCMotorController {
       double positionConversionFactor,
       double velocityConversionFactor) {
     super(
-        createConfiguredSparkMax(deviceID, motorType, reverse, idleMode),
+        createConfiguredSparkMax(
+            name,
+            shortName,
+            deviceID,
+            motorType,
+            idleMode,
+            reverse,
+            positionConversionFactor,
+            velocityConversionFactor),
         new DCMotor(
             nominalVoltageVolts,
             stallTorqueNewtonMeters,
@@ -57,7 +67,7 @@ public class CCSparkSim extends SparkMaxSim implements CCMotorController {
     this.name = name;
     this.shortName = shortName;
 
-    this.encoder = super.getAlternateEncoderSim();
+    this.encoder = super.getRelativeEncoderSim();
     this.setPositionConversionFactor(positionConversionFactor);
     this.setVelocityConversionFactor(velocityConversionFactor);
     voltageConversionFactor = 12;
@@ -73,9 +83,22 @@ public class CCSparkSim extends SparkMaxSim implements CCMotorController {
    * @return
    */
   private static SparkMax createConfiguredSparkMax(
-      int deviceID, MotorType motorType, boolean reverse, IdleMode idleMode) {
+      String name,
+      String shortName,
+      int deviceID,
+      MotorType motorType,
+      IdleMode idleMode,
+      boolean reverse,
+      double positionConversionFactor,
+      double velocityConversionFactor) {
+
     SparkMaxConfig config = new SparkMaxConfig();
     config.inverted(reverse).idleMode(idleMode);
+
+    AlternateEncoderConfig encoderConfig = new AlternateEncoderConfig();
+    encoderConfig.positionConversionFactor(positionConversionFactor);
+    encoderConfig.setSparkMaxDataPortConfig();
+    config.apply(encoderConfig);
 
     SparkMax sparkMax = new SparkMax(deviceID, motorType);
     sparkMax.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -144,6 +167,11 @@ public class CCSparkSim extends SparkMaxSim implements CCMotorController {
   }
 
   @Override
+  public void setVelocity(double speed) {
+    encoder.setVelocity(speed);
+  }
+
+  @Override
   public void disable() {
     super.disable();
   }
@@ -195,8 +223,13 @@ public class CCSparkSim extends SparkMaxSim implements CCMotorController {
   }
 
   @Override
-  public SparkMaxAlternateEncoderSim getEncoder() {
+  public SparkRelativeEncoderSim getEncoder() {
     return encoder;
+  }
+
+  @Override
+  public SparkMaxAlternateEncoderSim getAlternateEncoder() {
+    return super.getAlternateEncoderSim();
   }
 
   @Override

@@ -171,6 +171,7 @@ public class OrthogonalToTag extends Command {
     // || target.isEmpty();
   }
 
+  /** Helper Methods */
   public double getAverageX(List<Transform3d> transform3dList) {
 
     List<Distance> distanceList = new ArrayList<>();

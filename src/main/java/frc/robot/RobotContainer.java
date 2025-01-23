@@ -6,8 +6,7 @@ import frc.helpers.CCSparkMax;
 import frc.helpers.CCSparkSim;
 import frc.helpers.vision.PhotonVision;
 import frc.maps.Constants;
-import frc.robot.controlschemes.autoMechScheme;
-import frc.robot.controlschemes.teleOpMechScheme;
+import frc.robot.controlschemes.SwerveDriveScheme;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.algae.AlgaeIOHardware;
 import frc.robot.subsystems.algae.AlgaeIOReplay;
@@ -55,8 +54,9 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    teleOpMechScheme.configure(intake, arm, elevator, wrist, algae, climber, 1);
-    autoMechScheme.configure(intake, arm, elevator, wrist, algae, superstructure, 2);
+    // teleOpMechScheme.configure(intake, arm, elevator, wrist, algae, climber, 1);
+    // autoMechScheme.configure(intake, arm, elevator, wrist, algae, superstructure, 2);
+
     switch (Constants.currentMode) {
       case REAL:
         swerve = SwerveDriveSubsystem.getInstance(CCSparkMax::new, SwerveModuleIOHardware::new);
@@ -80,7 +80,7 @@ public class RobotContainer {
         intake = IntakeSubsystem.getInstance(CCSparkSim::new, IntakeIOSim::new);
         wrist = WristSubsystem.getInstance(CCSparkSim::new, WristIOSim::new);
 
-        photonvision = PhotonVision.getInstance();
+        // photonvision = PhotonVision.getInstance();
 
         superstructure = Superstructure.getInstance();
 
@@ -103,5 +103,7 @@ public class RobotContainer {
     RobotState.getInstance().poseInit();
     RobotState.getInstance().moduleEncodersInit();
     RobotState.getInstance().dashboardInit();
+
+    SwerveDriveScheme.configure(swerve, primaryController);
   }
 }

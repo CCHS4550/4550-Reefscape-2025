@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.helpers.CCMotorController;
-import frc.helpers.CCSparkMax;
+import frc.helpers.CCSparkSim;
 import frc.maps.Constants;
 
 public class ArmSubsystem extends SubsystemBase {
@@ -45,8 +45,10 @@ public class ArmSubsystem extends SubsystemBase {
   /** Implementation of Singleton Pattern */
   public static ArmSubsystem mInstance;
 
-  private static CCMotorController.MotorFactory defaultMotorFactory = CCSparkMax::new;
-  private static ArmIO.IOFactory defaultIoFactory = ArmIOHardware::new;
+  private final ArmIO io;
+
+  private static CCMotorController.MotorFactory defaultMotorFactory = CCSparkSim::new;
+  private static ArmIO.IOFactory defaultIoFactory = ArmIOSim::new;
 
   CCMotorController.MotorFactory motorFactory;
   ArmIO.IOFactory ioFactory;
@@ -72,19 +74,18 @@ public class ArmSubsystem extends SubsystemBase {
   private ArmSubsystem(CCMotorController.MotorFactory motorFactory, ArmIO.IOFactory ioFactory) {
     this.motorFactory = motorFactory;
     this.ioFactory = ioFactory;
+    this.io =
+        ioFactory.create(
+            motorFactory.create(
+                "armMotor",
+                "arm",
+                Constants.MotorConstants.ARM,
+                MotorType.kBrushless,
+                IdleMode.kBrake,
+                Constants.MotorConstants.ARM_REVERSE,
+                Constants.ArmConstants.ARM_MOTOR_ROTATIONS_TO_ARM_ROTATIONS_RADIANS,
+                Constants.ArmConstants.ARM_MOTOR_RADIANS_PER_SECOND_CONVERSION_FACTOR));
   }
-
-  private final ArmIO io =
-      ioFactory.create(
-          motorFactory.create(
-              "armMotor",
-              "arm",
-              Constants.MotorConstants.ARM,
-              MotorType.kBrushless,
-              IdleMode.kBrake,
-              Constants.MotorConstants.ARM_REVERSE,
-              Constants.ArmConstants.ARM_MOTOR_ROTATIONS_TO_ARM_ROTATIONS_RADIANS,
-              Constants.ArmConstants.ARM_MOTOR_RADIANS_PER_SECOND_CONVERSION_FACTOR));
 
   private void applyStates() {
     switch (currentState) {

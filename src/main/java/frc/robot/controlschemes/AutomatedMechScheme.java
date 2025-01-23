@@ -10,7 +10,7 @@ import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.wrist.WristSubsystem;
 
-public class autoMechScheme {
+public class AutomatedMechScheme {
   private static CommandGenericHID autoBoard;
 
   public static void configure(

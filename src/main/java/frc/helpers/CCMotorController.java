@@ -33,6 +33,8 @@ public interface CCMotorController {
     return 0;
   }
 
+  default void setVelocity(double speed) {}
+
   default double getRawVelocity() {
     return 0;
   }

@@ -8,7 +8,7 @@ import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.wrist.WristSubsystem;
 
-public class teleOpMechScheme {
+public class ManualMechScheme {
   private static CommandGenericHID teleOpBoard;
 
   public static void configure(

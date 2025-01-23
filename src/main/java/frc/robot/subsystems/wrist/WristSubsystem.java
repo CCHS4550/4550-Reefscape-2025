@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.helpers.CCMotorController;
-import frc.helpers.CCSparkMax;
+import frc.helpers.CCSparkSim;
 import frc.maps.Constants;
 
 public class WristSubsystem extends SubsystemBase {
@@ -45,8 +45,10 @@ public class WristSubsystem extends SubsystemBase {
   /** Implementation of Singleton Pattern */
   public static WristSubsystem mInstance;
 
-  private static CCMotorController.MotorFactory defaultMotorFactory = CCSparkMax::new;
-  private static WristIO.IOFactory defaultIoFactory = WristIOHardware::new;
+  private final WristIO io;
+
+  private static CCMotorController.MotorFactory defaultMotorFactory = CCSparkSim::new;
+  private static WristIO.IOFactory defaultIoFactory = WristIOSim::new;
 
   CCMotorController.MotorFactory motorFactory;
   WristIO.IOFactory ioFactory;
@@ -74,19 +76,18 @@ public class WristSubsystem extends SubsystemBase {
   private WristSubsystem(CCMotorController.MotorFactory motorFactory, WristIO.IOFactory ioFactory) {
     this.motorFactory = motorFactory;
     this.ioFactory = ioFactory;
+    this.io =
+        ioFactory.create(
+            motorFactory.create(
+                "wristMotor",
+                "wrist",
+                Constants.MotorConstants.WRIST,
+                MotorType.kBrushless,
+                IdleMode.kBrake,
+                Constants.WristConstants.WRIST_REVERSE,
+                1,
+                1));
   }
-
-  private final WristIO io =
-      ioFactory.create(
-          motorFactory.create(
-              "wristMotor",
-              "wrist",
-              Constants.MotorConstants.WRIST,
-              MotorType.kBrushless,
-              IdleMode.kBrake,
-              Constants.WristConstants.WRIST_REVERSE,
-              1,
-              1));
 
   private void applyStates() {
     switch (currentState) {

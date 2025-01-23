@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.helpers.CCMotorController;
-import frc.helpers.CCSparkMax;
+import frc.helpers.CCSparkSim;
 import frc.helpers.Elastic;
 import frc.helpers.Elastic.Notification.NotificationLevel;
 import frc.helpers.OI;
@@ -40,8 +40,10 @@ public class IntakeSubsystem extends SubsystemBase {
   /** Implementation of Singleton Pattern */
   public static IntakeSubsystem mInstance;
 
-  private static CCMotorController.MotorFactory defaultMotorFactory = CCSparkMax::new;
-  private static IntakeIO.IOFactory defaultIoFactory = IntakeIOHardware::new;
+  private final IntakeIO io;
+
+  private static CCMotorController.MotorFactory defaultMotorFactory = CCSparkSim::new;
+  private static IntakeIO.IOFactory defaultIoFactory = IntakeIOSim::new;
 
   CCMotorController.MotorFactory motorFactory;
   IntakeIO.IOFactory ioFactory;
@@ -68,28 +70,28 @@ public class IntakeSubsystem extends SubsystemBase {
       CCMotorController.MotorFactory motorFactory, IntakeIO.IOFactory ioFactory) {
     this.motorFactory = motorFactory;
     this.ioFactory = ioFactory;
-  }
 
-  public final IntakeIO io =
-      ioFactory.create(
-          motorFactory.create(
-              "intakeMotor1",
-              "intake1",
-              Constants.MotorConstants.INTAKE[1],
-              MotorType.kBrushless,
-              IdleMode.kBrake,
-              Constants.MotorConstants.INTAKE_REVERSE[1],
-              1,
-              1),
-          motorFactory.create(
-              "intakeMotor2",
-              "intake2",
-              Constants.MotorConstants.INTAKE[1],
-              MotorType.kBrushless,
-              IdleMode.kBrake,
-              Constants.MotorConstants.INTAKE_REVERSE[1],
-              1,
-              1));
+    this.io =
+        ioFactory.create(
+            motorFactory.create(
+                "intakeMotor1",
+                "intake1",
+                Constants.MotorConstants.INTAKE[0],
+                MotorType.kBrushless,
+                IdleMode.kBrake,
+                Constants.MotorConstants.INTAKE_REVERSE[0],
+                1,
+                1),
+            motorFactory.create(
+                "intakeMotor2",
+                "intake2",
+                Constants.MotorConstants.INTAKE[1],
+                MotorType.kBrushless,
+                IdleMode.kBrake,
+                Constants.MotorConstants.INTAKE_REVERSE[1],
+                1,
+                1));
+  }
 
   private void applyStates() {
     switch (currentState) {

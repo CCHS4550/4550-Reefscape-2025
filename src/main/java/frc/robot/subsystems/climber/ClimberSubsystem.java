@@ -11,7 +11,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.helpers.CCMotorController;
-import frc.helpers.CCSparkMax;
+import frc.helpers.CCSparkSim;
 import frc.maps.Constants;
 
 public class ClimberSubsystem extends SubsystemBase {
@@ -19,8 +19,10 @@ public class ClimberSubsystem extends SubsystemBase {
   /** Implementation of Singleton Pattern */
   public static ClimberSubsystem mInstance;
 
-  private static CCMotorController.MotorFactory defaultMotorFactory = CCSparkMax::new;
-  private static ClimberIO.IOFactory defaultIoFactory = ClimberIOHardware::new;
+  private final ClimberIO io;
+
+  private static CCMotorController.MotorFactory defaultMotorFactory = CCSparkSim::new;
+  private static ClimberIO.IOFactory defaultIoFactory = ClimberIOSim::new;
 
   CCMotorController.MotorFactory motorFactory;
   ClimberIO.IOFactory ioFactory;
@@ -47,19 +49,18 @@ public class ClimberSubsystem extends SubsystemBase {
       CCMotorController.MotorFactory motorFactory, ClimberIO.IOFactory ioFactory) {
     this.motorFactory = motorFactory;
     this.ioFactory = ioFactory;
+    this.io =
+        ioFactory.create(
+            motorFactory.create(
+                "Climber Motor",
+                "climb",
+                Constants.MotorConstants.CLIMBER,
+                MotorType.kBrushless,
+                IdleMode.kBrake,
+                Constants.MotorConstants.CLIMBER_REVERSE,
+                1,
+                1));
   }
-
-  private ClimberIO io =
-      ioFactory.create(
-          motorFactory.create(
-              "Climber Motor",
-              "climb",
-              Constants.MotorConstants.CLIMBER,
-              MotorType.kBrushless,
-              IdleMode.kBrake,
-              Constants.MotorConstants.CLIMBER_REVERSE,
-              1,
-              1));
 
   @Override
   public void periodic() {

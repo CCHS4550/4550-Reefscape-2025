@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.helpers.CCMotorController;
-import frc.helpers.CCSparkMax;
+import frc.helpers.CCSparkSim;
 import frc.maps.Constants;
 
 public class ElevatorSubsystem extends SubsystemBase {
@@ -47,8 +47,10 @@ public class ElevatorSubsystem extends SubsystemBase {
   /** Implementation of Singleton Pattern */
   public static ElevatorSubsystem mInstance;
 
-  private static CCMotorController.MotorFactory defaultMotorFactory = CCSparkMax::new;
-  private static ElevatorIO.IOFactory defaultIoFactory = ElevatorIOHardware::new;
+  private final ElevatorIO io;
+
+  private static CCMotorController.MotorFactory defaultMotorFactory = CCSparkSim::new;
+  private static ElevatorIO.IOFactory defaultIoFactory = ElevatorIOSim::new;
 
   CCMotorController.MotorFactory motorFactory;
   ElevatorIO.IOFactory ioFactory;
@@ -75,28 +77,27 @@ public class ElevatorSubsystem extends SubsystemBase {
       CCMotorController.MotorFactory motorFactory, ElevatorIO.IOFactory ioFactory) {
     this.motorFactory = motorFactory;
     this.ioFactory = ioFactory;
+    this.io =
+        ioFactory.create(
+            motorFactory.create(
+                "elevatorMotor1",
+                "elevator1",
+                Constants.MotorConstants.ELEVATOR[0],
+                MotorType.kBrushless,
+                IdleMode.kBrake,
+                Constants.MotorConstants.ELEVATOR_REVERSE[0],
+                Constants.ElevatorConstants.HEIGHT_METERS_PER_ELEVATOR_MOTOR_ROTATIONS,
+                Constants.ElevatorConstants.ELEVATOR_MOTOR_METERS_PER_SECOND_CONVERSION_FACTOR),
+            motorFactory.create(
+                "elevatorMotor2",
+                "elevator2",
+                Constants.MotorConstants.ELEVATOR[1],
+                MotorType.kBrushless,
+                IdleMode.kBrake,
+                Constants.MotorConstants.ELEVATOR_REVERSE[1],
+                Constants.ElevatorConstants.HEIGHT_METERS_PER_ELEVATOR_MOTOR_ROTATIONS,
+                Constants.ElevatorConstants.ELEVATOR_MOTOR_METERS_PER_SECOND_CONVERSION_FACTOR));
   }
-
-  private final ElevatorIO io =
-      ioFactory.create(
-          motorFactory.create(
-              "elevatorMotor1",
-              "elevator1",
-              Constants.MotorConstants.ELEVATOR[0],
-              MotorType.kBrushless,
-              IdleMode.kBrake,
-              Constants.MotorConstants.ELEVATOR_REVERSE[0],
-              Constants.ElevatorConstants.HEIGHT_METERS_PER_ELEVATOR_MOTOR_ROTATIONS,
-              Constants.ElevatorConstants.ELEVATOR_MOTOR_METERS_PER_SECOND_CONVERSION_FACTOR),
-          motorFactory.create(
-              "elevatorMotor2",
-              "elevator2",
-              Constants.MotorConstants.ELEVATOR[1],
-              MotorType.kBrushless,
-              IdleMode.kBrake,
-              Constants.MotorConstants.ELEVATOR_REVERSE[1],
-              Constants.ElevatorConstants.HEIGHT_METERS_PER_ELEVATOR_MOTOR_ROTATIONS,
-              Constants.ElevatorConstants.ELEVATOR_MOTOR_METERS_PER_SECOND_CONVERSION_FACTOR));
 
   private void applyStates() {
     switch (currentState) {

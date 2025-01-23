@@ -1,6 +1,6 @@
 package frc.robot.subsystems.swervedrive;
 
-import static edu.wpi.first.units.Units.*;
+import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.AnalogEncoder;
 import edu.wpi.first.wpilibj.simulation.AnalogEncoderSim;
 import frc.helpers.CCMotorController;
 import frc.maps.Constants;
+import java.util.Queue;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
@@ -33,12 +34,15 @@ public class SwerveModuleIOSim implements SwerveModuleIO {
 
   // private SparkPIDController turningPIDController;
 
-  private AnalogEncoder absoluteEncoder;
-  private AnalogEncoderSim absoluteEncoderSim;
+  private AnalogEncoderSim absoluteEncoder;
   private double absoluteEncoderOffset;
   private String name;
-
   private double absolutePosition;
+
+  // Queue inputs from odometry thread
+  private final Queue<Double> timestampContainer;
+  private final Queue<Double> drivePositionContainer;
+  private final Queue<Double> turnPositionContainer;
 
   // adjust absoluteEncoderChannel to possibly be absoluteEncoderAnalogInput
   /**
@@ -58,8 +62,7 @@ public class SwerveModuleIOSim implements SwerveModuleIO {
     this.driveMotor = driveMotor;
     this.turnMotor = turnMotor;
 
-    this.absoluteEncoder = new AnalogEncoder(absoluteEncoderChannel);
-    absoluteEncoderSim = new AnalogEncoderSim(absoluteEncoder);
+    this.absoluteEncoder = new AnalogEncoderSim(new AnalogEncoder(absoluteEncoderChannel));
 
     this.absolutePosition = getAbsoluteEncoderDistance();
 
@@ -81,6 +84,30 @@ public class SwerveModuleIOSim implements SwerveModuleIO {
 
     this.name = name;
     resetEncoders();
+
+    // Create odometry queues
+    timestampContainer = RealOdometryThread.getInstance().makeTimestampContainer();
+    drivePositionContainer =
+        RealOdometryThread.getInstance().registerInput(driveMotor, () -> getDrivePosition());
+    turnPositionContainer =
+        RealOdometryThread.getInstance().registerInput(turnMotor, () -> getTurnPosition());
+  }
+
+  @Override
+  public void updateInputs(SwerveModuleInputs inputs) {
+
+    // Update odometry inputs
+    inputs.odometryTimestamps =
+        timestampContainer.stream().mapToDouble((Double value) -> value).toArray();
+    inputs.odometryDrivePositionsMeters =
+        drivePositionContainer.stream().mapToDouble((Double value) -> value).toArray();
+    inputs.odometryTurnPositions =
+        turnPositionContainer.stream()
+            .map((Double value) -> new Rotation2d(value))
+            .toArray(Rotation2d[]::new);
+    timestampContainer.clear();
+    drivePositionContainer.clear();
+    turnPositionContainer.clear();
   }
 
   /**
@@ -205,7 +232,8 @@ public class SwerveModuleIOSim implements SwerveModuleIO {
     desiredState.optimize(encoderRotation);
 
     // Minimizes side drift when driving
-    desiredState.speedMetersPerSecond *= desiredState.angle.minus(encoderRotation).getCos();
+    // Messes up simulation for some reason
+    // desiredState.speedMetersPerSecond *= desiredState.angle.minus(encoderRotation).getCos();
 
     setDriveVelocity(desiredState.speedMetersPerSecond);
     Logger.recordOutput("desiredState - Meters per Second", desiredState.speedMetersPerSecond);
@@ -216,6 +244,9 @@ public class SwerveModuleIOSim implements SwerveModuleIO {
 
   @Override
   public void setDriveVelocity(double velocity) {
+
+    driveMotor.setVelocity(velocity);
+
     // These are both in m/s
     double driveOutput = drivingPidController.calculate(driveMotor.getVelocity(), velocity);
     Logger.recordOutput("desired drivePID Output", driveOutput);
@@ -229,6 +260,9 @@ public class SwerveModuleIOSim implements SwerveModuleIO {
 
   @Override
   public void setTurnPosition(DoubleSupplier angle) {
+
+    turnMotor.setPosition(angle.getAsDouble());
+
     double turnOutput =
         turningPIDController.calculate(getAbsoluteEncoderRadiansOffset(), angle.getAsDouble());
     // turnMotor.setVoltage(turnOutput);
@@ -280,7 +314,7 @@ public class SwerveModuleIOSim implements SwerveModuleIO {
   }
 
   public void printAbsoluteEncoder() {
-    System.out.println(name + ": " + absoluteEncoderSim.get());
+    System.out.println(name + ": " + absoluteEncoder.get());
   }
 
   @Override
@@ -294,7 +328,7 @@ public class SwerveModuleIOSim implements SwerveModuleIO {
   }
 
   public double getAbsoluteEncoderDistance() {
-    return absoluteEncoderSim.get() * Math.PI * 2;
+    return absoluteEncoder.get() * Math.PI * 2;
   }
 
   public double getTurnEncoderDistance() {

@@ -2,6 +2,7 @@ package frc.helpers;
 
 import com.revrobotics.*;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.AlternateEncoderConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
@@ -48,6 +49,11 @@ public class CCSparkMax extends SparkMax implements CCMotorController {
     this.shortName = shortName;
     SparkMaxConfig config = new SparkMaxConfig();
     config.inverted(reverse).idleMode(idleMode);
+
+    AlternateEncoderConfig encoderConfig = new AlternateEncoderConfig();
+    encoderConfig.positionConversionFactor(positionConversionFactor);
+    encoderConfig.setSparkMaxDataPortConfig();
+    config.apply(encoderConfig);
 
     this.encoder = super.getEncoder();
     this.alternateEncoder = super.getAlternateEncoder();
