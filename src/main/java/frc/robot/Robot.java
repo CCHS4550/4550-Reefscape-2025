@@ -19,7 +19,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.maps.Constants;
-// import frc.robot.autonomous.CustomAutoChooser;
+import frc.robot.autonomous.CustomAutoChooser;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -37,7 +37,7 @@ import org.littletonrobotics.urcl.URCL;
 public class Robot extends LoggedRobot {
 
   private RobotContainer robotContainer;
-  // CustomAutoChooser autoChooser;
+  CustomAutoChooser autoChooser;
 
   private boolean browningOut = false;
 
@@ -46,7 +46,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void robotInit() {
 
-    // autoChooser = new CustomAutoChooser();
+    autoChooser = new CustomAutoChooser();
 
     Constants.getCurrentMode();
 
@@ -129,8 +129,8 @@ public class Robot extends LoggedRobot {
       case REPLAY:
         break;
     }
-    RobotState.getInstance().updateOdometryPose();
     RobotState.getInstance().updateModulePositions();
+    RobotState.getInstance().updateOdometryPose();
 
     // Runs the Scheduler. This is responsible for polling buttons, adding
     // newly-scheduled
@@ -155,7 +155,7 @@ public class Robot extends LoggedRobot {
   public void autonomousInit() {
     // AutoBuilderScheme.getPathPlannerAutoCommand().schedule();
     // AutoBuilderScheme.getCustomAuto().schedule();
-    // autoChooser.getSelectedCustomCommand().schedule();
+    autoChooser.getSelectedCustomCommand().schedule();
 
     System.out.println("Autonomous Routine Scheduled!");
   }

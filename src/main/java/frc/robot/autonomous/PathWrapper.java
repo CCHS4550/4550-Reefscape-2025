@@ -17,6 +17,7 @@ import frc.robot.RobotState;
 import frc.robot.subsystems.swervedrive.SwerveDriveSubsystem;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Map;
 
 /** Add your docs here. */
 
@@ -144,25 +145,46 @@ public class PathWrapper {
     } catch (org.json.simple.parser.ParseException e) {
       e.printStackTrace();
       System.err.println("Error parsing the path file" + filename);
+    } catch (NullPointerException e) {
+      System.err.print("File does not exist " + filename);
     }
     return null;
   }
 
   public static PathPlannerPath getPathPlannerPathfromChoreo(String filename) {
     try {
-      return flipIfNecessary(PathPlannerPath.fromChoreoTrajectory(filename));
+      return flipIfNecessary(
+          PathPlannerPath.fromChoreoTrajectory(
+              handleChoreoIndex(filename).getKey(), handleChoreoIndex(filename).getValue()));
     } catch (IOException e) {
       e.printStackTrace();
       System.err.println("Error reading the path file" + filename);
     } catch (org.json.simple.parser.ParseException e) {
       e.printStackTrace();
       System.err.println("Error parsing the path file" + filename);
+    } catch (NullPointerException e) {
+      System.err.println("File does not exist " + filename);
     }
     return null;
   }
 
   public static PathPlannerPath flipIfNecessary(PathPlannerPath path) {
     return Constants.isBlue() ? path : path.flipPath();
+  }
+
+  public static Map.Entry<String, Integer> handleChoreoIndex(String filename) {
+    // Split the string into two parts
+    int lastDotIndex = filename.lastIndexOf(".");
+    if (lastDotIndex == -1) {
+      throw new IllegalArgumentException(
+          "Input string must contain a period '.' separating the path and number.");
+    }
+
+    // Extract the parts
+    String path = filename.substring(0, lastDotIndex); // "examplepath"
+    int number = Integer.parseInt(filename.substring(lastDotIndex + 1)); // 1
+
+    return Map.entry(path, number);
   }
 
   /** Helper Classes for general cases outside this class. */

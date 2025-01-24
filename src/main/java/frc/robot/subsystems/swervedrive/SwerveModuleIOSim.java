@@ -10,6 +10,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.AnalogEncoder;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.simulation.AnalogEncoderSim;
 import frc.helpers.CCMotorController;
 import frc.maps.Constants;
@@ -39,6 +40,12 @@ public class SwerveModuleIOSim implements SwerveModuleIO {
   private double absoluteEncoderOffset;
   private String name;
   private double absolutePosition;
+
+  private double previoustimeStamp;
+  private double timeStamp;
+
+  private double drivePositionSim;
+  private double turnPositionSim;
 
   // Queue inputs from odometry thread
   private final Queue<Double> timestampContainer;
@@ -87,6 +94,12 @@ public class SwerveModuleIOSim implements SwerveModuleIO {
     this.name = name;
     resetEncoders();
 
+    timeStamp = Timer.getFPGATimestamp();
+    previoustimeStamp = timeStamp;
+
+    drivePositionSim = 0;
+    turnPositionSim = 0;
+
     // Create odometry queues
     timestampContainer = RealOdometryThread.getInstance().makeTimestampContainer();
     drivePositionContainer =
@@ -119,13 +132,10 @@ public class SwerveModuleIOSim implements SwerveModuleIO {
    */
   @Override
   public double getDrivePosition() {
-    return ((SparkMaxAlternateEncoderSim) driveMotor.getAlternateEncoder())
-        .getVelocity(); // should be in meters?
+    return drivePositionSim;
+    // return ((SparkMaxAlternateEncoderSim) driveMotor.getAlternateEncoder()).getPosition();
+    // should be in meters?
   }
-
-  //   public SparkAnalogSensor getDriveAnalog() {
-  //     return driveMotor.getAnalog();
-  //   }
 
   /**
    * Gets the encoder value of the turn motor.
@@ -135,7 +145,9 @@ public class SwerveModuleIOSim implements SwerveModuleIO {
   @Override
   public double getTurnPosition() {
     // return turnMotor.getPosition() % (2 * Math.PI); // should be in radians?
-    return getAbsoluteEncoderRadiansOffset();
+    // return 0;
+    return turnPositionSim;
+    // return getAbsoluteEncoderRadiansOffset();
   }
 
   @Override
@@ -248,7 +260,9 @@ public class SwerveModuleIOSim implements SwerveModuleIO {
   @Override
   public void setDriveVelocity(double velocity) {
 
+    driveMotor.setVelocity(velocity);
     ((SparkMaxAlternateEncoderSim) driveMotor.getAlternateEncoder()).setVelocity(velocity);
+    drivePositionSim += velocity * getTimestampChange();
 
     // These are both in m/s
     double driveOutput = drivingPidController.calculate(driveMotor.getVelocity(), velocity);
@@ -265,6 +279,7 @@ public class SwerveModuleIOSim implements SwerveModuleIO {
   public void setTurnPosition(DoubleSupplier angle) {
 
     // absoluteEncoder.set(angle.getAsDouble());
+    turnPositionSim = angle.getAsDouble();
 
     double turnOutput =
         turningPIDController.calculate(getAbsoluteEncoderRadiansOffset(), angle.getAsDouble());
@@ -348,6 +363,13 @@ public class SwerveModuleIOSim implements SwerveModuleIO {
 
   public double getDriveEncoderVelocity() {
     return driveMotor.getVelocity();
+  }
+
+  private double getTimestampChange() {
+    previoustimeStamp = timeStamp;
+    timeStamp = Timer.getFPGATimestamp();
+    Logger.recordOutput("Period Sim", timeStamp - previoustimeStamp);
+    return timeStamp - previoustimeStamp;
   }
 
   /**

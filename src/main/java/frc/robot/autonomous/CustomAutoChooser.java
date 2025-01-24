@@ -33,16 +33,6 @@ public class CustomAutoChooser {
     EMPTY
   }
 
-  PathWrapper pathWrapper1 =
-      new PathWrapper(
-          AutoRoutine.AUTOROUTINE1,
-          Rotation2d.fromRadians(Math.PI),
-          new PathWrapper.AutoFile("examplepath.1", false),
-          new PathWrapper.AutoFile("examplepath.2", false),
-          new PathWrapper.AutoFile("examplepath.3", false),
-          new PathWrapper.AutoFile("examplepath.4", false),
-          new PathWrapper.AutoFile("examplepath.5", false));
-
   /**
    * This is what puts the options on Smart Dashboard, but instead of doing it by itself, we have to
    * populate it manually.
@@ -83,15 +73,19 @@ public class CustomAutoChooser {
 
   public Command autoRoutine1() {
 
+    PathWrapper pathWrapper1 =
+        new PathWrapper(
+            AutoRoutine.AUTOROUTINE1,
+            Rotation2d.fromRadians(Math.PI),
+            new PathWrapper.AutoFile("examplepath.0", true),
+            new PathWrapper.AutoFile("examplepath.1", true));
+
     SequentialCommandGroup c = new SequentialCommandGroup();
     // Do not add file extensions!
 
     c.addCommands(pathWrapper1.setInitialPose());
     c.addCommands(pathWrapper1.getStartingCommand());
     c.addCommands(pathWrapper1.getFollowCommand(1));
-    c.addCommands(pathWrapper1.getFollowCommand(2));
-
-    c.addCommands(followChoreoTestCommand("path2", new Rotation2d()));
 
     return c;
   }

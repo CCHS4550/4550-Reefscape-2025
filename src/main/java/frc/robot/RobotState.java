@@ -13,6 +13,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -54,9 +55,11 @@ public class RobotState {
   WristSubsystem wrist;
 
   /** Module positions used for odometry */
-  public SwerveModulePosition[] swerveModulePositions = new SwerveModulePosition[4];
-
   public SwerveModulePosition[] previousSwerveModulePositions = new SwerveModulePosition[4];
+
+  public SwerveModulePosition[] currentSwerveModulePositions = new SwerveModulePosition[4];
+
+  public SwerveModulePosition[] swerveModulePositions = new SwerveModulePosition[4];
 
   public int sampleCount;
   public double[] sampleTimestamps;
@@ -67,6 +70,7 @@ public class RobotState {
   private final Queue<Double> gyroContainer;
   public Rotation2d[] gyroAngle = new Rotation2d[] {};
   public List<Rotation2d> gyroAnglePlusDeltas = new ArrayList<>();
+  public double gyroAngleSim = 0;
 
   private RobotState() {
 
@@ -99,19 +103,23 @@ public class RobotState {
     this.wrist = wrist;
 
     swerveModulePositions[0] =
-        new SwerveModulePosition(
-            0, new Rotation2d(swerve.frontRight.getAbsoluteEncoderRadiansOffset()));
+        new SwerveModulePosition(0, new Rotation2d(swerve.frontRight.getTurnPosition()));
     swerveModulePositions[1] =
-        new SwerveModulePosition(
-            0, new Rotation2d(swerve.frontLeft.getAbsoluteEncoderRadiansOffset()));
+        new SwerveModulePosition(0, new Rotation2d(swerve.frontLeft.getTurnPosition()));
     swerveModulePositions[2] =
-        new SwerveModulePosition(
-            0, new Rotation2d(swerve.backRight.getAbsoluteEncoderRadiansOffset()));
+        new SwerveModulePosition(0, new Rotation2d(swerve.backRight.getTurnPosition()));
     swerveModulePositions[3] =
-        new SwerveModulePosition(
-            0, new Rotation2d(swerve.backLeft.getAbsoluteEncoderRadiansOffset()));
+        new SwerveModulePosition(0, new Rotation2d(swerve.backLeft.getTurnPosition()));
 
-    previousSwerveModulePositions = swerveModulePositions;
+    previousSwerveModulePositions[0] = new SwerveModulePosition();
+    previousSwerveModulePositions[1] = new SwerveModulePosition();
+    previousSwerveModulePositions[2] = new SwerveModulePosition();
+    previousSwerveModulePositions[3] = new SwerveModulePosition();
+
+    currentSwerveModulePositions[0] = new SwerveModulePosition();
+    currentSwerveModulePositions[1] = new SwerveModulePosition();
+    currentSwerveModulePositions[2] = new SwerveModulePosition();
+    currentSwerveModulePositions[3] = new SwerveModulePosition();
   }
 
   public final Field2d gameField = new Field2d();
@@ -149,13 +157,15 @@ public class RobotState {
      * Only just found out this method is basically useless unless your gyro has disconnected. Too
      * tired to explain it rn.
      */
-    // addModuleDeltas();
-
     gameField.setRobotPose(getPose());
 
     lastPose = currentPose;
 
-    if (swerve.swerveModuleInputs[0].odometryTimestamps.length > 0) {
+    if (!gyro.isConnected()) {
+      addModuleDeltas();
+      gyroAngle = gyroAnglePlusDeltas.toArray(new Rotation2d[0]);
+    }
+    if (swerve.swerveModuleInputs[0].odometryTimestamps.length > 0 && gyro.isConnected()) {
       sampleCount = swerve.swerveModuleInputs[0].odometryTimestamps.length;
       sampleTimestamps = swerve.swerveModuleInputs[0].odometryTimestamps;
       swerveModulePositionsArray = getModulePositionArray();
@@ -171,7 +181,7 @@ public class RobotState {
 
     } else {
       poseEstimator.updateWithTime(
-          Timer.getFPGATimestamp(), getPoseRotation2d(), swerveModulePositions);
+          Timer.getFPGATimestamp(), getRotation2d(), swerveModulePositions);
     }
 
     currentPose = getPose();
@@ -377,7 +387,10 @@ public class RobotState {
     }
   }
 
-  public synchronized void updateModulePositions() {
+  public synchronized SwerveModulePosition[] updateModulePositions() {
+
+    // previousSwerveModulePositions = swerveModulePositions;
+
     swerveModulePositions[0] =
         new SwerveModulePosition(
             swerve.frontRight.getDrivePosition(),
@@ -394,7 +407,10 @@ public class RobotState {
         new SwerveModulePosition(
             swerve.backLeft.getDrivePosition(), new Rotation2d(swerve.backLeft.getTurnPosition()));
 
-    Logger.recordOutput("modulePositions", swerveModulePositions);
+    Logger.recordOutput("currentModulePositions", swerveModulePositions);
+    Logger.recordOutput("previousModulePositions", previousSwerveModulePositions);
+
+    return swerveModulePositions;
   }
 
   public synchronized double[] getAverageTimestampArray() {
@@ -530,6 +546,34 @@ public class RobotState {
    * @return
    */
   public synchronized Rotation2d getRotation2d() {
+
+    // currentSwerveModulePositions = updateModulePositions();
+
+    if (RobotBase.isSimulation()) {
+      /**
+       * This code in this if block is from Mechanical Advantage's Spark Swerve Project. IDK why it
+       * works and my version didn't, but it does.
+       */
+      SwerveModulePosition[] modulePositions = new SwerveModulePosition[4];
+      SwerveModulePosition[] moduleDeltas = new SwerveModulePosition[4];
+      for (int moduleIndex = 0; moduleIndex < 4; moduleIndex++) {
+        modulePositions[moduleIndex] = swerveModulePositions[moduleIndex];
+        moduleDeltas[moduleIndex] =
+            new SwerveModulePosition(
+                modulePositions[moduleIndex].distanceMeters
+                    - previousSwerveModulePositions[moduleIndex].distanceMeters,
+                modulePositions[moduleIndex].angle);
+        previousSwerveModulePositions[moduleIndex] = modulePositions[moduleIndex];
+      }
+
+      gyroAngleSim += Constants.SwerveConstants.DRIVE_KINEMATICS.toTwist2d(moduleDeltas).dtheta;
+
+      Logger.recordOutput("gyroAngleSim", gyroAngleSim);
+
+      previousSwerveModulePositions = currentSwerveModulePositions;
+
+      return Rotation2d.fromRadians(gyroAngleSim);
+    }
 
     Logger.recordOutput("Gyro Rotation2d", gyro.getRotation2d());
     return gyro.getRotation2d();
