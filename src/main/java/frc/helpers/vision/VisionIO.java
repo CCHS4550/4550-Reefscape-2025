@@ -27,5 +27,5 @@ public interface VisionIO {
   }
 
   /** Default method, defined in photonvision */
-  public default void updateInputs(VisionIOInputs inputs, Pose2d estimate) {}
+  public default void updateInputs(VisionIOInputs inputs) {}
 }

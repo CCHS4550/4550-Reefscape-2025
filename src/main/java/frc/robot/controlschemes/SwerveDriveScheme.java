@@ -95,8 +95,8 @@ public class SwerveDriveScheme implements ControlScheme {
                           * driveSpeedModifier.getAsDouble();
 
                   double ySpeed =
-                      // MathUtil.applyDeadband(-controller.getLeftX(), 0.01)
-                      MathUtil.applyDeadband(0, 0.01)
+                      MathUtil.applyDeadband(-controller.getLeftX(), 0.01)
+                          // MathUtil.applyDeadband(0, 0.01)
                           * Constants.SwerveConstants.MAX_DRIVE_SPEED_METERS_PER_SECOND
                           * driveSpeedModifier.getAsDouble();
 
@@ -106,7 +106,7 @@ public class SwerveDriveScheme implements ControlScheme {
                   if (!orientationLocked) {
                     orientationLockAngle = RobotState.getInstance().getPoseAngleRadians();
                     // turnSpeed = MathUtil.applyDeadband(controller.getRightX(), 0.05);
-                    turnSpeed = MathUtil.applyDeadband(controller.getLeftX(), 0.05);
+                    turnSpeed = MathUtil.applyDeadband(controller.getRightX(), 0.05);
 
                   } else {
                     turnSpeed =
@@ -142,24 +142,12 @@ public class SwerveDriveScheme implements ControlScheme {
                             RobotState.getInstance().getPoseRotation2d());
                     Logger.recordOutput("xSpeed", xSpeed);
                     Logger.recordOutput("ySped", ySpeed);
-                    // RobotState.getInstance().getRotation2d());
+
                   } else {
                     // Relative to robot
                     chassisSpeeds = new ChassisSpeeds(xSpeed, ySpeed, -turnSpeed);
                   }
                   SwerveDriveSubsystem.getInstance().driveRobotRelative(chassisSpeeds);
-                  // chassisSpeeds = ChassisSpeeds.discretize(chassisSpeeds, 0.02);
-
-                  // SwerveModuleState[] moduleStates;
-                  // // Convert chassis speeds to individual module states
-                  // moduleStates =
-                  //     Constants.SwerveConstants.DRIVE_KINEMATICS.toSwerveModuleStates(
-                  //         chassisSpeeds);
-
-                  // // Logger.recordOutput("Teleoperated set moduleStates", moduleStates);
-
-                  // // swerveDrive.setRawDriveVolts(1);
-                  // swerveDrive.setModuleStates(moduleStates);
                 },
                 swerve)
             .withName("Swerve Controller Command"));

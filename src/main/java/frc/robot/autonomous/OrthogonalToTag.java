@@ -15,7 +15,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.helpers.vision.PhotonVision;
+import frc.helpers.vision.PhotonVisionAprilTag;
 import frc.maps.Constants;
 import frc.robot.RobotState;
 import frc.robot.subsystems.swervedrive.SwerveDriveSubsystem;
@@ -235,7 +235,7 @@ public class OrthogonalToTag extends Command {
     List<Transform3d> angles = new ArrayList<>();
 
     for (Map.Entry<PhotonPoseEstimator, PhotonPipelineResult> result :
-        PhotonVision.getInstance().condensedResults) {
+        PhotonVisionAprilTag.getInstance().condensedResults) {
 
       Transform3d transformVector =
           result

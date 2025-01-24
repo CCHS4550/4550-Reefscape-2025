@@ -5,10 +5,6 @@
 package frc.helpers.vision;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.maps.Constants;
@@ -24,22 +20,19 @@ import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
-import org.photonvision.simulation.PhotonCameraSim;
-import org.photonvision.simulation.SimCameraProperties;
-import org.photonvision.simulation.VisionSystemSim;
 import org.photonvision.targeting.PhotonPipelineResult;
 
-public class PhotonVision extends SubsystemBase implements VisionIO {
+public class PhotonVisionAprilTag extends SubsystemBase implements VisionIO {
 
   public List<Map.Entry<PhotonPoseEstimator, PhotonPipelineResult>> results = new ArrayList<>();
   public List<Map.Entry<PhotonPoseEstimator, PhotonPipelineResult>> condensedResults =
       new ArrayList<>();
 
-  public static PhotonVision mInstance;
+  public static PhotonVisionAprilTag mInstance;
 
-  public static PhotonVision getInstance() {
+  public static PhotonVisionAprilTag getInstance() {
     if (mInstance == null) {
-      mInstance = new PhotonVision();
+      mInstance = new PhotonVisionAprilTag();
     }
     return mInstance;
   }
@@ -47,8 +40,6 @@ public class PhotonVision extends SubsystemBase implements VisionIO {
   /* Create Camera */
   public PhotonCamera leftCamera;
   public PhotonCamera rightCamera;
-
-  public VisionSystemSim visionSim;
 
   /* Camera 1 PhotonPoseEstimator. */
   public PhotonPoseEstimator leftCamera_photonEstimator;
@@ -58,7 +49,7 @@ public class PhotonVision extends SubsystemBase implements VisionIO {
   PhotonPoseEstimator[] photonEstimators;
 
   /** Creates a new Photonvision. */
-  private PhotonVision() {
+  private PhotonVisionAprilTag() {
 
     // This will take a bit of tweaking to get right. I'm fairly certain that remotehost is defined
     // in the photonvision ui.
@@ -68,51 +59,22 @@ public class PhotonVision extends SubsystemBase implements VisionIO {
     leftCamera = new PhotonCamera(Constants.cameraOne.CAMERA_ONE_NAME);
     rightCamera = new PhotonCamera(Constants.cameraTwo.CAMERA_TWO_NAME);
 
-    switch (Constants.currentMode) {
-      case REAL:
-        leftCamera_photonEstimator =
-            new PhotonPoseEstimator(
-                Constants.AprilTags.aprilTagFieldLayout,
-                PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
-                Constants.cameraOne.ROBOT_TO_CAM);
-        rightCamera_photonEstimator =
-            new PhotonPoseEstimator(
-                Constants.AprilTags.aprilTagFieldLayout,
-                PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
-                Constants.cameraTwo.ROBOT_TO_CAM);
+    leftCamera_photonEstimator =
+        new PhotonPoseEstimator(
+            Constants.AprilTags.aprilTagFieldLayout,
+            PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+            Constants.cameraOne.ROBOT_TO_CAM);
+    rightCamera_photonEstimator =
+        new PhotonPoseEstimator(
+            Constants.AprilTags.aprilTagFieldLayout,
+            PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+            Constants.cameraTwo.ROBOT_TO_CAM);
 
-        leftCamera_photonEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
-        rightCamera_photonEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
+    leftCamera_photonEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
+    rightCamera_photonEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
 
-        photonEstimators =
-            new PhotonPoseEstimator[] {leftCamera_photonEstimator, rightCamera_photonEstimator};
-
-        break;
-
-      case SIM:
-        visionSim = new VisionSystemSim("main");
-        visionSim.addAprilTags(Constants.AprilTags.aprilTagFieldLayout);
-
-        SimCameraProperties cameraProp = new SimCameraProperties();
-        cameraProp.setCalibration(320, 240, Rotation2d.fromDegrees(62.5));
-        cameraProp.setFPS(40);
-
-        PhotonCameraSim cameraSim = new PhotonCameraSim(leftCamera, cameraProp);
-
-        // Our camera is mounted 0.1 meters forward and 0.5 meters up from the robot pose,
-        // (Robot pose is considered the center of rotation at the floor level, or Z = 0)
-        Translation3d robotToCameraTrl = new Translation3d(0.1, 0, 0.5);
-        // and pitched 15 degrees up.
-        Rotation3d robotToCameraRot = new Rotation3d(0, Math.toRadians(-35), 0);
-        Transform3d robotToCamera = new Transform3d(robotToCameraTrl, robotToCameraRot);
-
-        visionSim.addCamera(cameraSim, robotToCamera);
-
-        break;
-
-      case REPLAY:
-        break;
-    }
+    photonEstimators =
+        new PhotonPoseEstimator[] {leftCamera_photonEstimator, rightCamera_photonEstimator};
   }
 
   /**
@@ -124,7 +86,7 @@ public class PhotonVision extends SubsystemBase implements VisionIO {
    *     itself through the SwerveDrivePoseEstimator.
    */
   @Override
-  public void updateInputs(VisionIOInputs inputs, Pose2d currentEstimate) {
+  public void updateInputs(VisionIOInputs inputs) {
 
     /* Only an array in case we use multiple cameras. */
     results.clear();

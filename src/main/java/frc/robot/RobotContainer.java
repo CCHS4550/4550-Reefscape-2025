@@ -4,7 +4,10 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.helpers.CCMotorReplay;
 import frc.helpers.CCSparkMax;
 import frc.helpers.CCSparkSim;
-import frc.helpers.vision.PhotonVision;
+import frc.helpers.vision.PhotonVisionAprilTag;
+import frc.helpers.vision.PhotonVisionReplay;
+import frc.helpers.vision.PhotonVisionSim;
+import frc.helpers.vision.VisionIO;
 import frc.maps.Constants;
 import frc.robot.controlschemes.SwerveDriveScheme;
 import frc.robot.subsystems.Superstructure;
@@ -44,7 +47,7 @@ public class RobotContainer {
   WristSubsystem wrist;
   ClimberSubsystem climber;
 
-  PhotonVision photonvision;
+  VisionIO vision;
   Superstructure superstructure;
 
   /*
@@ -66,7 +69,7 @@ public class RobotContainer {
         intake = IntakeSubsystem.getInstance(CCSparkMax::new, IntakeIOHardware::new);
         wrist = WristSubsystem.getInstance(CCSparkMax::new, WristIOHardware::new);
 
-        photonvision = PhotonVision.getInstance();
+        vision = PhotonVisionAprilTag.getInstance();
 
         superstructure = Superstructure.getInstance();
 
@@ -80,7 +83,7 @@ public class RobotContainer {
         intake = IntakeSubsystem.getInstance(CCSparkSim::new, IntakeIOSim::new);
         wrist = WristSubsystem.getInstance(CCSparkSim::new, WristIOSim::new);
 
-        // photonvision = PhotonVision.getInstance();
+        vision = PhotonVisionSim.getInstance();
 
         superstructure = Superstructure.getInstance();
 
@@ -94,12 +97,14 @@ public class RobotContainer {
         intake = IntakeSubsystem.getInstance(CCMotorReplay::new, IntakeIOReplay::new);
         wrist = WristSubsystem.getInstance(CCMotorReplay::new, WristIOReplay::new);
 
+        vision = PhotonVisionReplay.getInstance();
+
         superstructure = Superstructure.getInstance();
 
         break;
     }
 
-    RobotState.getInstance().robotStateInit(swerve, algae, arm, elevator, intake, wrist);
+    RobotState.getInstance().robotStateInit(swerve, algae, arm, elevator, intake, wrist, vision);
     RobotState.getInstance().poseInit();
     RobotState.getInstance().moduleEncodersInit();
     RobotState.getInstance().dashboardInit();

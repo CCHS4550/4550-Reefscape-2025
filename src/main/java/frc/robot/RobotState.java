@@ -21,7 +21,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.helpers.vision.PhotonVision;
+import frc.helpers.vision.VisionIO;
 import frc.maps.Constants;
 import frc.robot.subsystems.algae.AlgaeSubsystem;
 import frc.robot.subsystems.arm.ArmSubsystem;
@@ -53,6 +53,8 @@ public class RobotState {
   ElevatorSubsystem elevator;
   IntakeSubsystem intake;
   WristSubsystem wrist;
+
+  VisionIO vision;
 
   /** Module positions used for odometry */
   public SwerveModulePosition[] previousSwerveModulePositions = new SwerveModulePosition[4];
@@ -94,13 +96,16 @@ public class RobotState {
       ArmSubsystem arm,
       ElevatorSubsystem elevator,
       IntakeSubsystem intake,
-      WristSubsystem wrist) {
+      WristSubsystem wrist,
+      VisionIO vision) {
     this.swerve = swerve;
     this.algae = algae;
     this.arm = arm;
     this.elevator = elevator;
     this.intake = intake;
     this.wrist = wrist;
+
+    this.vision = vision;
 
     swerveModulePositions[0] =
         new SwerveModulePosition(0, new Rotation2d(swerve.frontRight.getTurnPosition()));
@@ -191,16 +196,12 @@ public class RobotState {
 
   public synchronized void updateVisionPose() {
     /** Update the visionData to what the camera sees. */
-    if (Robot.isReal()) {
-      PhotonVision.getInstance().updateInputs(visionInputs, getPose());
+    vision.updateInputs(visionInputs);
 
-      for (int i = 0; i < visionInputs.poseEstimates.length; i++) {
-        /** Add the Photonvision pose estimates */
-        poseEstimator.addVisionMeasurement(
-            visionInputs.poseEstimates[i], visionInputs.timestampArray[i]);
-      }
-    } else if (Robot.isSimulation()) {
-      PhotonVision.getInstance().visionSim.update(getPose());
+    for (int i = 0; i < visionInputs.poseEstimates.length; i++) {
+      /** Add the Photonvision pose estimates */
+      poseEstimator.addVisionMeasurement(
+          visionInputs.poseEstimates[i], visionInputs.timestampArray[i]);
     }
   }
 
