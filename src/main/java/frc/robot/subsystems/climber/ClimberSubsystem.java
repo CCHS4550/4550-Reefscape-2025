@@ -11,7 +11,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.helpers.CCMotorController;
-import frc.helpers.CCSparkSim;
+import frc.helpers.CCMotorReplay;
 import frc.maps.Constants;
 
 public class ClimberSubsystem extends SubsystemBase {
@@ -21,8 +21,8 @@ public class ClimberSubsystem extends SubsystemBase {
 
   private final ClimberIO io;
 
-  private static CCMotorController.MotorFactory defaultMotorFactory = CCSparkSim::new;
-  private static ClimberIO.IOFactory defaultIoFactory = ClimberIOSim::new;
+  private static CCMotorController.MotorFactory defaultMotorFactory = CCMotorReplay::new;
+  private static ClimberIO.IOFactory defaultIoFactory = ClimberIOReplay::new;
 
   CCMotorController.MotorFactory motorFactory;
   ClimberIO.IOFactory ioFactory;
@@ -40,6 +40,7 @@ public class ClimberSubsystem extends SubsystemBase {
   public static ClimberSubsystem getInstance() {
     if (mInstance == null) {
       mInstance = new ClimberSubsystem(defaultMotorFactory, defaultIoFactory);
+      System.out.println("CREATING DEFAULT CLIMBER");
     }
     return mInstance;
   }

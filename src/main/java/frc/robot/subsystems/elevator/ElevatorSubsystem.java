@@ -68,6 +68,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   public static ElevatorSubsystem getInstance() {
     if (mInstance == null) {
       mInstance = new ElevatorSubsystem(defaultMotorFactory, defaultIoFactory);
+      System.out.println("CREATING DEFAULT ELEVATOR");
     }
     return mInstance;
   }

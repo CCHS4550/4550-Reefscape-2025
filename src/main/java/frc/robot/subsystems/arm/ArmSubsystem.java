@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.helpers.CCMotorController;
-import frc.helpers.CCSparkSim;
+import frc.helpers.CCMotorReplay;
 import frc.maps.Constants;
 
 public class ArmSubsystem extends SubsystemBase {
@@ -47,8 +47,8 @@ public class ArmSubsystem extends SubsystemBase {
 
   private final ArmIO io;
 
-  private static CCMotorController.MotorFactory defaultMotorFactory = CCSparkSim::new;
-  private static ArmIO.IOFactory defaultIoFactory = ArmIOSim::new;
+  private static CCMotorController.MotorFactory defaultMotorFactory = CCMotorReplay::new;
+  private static ArmIO.IOFactory defaultIoFactory = ArmIOReplay::new;
 
   CCMotorController.MotorFactory motorFactory;
   ArmIO.IOFactory ioFactory;
@@ -66,6 +66,7 @@ public class ArmSubsystem extends SubsystemBase {
   public static ArmSubsystem getInstance() {
     if (mInstance == null) {
       mInstance = new ArmSubsystem(defaultMotorFactory, defaultIoFactory);
+      System.out.println("CREATING DEFAULT ARM");
     }
     return mInstance;
   }

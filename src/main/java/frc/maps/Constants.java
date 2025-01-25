@@ -89,53 +89,54 @@ public class Constants {
   public static class MotorConstants {
 
     // Swerve Drive Base Motor & CAN ID Constants
-    public static final int FRONT_RIGHT_DRIVE = 3;
+    public static final int FRONT_RIGHT_DRIVE = 1;
     public static final boolean FRONT_RIGHT_DRIVE_REVERSE = true;
     public static final double FRONT_RIGHT_DRIVE_ENCODER = 1;
-    public static final int FRONT_RIGHT_TURN = 4;
+    public static final int FRONT_RIGHT_TURN = 2;
     public static final boolean FRONT_RIGHT_TURN_REVERSE = true;
     public static final double FRONT_RIGHT_TURN_ENCODER = 1;
 
-    public static final int FRONT_LEFT_DRIVE = 7;
+    public static final int FRONT_LEFT_DRIVE = 3;
     public static final boolean FRONT_LEFT_DRIVE_REVERSE = true;
     public static final double FRONT_LEFT_DRIVE_ENCODER = 1;
-    public static final int FRONT_LEFT_TURN = 6;
+    public static final int FRONT_LEFT_TURN = 4;
     public static final boolean FRONT_LEFT_TURN_REVERSE = true;
     public static final double FRONT_LEFT_TURN_ENCODER = 1;
 
-    public static final int BACK_RIGHT_DRIVE = 2;
+    public static final int BACK_RIGHT_DRIVE = 5;
     public static final boolean BACK_RIGHT_DRIVE_REVERSE = true;
     public static final double BACK_RIGHT_DRIVE_ENCODER = 1;
-    public static final int BACK_RIGHT_TURN = 1;
+    public static final int BACK_RIGHT_TURN = 6;
     public static final boolean BACK_RIGHT_TURN_REVERSE = true;
     public static final double BACK_RIGHT_TURN_ENCODER = 1;
 
-    public static final int BACK_LEFT_DRIVE = 9;
+    public static final int BACK_LEFT_DRIVE = 7;
     public static final boolean BACK_LEFT_DRIVE_REVERSE = true;
     public static final double BACK_LEFT_DRIVE_ENCODER = 1;
     public static final int BACK_LEFT_TURN = 8;
     public static final boolean BACK_LEFT_TURN_REVERSE = true;
     public static final double BACK_LEFT_TURN_ENCODER = 1;
 
-    public static final int ALGAE_WRIST = 10;
-    public static final boolean ALGAE_WRIST_REVERSE = false;
-
-    public static final int ALGAE_INTAKE = 11;
-    public static final boolean ALGAE_INTAKE_REVERSE = false;
-
-    public static final int CLIMBER = 12;
+    public static final int CLIMBER = 9;
     public static final boolean CLIMBER_REVERSE = false;
 
-    public static final int[] ELEVATOR = {13, 14};
+    public static final int[] ELEVATOR = {10, 11};
     public static final boolean[] ELEVATOR_REVERSE = {false, true};
 
-    public static final int ARM = 15;
+    public static final int ARM = 12;
     public static final boolean ARM_REVERSE = false;
 
-    public static final int[] INTAKE = {16, 17};
+    public static final int WRIST = 13;
+    public static final boolean WRIST_REVERSE = false;
+
+    public static final int[] INTAKE = {14, 15};
     public static final boolean[] INTAKE_REVERSE = {false, true};
 
-    public static final int WRIST = 18;
+    public static final int ALGAE_WRIST = 16;
+    public static final boolean ALGAE_WRIST_REVERSE = false;
+
+    public static final int ALGAE_INTAKE = 17;
+    public static final boolean ALGAE_INTAKE_REVERSE = false;
   }
 
   public static class SwerveConstants {

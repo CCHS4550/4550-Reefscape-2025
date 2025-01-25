@@ -14,7 +14,7 @@ public class CCSparkMax extends SparkMax implements CCMotorController {
   private String name;
   private String shortName;
   private RelativeEncoder encoder;
-  private RelativeEncoder alternateEncoder;
+  private RelativeEncoder alternateEncoder = null;
   AlternateEncoderConfig encoderConfig;
 
   private double voltageConversionFactor;
@@ -52,6 +52,7 @@ public class CCSparkMax extends SparkMax implements CCMotorController {
     this.shortName = shortName;
 
     config = new SparkMaxConfig();
+
     config.inverted(reverse).idleMode(idleMode);
 
     encoderConfig = new AlternateEncoderConfig();
@@ -61,7 +62,6 @@ public class CCSparkMax extends SparkMax implements CCMotorController {
     config.apply(encoderConfig);
 
     this.encoder = super.getEncoder();
-    this.alternateEncoder = super.getAlternateEncoder();
 
     this.setPositionConversionFactor(positionConversionFactor);
     this.setVelocityConversionFactor(velocityConversionFactor);
@@ -229,6 +229,7 @@ public class CCSparkMax extends SparkMax implements CCMotorController {
 
   @Override
   public RelativeEncoder getAlternateEncoder() {
+    this.alternateEncoder = super.getAlternateEncoder();
     return alternateEncoder;
   }
 

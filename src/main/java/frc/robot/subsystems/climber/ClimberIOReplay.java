@@ -4,7 +4,11 @@
 
 package frc.robot.subsystems.climber;
 
+import frc.helpers.CCMotorController;
+
 /** Add your docs here. */
 public class ClimberIOReplay implements ClimberIO {
-  public ClimberIOReplay() {}
+  public ClimberIOReplay(CCMotorController winchMotor) {
+    System.err.println("CLIMBER IN REPLAY");
+  }
 }

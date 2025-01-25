@@ -8,5 +8,7 @@ import frc.helpers.CCMotorController;
 
 /** Add your docs here. */
 public class AlgaeIOReplay implements AlgaeIO {
-  public AlgaeIOReplay(CCMotorController wrist, CCMotorController intake) {}
+  public AlgaeIOReplay(CCMotorController wrist, CCMotorController intake) {
+    System.err.println("ALGAE IN REPLAY");
+  }
 }

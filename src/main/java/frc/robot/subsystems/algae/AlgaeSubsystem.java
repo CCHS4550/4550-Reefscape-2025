@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.helpers.CCMotorController;
-import frc.helpers.CCSparkSim;
+import frc.helpers.CCMotorReplay;
 import frc.maps.Constants;
 
 public class AlgaeSubsystem extends SubsystemBase {
@@ -19,8 +19,8 @@ public class AlgaeSubsystem extends SubsystemBase {
 
   private final AlgaeIO io;
 
-  private static CCMotorController.MotorFactory defaultMotorFactory = CCSparkSim::new;
-  private static AlgaeIO.IOFactory defaultIoFactory = AlgaeIOSim::new;
+  private static CCMotorController.MotorFactory defaultMotorFactory = CCMotorReplay::new;
+  private static AlgaeIO.IOFactory defaultIoFactory = AlgaeIOReplay::new;
 
   CCMotorController.MotorFactory motorFactory;
   AlgaeIO.IOFactory ioFactory;
@@ -38,6 +38,7 @@ public class AlgaeSubsystem extends SubsystemBase {
   public static AlgaeSubsystem getInstance() {
     if (mInstance == null) {
       mInstance = new AlgaeSubsystem(defaultMotorFactory, defaultIoFactory);
+      System.out.println("CREATING DEFAULT ALGAE");
     }
     return mInstance;
   }

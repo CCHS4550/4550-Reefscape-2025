@@ -71,13 +71,13 @@ public class WristIOSim implements WristIO {
         Volts.of(getPIDFFOutput(new State(Units.degreesToRadians(goalState.getAngle()), 0))));
   }
 
-  public Command goToGoalState(State goalState, WristSubsystem arm) {
+  public Command goToGoalState(State goalState, WristSubsystem wrist) {
     return new FunctionalCommand(
         () -> {},
         () -> setVoltage(Volts.of(getPIDFFOutput(goalState))),
         (end) -> stop(),
         atSetpoint(),
-        arm);
+        wrist);
   }
 
   /** Called continuously */

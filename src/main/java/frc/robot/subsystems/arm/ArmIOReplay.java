@@ -7,5 +7,7 @@ import frc.helpers.CCMotorController;
 
 /** Add your docs here. */
 public class ArmIOReplay implements ArmIO {
-  public ArmIOReplay(CCMotorController motor) {}
+  public ArmIOReplay(CCMotorController motor) {
+    System.err.println("ARM IN REPLAY");
+  }
 }

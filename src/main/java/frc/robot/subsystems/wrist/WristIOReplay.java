@@ -8,5 +8,7 @@ import frc.helpers.CCMotorController;
 
 /** Add your docs here. */
 public class WristIOReplay implements WristIO {
-  public WristIOReplay(CCMotorController motor) {}
+  public WristIOReplay(CCMotorController motor) {
+    System.err.println("WRIST IN REPLAY");
+  }
 }

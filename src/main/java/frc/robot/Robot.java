@@ -49,6 +49,7 @@ public class Robot extends LoggedRobot {
     autoChooser = new CustomAutoChooser();
 
     Constants.getCurrentMode();
+    System.out.println(Constants.currentMode);
 
     SmartDashboard.putBoolean("Browning Out?", browningOut);
 
@@ -131,7 +132,7 @@ public class Robot extends LoggedRobot {
     }
     RobotState.getInstance().updateModulePositions();
     RobotState.getInstance().updateOdometryPose();
-    RobotState.getInstance().updateVisionPose();
+    // RobotState.getInstance().updateVisionPose();
 
     // Runs the Scheduler. This is responsible for polling buttons, adding
     // newly-scheduled

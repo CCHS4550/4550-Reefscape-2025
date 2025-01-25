@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.helpers.CCMotorController;
-import frc.helpers.CCSparkSim;
+import frc.helpers.CCMotorReplay;
 import frc.helpers.Elastic;
 import frc.helpers.Elastic.Notification.NotificationLevel;
 import frc.helpers.OI;
@@ -42,8 +42,8 @@ public class IntakeSubsystem extends SubsystemBase {
 
   private final IntakeIO io;
 
-  private static CCMotorController.MotorFactory defaultMotorFactory = CCSparkSim::new;
-  private static IntakeIO.IOFactory defaultIoFactory = IntakeIOSim::new;
+  private static CCMotorController.MotorFactory defaultMotorFactory = CCMotorReplay::new;
+  private static IntakeIO.IOFactory defaultIoFactory = IntakeIOReplay::new;
 
   CCMotorController.MotorFactory motorFactory;
   IntakeIO.IOFactory ioFactory;
@@ -61,6 +61,7 @@ public class IntakeSubsystem extends SubsystemBase {
   public static IntakeSubsystem getInstance() {
     if (mInstance == null) {
       mInstance = new IntakeSubsystem(defaultMotorFactory, defaultIoFactory);
+      System.out.println("CREATING DEFAULT INTAKE");
     }
     return mInstance;
   }

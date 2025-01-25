@@ -16,7 +16,9 @@ public class SwerveModuleIOReplay implements SwerveModuleIO {
       CCMotorController turnMotor,
       int absoluteEncoderChannel,
       double absoluteEncoderOffset,
-      String name) {}
+      String name) {
+    System.err.println(name + " SWERVEMODULE IN REPLAY");
+  }
 
   public double getDrivePosition() {
     return 0;

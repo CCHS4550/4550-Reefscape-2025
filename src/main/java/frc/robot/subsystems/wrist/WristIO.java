@@ -34,7 +34,7 @@ public interface WristIO {
 
   public default void holdAtState(WristState goalState) {}
 
-  public default Command goToGoalState(State goalState, WristSubsystem arm) {
+  public default Command goToGoalState(State goalState, WristSubsystem wrist) {
     return new InstantCommand();
   }
 

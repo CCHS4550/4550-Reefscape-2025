@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.helpers.CCMotorController;
-import frc.helpers.CCSparkSim;
+import frc.helpers.CCMotorReplay;
 import frc.maps.Constants;
 
 public class WristSubsystem extends SubsystemBase {
@@ -47,8 +47,8 @@ public class WristSubsystem extends SubsystemBase {
 
   private final WristIO io;
 
-  private static CCMotorController.MotorFactory defaultMotorFactory = CCSparkSim::new;
-  private static WristIO.IOFactory defaultIoFactory = WristIOSim::new;
+  private static CCMotorController.MotorFactory defaultMotorFactory = CCMotorReplay::new;
+  private static WristIO.IOFactory defaultIoFactory = WristIOReplay::new;
 
   CCMotorController.MotorFactory motorFactory;
   WristIO.IOFactory ioFactory;
@@ -68,6 +68,7 @@ public class WristSubsystem extends SubsystemBase {
   public static WristSubsystem getInstance() {
     if (mInstance == null) {
       mInstance = new WristSubsystem(defaultMotorFactory, defaultIoFactory);
+      System.out.println("CREATING DEFAULT WRIST");
     }
     return mInstance;
   }

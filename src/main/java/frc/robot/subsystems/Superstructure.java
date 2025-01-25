@@ -19,16 +19,6 @@ import frc.robot.subsystems.wrist.WristSubsystem.WristState;
 
 public class Superstructure extends SubsystemBase {
 
-  /** Implementation of Singleton Pattern */
-  public static Superstructure mInstance;
-
-  public static Superstructure getInstance() {
-    if (mInstance == null) {
-      mInstance = new Superstructure();
-    }
-    return mInstance;
-  }
-
   AlgaeSubsystem algae;
   ArmSubsystem arm;
   ElevatorSubsystem elevator;
@@ -36,14 +26,37 @@ public class Superstructure extends SubsystemBase {
   SwerveDriveSubsystem swerve;
   WristSubsystem wrist;
 
+  /** Implementation of Singleton Pattern */
+  public static Superstructure mInstance;
+
+  public static Superstructure getInstance(
+      SwerveDriveSubsystem swerve,
+      AlgaeSubsystem algae,
+      ArmSubsystem arm,
+      ElevatorSubsystem elevator,
+      IntakeSubsystem intake,
+      WristSubsystem wrist) {
+    if (mInstance == null) {
+      mInstance = new Superstructure(algae, arm, elevator, intake, wrist);
+    }
+    return mInstance;
+  }
+
+  public static Superstructure getInstance() {
+    return mInstance;
+  }
+
   /** Creates a new Superstructure. */
-  private Superstructure() {
-    algae = AlgaeSubsystem.getInstance();
-    arm = ArmSubsystem.getInstance();
-    elevator = ElevatorSubsystem.getInstance();
-    intake = IntakeSubsystem.getInstance();
-    swerve = SwerveDriveSubsystem.getInstance();
-    wrist = WristSubsystem.getInstance();
+  private Superstructure(
+      AlgaeSubsystem algae,
+      ArmSubsystem arm,
+      ElevatorSubsystem elevator,
+      IntakeSubsystem intake,
+      WristSubsystem wrist) {
+    this.algae = algae;
+    this.arm = arm;
+    this.elevator = elevator;
+    this.intake = intake;
   }
 
   /**

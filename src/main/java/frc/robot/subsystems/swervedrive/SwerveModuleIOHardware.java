@@ -63,8 +63,6 @@ public class SwerveModuleIOHardware implements SwerveModuleIO {
 
     this.absoluteEncoder = new AnalogEncoder(absoluteEncoderChannel);
 
-    this.absolutePosition = getAbsoluteEncoderDistance();
-
     // this.absoluteEncoder.setPositionOffset(absoluteEncoderOffset);
     this.absoluteEncoderOffset = absoluteEncoderOffset;
     // turningPIDController = new SparkPIDController(.5, 0, 0);
