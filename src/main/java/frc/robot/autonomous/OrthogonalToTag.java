@@ -8,6 +8,7 @@ import com.pathplanner.lib.trajectory.PathPlannerTrajectoryState;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+<<<<<<< Updated upstream
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Timer;
@@ -16,6 +17,20 @@ import frc.maps.Constants;
 import frc.robot.RobotState;
 import frc.robot.subsystems.swervedrive.SwerveDriveSubsystem;
 import java.util.Optional;
+=======
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj2.command.Command;
+import frc.helpers.vision.*;
+import frc.maps.Constants;
+import frc.robot.RobotState;
+import frc.robot.subsystems.swervedrive.SwerveDriveSubsystem;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+>>>>>>> Stashed changes
 import org.littletonrobotics.junction.Logger;
 import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonTrackedTarget;
@@ -53,6 +68,7 @@ public class OrthogonalToTag extends Command {
      * negative according to that coordinate system and I'm just going to assume that this is common
      * for all cases.
      */
+<<<<<<< Updated upstream
     target =
         Optional.of(
             frc.helpers.vision.PhotonVision.getInstance()
@@ -62,6 +78,11 @@ public class OrthogonalToTag extends Command {
     targetAngle =
         Rotation2d.fromDegrees(
             -target.get().getBestCameraToTarget().getRotation().toRotation2d().getDegrees() - 180);
+=======
+    targetAngle = getAverageAngle(getTransformList());
+    targetX = getAverageX(getTransformList());
+    targetY = getAverageY(getTransformList());
+>>>>>>> Stashed changes
 
     if (target.isPresent()) {
       /** Initialize a temporary PoseEstimator that lasts for this command's length. It will */
@@ -107,9 +128,23 @@ public class OrthogonalToTag extends Command {
   @Override
   public void execute() {
 
+<<<<<<< Updated upstream
     Logger.recordOutput("AprilTag Yaw", target.get().getYaw());
     Logger.recordOutput("AprilTag Yaw 2", targetAngle);
     double currentTime = timer.get();
+=======
+    targetAngle = getAverageAngle(getTransformList());
+    targetX = getAverageX(getTransformList());
+    targetY = getAverageY(getTransformList());
+
+    targetState.pose = new Pose2d(targetX, targetY, targetAngle);
+
+    targetState.heading = targetAngle;
+
+    Logger.recordOutput("OrthogonalToTag/targetPose", targetState.pose);
+    Logger.recordOutput(
+        "OrthogonalToTag/currentPose", poseRelativeToTargetEstimator.getEstimatedPosition());
+>>>>>>> Stashed changes
 
     // I'm not sure if we need to do all this, but it should make it relatively more accurate. By
     // doing this, we are combining swerve drive odometry with vision.
@@ -136,6 +171,7 @@ public class OrthogonalToTag extends Command {
             new Translation2d(),
             poseRelativeToTargetEstimator.getEstimatedPosition().getRotation());
 
+<<<<<<< Updated upstream
     ChassisSpeeds chassisSpeeds =
         SwerveDriveSubsystem.getInstance()
             .swerveFollower
@@ -144,8 +180,18 @@ public class OrthogonalToTag extends Command {
             // 0,Rotation2d.fromDegrees(target.getYaw())))), new State());
             .calculateRobotRelativeSpeeds(currentPose, targetState);
     // Convert chassis speeds to individual module states
+=======
+    // ChassisSpeeds chassisSpeeds =
+    //     SwerveDriveSubsystem.getInstance()
+    //         .swerveFollower
+    //         // .calculateRobotRelativeSpeeds(new Pose2d(0, 0,
+    //         // RobotState.getInstance().getAngleBetweenCurrentAndTargetPose(new Pose2d(0,
+    //         // 0,Rotation2d.fromDegrees(target.getYaw())))), new State());
+    //         .calculateRobotRelativeSpeeds(currentRelativePose, targetState);
+    // // Convert chassis speeds to individual module states
+>>>>>>> Stashed changes
 
-    SwerveDriveSubsystem.getInstance().driveRobotRelative(chassisSpeeds);
+    // SwerveDriveSubsystem.getInstance().driveRobotRelative(chassisSpeeds);
   }
 
   // Called once the command ends or is interrupted.
@@ -162,4 +208,93 @@ public class OrthogonalToTag extends Command {
         < 2);
     // || target.isEmpty();
   }
+<<<<<<< Updated upstream
+=======
+
+  /** Helper Methods */
+  public double getAverageX(List<Transform3d> transform3dList) {
+
+    List<Distance> distanceList = new ArrayList<>();
+
+    for (Transform3d transform3d : transform3dList) {
+      Distance orthogonalAngle = transform3d.getMeasureX();
+      distanceList.add(orthogonalAngle);
+    }
+
+    int distanceCount = distanceList.size();
+
+    double totalDistance = 0;
+
+    for (int i = 0; i < distanceCount; i++) {
+      totalDistance += distanceList.get(i).in(Meter);
+    }
+    return (totalDistance / distanceCount);
+  }
+
+  public double getAverageY(List<Transform3d> transform3dList) {
+
+    List<Distance> distanceList = new ArrayList<>();
+
+    for (Transform3d transform3d : transform3dList) {
+      Distance orthogonalAngle = transform3d.getMeasureY();
+      distanceList.add(orthogonalAngle);
+    }
+
+    int distanceCount = distanceList.size();
+
+    double totalDistance = 0;
+
+    for (int i = 0; i < distanceCount; i++) {
+      totalDistance += distanceList.get(i).in(Meter);
+    }
+    return (totalDistance / distanceCount);
+  }
+
+  public Rotation2d getAverageAngle(List<Transform3d> transform3dList) {
+
+    List<Rotation2d> angleList = new ArrayList<>();
+
+    for (Transform3d transform3d : transform3dList) {
+      Rotation2d orthogonalAngle =
+          Rotation2d.fromDegrees(transform3d.getRotation().toRotation2d().getDegrees() - 180);
+      angleList.add(orthogonalAngle);
+    }
+
+    int angleCount = angleList.size();
+
+    double totalAngle = 0;
+
+    for (int i = 0; i < angleCount; i++) {
+      totalAngle += angleList.get(i).getDegrees();
+    }
+    return Rotation2d.fromDegrees(totalAngle / angleCount);
+  }
+
+  public List<Transform3d> getTransformList() {
+
+    // if (RobotBase.isSimulation()) return PhotonVisionSim.getInstance().getTransformListSim();
+
+    if (RobotBase.isSimulation())
+      return PhotonVisionSim.getInstance().condensedResults.stream()
+          .map(
+              result ->
+                  result
+                      .getKey()
+                      .getRobotToCameraTransform()
+                      .plus(result.getValue().getBestTarget().getBestCameraToTarget()))
+          .collect(Collectors.toList());
+
+    if (RobotBase.isReal())
+      return PhotonVisionAprilTag.getInstance().condensedResults.stream()
+          .map(
+              result ->
+                  result
+                      .getKey()
+                      .getRobotToCameraTransform()
+                      .plus(result.getValue().getBestTarget().getBestCameraToTarget()))
+          .collect(Collectors.toList());
+
+    return null;
+  }
+>>>>>>> Stashed changes
 }

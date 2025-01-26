@@ -166,12 +166,12 @@ public class SwerveDriveScheme {
                 swerve)
             .withName("Swerve Controller Command"));
 
-    configureButtons(
-        swerve,
-        //  shooter,
-        //   indexer,
-        //    port
-        controller);
+    // configureButtons(
+    //     swerve,
+    //     //  shooter,
+    //     //   indexer,
+    //     //    port
+    //     controller);
   }
 
   /**

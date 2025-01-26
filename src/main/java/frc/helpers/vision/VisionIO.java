@@ -5,7 +5,12 @@
 package frc.helpers.vision;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import org.littletonrobotics.junction.AutoLog;
+import org.photonvision.PhotonPoseEstimator;
+import org.photonvision.targeting.PhotonPipelineResult;
 
 /** Add your docs here. */
 
@@ -27,5 +32,14 @@ public interface VisionIO {
   }
 
   /** Default method, defined in photonvision */
+<<<<<<< Updated upstream
   public default void updateInputs(VisionIOInputs inputs, Pose2d estimate) {}
+=======
+  public default void updateInputs(VisionIOInputs inputs) {}
+
+  public default List<Map.Entry<PhotonPoseEstimator, PhotonPipelineResult>>
+      condensePipelineResults() {
+    return new ArrayList<Map.Entry<PhotonPoseEstimator, PhotonPipelineResult>>();
+  }
+>>>>>>> Stashed changes
 }

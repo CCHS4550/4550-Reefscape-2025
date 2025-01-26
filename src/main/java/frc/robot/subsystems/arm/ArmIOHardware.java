@@ -70,6 +70,10 @@ public class ArmIOHardware implements ArmIO {
 
   @Override
   public void holdAtState(ArmState goalState) {
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
     setVoltage(
         Volts.of(getPIDFFOutput(new State(Units.degreesToRadians(goalState.getAngle()), 0))));
   }

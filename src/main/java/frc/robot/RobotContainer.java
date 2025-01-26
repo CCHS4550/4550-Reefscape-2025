@@ -4,10 +4,21 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.helpers.CCMotorReplay;
 import frc.helpers.CCSparkMax;
 import frc.helpers.CCSparkSim;
+<<<<<<< Updated upstream
 import frc.helpers.vision.PhotonVision;
 import frc.maps.Constants;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.algae.AlgaeIOHardware;
+=======
+import frc.helpers.vision.PhotonVisionAprilTag;
+import frc.helpers.vision.PhotonVisionReplay;
+import frc.helpers.vision.PhotonVisionSim;
+import frc.helpers.vision.VisionIO;
+import frc.maps.Constants;
+// import frc.robot.subsystems.Superstructure;
+import frc.robot.controlschemes.*;
+import frc.robot.subsystems.Superstructure;
+>>>>>>> Stashed changes
 import frc.robot.subsystems.algae.AlgaeIOReplay;
 import frc.robot.subsystems.algae.AlgaeIOSim;
 import frc.robot.subsystems.algae.AlgaeSubsystem;
@@ -41,7 +52,11 @@ public class RobotContainer {
   SwerveDriveSubsystem swerve;
   WristSubsystem wrist;
 
+<<<<<<< Updated upstream
   PhotonVision photonvision;
+=======
+  VisionIO vision;
+>>>>>>> Stashed changes
   Superstructure superstructure;
 
   /*
@@ -62,7 +77,11 @@ public class RobotContainer {
         intake = IntakeSubsystem.getInstance(CCSparkMax::new, IntakeIOHardware::new);
         wrist = WristSubsystem.getInstance(CCSparkMax::new, WristIOHardware::new);
 
+<<<<<<< Updated upstream
         photonvision = PhotonVision.getInstance();
+=======
+        vision = PhotonVisionAprilTag.getInstance();
+>>>>>>> Stashed changes
 
         superstructure = Superstructure.getInstance();
 
@@ -99,5 +118,23 @@ public class RobotContainer {
     RobotState.getInstance().poseInit();
     RobotState.getInstance().moduleEncodersInit();
     RobotState.getInstance().dashboardInit();
+<<<<<<< Updated upstream
+=======
+
+    switch (Constants.currentMode) {
+      case REAL:
+        SwerveDriveScheme.configure(swerve, primaryController);
+        // CharacterizationScheme.configure(swerve, algae, arm, elevator, intake, wrist,
+        // primaryController);
+        break;
+      case SIM:
+        SwerveDriveScheme.configure(swerve, primaryController);
+        SimulationScheme.configure(
+            intake, arm, elevator, wrist, algae, superstructure, primaryController);
+        break;
+      case REPLAY:
+        break;
+    }
+>>>>>>> Stashed changes
   }
 }

@@ -36,6 +36,7 @@ public class Superstructure extends SubsystemBase {
   SwerveDriveSubsystem swerve;
   WristSubsystem wrist;
 
+<<<<<<< Updated upstream
   /** Creates a new Superstructure. */
   private Superstructure() {
     algae = AlgaeSubsystem.getInstance();
@@ -44,6 +45,26 @@ public class Superstructure extends SubsystemBase {
     intake = IntakeSubsystem.getInstance();
     swerve = SwerveDriveSubsystem.getInstance();
     wrist = WristSubsystem.getInstance();
+=======
+  /** Implementation of Singleton Pattern */
+  public static Superstructure mInstance;
+
+  public static Superstructure getInstance() {
+    if (mInstance == null) {
+      mInstance = new Superstructure();
+    }
+    return mInstance;
+  }
+
+  /** Creates a new Superstructure. */
+  private Superstructure() {
+    this.algae = AlgaeSubsystem.getInstance();
+    this.arm = ArmSubsystem.getInstance();
+    this.elevator = ElevatorSubsystem.getInstance();
+    this.intake = IntakeSubsystem.getInstance();
+    this.swerve = SwerveDriveSubsystem.getInstance();
+    this.wrist = WristSubsystem.getInstance();
+>>>>>>> Stashed changes
   }
 
   /**

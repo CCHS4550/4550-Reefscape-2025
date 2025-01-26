@@ -93,6 +93,7 @@ public class Robot extends LoggedRobot {
     }
 
     PortForwarder.add(5800, "photonvision.local", 5800);
+    PortForwarder.add(5801, "photonvision2.local", 5801);
 
     // Unofficial REV-Compatible Logger
     // Used by SysID to log REV devices
@@ -130,7 +131,11 @@ public class Robot extends LoggedRobot {
         break;
     }
     RobotState.getInstance().updateOdometryPose();
+<<<<<<< Updated upstream
     RobotState.getInstance().updateModulePositions();
+=======
+    RobotState.getInstance().updateVisionPose();
+>>>>>>> Stashed changes
 
     // Runs the Scheduler. This is responsible for polling buttons, adding
     // newly-scheduled
