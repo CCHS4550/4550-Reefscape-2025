@@ -23,6 +23,7 @@ public class AutomatedMechScheme {
       int port) {
     autoBoard = new CommandGenericHID(port);
     configureButtons(intake, arm, elevator, wrist, algae, superstructure, port);
+    addNamedCommands();
   }
 
   public static void configureButtons(
@@ -57,5 +58,16 @@ public class AutomatedMechScheme {
         .button(4)
         .onTrue(superstructure.setWantedSuperstateCommand(WantedSuperState.L3_FRONT));
     autoBoard.button(4).onTrue(superstructure.setWantedSuperstateCommand(WantedSuperState.L4_BACK));
+  }
+  public static void addNamedCommands(){
+    NamedCommands.registerCommand("to L1", Superstructure.getInstance().setWantedSuperstateCommand(WantedSuperState.L1_FRONT));
+    NamedCommands.registerCommand("to L2", Superstructure.getInstance().setWantedSuperstateCommand(WantedSuperState.L2_FRONT));
+    NamedCommands.registerCommand("to L3", Superstructure.getInstance().setWantedSuperstateCommand(WantedSuperState.L3_FRONT));
+    NamedCommands.registerCommand("to L4", Superstructure.getInstance().setWantedSuperstateCommand(WantedSuperState.L4_BACK));
+
+    NamedCommands.registerCommand("intake", /*intake.intake()*/ intake.setWantedStateCommand(IntakeState.INTAKING_FRONT));
+    NamedCommands.registerCommand("outtake", /*intake.outtake()*/ intake.setWantedStateCommand(IntakeState.OUTTAKING_FRONT));
+
+    
   }
 }
