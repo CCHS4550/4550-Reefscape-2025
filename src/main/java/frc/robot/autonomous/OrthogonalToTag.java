@@ -13,19 +13,18 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.helpers.vision.PhotonVisionAprilTag;
+import frc.helpers.vision.*;
 import frc.maps.Constants;
 import frc.robot.RobotState;
 import frc.robot.subsystems.swervedrive.SwerveDriveSubsystem;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 import org.littletonrobotics.junction.Logger;
-import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonUtils;
-import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 public class OrthogonalToTag extends Command {
@@ -64,9 +63,9 @@ public class OrthogonalToTag extends Command {
      * negative according to that coordinate system and I'm just going to assume that this is common
      * for all cases.
      */
-    targetAngle = getAverageAngle(getOrthogonalTransformList());
-    targetX = getAverageX(getOrthogonalTransformList());
-    targetY = getAverageY(getOrthogonalTransformList());
+    targetAngle = getAverageAngle(getTransform3dList());
+    targetX = getAverageX(getTransform3dList());
+    targetY = getAverageY(getTransform3dList());
 
     // if (targets.isPresent()) {
     /** Initialize a temporary PoseEstimator that lasts for this command's length. It will */
@@ -111,13 +110,11 @@ public class OrthogonalToTag extends Command {
   @Override
   public void execute() {
 
-    targetAngle = getAverageAngle(getOrthogonalTransformList());
-    targetX = getAverageX(getOrthogonalTransformList());
-    targetY = getAverageY(getOrthogonalTransformList());
+    targetAngle = getAverageAngle(getTransform3dList());
+    targetX = getAverageX(getTransform3dList());
+    targetY = getAverageY(getTransform3dList());
 
     targetState.pose = new Pose2d(targetX, targetY, targetAngle);
-
-    Logger.recordOutput("Auto/TargetPose", targetState.pose);
 
     targetState.heading = targetAngle;
 
@@ -232,22 +229,30 @@ public class OrthogonalToTag extends Command {
     return Rotation2d.fromDegrees(totalAngle / angleCount);
   }
 
-  public List<Transform3d> getOrthogonalTransformList() {
+  public List<Transform3d> getTransform3dList() {
 
-    List<Transform3d> angles = new ArrayList<>();
+    // if (RobotBase.isSimulation()) return PhotonVisionSim.getInstance().getTransformListSim();
 
-    for (Map.Entry<PhotonPoseEstimator, PhotonPipelineResult> result :
-        PhotonVisionAprilTag.getInstance().condensedResults) {
+    if (RobotBase.isSimulation())
+      return PhotonVisionSim.getInstance().condensedResults.stream()
+          .map(
+              result ->
+                  result
+                      .getKey()
+                      .getRobotToCameraTransform()
+                      .plus(result.getValue().getBestTarget().getBestCameraToTarget()))
+          .collect(Collectors.toList());
 
-      Transform3d transformVector =
-          result
-              .getKey()
-              .getRobotToCameraTransform()
-              .plus(result.getValue().getBestTarget().getBestCameraToTarget());
+    if (RobotBase.isReal())
+      return PhotonVisionAprilTag.getInstance().condensedResults.stream()
+          .map(
+              result ->
+                  result
+                      .getKey()
+                      .getRobotToCameraTransform()
+                      .plus(result.getValue().getBestTarget().getBestCameraToTarget()))
+          .collect(Collectors.toList());
 
-      angles.add(transformVector);
-    }
-
-    return angles;
+    return null;
   }
 }

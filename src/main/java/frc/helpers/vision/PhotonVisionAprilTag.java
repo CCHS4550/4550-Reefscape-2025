@@ -153,6 +153,7 @@ public class PhotonVisionAprilTag extends SubsystemBase implements VisionIO {
     return estimates.toArray(new Pose2d[0]);
   }
 
+  @Override
   public List<Map.Entry<PhotonPoseEstimator, PhotonPipelineResult>> condensePipelineResults() {
 
     List<Integer> fudicialIDList = new ArrayList<>();

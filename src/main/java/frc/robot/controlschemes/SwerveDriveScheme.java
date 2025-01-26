@@ -152,12 +152,12 @@ public class SwerveDriveScheme implements ControlScheme {
                 swerve)
             .withName("Swerve Controller Command"));
 
-    configureButtons(
-        swerve,
-        //  shooter,
-        //   indexer,
-        //    port
-        controller);
+    // configureButtons(
+    //     swerve,
+    //     //  shooter,
+    //     //   indexer,
+    //     //    port
+    //     controller);
   }
 
   /**

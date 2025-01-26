@@ -10,6 +10,7 @@ import frc.helpers.vision.VisionIO;
 import frc.maps.Constants;
 // import frc.robot.subsystems.Superstructure;
 import frc.robot.controlschemes.*;
+import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.algae.AlgaeIOReplay;
 import frc.robot.subsystems.algae.AlgaeIOSim;
 import frc.robot.subsystems.algae.AlgaeSubsystem;
@@ -46,7 +47,7 @@ public class RobotContainer {
   WristSubsystem wrist;
 
   VisionIO vision;
-  // Superstructure superstructure;
+  Superstructure superstructure;
 
   /*
    * Initialize controllers.
@@ -55,8 +56,6 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    // teleOpMechScheme.configure(intake, arm, elevator, wrist, algae, climber, 1);
-    // autoMechScheme.configure(intake, arm, elevator, wrist, algae, superstructure, 2);
 
     switch (Constants.currentMode) {
       case REAL:
@@ -71,7 +70,7 @@ public class RobotContainer {
 
         // vision = PhotonVisionAprilTag.getInstance();
 
-        // superstructure = Superstructure.getInstance();
+        superstructure = Superstructure.getInstance();
 
         break;
 
@@ -87,7 +86,7 @@ public class RobotContainer {
 
         vision = PhotonVisionSim.getInstance();
 
-        // superstructure = Superstructure.getInstance();
+        superstructure = Superstructure.getInstance();
 
         break;
 
@@ -113,8 +112,25 @@ public class RobotContainer {
     RobotState.getInstance().moduleEncodersInit();
     RobotState.getInstance().dashboardInit();
 
-    SwerveDriveScheme.configure(swerve, primaryController);
-    // CharacterizationScheme.configure(
-    //     swerve, algae, arm, elevator, intake, wrist, primaryController);
+    switch (Constants.currentMode) {
+      case REAL:
+        SwerveDriveScheme.configure(swerve, primaryController);
+        // teleOpMechScheme.configure(intake, arm, elevator, wrist, algae, climber, 1);
+        // autoMechScheme.configure(intake, arm, elevator, wrist, algae, superstructure, 2);
+
+        // CharacterizationScheme.configure(swerve, algae, arm, elevator, intake, wrist,
+        // primaryController);
+        break;
+
+      case SIM:
+        SwerveDriveScheme.configure(swerve, primaryController);
+
+        SimulationScheme.configure(
+            intake, arm, elevator, wrist, algae, superstructure, primaryController);
+        break;
+
+      case REPLAY:
+        break;
+    }
   }
 }
