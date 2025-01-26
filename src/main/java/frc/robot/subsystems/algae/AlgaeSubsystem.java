@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.helpers.CCMotorController;
 import frc.helpers.CCMotorReplay;
 import frc.maps.Constants;
+import org.littletonrobotics.junction.Logger;
 
 public class AlgaeSubsystem extends SubsystemBase {
 
@@ -132,6 +133,8 @@ public class AlgaeSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     io.updateInputs(algaeInputs);
+    Logger.processInputs("Subsystem/Algae", algaeInputs);
+
     currentState = handleStateTransitions();
     applyStates();
   }

@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.helpers.CCMotorController;
 import frc.helpers.CCMotorReplay;
 import frc.maps.Constants;
+import org.littletonrobotics.junction.Logger;
 
 public class ClimberSubsystem extends SubsystemBase {
 
@@ -65,6 +66,8 @@ public class ClimberSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    io.updateInputs(climberInputs);
+    Logger.processInputs("Subsystem/Climber", climberInputs);
     // This method will be called once per scheduler run
   }
 

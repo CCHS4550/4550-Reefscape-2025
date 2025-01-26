@@ -11,10 +11,13 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.helpers.CCMotorController;
 import frc.helpers.CCMotorReplay;
 import frc.maps.Constants;
+import org.littletonrobotics.junction.Logger;
 
 public class WristSubsystem extends SubsystemBase {
 
@@ -45,7 +48,7 @@ public class WristSubsystem extends SubsystemBase {
   /** Implementation of Singleton Pattern */
   public static WristSubsystem mInstance;
 
-  private final WristIO io;
+  public final WristIO io;
 
   private static CCMotorController.MotorFactory defaultMotorFactory = CCMotorReplay::new;
   private static WristIO.IOFactory defaultIoFactory = WristIOReplay::new;
@@ -141,6 +144,15 @@ public class WristSubsystem extends SubsystemBase {
     }
   }
 
+  public Command runCharacterization() {
+    SequentialCommandGroup c = new SequentialCommandGroup();
+    c.addCommands(io.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    c.addCommands(io.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    c.addCommands(io.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    c.addCommands(io.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    return c;
+  }
+
   public void setWantedState(WristState wantedState) {
     this.wantedState = wantedState;
   }
@@ -156,6 +168,7 @@ public class WristSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     io.updateInputs(wristInputs);
+    Logger.processInputs("Subsystem/Wrist", wristInputs);
     currentState = handleStateTransitions();
     applyStates();
 

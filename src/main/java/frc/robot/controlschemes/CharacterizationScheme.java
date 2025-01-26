@@ -5,7 +5,6 @@
 package frc.robot.controlschemes;
 
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.subsystems.algae.AlgaeSubsystem;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
@@ -13,38 +12,29 @@ import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveDriveSubsystem;
 import frc.robot.subsystems.wrist.WristSubsystem;
 
-
 /** Add your docs here. */
-public class CharacterizingScheme {
+public class CharacterizationScheme {
 
   public static void configure(
-    SwerveDriveSubsystem swerve,
-    AlgaeSubsystem algae,
-    ArmSubsystem arm,
-    ElevatorSubsystem elevator,
-    IntakeSubsystem intake,
-    WristSubsystem wrist
-    CommandXboxController controller
-      ) {
+      SwerveDriveSubsystem swerve,
+      AlgaeSubsystem algae,
+      ArmSubsystem arm,
+      ElevatorSubsystem elevator,
+      IntakeSubsystem intake,
+      WristSubsystem wrist,
+      CommandXboxController controller) {
 
-    configureButtons(
-        swerve,
-        algae,
-        arm,
-        elevator,
-        intake,
-        wrist,
-        controller,
-        );
+    configureButtons(swerve, algae, arm, elevator, intake, wrist, controller);
   }
 
   public static void configureButtons(
-    SwerveDriveSubsystem swerve,
-    AlgaeSubsystem algae,
-    ArmSubsystem arm,
-    ElevatorSubsystem elevator,
-    IntakeSubsystem intake,
-    WristSubsystem wrist) {
+      SwerveDriveSubsystem swerve,
+      AlgaeSubsystem algae,
+      ArmSubsystem arm,
+      ElevatorSubsystem elevator,
+      IntakeSubsystem intake,
+      WristSubsystem wrist,
+      CommandXboxController controller) {
 
     // controller.a().onTrue(algae.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
     // controller.b().onTrue(algae.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
@@ -65,11 +55,8 @@ public class CharacterizingScheme {
     // controller.b().onTrue(intake.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
     // controller.x().onTrue(intake.sysIdDynamic(SysIdRoutine.Direction.kForward));
     // controller.y().onTrue(intake.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-    
-    // controller.a().onTrue(wrist.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    // controller.b().onTrue(wrist.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    // controller.x().onTrue(wrist.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    // controller.y().onTrue(wrist.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+
+    controller.a().onTrue(wrist.runCharacterization());
 
     // controller.a().onTrue(swerve.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
     // controller.b().onTrue(swerve.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));

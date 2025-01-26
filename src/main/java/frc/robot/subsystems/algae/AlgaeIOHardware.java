@@ -175,8 +175,8 @@ public class AlgaeIOHardware implements AlgaeIO {
       new SysIdRoutine(
           new SysIdRoutine.Config(
               Volts.per(Second).of(1),
-              Volts.of(5),
-              Seconds.of(4),
+              Volts.of(1),
+              Seconds.of(2),
               (state) -> Logger.recordOutput("SysIdTestState", state.toString())),
           new SysIdRoutine.Mechanism(
               (voltage) -> setWristVoltage(voltage),

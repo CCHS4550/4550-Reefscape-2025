@@ -110,7 +110,8 @@ public class SwerveDriveSubsystem extends SubsystemBase {
                 "frt",
                 Constants.MotorConstants.FRONT_RIGHT_TURN,
                 MotorType.kBrushless,
-                IdleMode.kBrake,
+                // Brake
+                IdleMode.kCoast,
                 Constants.MotorConstants.FRONT_RIGHT_TURN_REVERSE,
                 Constants.ConversionConstants.TURN_MOTOR_ROTATIONS_TO_WHEEL_ROTATIONS_RADIANS,
                 Constants.ConversionConstants.TURN_MOTOR_RADIANS_PER_SECOND),
@@ -134,7 +135,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
                 "flt",
                 Constants.MotorConstants.FRONT_LEFT_TURN,
                 MotorType.kBrushless,
-                IdleMode.kBrake,
+                IdleMode.kCoast,
                 Constants.MotorConstants.FRONT_LEFT_TURN_REVERSE,
                 Constants.ConversionConstants.TURN_MOTOR_ROTATIONS_TO_WHEEL_ROTATIONS_RADIANS,
                 Constants.ConversionConstants.TURN_MOTOR_RADIANS_PER_SECOND),
@@ -158,7 +159,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
                 "brt",
                 Constants.MotorConstants.BACK_RIGHT_TURN,
                 MotorType.kBrushless,
-                IdleMode.kBrake,
+                IdleMode.kCoast,
                 Constants.MotorConstants.BACK_RIGHT_TURN_REVERSE,
                 Constants.ConversionConstants.TURN_MOTOR_ROTATIONS_TO_WHEEL_ROTATIONS_RADIANS,
                 Constants.ConversionConstants.TURN_MOTOR_RADIANS_PER_SECOND),
@@ -182,7 +183,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
                 "blt",
                 Constants.MotorConstants.BACK_LEFT_TURN,
                 MotorType.kBrushless,
-                IdleMode.kBrake,
+                IdleMode.kCoast,
                 Constants.MotorConstants.BACK_LEFT_TURN_REVERSE,
                 Constants.ConversionConstants.TURN_MOTOR_ROTATIONS_TO_WHEEL_ROTATIONS_RADIANS,
                 Constants.ConversionConstants.TURN_MOTOR_RADIANS_PER_SECOND),
@@ -238,6 +239,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
 
     for (int i = 0; i < swerveModules.length; i++) {
       swerveModules[i].updateInputs(swerveModuleInputs[i]);
+      Logger.processInputs("Subsystem/Drive/" + swerveModules[i].getName(), swerveModuleInputs[i]);
     }
 
     Logger.recordOutput("Actual moduleStates", getCurrentModuleStates());

@@ -75,8 +75,9 @@ public class Robot extends LoggedRobot {
     switch (Constants.currentMode) {
       case REAL:
         // Running on a real robot, log to a USB stick ("/U/logs")
-        Logger.addDataReceiver(new WPILOGWriter());
+        Logger.addDataReceiver(new WPILOGWriter("/U/logs")); // Log to a USB stick
         Logger.addDataReceiver(new NT4Publisher());
+        Logger.recordMetadata("ProjectName", "MyProject"); // Set a metadata value
         break;
 
       case SIM:
@@ -111,6 +112,10 @@ public class Robot extends LoggedRobot {
 
     switch (Constants.currentMode) {
       case REAL:
+
+        // Remove later
+        DriverStation.silenceJoystickConnectionWarning(true);
+
         RobotState.getInstance().updateDashboard();
         // RobotState.getInstance().updateVisionPose();
 

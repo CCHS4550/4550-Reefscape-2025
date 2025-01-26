@@ -181,7 +181,8 @@ public class RobotState {
 
         // System.out.println("sampleTimeStamps size" + sampleTimestamps.length);
         // System.out.println("gyroAngle size" + gyroAngle.length);
-        // System.out.println("swerveModulePositionsArray size" + swerveModulePositionsArray.length);
+        // System.out.println("swerveModulePositionsArray size" +
+        // swerveModulePositionsArray.length);
 
         poseEstimator.updateWithTime(
             getSampleTimestamp(i), getGyroAngle(i), getSwerveModulePositionsArray(i));
@@ -360,7 +361,7 @@ public class RobotState {
 
     SwerveModulePosition[][] positions = new SwerveModulePosition[min][4];
 
-    for (int i = 0; i < positions.length; i++) {
+    for (int i = 0; i < min; i++) {
       positions[i][0] =
           new SwerveModulePosition(
               swerve.swerveModuleInputs[0].odometryDrivePositionsMeters[i],
@@ -379,7 +380,7 @@ public class RobotState {
               swerve.swerveModuleInputs[3].odometryTurnPositions[i]);
     }
 
-    swerveModulePositions = positions[positions.length - 1];
+    if (min != 0) swerveModulePositions = positions[min - 1];
 
     return positions;
   }
@@ -445,7 +446,6 @@ public class RobotState {
 
   public Rotation2d getGyroAngle(int index) {
     if (index > gyroAngle.length - 1) {
-      System.out.println("wtf");
       return gyroAngle[gyroAngle.length - 1];
     }
     return gyroAngle[index];

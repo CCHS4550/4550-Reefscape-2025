@@ -18,6 +18,7 @@ import frc.helpers.Elastic;
 import frc.helpers.Elastic.Notification.NotificationLevel;
 import frc.helpers.OI;
 import frc.maps.Constants;
+import org.littletonrobotics.junction.Logger;
 
 public class IntakeSubsystem extends SubsystemBase {
 
@@ -184,6 +185,7 @@ public class IntakeSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     io.updateInputs(intakeInputs);
+    Logger.processInputs("Subsystem/Intake", intakeInputs);
     currentState = handleStateTransitions();
     applyStates();
     // This method will be called once per scheduler run

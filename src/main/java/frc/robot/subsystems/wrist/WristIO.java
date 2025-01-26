@@ -4,6 +4,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.helpers.CCMotorController;
 import frc.robot.subsystems.wrist.WristSubsystem.WristState;
 import java.util.function.BooleanSupplier;
@@ -70,6 +71,14 @@ public interface WristIO {
    */
   default double getAbsoluteEncoderRadiansNoOffset() {
     return 0.0;
+  }
+
+  default Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+    return new InstantCommand();
+  }
+
+  default Command sysIdDynamic(SysIdRoutine.Direction direction) {
+    return new InstantCommand();
   }
 
   @FunctionalInterface

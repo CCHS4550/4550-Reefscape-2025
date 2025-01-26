@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.helpers.CCMotorController;
 import frc.helpers.CCSparkSim;
 import frc.maps.Constants;
+import org.littletonrobotics.junction.Logger;
 
 public class ElevatorSubsystem extends SubsystemBase {
 
@@ -170,6 +171,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     io.updateInputs(elevatorInputs);
+    Logger.processInputs("Subsystem/Elevator", elevatorInputs);
     currentState = handleStateTransitions();
     applyStates();
 

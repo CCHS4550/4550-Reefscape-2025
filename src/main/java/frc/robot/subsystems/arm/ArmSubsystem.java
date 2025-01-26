@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.helpers.CCMotorController;
 import frc.helpers.CCMotorReplay;
 import frc.maps.Constants;
+import org.littletonrobotics.junction.Logger;
 
 public class ArmSubsystem extends SubsystemBase {
 
@@ -154,6 +155,7 @@ public class ArmSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     io.updateInputs(armInputs);
+    Logger.processInputs("Subsystem/Arm", armInputs);
     currentState = handleStateTransitions();
     applyStates();
 
