@@ -196,8 +196,11 @@ public class RobotState {
     }
 
     currentPose = getPose();
-    Logger.recordOutput("Estimated Pose", getPose());
-    Logger.recordOutput("Estimated Angle", getPose().getRotation().getDegrees());
+    Logger.recordOutput("SwerveDrivePoseEstimator/Estimated Pose", getPose());
+    Logger.recordOutput(
+        "SwerveDrivePoseEstimator/Estimated Angle Degrees", getPose().getRotation().getDegrees());
+    Logger.recordOutput(
+        "SwerveDrivePoseEstimator/Estimated Angle Radians", getPose().getRotation().getRadians());
   }
 
   public synchronized void updateVisionPose() {

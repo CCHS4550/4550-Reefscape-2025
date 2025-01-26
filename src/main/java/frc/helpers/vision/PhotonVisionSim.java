@@ -17,13 +17,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import org.littletonrobotics.junction.Logger;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
+import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.simulation.PhotonCameraSim;
 import org.photonvision.simulation.SimCameraProperties;
 import org.photonvision.simulation.VisionSystemSim;
+import org.photonvision.simulation.VisionTargetSim;
 import org.photonvision.targeting.PhotonPipelineResult;
 
 public class PhotonVisionSim extends SubsystemBase implements VisionIO {
@@ -62,6 +63,23 @@ public class PhotonVisionSim extends SubsystemBase implements VisionIO {
 
     leftCamera = new PhotonCamera(Constants.cameraOne.CAMERA_ONE_NAME);
     rightCamera = new PhotonCamera(Constants.cameraTwo.CAMERA_TWO_NAME);
+
+    leftCamera_photonEstimator =
+        new PhotonPoseEstimator(
+            Constants.AprilTags.aprilTagFieldLayout,
+            PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+            Constants.cameraOne.ROBOT_TO_CAM);
+    rightCamera_photonEstimator =
+        new PhotonPoseEstimator(
+            Constants.AprilTags.aprilTagFieldLayout,
+            PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+            Constants.cameraTwo.ROBOT_TO_CAM);
+
+    leftCamera_photonEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
+    rightCamera_photonEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
+
+    photonEstimators =
+        new PhotonPoseEstimator[] {leftCamera_photonEstimator, rightCamera_photonEstimator};
 
     visionSim = new VisionSystemSim("main");
     visionSim.addAprilTags(Constants.AprilTags.aprilTagFieldLayout);
@@ -114,18 +132,26 @@ public class PhotonVisionSim extends SubsystemBase implements VisionIO {
   @Override
   public void updateInputs(VisionIOInputs inputs) {
 
+    // System.out.println("VisionSim Functional");
+
     /* Only an array in case we use multiple cameras. */
     results.clear();
 
-    results.addAll(
-        leftCameraSim.getCamera().getAllUnreadResults().stream()
-            .map(result -> Map.entry(leftCamera_photonEstimator, result))
-            .collect(Collectors.toList()));
+    if (visionSim.getCameraPose(leftCameraSim).isPresent()) {
+      results.add(
+          Map.entry(
+              leftCamera_photonEstimator,
+              leftCameraSim.process(
+                  20.0, visionSim.getCameraPose(leftCameraSim).get(), getVisionTargetSimList())));
+    }
 
-    results.addAll(
-        rightCameraSim.getCamera().getAllUnreadResults().stream()
-            .map(result -> Map.entry(rightCamera_photonEstimator, result))
-            .collect(Collectors.toList()));
+    if (visionSim.getCameraPose(rightCameraSim).isPresent()) {
+      results.add(
+          Map.entry(
+              rightCamera_photonEstimator,
+              rightCameraSim.process(
+                  20.0, visionSim.getCameraPose(rightCameraSim).get(), getVisionTargetSimList())));
+    }
 
     condensedResults = results;
     condensedResults = condensePipelineResults();
@@ -140,26 +166,34 @@ public class PhotonVisionSim extends SubsystemBase implements VisionIO {
     inputs.timestamp = Timer.getFPGATimestamp();
 
     /** If you have a target, then update the poseEstimate ArrayList to equal that. */
-    if (visionSim.getVisionTargets().size() > 0) {
+    for (int i = 0; i < getVisionTargetSimList().size(); i++)
+      if (leftCameraSim.canSeeTargetPose(
+              visionSim.getCameraPose(leftCameraSim).get(), getVisionTargetSimList().get(i))
+          || leftCameraSim.canSeeTargetPose(
+              visionSim.getCameraPose(leftCameraSim).get(), getVisionTargetSimList().get(i))) {
 
-      inputs.poseEstimates = new Pose2d[] {visionSim.getRobotPose().toPose2d()};
-      inputs.hasEstimate = true;
+        inputs.poseEstimates = new Pose2d[] {visionSim.getRobotPose().toPose2d()};
+        inputs.hasEstimate = true;
 
-    } else {
-      inputs.timestamp = inputs.timestamp;
-      inputs.hasEstimate = false;
-    }
+      } else {
+        inputs.timestamp = inputs.timestamp;
+        inputs.hasEstimate = false;
+      }
   }
 
   @Override
   public List<Map.Entry<PhotonPoseEstimator, PhotonPipelineResult>> condensePipelineResults() {
     List<Integer> fudicialIDList = new ArrayList<>();
+
     for (Map.Entry<PhotonPoseEstimator, PhotonPipelineResult> condensedResult : condensedResults) {
-      fudicialIDList.add(condensedResult.getValue().getBestTarget().fiducialId);
+      if (condensedResult.getValue().hasTargets())
+        fudicialIDList.add(condensedResult.getValue().getBestTarget().fiducialId);
     }
     condensedResults.removeIf(
         result ->
-            result.getValue().getBestTarget().getFiducialId() != getPlurality(fudicialIDList));
+            result.getValue().hasTargets()
+                ? result.getValue().getBestTarget().getFiducialId() != getPlurality(fudicialIDList)
+                : false);
 
     return condensedResults;
   }
@@ -184,6 +218,11 @@ public class PhotonVisionSim extends SubsystemBase implements VisionIO {
     }
 
     return (int) plurality;
+  }
+
+  public List<VisionTargetSim> getVisionTargetSimList() {
+    // System.out.println(visionSim.getVisionTargets().size());
+    return new ArrayList<VisionTargetSim>(visionSim.getVisionTargets());
   }
 
   @Override

@@ -10,8 +10,8 @@ import com.pathplanner.lib.trajectory.PathPlannerTrajectoryState;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
@@ -19,12 +19,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.helpers.vision.*;
 import frc.maps.Constants;
 import frc.robot.RobotState;
-import frc.robot.subsystems.swervedrive.SwerveDriveSubsystem;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.littletonrobotics.junction.Logger;
-import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 public class OrthogonalToTag extends Command {
@@ -87,7 +85,7 @@ public class OrthogonalToTag extends Command {
             new Pose2d(0, 0, new Rotation2d()));
 
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(SwerveDriveSubsystem.getInstance());
+    // addRequirements(SwerveDriveSubsystem.getInstance());
   }
 
   // Called when the command is initially scheduled.
@@ -118,6 +116,26 @@ public class OrthogonalToTag extends Command {
 
     targetState.heading = targetAngle;
 
+    for (int i = 0; i < getTransform3dList().size(); i++) {
+      Logger.recordOutput(
+          "OrthogonalToTag/Transformations/" + i + "/Translations",
+          getTransform3dList().get(i).getTranslation());
+      Logger.recordOutput(
+          "OrthogonalToTag/Transformations/" + i + "/Rotations",
+          getTransform3dList().get(i).getTranslation());
+    }
+
+    Pose2d currentGlobalPose =
+        RobotState.getInstance()
+            .getPose()
+            .plus(new Transform2d(currentRelativePose, targetState.pose));
+    Logger.recordOutput(
+        "OrthogonalToTag/currentGlobalPose",
+        new Pose2d(
+            currentGlobalPose.getX(), currentGlobalPose.getY(), currentGlobalPose.getRotation()));
+
+    Logger.recordOutput("OrthogonalToTag/ExecutingCommand...", true);
+
     Logger.recordOutput("OrthogonalToTag/targetPose", targetState.pose);
     Logger.recordOutput(
         "OrthogonalToTag/currentPose", poseRelativeToTargetEstimator.getEstimatedPosition());
@@ -146,27 +164,28 @@ public class OrthogonalToTag extends Command {
     // pose to (0,0) with the angle of the AprilTag.
     currentRelativePose = poseRelativeToTargetEstimator.getEstimatedPosition();
 
-    ChassisSpeeds chassisSpeeds =
-        SwerveDriveSubsystem.getInstance()
-            .swerveFollower
-            // .calculateRobotRelativeSpeeds(new Pose2d(0, 0,
-            // RobotState.getInstance().getAngleBetweenCurrentAndTargetPose(new Pose2d(0,
-            // 0,Rotation2d.fromDegrees(target.getYaw())))), new State());
-            .calculateRobotRelativeSpeeds(currentRelativePose, targetState);
-    // Convert chassis speeds to individual module states
+    // ChassisSpeeds chassisSpeeds =
+    //     SwerveDriveSubsystem.getInstance()
+    //         .swerveFollower
+    //         // .calculateRobotRelativeSpeeds(new Pose2d(0, 0,
+    //         // RobotState.getInstance().getAngleBetweenCurrentAndTargetPose(new Pose2d(0,
+    //         // 0,Rotation2d.fromDegrees(target.getYaw())))), new State());
+    //         .calculateRobotRelativeSpeeds(currentRelativePose, targetState);
+    // // Convert chassis speeds to individual module states
 
-    SwerveDriveSubsystem.getInstance().driveRobotRelative(chassisSpeeds);
+    // SwerveDriveSubsystem.getInstance().driveRobotRelative(chassisSpeeds);
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    Logger.recordOutput("OrthogonalToTag/ExecutingCommand...", true);
+  }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (Math.abs(PhotonUtils.getYawToPose(currentRelativePose, targetState.pose).getDegrees())
-        < 2);
+    return timer.hasElapsed(.5);
     // || target.isEmpty();
   }
 
@@ -232,25 +251,29 @@ public class OrthogonalToTag extends Command {
   public List<Transform3d> getTransform3dList() {
 
     // if (RobotBase.isSimulation()) return PhotonVisionSim.getInstance().getTransformListSim();
-
+    // System.out.println(PhotonVisionSim.getInstance().condensedResults.size());
     if (RobotBase.isSimulation())
       return PhotonVisionSim.getInstance().condensedResults.stream()
           .map(
               result ->
-                  result
-                      .getKey()
-                      .getRobotToCameraTransform()
-                      .plus(result.getValue().getBestTarget().getBestCameraToTarget()))
+                  result.getValue().hasTargets()
+                      ? result
+                          .getKey()
+                          .getRobotToCameraTransform()
+                          .plus(result.getValue().getBestTarget().getBestCameraToTarget())
+                      : new Transform3d())
           .collect(Collectors.toList());
 
     if (RobotBase.isReal())
       return PhotonVisionAprilTag.getInstance().condensedResults.stream()
           .map(
               result ->
-                  result
-                      .getKey()
-                      .getRobotToCameraTransform()
-                      .plus(result.getValue().getBestTarget().getBestCameraToTarget()))
+                  result.getValue().hasTargets()
+                      ? result
+                          .getKey()
+                          .getRobotToCameraTransform()
+                          .plus(result.getValue().getBestTarget().getBestCameraToTarget())
+                      : new Transform3d())
           .collect(Collectors.toList());
 
     return null;

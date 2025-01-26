@@ -33,11 +33,9 @@ public class SimulationScheme {
       Superstructure superstructure,
       CommandXboxController controller) {
 
-    OrthogonalToTag alignToTagCommand = new OrthogonalToTag();
-
     /** z */
     controller.a().onTrue(new InstantCommand(() -> System.out.println("a")));
-    controller.a().onTrue(alignToTagCommand);
+    controller.a().onTrue(new OrthogonalToTag());
 
     /** x */
     controller.b().onTrue(new InstantCommand(() -> System.out.println("b")));
