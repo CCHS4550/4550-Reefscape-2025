@@ -4,7 +4,7 @@ import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
-import com.revrobotics.RelativeEncoder;
+import com.revrobotics.AbsoluteEncoder;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -24,7 +24,7 @@ public class WristIOHardware implements WristIO {
 
   CCMotorController wristMotor;
 
-  RelativeEncoder throughBore;
+  AbsoluteEncoder throughBore;
 
   ProfiledPIDController wristPidController;
   ArmFeedforward wristFeedForward;
@@ -37,7 +37,7 @@ public class WristIOHardware implements WristIO {
   public WristIOHardware(CCMotorController wristMotor) {
     this.wristMotor = wristMotor;
 
-    throughBore = (RelativeEncoder) wristMotor.getEncoder();
+    throughBore = (AbsoluteEncoder) wristMotor.getDataportAbsoluteEncoder();
 
     wristPidController =
         new ProfiledPIDController(
@@ -53,8 +53,8 @@ public class WristIOHardware implements WristIO {
   @Override
   public void updateInputs(WristIOInputs inputs) {
 
-    inputs.currentAngleDegrees = Units.radiansToDegrees(getAbsoluteEncoderRadiansOffset());
-    inputs.currentAngleRadians = getAbsoluteEncoderRadiansOffset();
+    inputs.currentAngleDegrees = Units.radiansToDegrees(getAbsoluteEncoderGlobalRadians());
+    inputs.currentAngleRadians = getAbsoluteEncoderGlobalRadians();
 
     inputs.pidOutput = this.pidOutput;
     inputs.ffOutput = this.ffOutput;
@@ -113,7 +113,7 @@ public class WristIOHardware implements WristIO {
   //  MAKE 0 PARALLEL OFF THE GROUND; STANDARD UNIT CIRCLE NOTATION.
   @Override
   public double getAbsoluteEncoderRadiansOffset() {
-    return (throughBore.getPosition())
+    return getAbsoluteEncoderRadiansNoOffset()
         - Constants.WristConstants.WRIST_THROUGHBORE_OFFSET
         + Math.PI;
     // return (throughBore.getPosition())
@@ -128,7 +128,7 @@ public class WristIOHardware implements WristIO {
    */
   @Override
   public double getAbsoluteEncoderRadiansNoOffset() {
-    return (throughBore.getPosition());
+    return (throughBore.getPosition() * .75 * Math.PI);
   }
 
   @Override

@@ -192,7 +192,7 @@ public class RobotState {
 
     } else {
       poseEstimator.updateWithTime(
-          Timer.getFPGATimestamp(), getRotation2d(), swerveModulePositions);
+          Timer.getFPGATimestamp() / 1e6, getRotation2d(), swerveModulePositions);
     }
 
     currentPose = getPose();

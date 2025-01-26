@@ -4,7 +4,7 @@ import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
-import com.revrobotics.RelativeEncoder;
+import com.revrobotics.AbsoluteEncoder;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -23,7 +23,7 @@ import org.littletonrobotics.junction.Logger;
 public class ArmIOHardware implements ArmIO {
 
   CCMotorController motor;
-  RelativeEncoder throughBore;
+  AbsoluteEncoder throughBore;
 
   ProfiledPIDController pidController;
   ArmFeedforward feedForward;
@@ -35,7 +35,7 @@ public class ArmIOHardware implements ArmIO {
 
   public ArmIOHardware(CCMotorController motor) {
     this.motor = motor;
-    throughBore = (RelativeEncoder) motor.getAlternateEncoder();
+    throughBore = (AbsoluteEncoder) motor.getDataportAbsoluteEncoder();
 
     pidController =
         new ProfiledPIDController(
@@ -111,7 +111,10 @@ public class ArmIOHardware implements ArmIO {
   //  MAKE 0 PARALLEL OFF THE GROUND; STANDARD UNIT CIRCLE NOTATION.
   @Override
   public double getAbsoluteEncoderRadiansOffset() {
-    return (throughBore.getPosition()) - Constants.ArmConstants.ARM_THROUGHBORE_OFFSET + Math.PI;
+    System.out.println(getAbsoluteEncoderRadiansNoOffset());
+    return getAbsoluteEncoderRadiansNoOffset()
+        - Constants.ArmConstants.ARM_THROUGHBORE_OFFSET
+        + Math.PI;
   }
 
   /**
@@ -121,7 +124,8 @@ public class ArmIOHardware implements ArmIO {
    */
   @Override
   public double getAbsoluteEncoderRadiansNoOffset() {
-    return (throughBore.getPosition());
+    // System.out.println(throughBore.getPosition());
+    return (throughBore.getPosition() * Math.PI);
   }
 
   @Override

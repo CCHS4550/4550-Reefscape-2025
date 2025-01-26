@@ -56,7 +56,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   CCMotorController.MotorFactory motorFactory;
   ElevatorIO.IOFactory ioFactory;
 
-  ElevatorIOInputsAutoLogged elevatorInputs = new ElevatorIOInputsAutoLogged();
+  private static final ElevatorIOInputsAutoLogged elevatorInputs = new ElevatorIOInputsAutoLogged();
 
   public static ElevatorSubsystem getInstance(
       CCMotorController.MotorFactory motorFactory, ElevatorIO.IOFactory ioFactory) {

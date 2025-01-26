@@ -80,8 +80,8 @@ public class SwerveDriveScheme implements ControlScheme {
     // controller = new CommandXboxController(port);
 
     // Set to slow mode for recreation
-    // setSlowMode();
-    setFastMode();
+    setSlowMode();
+    // setFastMode();
 
     // Sends this command into the command scheduler on repeat! Very important!
     swerve.setDefaultCommand(

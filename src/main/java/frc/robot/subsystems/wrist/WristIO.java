@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.helpers.CCMotorController;
+import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.wrist.WristSubsystem.WristState;
 import java.util.function.BooleanSupplier;
 import org.littletonrobotics.junction.AutoLog;
@@ -53,6 +54,10 @@ public interface WristIO {
 
   public default BooleanSupplier atSetpoint() {
     return () -> false;
+  }
+
+  default double getAbsoluteEncoderGlobalRadians() {
+    return getAbsoluteEncoderRadiansOffset() - ArmSubsystem.getInstance().getPosition();
   }
 
   /**

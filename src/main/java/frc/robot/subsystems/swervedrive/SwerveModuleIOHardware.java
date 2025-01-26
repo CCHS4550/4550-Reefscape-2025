@@ -243,13 +243,13 @@ public class SwerveModuleIOHardware implements SwerveModuleIO {
 
     // These are both in m/s
     double driveOutput = drivingPidController.calculate(driveMotor.getVelocity(), velocity);
-    Logger.recordOutput("desired drivePID Output", driveOutput);
+    Logger.recordOutput(name + "/desired drivePID Output", driveOutput);
     // Feed forward
     double driveFF = driveFeedforward.calculate(velocity);
-    Logger.recordOutput("desired driveFF Output", driveFF);
+    Logger.recordOutput(name + "/desired driveFF Output", driveFF);
 
     driveMotor.setVoltage(driveOutput + driveFF);
-    Logger.recordOutput("desired drivePID + driveFF Output", driveOutput + driveFF);
+    Logger.recordOutput(name + "/desired drivePID + driveFF Output", driveOutput + driveFF);
   }
 
   @Override

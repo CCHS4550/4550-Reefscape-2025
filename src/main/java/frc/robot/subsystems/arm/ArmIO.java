@@ -13,24 +13,24 @@ public interface ArmIO {
 
   @AutoLog
   class ArmIOInputs {
-    public double currentAngleDegrees = 1.0;
-    public double currentAngleRadians = 0.0;
+    public double currentAngleDegrees;
+    public double currentAngleRadians;
 
-    public double pidOutput = 0.0;
-    public double ffOutput = 0.0;
-    public double appliedVoltage = 0.0;
+    public double pidOutput;
+    public double ffOutput;
+    public double appliedVoltage;
 
-    public double setpointAngleDegrees = 0.0;
-    public double setpointAngleRadians = 0.0;
-    public double setpointVelocity = 0.0;
+    public double setpointAngleDegrees;
+    public double setpointAngleRadians;
+    public double setpointVelocity;
 
-    public double goalAngleRadians = 0.0;
-    public double goalAngleDegrees = 0.0;
-    public double goalVelocity = 0.0;
+    public double goalAngleRadians;
+    public double goalAngleDegrees;
+    public double goalVelocity;
   }
 
   /** Update the data coming into the robot. */
-  default void updateInputs(ArmIOInputs inputs) {}
+  public default void updateInputs(ArmIOInputs inputs) {}
 
   public default void holdAtState(ArmState goalState) {}
 

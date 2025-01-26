@@ -46,10 +46,14 @@ public class SwerveDriveSubsystem extends SubsystemBase {
   private CCMotorController.MotorFactory motorFactory;
   private SwerveModuleIO.ModuleFactory moduleFactory;
 
-  public SwerveModuleInputsAutoLogged frontRightInputs;
-  public SwerveModuleInputsAutoLogged frontLeftInputs;
-  public SwerveModuleInputsAutoLogged backRightInputs;
-  public SwerveModuleInputsAutoLogged backLeftInputs;
+  public static final SwerveModuleInputsAutoLogged frontRightInputs =
+      new SwerveModuleInputsAutoLogged();
+  public static final SwerveModuleInputsAutoLogged frontLeftInputs =
+      new SwerveModuleInputsAutoLogged();
+  public static final SwerveModuleInputsAutoLogged backRightInputs =
+      new SwerveModuleInputsAutoLogged();
+  public static final SwerveModuleInputsAutoLogged backLeftInputs =
+      new SwerveModuleInputsAutoLogged();
 
   public SwerveModuleInputsAutoLogged[] swerveModuleInputs;
 
@@ -110,8 +114,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
                 "frt",
                 Constants.MotorConstants.FRONT_RIGHT_TURN,
                 MotorType.kBrushless,
-                // Brake
-                IdleMode.kCoast,
+                IdleMode.kBrake,
                 Constants.MotorConstants.FRONT_RIGHT_TURN_REVERSE,
                 Constants.ConversionConstants.TURN_MOTOR_ROTATIONS_TO_WHEEL_ROTATIONS_RADIANS,
                 Constants.ConversionConstants.TURN_MOTOR_RADIANS_PER_SECOND),
@@ -135,7 +138,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
                 "flt",
                 Constants.MotorConstants.FRONT_LEFT_TURN,
                 MotorType.kBrushless,
-                IdleMode.kCoast,
+                IdleMode.kBrake,
                 Constants.MotorConstants.FRONT_LEFT_TURN_REVERSE,
                 Constants.ConversionConstants.TURN_MOTOR_ROTATIONS_TO_WHEEL_ROTATIONS_RADIANS,
                 Constants.ConversionConstants.TURN_MOTOR_RADIANS_PER_SECOND),
@@ -159,7 +162,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
                 "brt",
                 Constants.MotorConstants.BACK_RIGHT_TURN,
                 MotorType.kBrushless,
-                IdleMode.kCoast,
+                IdleMode.kBrake,
                 Constants.MotorConstants.BACK_RIGHT_TURN_REVERSE,
                 Constants.ConversionConstants.TURN_MOTOR_ROTATIONS_TO_WHEEL_ROTATIONS_RADIANS,
                 Constants.ConversionConstants.TURN_MOTOR_RADIANS_PER_SECOND),
@@ -183,7 +186,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
                 "blt",
                 Constants.MotorConstants.BACK_LEFT_TURN,
                 MotorType.kBrushless,
-                IdleMode.kCoast,
+                IdleMode.kBrake,
                 Constants.MotorConstants.BACK_LEFT_TURN_REVERSE,
                 Constants.ConversionConstants.TURN_MOTOR_ROTATIONS_TO_WHEEL_ROTATIONS_RADIANS,
                 Constants.ConversionConstants.TURN_MOTOR_RADIANS_PER_SECOND),
@@ -192,11 +195,6 @@ public class SwerveDriveSubsystem extends SubsystemBase {
             "Back Left");
 
     swerveModules = new SwerveModuleIO[] {frontRight, frontLeft, backRight, backLeft};
-
-    frontRightInputs = new SwerveModuleInputsAutoLogged();
-    frontLeftInputs = new SwerveModuleInputsAutoLogged();
-    backRightInputs = new SwerveModuleInputsAutoLogged();
-    backLeftInputs = new SwerveModuleInputsAutoLogged();
 
     swerveModuleInputs =
         new SwerveModuleInputsAutoLogged[] {
@@ -242,6 +240,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
       Logger.processInputs("Subsystem/Drive/" + swerveModules[i].getName(), swerveModuleInputs[i]);
     }
 
+    // getAbsoluteEncoderoffsets();
     Logger.recordOutput("Actual moduleStates", getCurrentModuleStates());
   }
 

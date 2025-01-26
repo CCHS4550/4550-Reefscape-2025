@@ -66,6 +66,10 @@ public interface CCMotorController {
     return null;
   }
 
+  default Object getDataportAbsoluteEncoder() {
+    return null;
+  }
+
   default String getName() {
     return "No Given Name";
   }

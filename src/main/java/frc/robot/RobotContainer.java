@@ -113,8 +113,8 @@ public class RobotContainer {
     RobotState.getInstance().moduleEncodersInit();
     RobotState.getInstance().dashboardInit();
 
-    // SwerveDriveScheme.configure(swerve, primaryController);
-    CharacterizationScheme.configure(
-        swerve, algae, arm, elevator, intake, wrist, primaryController);
+    SwerveDriveScheme.configure(swerve, primaryController);
+    // CharacterizationScheme.configure(
+    //     swerve, algae, arm, elevator, intake, wrist, primaryController);
   }
 }

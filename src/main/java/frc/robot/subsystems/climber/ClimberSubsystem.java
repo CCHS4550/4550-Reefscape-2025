@@ -28,7 +28,7 @@ public class ClimberSubsystem extends SubsystemBase {
   CCMotorController.MotorFactory motorFactory;
   ClimberIO.IOFactory ioFactory;
 
-  private final ClimberIOInputsAutoLogged climberInputs = new ClimberIOInputsAutoLogged();
+  private static final ClimberIOInputsAutoLogged climberInputs = new ClimberIOInputsAutoLogged();
 
   public static ClimberSubsystem getInstance(
       CCMotorController.MotorFactory motorFactory, ClimberIO.IOFactory ioFactory) {

@@ -49,7 +49,7 @@ public class IntakeSubsystem extends SubsystemBase {
   CCMotorController.MotorFactory motorFactory;
   IntakeIO.IOFactory ioFactory;
 
-  IntakeIOInputsAutoLogged intakeInputs = new IntakeIOInputsAutoLogged();
+  public static final IntakeIOInputsAutoLogged intakeInputs = new IntakeIOInputsAutoLogged();
 
   public static IntakeSubsystem getInstance(
       CCMotorController.MotorFactory motorFactory, IntakeIO.IOFactory ioFactory) {

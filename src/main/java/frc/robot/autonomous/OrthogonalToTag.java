@@ -35,6 +35,8 @@ public class OrthogonalToTag extends Command {
   double targetX;
   double targetY;
 
+  double distanceFromTarget;
+
   Pose2d currentRelativePose;
   PathPlannerTrajectoryState targetState;
 
@@ -113,9 +115,9 @@ public class OrthogonalToTag extends Command {
     targetX = getAverageX(getOrthogonalTransformList());
     targetY = getAverageY(getOrthogonalTransformList());
 
-    targetState.pose =
-        new Pose2d(
-            Math.cos(targetAngle.getRadians()), Math.sin(targetAngle.getRadians()), targetAngle);
+    targetState.pose = new Pose2d(targetX, targetY, targetAngle);
+
+    Logger.recordOutput("Auto/TargetPose", targetState.pose);
 
     targetState.heading = targetAngle;
 

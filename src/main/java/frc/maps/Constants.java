@@ -62,9 +62,9 @@ public class Constants {
 
   public static class ConversionConstants {
 
-    // 150/7 rotations of the turn motor to one rotation of the wheel
+    //  rotations of the turn motor to one rotation of the wheel
     // how much of a rotation the wheel turns for one rotation of the turn motor
-    public static final double TURN_MOTOR_ROTATIONS_TO_WHEEL_ROTATIONS = 7.0 / 150.0;
+    public static final double TURN_MOTOR_ROTATIONS_TO_WHEEL_ROTATIONS = 1 / 18.75;
 
     // How many radians the wheel pivots for one full rotation of the turn motor
     public static final double TURN_MOTOR_ROTATIONS_TO_WHEEL_ROTATIONS_RADIANS =
@@ -90,7 +90,7 @@ public class Constants {
 
     // Swerve Drive Base Motor & CAN ID Constants
     public static final int FRONT_RIGHT_DRIVE = 1;
-    public static final boolean FRONT_RIGHT_DRIVE_REVERSE = true;
+    public static final boolean FRONT_RIGHT_DRIVE_REVERSE = false;
     public static final double FRONT_RIGHT_DRIVE_ENCODER = 1;
     public static final int FRONT_RIGHT_TURN = 2;
     public static final boolean FRONT_RIGHT_TURN_REVERSE = true;
@@ -104,7 +104,7 @@ public class Constants {
     public static final double FRONT_LEFT_TURN_ENCODER = 1;
 
     public static final int BACK_RIGHT_DRIVE = 5;
-    public static final boolean BACK_RIGHT_DRIVE_REVERSE = true;
+    public static final boolean BACK_RIGHT_DRIVE_REVERSE = false;
     public static final double BACK_RIGHT_DRIVE_ENCODER = 1;
     public static final int BACK_RIGHT_TURN = 6;
     public static final boolean BACK_RIGHT_TURN_REVERSE = true;
@@ -143,14 +143,14 @@ public class Constants {
 
     // Absolute Encoder Ports
     public static final int FRONT_RIGHT_ABSOLUTE_ENCODER = 1;
-    public static final int FRONT_LEFT_ABSOLUTE_ENCODER = 3;
-    public static final int BACK_RIGHT_ABSOLUTE_ENCODER = 0;
-    public static final int BACK_LEFT_ABSOLUTE_ENCODER = 2;
+    public static final int FRONT_LEFT_ABSOLUTE_ENCODER = 0;
+    public static final int BACK_RIGHT_ABSOLUTE_ENCODER = 2;
+    public static final int BACK_LEFT_ABSOLUTE_ENCODER = 3;
 
-    public static final double FRONT_RIGHT_ABSOLUTE_ENCODER_OFFSET = 2.348;
-    public static final double FRONT_LEFT_ABSOLUTE_ENCODER_OFFSET = 5.6393;
-    public static final double BACK_RIGHT_ABSOLUTE_ENCODER_OFFSET = 1.7729;
-    public static final double BACK_LEFT_ABSOLUTE_ENCODER_OFFSET = 5.965215;
+    public static final double FRONT_RIGHT_ABSOLUTE_ENCODER_OFFSET = 2.974;
+    public static final double FRONT_LEFT_ABSOLUTE_ENCODER_OFFSET = 4.540;
+    public static final double BACK_RIGHT_ABSOLUTE_ENCODER_OFFSET = 1.960;
+    public static final double BACK_LEFT_ABSOLUTE_ENCODER_OFFSET = 0.335;
 
     // Robot Constants (change with SysId)
     // max speed in free sprint: used in getting velocities of swerve modules
@@ -215,7 +215,10 @@ public class Constants {
 
   public static class ArmConstants {
 
-    public static final double ARM_MOTOR_ROTATIONS_TO_ARM_ROTATIONS = 1.0;
+    // 1/4 * 1/3 * 32/48
+    public static final double ARM_MOTOR_ROTATIONS_TO_ARM_ROTATIONS = (.333 * .250 * 0.500);
+
+    // public static final double ARM_MOTOR_ROTATIONS_TO_ARM_ROTATIONS = 1;
 
     public static final double ARM_MOTOR_ROTATIONS_TO_ARM_ROTATIONS_RADIANS =
         Units.rotationsToRadians(ARM_MOTOR_ROTATIONS_TO_ARM_ROTATIONS);
@@ -223,7 +226,7 @@ public class Constants {
     public static final double ARM_MOTOR_RADIANS_PER_SECOND_CONVERSION_FACTOR =
         ARM_MOTOR_ROTATIONS_TO_ARM_ROTATIONS_RADIANS / 60;
 
-    public static final double ARM_THROUGHBORE_OFFSET = 1.0;
+    public static final double ARM_THROUGHBORE_OFFSET = 2.933;
   }
 
   public static class ElevatorConstants {
@@ -251,7 +254,8 @@ public class Constants {
 
   public static class WristConstants {
 
-    public static final double WRIST_MOTOR_ROTATIONS_TO_WRIST_ROTATIONS = 1.0;
+    // 1/4 * 1/3 * 36/48
+    public static final double WRIST_MOTOR_ROTATIONS_TO_WRIST_ROTATIONS = (.25 * .333 * .75);
 
     public static final double WRIST_MOTOR_ROTATIONS_TO_WRIST_ROTATIONS_RADIANS =
         Units.rotationsToRadians(WRIST_MOTOR_ROTATIONS_TO_WRIST_ROTATIONS);
@@ -264,7 +268,7 @@ public class Constants {
     public static boolean WRIST_REVERSE = false;
   }
 
-  public static class algaeConstants {}
+  public static class AlgaeConstants {}
 
   public class FeedForwardConstants {
 

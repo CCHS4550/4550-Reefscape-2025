@@ -54,7 +54,7 @@ public class ArmSubsystem extends SubsystemBase {
   CCMotorController.MotorFactory motorFactory;
   ArmIO.IOFactory ioFactory;
 
-  private ArmIOInputsAutoLogged armInputs = new ArmIOInputsAutoLogged();
+  private static ArmIOInputsAutoLogged armInputs = new ArmIOInputsAutoLogged();
 
   public static ArmSubsystem getInstance(
       CCMotorController.MotorFactory motorFactory, ArmIO.IOFactory ioFactory) {
@@ -152,11 +152,16 @@ public class ArmSubsystem extends SubsystemBase {
     return wantedState;
   }
 
+  public double getPosition() {
+    return armIO.getAbsoluteEncoderRadiansOffset();
+  }
+
   @Override
   public void periodic() {
-    armIO.updateInputs(armInputs);
 
-    System.out.println(armInputs.currentAngleDegrees);
+    // System.out.println(armIO.getAbsoluteEncoderRadiansOffset());
+
+    armIO.updateInputs(armInputs);
     Logger.processInputs("Subsystem/Arm", armInputs);
 
     currentState = handleStateTransitions();

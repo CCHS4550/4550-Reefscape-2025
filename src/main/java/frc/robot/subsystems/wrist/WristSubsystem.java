@@ -48,7 +48,7 @@ public class WristSubsystem extends SubsystemBase {
   /** Implementation of Singleton Pattern */
   public static WristSubsystem mInstance;
 
-  public final WristIO io;
+  public final WristIO wristIO;
 
   private static CCMotorController.MotorFactory defaultMotorFactory = CCMotorReplay::new;
   private static WristIO.IOFactory defaultIoFactory = WristIOReplay::new;
@@ -56,7 +56,7 @@ public class WristSubsystem extends SubsystemBase {
   CCMotorController.MotorFactory motorFactory;
   WristIO.IOFactory ioFactory;
 
-  WristIOInputsAutoLogged wristInputs = new WristIOInputsAutoLogged();
+  public static final WristIOInputsAutoLogged wristInputs = new WristIOInputsAutoLogged();
 
   /** Singleton Practice */
   public static WristSubsystem getInstance(
@@ -80,7 +80,7 @@ public class WristSubsystem extends SubsystemBase {
   private WristSubsystem(CCMotorController.MotorFactory motorFactory, WristIO.IOFactory ioFactory) {
     this.motorFactory = motorFactory;
     this.ioFactory = ioFactory;
-    this.io =
+    this.wristIO =
         ioFactory.create(
             motorFactory.create(
                 "wristMotor",
@@ -96,25 +96,25 @@ public class WristSubsystem extends SubsystemBase {
   private void applyStates() {
     switch (currentState) {
       case DEFAULT_WITHINFRAME:
-        io.holdAtState(WristState.DEFAULT_WITHINFRAME);
+        wristIO.holdAtState(WristState.DEFAULT_WITHINFRAME);
 
       case L1_FRONT:
-        io.holdAtState(WristState.L1_FRONT);
+        wristIO.holdAtState(WristState.L1_FRONT);
 
       case L2L3_FRONT:
-        io.holdAtState(WristState.L2L3_FRONT);
+        wristIO.holdAtState(WristState.L2L3_FRONT);
 
       case L4_BACK:
-        io.holdAtState(WristState.L4_BACK);
+        wristIO.holdAtState(WristState.L4_BACK);
 
       case CORAL_STATION_FRONT:
-        io.holdAtState(WristState.CORAL_STATION_FRONT);
+        wristIO.holdAtState(WristState.CORAL_STATION_FRONT);
 
       case CORAL_STATION_BACK:
-        io.holdAtState(WristState.CORAL_STATION_BACK);
+        wristIO.holdAtState(WristState.CORAL_STATION_BACK);
 
       default:
-        io.holdAtState(WristState.DEFAULT_WITHINFRAME);
+        wristIO.holdAtState(WristState.DEFAULT_WITHINFRAME);
     }
   }
 
@@ -146,10 +146,10 @@ public class WristSubsystem extends SubsystemBase {
 
   public Command runCharacterization() {
     SequentialCommandGroup c = new SequentialCommandGroup();
-    c.addCommands(io.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    c.addCommands(io.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    c.addCommands(io.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    c.addCommands(io.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    c.addCommands(wristIO.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    c.addCommands(wristIO.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    c.addCommands(wristIO.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    c.addCommands(wristIO.sysIdDynamic(SysIdRoutine.Direction.kReverse));
     return c;
   }
 
@@ -165,9 +165,13 @@ public class WristSubsystem extends SubsystemBase {
     return wantedState;
   }
 
+  public double getPosition() {
+    return wristIO.getAbsoluteEncoderRadiansOffset();
+  }
+
   @Override
   public void periodic() {
-    io.updateInputs(wristInputs);
+    wristIO.updateInputs(wristInputs);
     Logger.processInputs("Subsystem/Wrist", wristInputs);
     currentState = handleStateTransitions();
     applyStates();
@@ -178,20 +182,20 @@ public class WristSubsystem extends SubsystemBase {
   public Command wristUp() {
     return this.startEnd(
         () -> {
-          io.setVoltage(Volts.of(5.0));
+          wristIO.setVoltage(Volts.of(5.0));
         },
         () -> {
-          io.setVoltage(Volts.of(0.0));
+          wristIO.setVoltage(Volts.of(0.0));
         });
   }
 
   public Command wristDown() {
     return this.startEnd(
         () -> {
-          io.setVoltage(Volts.of(-5.0));
+          wristIO.setVoltage(Volts.of(-5.0));
         },
         () -> {
-          io.setVoltage(Volts.of(0.0));
+          wristIO.setVoltage(Volts.of(0.0));
         });
   }
 }

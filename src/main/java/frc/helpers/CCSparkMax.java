@@ -2,6 +2,7 @@ package frc.helpers;
 
 import com.revrobotics.*;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.AbsoluteEncoderConfig;
 import com.revrobotics.spark.config.AlternateEncoderConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
@@ -15,11 +16,16 @@ public class CCSparkMax extends SparkMax implements CCMotorController {
   private String shortName;
   private RelativeEncoder encoder;
   private RelativeEncoder alternateEncoder = null;
-  AlternateEncoderConfig encoderConfig;
+  private AlternateEncoderConfig encoderConfig;
+  private AbsoluteEncoder absoluteEncoder = null;
+  private AbsoluteEncoderConfig absoluteEncoderConfig;
 
   private double voltageConversionFactor;
-  private double velocityConversionFactorOne = 1.0;
-  private double positionConversionFactorOne = 1.0;
+  private double velocityConversionFactor = 1.0;
+  private double positionConversionFactor = 1.0;
+
+  ResetMode resetMode = ResetMode.kResetSafeParameters;
+  PersistMode persistMode = PersistMode.kPersistParameters;
 
   // This will error but it should work nonetheless.
   MotorDataAutoLogged realMotor = new MotorDataAutoLogged();
@@ -55,19 +61,13 @@ public class CCSparkMax extends SparkMax implements CCMotorController {
 
     config.inverted(reverse).idleMode(idleMode);
 
-    encoderConfig = new AlternateEncoderConfig();
-    encoderConfig.positionConversionFactor(positionConversionFactor);
-    encoderConfig.velocityConversionFactor(velocityConversionFactor);
-    encoderConfig.setSparkMaxDataPortConfig();
-    config.apply(encoderConfig);
-
     this.encoder = super.getEncoder();
 
     this.setPositionConversionFactor(positionConversionFactor);
     this.setVelocityConversionFactor(velocityConversionFactor);
     voltageConversionFactor = 12;
 
-    super.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    super.configure(config, resetMode, persistMode);
   }
 
   //   public CCSparkMax(
@@ -166,8 +166,9 @@ public class CCSparkMax extends SparkMax implements CCMotorController {
 
   @Override
   public double getVelocity() {
-
-    return encoder.getVelocity();
+    if (alternateEncoder != null) alternateEncoder.getPosition();
+    if (absoluteEncoder != null) return absoluteEncoder.getVelocity();
+    return encoder.getVelocity() * velocityConversionFactor;
   }
 
   @Override
@@ -187,8 +188,17 @@ public class CCSparkMax extends SparkMax implements CCMotorController {
    */
   @Override
   public void setPositionConversionFactor(double factor) {
-    encoderConfig.positionConversionFactor(factor);
-    config.apply(encoderConfig);
+    if (alternateEncoder != null) {
+      encoderConfig.positionConversionFactor(factor);
+      config.apply(encoderConfig);
+      configure(config, resetMode, persistMode);
+    }
+    if (absoluteEncoder != null) {
+      absoluteEncoderConfig.positionConversionFactor(factor);
+      config.apply(absoluteEncoderConfig);
+      configure(config, resetMode, persistMode);
+    }
+    this.positionConversionFactor = factor;
   }
 
   /**
@@ -198,8 +208,17 @@ public class CCSparkMax extends SparkMax implements CCMotorController {
    */
   @Override
   public void setVelocityConversionFactor(double factor) {
-    encoderConfig.velocityConversionFactor(factor);
-    config.apply(encoderConfig);
+    if (alternateEncoder != null) {
+      encoderConfig.velocityConversionFactor(factor);
+      config.apply(encoderConfig);
+      configure(config, resetMode, persistMode);
+    }
+    if (absoluteEncoder != null) {
+      absoluteEncoderConfig.velocityConversionFactor(factor);
+      config.apply(absoluteEncoderConfig);
+      configure(config, resetMode, persistMode);
+    }
+    this.velocityConversionFactor = factor;
   }
 
   /**
@@ -219,7 +238,11 @@ public class CCSparkMax extends SparkMax implements CCMotorController {
    */
   @Override
   public double getPosition() {
-    return encoder.getPosition();
+    if (alternateEncoder != null) return alternateEncoder.getPosition();
+
+    if (absoluteEncoder != null) return absoluteEncoder.getPosition();
+
+    return encoder.getPosition() * positionConversionFactor;
   }
 
   @Override
@@ -229,8 +252,25 @@ public class CCSparkMax extends SparkMax implements CCMotorController {
 
   @Override
   public RelativeEncoder getAlternateEncoder() {
+
+    encoderConfig = new AlternateEncoderConfig();
+    // encoderConfig.positionConversionFactor(positionConversionFactor);
+    // encoderConfig.velocityConversionFactor(velocityConversionFactor);
+    encoderConfig.setSparkMaxDataPortConfig();
+    config.apply(encoderConfig);
+    configure(config, resetMode, persistMode);
+
     this.alternateEncoder = super.getAlternateEncoder();
     return alternateEncoder;
+  }
+
+  @Override
+  public AbsoluteEncoder getDataportAbsoluteEncoder() {
+    absoluteEncoderConfig = new AbsoluteEncoderConfig();
+    absoluteEncoderConfig.setSparkMaxDataPortConfig();
+    config.apply(absoluteEncoderConfig);
+    this.absoluteEncoder = super.getAbsoluteEncoder();
+    return absoluteEncoder;
   }
 
   @Override
