@@ -46,7 +46,7 @@ public class ArmSubsystem extends SubsystemBase {
   /** Implementation of Singleton Pattern */
   public static ArmSubsystem mInstance;
 
-  private final ArmIO io;
+  private final ArmIO armIO;
 
   private static CCMotorController.MotorFactory defaultMotorFactory = CCMotorReplay::new;
   private static ArmIO.IOFactory defaultIoFactory = ArmIOReplay::new;
@@ -54,7 +54,7 @@ public class ArmSubsystem extends SubsystemBase {
   CCMotorController.MotorFactory motorFactory;
   ArmIO.IOFactory ioFactory;
 
-  private final ArmIOInputsAutoLogged armInputs = new ArmIOInputsAutoLogged();
+  private ArmIOInputsAutoLogged armInputs = new ArmIOInputsAutoLogged();
 
   public static ArmSubsystem getInstance(
       CCMotorController.MotorFactory motorFactory, ArmIO.IOFactory ioFactory) {
@@ -76,7 +76,7 @@ public class ArmSubsystem extends SubsystemBase {
   private ArmSubsystem(CCMotorController.MotorFactory motorFactory, ArmIO.IOFactory ioFactory) {
     this.motorFactory = motorFactory;
     this.ioFactory = ioFactory;
-    this.io =
+    this.armIO =
         ioFactory.create(
             motorFactory.create(
                 "armMotor",
@@ -92,25 +92,25 @@ public class ArmSubsystem extends SubsystemBase {
   private void applyStates() {
     switch (currentState) {
       case DEFAULT_WITHINFRAME:
-        io.holdAtState(ArmState.DEFAULT_WITHINFRAME);
+        armIO.holdAtState(ArmState.DEFAULT_WITHINFRAME);
 
       case L1_FRONT:
-        io.holdAtState(ArmState.L1_FRONT);
+        armIO.holdAtState(ArmState.L1_FRONT);
 
       case L2L3_FRONT:
-        io.holdAtState(ArmState.L2L3_FRONT);
+        armIO.holdAtState(ArmState.L2L3_FRONT);
 
       case L4_BACK:
-        io.holdAtState(ArmState.L4_BACK);
+        armIO.holdAtState(ArmState.L4_BACK);
 
       case CORAL_STATION_FRONT:
-        io.holdAtState(ArmState.CORAL_STATION_FRONT);
+        armIO.holdAtState(ArmState.CORAL_STATION_FRONT);
 
       case CORAL_STATION_BACK:
-        io.holdAtState(ArmState.CORAL_STATION_BACK);
+        armIO.holdAtState(ArmState.CORAL_STATION_BACK);
 
       default:
-        io.holdAtState(ArmState.DEFAULT_WITHINFRAME);
+        armIO.holdAtState(ArmState.DEFAULT_WITHINFRAME);
     }
   }
 
@@ -154,8 +154,11 @@ public class ArmSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    io.updateInputs(armInputs);
+    armIO.updateInputs(armInputs);
+
+    System.out.println(armInputs.currentAngleDegrees);
     Logger.processInputs("Subsystem/Arm", armInputs);
+
     currentState = handleStateTransitions();
     applyStates();
 
@@ -165,20 +168,20 @@ public class ArmSubsystem extends SubsystemBase {
   public Command armUp() {
     return this.startEnd(
         () -> {
-          io.setVoltage(Volts.of(5.0));
+          armIO.setVoltage(Volts.of(5.0));
         },
         () -> {
-          io.setVoltage(Volts.of(0.0));
+          armIO.setVoltage(Volts.of(0.0));
         });
   }
 
   public Command armDown() {
     return this.startEnd(
         () -> {
-          io.setVoltage(Volts.of(-5.0));
+          armIO.setVoltage(Volts.of(-5.0));
         },
         () -> {
-          io.setVoltage(Volts.of(0.0));
+          armIO.setVoltage(Volts.of(0.0));
         });
   }
 }

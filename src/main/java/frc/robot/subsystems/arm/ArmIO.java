@@ -12,8 +12,8 @@ import org.littletonrobotics.junction.AutoLog;
 public interface ArmIO {
 
   @AutoLog
-  public static class ArmIOInputs {
-    public double currentAngleDegrees = 0.0;
+  class ArmIOInputs {
+    public double currentAngleDegrees = 1.0;
     public double currentAngleRadians = 0.0;
 
     public double pidOutput = 0.0;
@@ -30,7 +30,7 @@ public interface ArmIO {
   }
 
   /** Update the data coming into the robot. */
-  public default void updateInputs(ArmIOInputsAutoLogged inputs) {}
+  default void updateInputs(ArmIOInputs inputs) {}
 
   public default void holdAtState(ArmState goalState) {}
 

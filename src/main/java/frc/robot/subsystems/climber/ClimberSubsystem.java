@@ -20,7 +20,7 @@ public class ClimberSubsystem extends SubsystemBase {
   /** Implementation of Singleton Pattern */
   public static ClimberSubsystem mInstance;
 
-  private final ClimberIO io;
+  private final ClimberIO climberIO;
 
   private static CCMotorController.MotorFactory defaultMotorFactory = CCMotorReplay::new;
   private static ClimberIO.IOFactory defaultIoFactory = ClimberIOReplay::new;
@@ -51,7 +51,7 @@ public class ClimberSubsystem extends SubsystemBase {
       CCMotorController.MotorFactory motorFactory, ClimberIO.IOFactory ioFactory) {
     this.motorFactory = motorFactory;
     this.ioFactory = ioFactory;
-    this.io =
+    this.climberIO =
         ioFactory.create(
             motorFactory.create(
                 "Climber Motor",
@@ -66,7 +66,7 @@ public class ClimberSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    io.updateInputs(climberInputs);
+    climberIO.updateInputs(climberInputs);
     Logger.processInputs("Subsystem/Climber", climberInputs);
     // This method will be called once per scheduler run
   }
@@ -74,20 +74,20 @@ public class ClimberSubsystem extends SubsystemBase {
   public Command climberUp() {
     return this.startEnd(
         () -> {
-          io.winchUp();
+          climberIO.winchUp();
         },
         () -> {
-          io.setVoltage(Volts.of(0.0));
+          climberIO.setVoltage(Volts.of(0.0));
         });
   }
 
   public Command climberDown() {
     return this.startEnd(
         () -> {
-          io.winchDown();
+          climberIO.winchDown();
         },
         () -> {
-          io.setVoltage(Volts.of(0.0));
+          climberIO.setVoltage(Volts.of(0.0));
         });
   }
 }

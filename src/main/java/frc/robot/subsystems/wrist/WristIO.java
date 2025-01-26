@@ -13,7 +13,7 @@ import org.littletonrobotics.junction.AutoLog;
 public interface WristIO {
 
   @AutoLog
-  public static class WristIOInputs {
+  class WristIOInputs {
     public double currentAngleDegrees = 0.0;
     public double currentAngleRadians = 0.0;
 

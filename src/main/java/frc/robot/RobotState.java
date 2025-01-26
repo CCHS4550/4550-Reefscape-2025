@@ -147,7 +147,7 @@ public class RobotState {
             Constants.SwerveConstants.DRIVE_KINEMATICS,
             getRotation2d(),
             swerveModulePositions,
-            new Pose2d(0, 0, new Rotation2d(0)));
+            new Pose2d(0, 0, new Rotation2d()));
   }
 
   public synchronized void updateOdometryPose() {
@@ -354,7 +354,11 @@ public class RobotState {
       swerve.swerveModuleInputs[0].odometryDrivePositionsMeters.length,
       swerve.swerveModuleInputs[1].odometryDrivePositionsMeters.length,
       swerve.swerveModuleInputs[2].odometryDrivePositionsMeters.length,
-      swerve.swerveModuleInputs[3].odometryDrivePositionsMeters.length
+      swerve.swerveModuleInputs[3].odometryDrivePositionsMeters.length,
+      swerve.swerveModuleInputs[0].odometryTurnPositions.length,
+      swerve.swerveModuleInputs[1].odometryTurnPositions.length,
+      swerve.swerveModuleInputs[2].odometryTurnPositions.length,
+      swerve.swerveModuleInputs[3].odometryTurnPositions.length,
     };
 
     int min = Arrays.stream(numbers).min().getAsInt();
