@@ -11,7 +11,6 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -40,7 +39,7 @@ public class ArmIOHardware implements ArmIO {
 
     pidController =
         new ProfiledPIDController(
-            1.5, 0, 0, new TrapezoidProfile.Constraints(.5, .25)); // do something for this
+            2.5, 0, 0, new TrapezoidProfile.Constraints(.5, .25)); // do something for this
 
     pidController.reset(throughBore.getPosition());
     // TODO Sysid
@@ -51,7 +50,6 @@ public class ArmIOHardware implements ArmIO {
 
   @Override
   public void updateInputs(ArmIOInputs inputs) {
-
 
     inputs.currentAngleDegrees = Units.radiansToDegrees(getAbsoluteEncoderRadiansOffset());
     inputs.currentAngleRadians = getAbsoluteEncoderRadiansOffset();
@@ -72,6 +70,7 @@ public class ArmIOHardware implements ArmIO {
 
   @Override
   public void holdAtState(ArmState goalState) {
+    pidController.reset(getAbsoluteEncoderRadiansOffset());
     setVoltage(
         Volts.of(getPIDFFOutput(new State(Units.degreesToRadians(goalState.getAngle()), 0))));
   }
