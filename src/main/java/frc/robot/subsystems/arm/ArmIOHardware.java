@@ -11,6 +11,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -22,7 +23,7 @@ import org.littletonrobotics.junction.Logger;
 
 public class ArmIOHardware implements ArmIO {
 
-  CCMotorController motor;
+  CCMotorController armMotor;
   AbsoluteEncoder throughBore;
 
   ProfiledPIDController pidController;
@@ -33,13 +34,13 @@ public class ArmIOHardware implements ArmIO {
 
   State goalState;
 
-  public ArmIOHardware(CCMotorController motor) {
-    this.motor = motor;
-    throughBore = (AbsoluteEncoder) motor.getDataportAbsoluteEncoder();
+  public ArmIOHardware(CCMotorController armMotor) {
+    this.armMotor = armMotor;
+    throughBore = (AbsoluteEncoder) armMotor.getDataportAbsoluteEncoder();
 
     pidController =
         new ProfiledPIDController(
-            0, 0, 0, new TrapezoidProfile.Constraints(0, 0)); // do something for this
+            1.5, 0, 0, new TrapezoidProfile.Constraints(.5, .25)); // do something for this
 
     pidController.reset(throughBore.getPosition());
     // TODO Sysid
@@ -50,6 +51,7 @@ public class ArmIOHardware implements ArmIO {
 
   @Override
   public void updateInputs(ArmIOInputs inputs) {
+
 
     inputs.currentAngleDegrees = Units.radiansToDegrees(getAbsoluteEncoderRadiansOffset());
     inputs.currentAngleRadians = getAbsoluteEncoderRadiansOffset();
@@ -94,7 +96,7 @@ public class ArmIOHardware implements ArmIO {
         feedForward.calculate(
             pidController.getSetpoint().position, pidController.getSetpoint().velocity);
 
-    return pidOutput + ffOutput;
+    return pidOutput;
   }
 
   @Override
@@ -111,10 +113,8 @@ public class ArmIOHardware implements ArmIO {
   //  MAKE 0 PARALLEL OFF THE GROUND; STANDARD UNIT CIRCLE NOTATION.
   @Override
   public double getAbsoluteEncoderRadiansOffset() {
-    System.out.println(getAbsoluteEncoderRadiansNoOffset());
-    return getAbsoluteEncoderRadiansNoOffset()
-        - Constants.ArmConstants.ARM_THROUGHBORE_OFFSET
-        + Math.PI;
+
+    return getAbsoluteEncoderRadiansNoOffset() - Constants.ArmConstants.ARM_THROUGHBORE_OFFSET;
   }
 
   /**
@@ -125,22 +125,22 @@ public class ArmIOHardware implements ArmIO {
   @Override
   public double getAbsoluteEncoderRadiansNoOffset() {
     // System.out.println(throughBore.getPosition());
-    return (throughBore.getPosition() * Math.PI);
+    return (armMotor.getPosition() * 2 * Math.PI);
   }
 
   @Override
   public void setVoltage(Voltage voltage) {
-    motor.setVoltage(voltage.magnitude());
+    armMotor.setVoltage(voltage.magnitude());
   }
 
   @Override
   public double getVoltage() {
-    return motor.getVoltage();
+    return armMotor.getVoltage();
   }
 
   @Override
   public void stop() {
-    motor.setVoltage(0);
+    armMotor.setVoltage(0);
   }
 
   /** SYSID METHODS */

@@ -166,7 +166,7 @@ public class CCSparkMax extends SparkMax implements CCMotorController {
 
   @Override
   public double getVelocity() {
-    if (alternateEncoder != null) alternateEncoder.getPosition();
+    if (alternateEncoder != null) alternateEncoder.getVelocity();
     if (absoluteEncoder != null) return absoluteEncoder.getVelocity();
     return encoder.getVelocity() * velocityConversionFactor;
   }

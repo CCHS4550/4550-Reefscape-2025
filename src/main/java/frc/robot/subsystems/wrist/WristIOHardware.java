@@ -113,9 +113,7 @@ public class WristIOHardware implements WristIO {
   //  MAKE 0 PARALLEL OFF THE GROUND; STANDARD UNIT CIRCLE NOTATION.
   @Override
   public double getAbsoluteEncoderRadiansOffset() {
-    return getAbsoluteEncoderRadiansNoOffset()
-        - Constants.WristConstants.WRIST_THROUGHBORE_OFFSET
-        + Math.PI;
+    return getAbsoluteEncoderRadiansNoOffset() - Constants.WristConstants.WRIST_THROUGHBORE_OFFSET;
     // return (throughBore.getPosition())
     //     - Constants.WristConstants.WRIST_THROUGHBORE_OFFSET
     //     + Math.PI;
@@ -128,7 +126,7 @@ public class WristIOHardware implements WristIO {
    */
   @Override
   public double getAbsoluteEncoderRadiansNoOffset() {
-    return (throughBore.getPosition() * .75 * Math.PI);
+    return (throughBore.getPosition() * .75 * 2 * Math.PI);
   }
 
   @Override

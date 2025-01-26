@@ -21,6 +21,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   public enum ArmState {
     // Placeholder Values
+    ZERO(0),
     DEFAULT_WITHINFRAME(Units.degreesToRadians(0)),
     L1_FRONT(Units.degreesToRadians(30)),
     L2L3_FRONT(Units.degreesToRadians(45)),
@@ -91,6 +92,8 @@ public class ArmSubsystem extends SubsystemBase {
 
   private void applyStates() {
     switch (currentState) {
+      case ZERO:
+        armIO.holdAtState(ArmState.ZERO);
       case DEFAULT_WITHINFRAME:
         armIO.holdAtState(ArmState.DEFAULT_WITHINFRAME);
 
@@ -159,7 +162,7 @@ public class ArmSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
 
-    // System.out.println(armIO.getAbsoluteEncoderRadiansOffset());
+    // System.out.println(getPosition());
 
     armIO.updateInputs(armInputs);
     Logger.processInputs("Subsystem/Arm", armInputs);

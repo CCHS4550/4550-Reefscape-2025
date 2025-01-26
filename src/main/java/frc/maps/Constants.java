@@ -226,7 +226,7 @@ public class Constants {
     public static final double ARM_MOTOR_RADIANS_PER_SECOND_CONVERSION_FACTOR =
         ARM_MOTOR_ROTATIONS_TO_ARM_ROTATIONS_RADIANS / 60;
 
-    public static final double ARM_THROUGHBORE_OFFSET = 2.933;
+    public static final double ARM_THROUGHBORE_OFFSET = 5.877;
   }
 
   public static class ElevatorConstants {
