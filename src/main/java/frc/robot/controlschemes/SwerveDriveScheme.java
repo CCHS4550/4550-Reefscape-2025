@@ -105,15 +105,12 @@ public class SwerveDriveScheme implements ControlScheme {
 
                   if (!orientationLocked) {
                     orientationLockAngle = RobotState.getInstance().getPoseAngleRadians();
-                    // turnSpeed = MathUtil.applyDeadband(controller.getRightX(), 0.05);
-                    turnSpeed = MathUtil.applyDeadband(controller.getRightX(), 0.05);
+                    turnSpeed = MathUtil.applyDeadband(controller.getRightY(), 0.05);
 
                   } else {
                     turnSpeed =
                         orientationLockPID.calculate(
-                                RobotState.getInstance().getPoseAngleRadians(),
-                                orientationLockAngle)
-                            * 2;
+                            RobotState.getInstance().getPoseAngleRadians(), orientationLockAngle);
                   }
 
                   turnSpeed *= 2.0 * Math.PI * turnSpeedModifier;
@@ -141,7 +138,7 @@ public class SwerveDriveScheme implements ControlScheme {
                             -turnSpeed,
                             RobotState.getInstance().getPoseRotation2d());
                     Logger.recordOutput("xSpeed", xSpeed);
-                    Logger.recordOutput("ySped", ySpeed);
+                    Logger.recordOutput("ySpeed", ySpeed);
 
                   } else {
                     // Relative to robot

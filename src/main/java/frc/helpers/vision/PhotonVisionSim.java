@@ -6,17 +6,15 @@ package frc.helpers.vision;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.maps.Constants;
 import frc.robot.RobotState;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.littletonrobotics.junction.Logger;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
@@ -26,6 +24,7 @@ import org.photonvision.simulation.SimCameraProperties;
 import org.photonvision.simulation.VisionSystemSim;
 import org.photonvision.simulation.VisionTargetSim;
 import org.photonvision.targeting.PhotonPipelineResult;
+import org.photonvision.targeting.PhotonTrackedTarget;
 
 public class PhotonVisionSim extends SubsystemBase implements VisionIO {
 
@@ -94,22 +93,13 @@ public class PhotonVisionSim extends SubsystemBase implements VisionIO {
     leftCameraSim = new PhotonCameraSim(leftCamera, leftCameraProp);
     rightCameraSim = new PhotonCameraSim(rightCamera, rightCameraProp);
 
-    // Our camera is mounted 0.1 meters forward and 0.5 meters up from the robot pose,
-    // (Robot pose is considered the center of rotation at the floor level, or Z = 0)
-    Translation3d robotToLeftCameraTrans = new Translation3d(0.3302, 0.3048, 0.2032);
-    Translation3d robotToRightCameraTrans = new Translation3d(0.3302, -0.3048, 0.2032);
-    // and pitched 15 degrees up.
-    Rotation3d robotToLeftCameraRot = new Rotation3d(0, Math.toRadians(-0), Math.toRadians(15));
-    Rotation3d robotToRightCameraRot = new Rotation3d(0, Math.toRadians(-0), Math.toRadians(-15));
-
-    Transform3d robotToLeftCamera = new Transform3d(robotToLeftCameraTrans, robotToLeftCameraRot);
-    Transform3d robotToRightCamera =
-        new Transform3d(robotToRightCameraTrans, robotToRightCameraRot);
-
-    visionSim.addCamera(leftCameraSim, robotToLeftCamera);
-    visionSim.addCamera(rightCameraSim, robotToRightCamera);
+    visionSim.addCamera(leftCameraSim, Constants.cameraOne.ROBOT_TO_CAM);
+    visionSim.addCamera(rightCameraSim, Constants.cameraTwo.ROBOT_TO_CAM);
 
     // Enable the raw and processed streams. These are enabled by default.
+
+    leftCameraSim.setMaxSightRange(4);
+    leftCameraSim.setMaxSightRange(4);
     leftCameraSim.enableRawStream(true);
     rightCameraSim.enableRawStream(true);
     leftCameraSim.enableProcessedStream(true);
@@ -156,6 +146,32 @@ public class PhotonVisionSim extends SubsystemBase implements VisionIO {
     condensedResults = results;
     condensedResults = condensePipelineResults();
 
+    Set<PhotonTrackedTarget> visibleCamera1Targets =
+        results.stream()
+            .filter(x -> x.getKey().equals(leftCamera_photonEstimator))
+            .flatMap(y -> y.getValue().getTargets().stream())
+            .collect(Collectors.toSet());
+    inputs.visibleCamera1Targets =
+        visibleCamera1Targets.stream().mapToInt(target -> target.fiducialId).distinct().toArray();
+
+    Set<PhotonTrackedTarget> visibleCamera2Targets =
+        results.stream()
+            .filter(x -> x.getKey().equals(leftCamera_photonEstimator))
+            .flatMap(y -> y.getValue().getTargets().stream())
+            .collect(Collectors.toSet());
+    inputs.visibleCamera2Targets =
+        visibleCamera2Targets.stream().mapToInt(target -> target.fiducialId).distinct().toArray();
+
+    inputs.focusedId =
+        getPlurality(
+            condensedResults.stream()
+                .map(
+                    condensedResult ->
+                        condensedResult.getValue().hasTargets()
+                            ? condensedResult.getValue().getBestTarget().fiducialId
+                            : -1)
+                .collect(Collectors.toList()));
+
     visionSim.update(RobotState.getInstance().getPose());
 
     inputs.timestampArray = new double[] {Timer.getFPGATimestamp()};
@@ -196,28 +212,6 @@ public class PhotonVisionSim extends SubsystemBase implements VisionIO {
                 : false);
 
     return condensedResults;
-  }
-
-  public static int getPlurality(List<Integer> list) {
-    // Map to store the frequency of each element
-    Map<Integer, Integer> frequencyMap = new HashMap<>();
-
-    // Count occurrences of each element
-    for (Integer item : list) {
-      frequencyMap.put(item, frequencyMap.getOrDefault(item, 0) + 1);
-    }
-
-    // Find the element with the highest frequency
-    Integer plurality = null;
-    int maxCount = 0;
-    for (Map.Entry<Integer, Integer> entry : frequencyMap.entrySet()) {
-      if (entry.getValue() > maxCount) {
-        maxCount = entry.getValue();
-        plurality = entry.getKey();
-      }
-    }
-
-    return (int) plurality;
   }
 
   public List<VisionTargetSim> getVisionTargetSimList() {

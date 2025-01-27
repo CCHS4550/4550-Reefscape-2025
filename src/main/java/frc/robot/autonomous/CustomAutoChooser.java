@@ -138,7 +138,8 @@ public class CustomAutoChooser {
                     .setOdometry(
                         PathWrapper.getPathPlannerPathfromChoreo(pathname)
                             .getStartingHolonomicPose()
-                            .get())),
+                            .get()
+                            .getTranslation())),
         new InstantCommand(() -> RobotState.getInstance().setRotation2d(initialHeading)),
         // new Pose2d(
         //     PathWrapper.getChoreoTrajectory(pathname)
@@ -156,7 +157,8 @@ public class CustomAutoChooser {
                     .setOdometry(
                         PathWrapper.getPathPlannerPathfromPath(pathname)
                             .getStartingHolonomicPose()
-                            .get())),
+                            .get()
+                            .getTranslation())),
         new InstantCommand(() -> RobotState.getInstance().setRotation2d(initialHeading)),
         new FollowPathCommand(PathWrapper.getPathPlannerTrajectory(pathname)));
   }

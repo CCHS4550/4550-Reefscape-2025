@@ -10,10 +10,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.maps.Constants;
 import frc.robot.RobotState;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import org.littletonrobotics.junction.Logger;
 import org.photonvision.EstimatedRobotPose;
@@ -21,6 +21,7 @@ import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.PhotonPipelineResult;
+import org.photonvision.targeting.PhotonTrackedTarget;
 
 public class PhotonVisionAprilTag extends SubsystemBase implements VisionIO {
 
@@ -104,6 +105,32 @@ public class PhotonVisionAprilTag extends SubsystemBase implements VisionIO {
     condensedResults = results;
     condensedResults = condensePipelineResults();
 
+    Set<PhotonTrackedTarget> visibleCamera1Targets =
+        results.stream()
+            .filter(x -> x.getKey().equals(leftCamera_photonEstimator))
+            .flatMap(y -> y.getValue().getTargets().stream())
+            .collect(Collectors.toSet());
+    inputs.visibleCamera1Targets =
+        visibleCamera1Targets.stream().mapToInt(target -> target.fiducialId).distinct().toArray();
+
+    Set<PhotonTrackedTarget> visibleCamera2Targets =
+        results.stream()
+            .filter(x -> x.getKey().equals(leftCamera_photonEstimator))
+            .flatMap(y -> y.getValue().getTargets().stream())
+            .collect(Collectors.toSet());
+    inputs.visibleCamera2Targets =
+        visibleCamera2Targets.stream().mapToInt(target -> target.fiducialId).distinct().toArray();
+
+    inputs.focusedId =
+        getPlurality(
+            condensedResults.stream()
+                .map(
+                    condensedResult ->
+                        condensedResult.getValue().hasTargets()
+                            ? condensedResult.getValue().getBestTarget().fiducialId
+                            : -1)
+                .collect(Collectors.toList()));
+
     inputs.timestampArray =
         results.stream().mapToDouble(result -> result.getValue().getTimestampSeconds()).toArray();
 
@@ -186,28 +213,6 @@ public class PhotonVisionAprilTag extends SubsystemBase implements VisionIO {
       }
     }
     return false;
-  }
-
-  public static int getPlurality(List<Integer> list) {
-    // Map to store the frequency of each element
-    Map<Integer, Integer> frequencyMap = new HashMap<>();
-
-    // Count occurrences of each element
-    for (Integer item : list) {
-      frequencyMap.put(item, frequencyMap.getOrDefault(item, 0) + 1);
-    }
-
-    // Find the element with the highest frequency
-    Integer plurality = null;
-    int maxCount = 0;
-    for (Map.Entry<Integer, Integer> entry : frequencyMap.entrySet()) {
-      if (entry.getValue() > maxCount) {
-        maxCount = entry.getValue();
-        plurality = entry.getKey();
-      }
-    }
-
-    return (int) plurality;
   }
 
   @Override

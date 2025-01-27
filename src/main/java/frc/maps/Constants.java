@@ -4,6 +4,10 @@ import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.path.PathConstraints;
@@ -299,7 +303,9 @@ public class Constants {
     public static final double WRIST_KG = 0.15212;
   }
 
-  public class FieldPositionConstants {}
+  public class FieldPositionConstants {
+    public static final Transform3d REEF_OFFSET = new Transform3d();
+  }
 
   public class MechanismPositions {
     public static double ELEVATOR_INTAKE = 0;
@@ -358,20 +364,31 @@ public class Constants {
   }
 
   public static class cameraOne {
-    public static final String CAMERA_ONE_NAME = "FrontCamera";
+
+    public static final String CAMERA_ONE_NAME = "LeftCamera";
     public static final int CAMERA_ONE_PIPELINE = 9;
+
+    // (Robot pose is considered the center of rotation at the floor level, or Z = 0)
+    public static final Translation3d ROBOT_TO_CAMERA_TRANS =
+        new Translation3d(0.3302, 0.3048, 0.2032);
+    public static final Rotation3d ROBOT_TO_CAMERA_ROT =
+        new Rotation3d(0, Math.toRadians(-0), Math.toRadians(5));
+
     public static final Transform3d ROBOT_TO_CAM =
-        new Transform3d(
-            new Translation3d(Inches.of(9.3418), Inches.of(0), Inches.of(14.157)),
-            new Rotation3d(0, Units.degreesToRadians(0), Units.degreesToRadians(0)));
+        new Transform3d(ROBOT_TO_CAMERA_TRANS, ROBOT_TO_CAMERA_ROT);
   }
 
   public static class cameraTwo {
-    public static final String CAMERA_TWO_NAME = "BackCamera";
+    public static final String CAMERA_TWO_NAME = "RightCamera";
+
+    public static final Translation3d ROBOT_TO_CAMERA_TRANS =
+        new Translation3d(0.3302, -0.3048, 0.2032);
+
+    public static final Rotation3d ROBOT_TO_CAMERA_ROT =
+        new Rotation3d(0, Math.toRadians(-0), Math.toRadians(-5));
+
     public static final Transform3d ROBOT_TO_CAM =
-        new Transform3d(
-            new Translation3d(Inches.of(9.3418), Inches.of(0), Inches.of(14.157)),
-            new Rotation3d(0, Units.degreesToRadians(0), Units.degreesToRadians(0)));
+        new Transform3d(ROBOT_TO_CAMERA_TRANS, ROBOT_TO_CAMERA_ROT);
   }
 
   /**
@@ -381,6 +398,12 @@ public class Constants {
   public static class AprilTags {
     public static final AprilTagFieldLayout aprilTagFieldLayout =
         AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
+
+    public static final List<Map.Entry<Integer, Pose2d>> tagProperties = aprilTagFieldLayout.getTags().stream().map(tag -> Map.entry(tag.ID, tag.pose.toPose2d())).collect(Collectors.toList());
+
+    public static final List<Integer> tagIds = aprilTagFieldLayout.getTags().stream().map(tag -> tag.ID).collect(Collectors.toList());
+    public static final List<Pose2d> tagPoses = aprilTagFieldLayout.getTags().stream().map(tag -> tag.pose.toPose2d()).collect(Collectors.toList());
+
 
     // public static int BLUE_SOURCE_LEFT = 1;
     // public static int BLUE_SOURCE_RIGHT = 2;
