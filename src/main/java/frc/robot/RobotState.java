@@ -362,7 +362,7 @@ public class RobotState {
   }
 
   /** Update odometry, not HF */
-  public synchronized SwerveModulePosition[] updateSwerveModulePositionsPeriodic() {
+  public SwerveModulePosition[] updateSwerveModulePositionsPeriodic() {
     swerveModulePositions[0] =
         new SwerveModulePosition(
             swerve.frontRight.getDrivePosition(),

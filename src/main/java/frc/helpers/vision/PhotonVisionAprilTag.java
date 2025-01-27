@@ -62,12 +62,12 @@ public class PhotonVisionAprilTag extends SubsystemBase implements VisionIO {
 
     leftCamera_photonEstimator =
         new PhotonPoseEstimator(
-            Constants.AprilTags.aprilTagFieldLayout,
+            Constants.AprilTags.APRIL_TAG_FIELD_LAYOUT,
             PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
             Constants.cameraOne.ROBOT_TO_CAM);
     rightCamera_photonEstimator =
         new PhotonPoseEstimator(
-            Constants.AprilTags.aprilTagFieldLayout,
+            Constants.AprilTags.APRIL_TAG_FIELD_LAYOUT,
             PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
             Constants.cameraTwo.ROBOT_TO_CAM);
 
@@ -104,6 +104,8 @@ public class PhotonVisionAprilTag extends SubsystemBase implements VisionIO {
 
     condensedResults = results;
     condensedResults = condensePipelineResults();
+
+    inputs.hasTarget = hasAnyTarget(condensedResults) ? true : false;
 
     Set<PhotonTrackedTarget> visibleCamera1Targets =
         results.stream()

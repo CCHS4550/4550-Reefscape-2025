@@ -7,14 +7,13 @@ package frc.robot.autonomous;
 import static edu.wpi.first.units.Units.Meter;
 
 import com.pathplanner.lib.trajectory.PathPlannerTrajectoryState;
-
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
@@ -22,10 +21,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.helpers.vision.*;
 import frc.maps.Constants;
 import frc.robot.RobotState;
+import frc.robot.subsystems.swervedrive.SwerveDriveSubsystem;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import org.littletonrobotics.junction.Logger;
 import org.photonvision.targeting.PhotonTrackedTarget;
@@ -43,38 +42,36 @@ public class OrthogonalToTag extends Command {
   Pose2d currentRelativePose;
   PathPlannerTrajectoryState targetState;
   Transform2d transformation;
+  List<Pose2d> idList;
 
   SwerveDrivePoseEstimator poseRelativeToTargetEstimator;
+
+  PIDController translationPID;
+  PIDController rotationPID;
 
   Timer timer = new Timer();
 
   // If you want to troubleshoot this, you should log the poses and check it in advantagescope or
   // whatever.
 
-/**
- * This command should rotate the robot such that it is orthogonal to the AprilTag in its vision.
- * UNTESTED
- * @param transformation The transformation to apply to the apriltag position.
- * @param focusedTag The tag to focus on throughout the command. -1 to use the current focused Id.
- */
-  public OrthogonalToTag(Transform2d transformation, List<Pose2d> idList) {
+  /**
+   * This command should rotate the robot such that it is orthogonal to the AprilTag in its vision.
+   * UNTESTED
+   *
+   * @param transformation The transformation to apply to the apriltag position.
+   * @param focusedTag The tag to focus on throughout the command. -1 to use the current focused Id.
+   */
+  public OrthogonalToTag(Transform2d transformation, List<Pose2d> idList, boolean useBestTag) {
     this.transformation = transformation;
+    this.idList = idList;
 
-    if (focusedTag == -1) this.focusedTag = RobotState.getInstance().visionInputs.focusedId;
+    translationPID = SwerveDriveSubsystem.getInstance().translationPID;
+    rotationPID = SwerveDriveSubsystem.getInstance().rotationPID;
 
-    for (int i = 0; i < Constants.AprilTags.tagIds.size(); i ++)
-    if (RobotState.getInstance().getPose().nearest(idList).nearest(Constants.AprilTags.tagPoses).equals(Constants.AprilTags.tagPoses.get(i))) {
-      focusedTag = Constants.AprilTags.tagIds.get(i);
-    }
+    if (useBestTag) this.focusedTag = RobotState.getInstance().visionInputs.focusedId;
 
     // if (targets.isPresent()) {
     /** Initialize a temporary PoseEstimator that lasts for this command's length. It will */
-    poseRelativeToTargetEstimator =
-        new SwerveDrivePoseEstimator(
-            Constants.SwerveConstants.DRIVE_KINEMATICS,
-            RobotState.getInstance().getPoseRotation2d(),
-            RobotState.getInstance().swerveModulePositions,
-            new Pose2d(0, 0, new Rotation2d()));
 
     // Use addRequirements() here to declare subsystem dependencies.
     // addRequirements(SwerveDriveSubsystem.getInstance());
@@ -84,10 +81,23 @@ public class OrthogonalToTag extends Command {
   @Override
   public void initialize() {
 
+    poseRelativeToTargetEstimator =
+        new SwerveDrivePoseEstimator(
+            Constants.SwerveConstants.DRIVE_KINEMATICS,
+            RobotState.getInstance().getPoseRotation2d(),
+            RobotState.getInstance().swerveModulePositions,
+            new Pose2d(0, 0, new Rotation2d()));
+
+    Pose2d samplePose =
+        RobotState.getInstance().getPose().nearest(idList).nearest(Constants.AprilTags.TAG_POSES);
+
+    for (int i = 0; i < Constants.AprilTags.TAG_POSES.size(); i++) {
+      if (samplePose.equals(Constants.AprilTags.TAG_POSES.get(i)))
+        focusedTag = Constants.AprilTags.TAG_IDS[i];
+    }
+
     timer.reset();
     timer.start();
-    
-  
 
     // if (target.isPresent()) {
     currentRelativePose = poseRelativeToTargetEstimator.getEstimatedPosition();
@@ -97,9 +107,12 @@ public class OrthogonalToTag extends Command {
     targetX = getAverageX(getTransform3dList());
     targetY = getAverageY(getTransform3dList());
 
-    targetState.pose = new Pose2d(targetX, targetY, targetAngle);
-    targetState.pose.plus(transformation);
-    targetState.heading = targetAngle.plus(transformation.getRotation());
+    targetState.pose =
+        new Pose2d(targetX, targetY, targetAngle)
+            .plus(new Transform2d(new Pose2d(), currentRelativePose));
+    targetState.pose = targetState.pose.plus(transformation);
+    targetState.heading = targetState.pose.getRotation();
+    // .plus(transformation.getRotation());
   }
   // }
 
@@ -107,17 +120,39 @@ public class OrthogonalToTag extends Command {
   @Override
   public void execute() {
 
-    if (
-      Arrays.stream(RobotState.getInstance().visionInputs.visibleCamera1Targets).anyMatch(tag -> tag == focusedTag) ||
-      Arrays.stream(RobotState.getInstance().visionInputs.visibleCamera2Targets).anyMatch(tag -> tag == focusedTag)) {
+    Logger.recordOutput("OrthogonalToTag/focusedTag", focusedTag);
+    Logger.recordOutput("OrthogonalToTag/ExecutingCommand...", true);
+
+    currentRelativePose = poseRelativeToTargetEstimator.getEstimatedPosition();
+
+    if (Arrays.stream(RobotState.getInstance().visionInputs.visibleCamera1Targets)
+            .anyMatch(tag -> tag == focusedTag)
+        || Arrays.stream(RobotState.getInstance().visionInputs.visibleCamera2Targets)
+            .anyMatch(tag -> tag == focusedTag)) {
 
       targetAngle = getAverageAngle(getTransform3dList());
       targetX = getAverageX(getTransform3dList());
       targetY = getAverageY(getTransform3dList());
 
-      targetState.pose = new Pose2d(targetX, targetY, targetAngle);
-      targetState.pose.plus(transformation);
-      targetState.heading = targetAngle.plus(transformation.getRotation());
+      // new Transform2d(new Pose2d(), currentRelativePose);
+
+      targetState.pose =
+          new Pose2d(targetX, targetY, targetAngle)
+              .plus(new Transform2d(new Pose2d(), currentRelativePose));
+      targetState.pose = targetState.pose.plus(transformation);
+      targetState.heading = targetState.pose.getRotation();
+      // .plus(transformation.getRotation());
+
+      Pose2d globalTargetPose =
+          RobotState.getInstance()
+              .getPose()
+              .plus(new Transform2d(currentRelativePose, targetState.pose));
+
+      Logger.recordOutput("OrthogonalToTag/globalCurrentPose", RobotState.getInstance().getPose());
+      Logger.recordOutput("OrthogonalToTag/globalTargetPose", globalTargetPose);
+
+      Logger.recordOutput("OrthogonalToTag/targetPose", targetState.pose);
+      Logger.recordOutput("OrthogonalToTag/currentPose", currentRelativePose);
     }
 
     for (int i = 0; i < getTransform3dList().size(); i++) {
@@ -128,18 +163,6 @@ public class OrthogonalToTag extends Command {
           "OrthogonalToTag/Transformations/" + i + "/Rotations",
           getTransform3dList().get(i).getTranslation());
     }
-
-    Pose2d currentGlobalPose =
-        RobotState.getInstance()
-            .getPose()
-            .plus(new Transform2d(currentRelativePose, targetState.pose));
-    Logger.recordOutput("OrthogonalToTag/currentGlobalPose", currentGlobalPose);
-
-    Logger.recordOutput("OrthogonalToTag/ExecutingCommand...", true);
-
-    Logger.recordOutput("OrthogonalToTag/targetPose", targetState.pose);
-    Logger.recordOutput(
-        "OrthogonalToTag/currentPose", poseRelativeToTargetEstimator.getEstimatedPosition());
 
     // I'm not sure if we need to do all this, but it should make it relatively more accurate. By
     // doing this, we are combining swerve drive odometry with vision.
@@ -154,16 +177,20 @@ public class OrthogonalToTag extends Command {
     // have typically always used getRotation2dNegative() which has always worked fine.
     // I feel like this doesn't make much sense though but I'm a little scared to change it. If it
     // works, it works.
-    for (int i = 0; i < RobotState.getInstance().sampleCountHF; i++) {
+    if (RobotState.getInstance().sampleCountHF > 0) {
+      for (int i = 0; i < RobotState.getInstance().sampleCountHF; i++) {
+        poseRelativeToTargetEstimator.updateWithTime(
+            RobotState.getInstance().sampleTimestampsHF[i],
+            RobotState.getInstance().gyroAnglesHF[i],
+            RobotState.getInstance().swerveModulePositionsHF[i]);
+      }
+    } else {
+      double currentTime = Timer.getFPGATimestamp();
       poseRelativeToTargetEstimator.updateWithTime(
-          RobotState.getInstance().sampleTimestampsHF[i],
-          RobotState.getInstance().gyroAnglesHF[i],
-          RobotState.getInstance().swerveModulePositionsHF[i]);
+          currentTime,
+          RobotState.getInstance().getRotation2d(),
+          RobotState.getInstance().swerveModulePositions);
     }
-
-    // We only want the angle, not the translation because we only want to rotate, so we set the
-    // pose to (0,0) with the angle of the AprilTag.
-    currentRelativePose = poseRelativeToTargetEstimator.getEstimatedPosition();
 
     // ChassisSpeeds chassisSpeeds =
     //     SwerveDriveSubsystem.getInstance()
@@ -174,13 +201,32 @@ public class OrthogonalToTag extends Command {
     //         .calculateRobotRelativeSpeeds(currentRelativePose, targetState);
     // // Convert chassis speeds to individual module states
 
+    double xPID = translationPID.calculate(currentRelativePose.getX(), targetState.pose.getX());
+    double yPID = translationPID.calculate(currentRelativePose.getY(), targetState.pose.getY());
+
+    double wantedRotationSpeeds =
+        rotationPID.calculate(
+            currentRelativePose.getRotation().getRadians(), targetState.heading.getRadians());
+
+    /** Add alliance transform! */
+
+    /** Create a ChassisSpeeds object to represent how the robot should be moving at this time. */
+    ChassisSpeeds chassisSpeeds =
+        ChassisSpeeds.fromFieldRelativeSpeeds(
+            xPID, yPID, wantedRotationSpeeds, currentRelativePose.getRotation());
+    // SwerveDrive.getInstance()
+    //     .swerveFollower
+    //     .calculateRobotRelativeSpeeds(RobotState.getInstance().currentPose, wantedState);
+
+    // SwerveDriveSubsystem.getInstance().driveRobotRelative(chassisSpeeds);
+
     // SwerveDriveSubsystem.getInstance().driveRobotRelative(chassisSpeeds);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    Logger.recordOutput("OrthogonalToTag/ExecutingCommand...", true);
+    Logger.recordOutput("OrthogonalToTag/ExecutingCommand...", false);
   }
 
   // Returns true when the command should end.
@@ -259,26 +305,30 @@ public class OrthogonalToTag extends Command {
 
     if (RobotBase.isSimulation())
       return PhotonVisionSim.getInstance().results.stream()
+          .filter(
+              (result) ->
+                  result.getValue().hasTargets()
+                      && result.getValue().getBestTarget().fiducialId == focusedTag)
           .map(
               result ->
-                  result.getValue().hasTargets() && result.getValue().getBestTarget().fiducialId == focusedTag
-                      ? result
-                          .getKey()
-                          .getRobotToCameraTransform()
-                          .plus(result.getValue().getBestTarget().getBestCameraToTarget())
-                      : new Transform3d())
+                  result
+                      .getKey()
+                      .getRobotToCameraTransform()
+                      .plus(result.getValue().getBestTarget().getBestCameraToTarget()))
           .collect(Collectors.toList());
 
     if (RobotBase.isReal())
       return PhotonVisionAprilTag.getInstance().results.stream()
+          .filter(
+              (result) ->
+                  result.getValue().hasTargets()
+                      && result.getValue().getBestTarget().fiducialId == focusedTag)
           .map(
               result ->
-                  result.getValue().hasTargets() && result.getValue().getBestTarget().fiducialId == focusedTag
-                      ? result
-                          .getKey()
-                          .getRobotToCameraTransform()
-                          .plus(result.getValue().getBestTarget().getBestCameraToTarget())
-                      : new Transform3d())
+                  result
+                      .getKey()
+                      .getRobotToCameraTransform()
+                      .plus(result.getValue().getBestTarget().getBestCameraToTarget()))
           .collect(Collectors.toList());
 
     return null;

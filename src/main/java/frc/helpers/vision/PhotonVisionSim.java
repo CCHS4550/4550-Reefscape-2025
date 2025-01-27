@@ -65,12 +65,12 @@ public class PhotonVisionSim extends SubsystemBase implements VisionIO {
 
     leftCamera_photonEstimator =
         new PhotonPoseEstimator(
-            Constants.AprilTags.aprilTagFieldLayout,
+            Constants.AprilTags.APRIL_TAG_FIELD_LAYOUT,
             PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
             Constants.cameraOne.ROBOT_TO_CAM);
     rightCamera_photonEstimator =
         new PhotonPoseEstimator(
-            Constants.AprilTags.aprilTagFieldLayout,
+            Constants.AprilTags.APRIL_TAG_FIELD_LAYOUT,
             PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
             Constants.cameraTwo.ROBOT_TO_CAM);
 
@@ -81,7 +81,7 @@ public class PhotonVisionSim extends SubsystemBase implements VisionIO {
         new PhotonPoseEstimator[] {leftCamera_photonEstimator, rightCamera_photonEstimator};
 
     visionSim = new VisionSystemSim("main");
-    visionSim.addAprilTags(Constants.AprilTags.aprilTagFieldLayout);
+    visionSim.addAprilTags(Constants.AprilTags.APRIL_TAG_FIELD_LAYOUT);
 
     SimCameraProperties leftCameraProp = new SimCameraProperties();
     SimCameraProperties rightCameraProp = new SimCameraProperties();
@@ -98,8 +98,8 @@ public class PhotonVisionSim extends SubsystemBase implements VisionIO {
 
     // Enable the raw and processed streams. These are enabled by default.
 
-    leftCameraSim.setMaxSightRange(4);
-    leftCameraSim.setMaxSightRange(4);
+    leftCameraSim.setMaxSightRange(2);
+    leftCameraSim.setMaxSightRange(2);
     leftCameraSim.enableRawStream(true);
     rightCameraSim.enableRawStream(true);
     leftCameraSim.enableProcessedStream(true);
@@ -132,19 +132,21 @@ public class PhotonVisionSim extends SubsystemBase implements VisionIO {
           Map.entry(
               leftCamera_photonEstimator,
               leftCameraSim.process(
-                  20.0, visionSim.getCameraPose(leftCameraSim).get(), getVisionTargetSimList())));
+                  10.0, visionSim.getCameraPose(leftCameraSim).get(), getVisionTargetSimList())));
     }
-
     if (visionSim.getCameraPose(rightCameraSim).isPresent()) {
       results.add(
           Map.entry(
               rightCamera_photonEstimator,
               rightCameraSim.process(
-                  20.0, visionSim.getCameraPose(rightCameraSim).get(), getVisionTargetSimList())));
+                  10.0, visionSim.getCameraPose(rightCameraSim).get(), getVisionTargetSimList())));
     }
 
     condensedResults = results;
     condensedResults = condensePipelineResults();
+
+    inputs.hasTarget =
+        condensedResults.stream().anyMatch(result -> result.getValue().hasTargets()) ? true : false;
 
     Set<PhotonTrackedTarget> visibleCamera1Targets =
         results.stream()
@@ -156,7 +158,7 @@ public class PhotonVisionSim extends SubsystemBase implements VisionIO {
 
     Set<PhotonTrackedTarget> visibleCamera2Targets =
         results.stream()
-            .filter(x -> x.getKey().equals(leftCamera_photonEstimator))
+            .filter(x -> x.getKey().equals(rightCamera_photonEstimator))
             .flatMap(y -> y.getValue().getTargets().stream())
             .collect(Collectors.toSet());
     inputs.visibleCamera2Targets =
@@ -185,8 +187,8 @@ public class PhotonVisionSim extends SubsystemBase implements VisionIO {
     for (int i = 0; i < getVisionTargetSimList().size(); i++)
       if (leftCameraSim.canSeeTargetPose(
               visionSim.getCameraPose(leftCameraSim).get(), getVisionTargetSimList().get(i))
-          || leftCameraSim.canSeeTargetPose(
-              visionSim.getCameraPose(leftCameraSim).get(), getVisionTargetSimList().get(i))) {
+          || rightCameraSim.canSeeTargetPose(
+              visionSim.getCameraPose(rightCameraSim).get(), getVisionTargetSimList().get(i))) {
 
         inputs.poseEstimates = new Pose2d[] {visionSim.getRobotPose().toPose2d()};
         inputs.hasEstimate = true;

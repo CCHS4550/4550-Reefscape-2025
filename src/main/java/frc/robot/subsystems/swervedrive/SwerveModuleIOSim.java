@@ -262,7 +262,7 @@ public class SwerveModuleIOSim implements SwerveModuleIO {
 
     driveMotor.setVelocity(velocity);
     ((SparkMaxAlternateEncoderSim) driveMotor.getAlternateEncoder()).setVelocity(velocity);
-    drivePositionSim += velocity * getTimestampChange();
+    drivePositionSim += velocity * .020;
 
     // These are both in m/s
     double driveOutput = drivingPidController.calculate(driveMotor.getVelocity(), velocity);

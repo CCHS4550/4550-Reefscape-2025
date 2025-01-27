@@ -11,7 +11,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.maps.Constants;
 import frc.robot.RobotState;
@@ -28,17 +27,8 @@ public class FollowPathCommand extends Command {
 
   PathPlannerTrajectoryState lastState, wantedState;
 
-  static PIDController translationPID;
-  static PIDController rotationPID;
-
-  static {
-    translationPID = new PIDController(5, 0, 0);
-    rotationPID = new PIDController(5, 0, 0);
-    rotationPID.enableContinuousInput(-Math.PI, Math.PI);
-
-    SmartDashboard.putData(translationPID);
-    SmartDashboard.putData(rotationPID);
-  }
+  PIDController translationPID;
+  PIDController rotationPID;
 
   /**
    * Follows a PathPlannerTrajectory
@@ -46,6 +36,8 @@ public class FollowPathCommand extends Command {
    * @param trajectory the PathPlannerTrajectory
    */
   public FollowPathCommand(PathPlannerTrajectory trajectory) {
+    translationPID = SwerveDriveSubsystem.getInstance().translationPID;
+    rotationPID = SwerveDriveSubsystem.getInstance().rotationPID;
 
     this.trajectory = trajectory;
     // Use addRequirements() here to declare subsystem dependencies.

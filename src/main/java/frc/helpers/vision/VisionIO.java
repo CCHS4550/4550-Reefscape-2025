@@ -32,6 +32,7 @@ public interface VisionIO {
     // public int[] camera3Targets = new int[0];
 
     public boolean hasEstimate = false;
+    public boolean hasTarget = false;
   }
 
   /** Default method, defined in photonvision */

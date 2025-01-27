@@ -20,6 +20,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.units.VelocityUnit;
 import edu.wpi.first.units.VoltageUnit;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -71,7 +72,9 @@ public class SwerveDriveSubsystem extends SubsystemBase {
   public PIDController xPID, yPID;
   public PIDController turnPID;
   public ProfiledPIDController turnPIDProfiled;
-  // ProfiledPIDController turnPID;
+
+  public PIDController translationPID;
+  public PIDController rotationPID;
 
   /** For old pathplanner */
   public final PPHolonomicDriveController swerveFollower;
@@ -210,10 +213,17 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     desiredModuleStates[2] = new SwerveModuleState(0, new Rotation2d());
     desiredModuleStates[3] = new SwerveModuleState(0, new Rotation2d());
 
-    xPID = new PIDController(1, .1, 0);
-    yPID = new PIDController(1, .1, 0);
+    xPID = new PIDController(.5, 0, .1);
+    yPID = new PIDController(.5, 0, .1);
 
     turnPID = new PIDController(.05, .1, 0);
+
+    translationPID = new PIDController(5, 0, 0);
+    rotationPID = new PIDController(5, 0, 0);
+    rotationPID.enableContinuousInput(-Math.PI, Math.PI);
+
+    SmartDashboard.putData(translationPID);
+    SmartDashboard.putData(rotationPID);
 
     swerveFollower =
         new PPHolonomicDriveController(
