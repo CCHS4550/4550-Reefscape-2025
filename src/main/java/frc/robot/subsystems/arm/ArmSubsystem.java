@@ -153,14 +153,11 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public void setWantedState(ArmState state) {
-    System.out.println("sdajkdfslfgjdgfk");
     this.wantedState = state;
   }
 
   public Command setWantedStateCommand(ArmState wantedState) {
     System.out.println(wantedState);
-    System.out.println("sdajkdfslfgjdgfk");
-    // return runOnce(() -> System.out.println("ahfdsklgdgfjhglgk"));
     return new InstantCommand(() -> setWantedState(wantedState));
   }
 

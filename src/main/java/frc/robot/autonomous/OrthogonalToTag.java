@@ -220,7 +220,7 @@ public class OrthogonalToTag extends Command {
 
     // SwerveDriveSubsystem.getInstance().driveRobotRelative(chassisSpeeds);
 
-    // SwerveDriveSubsystem.getInstance().driveRobotRelative(chassisSpeeds);
+    SwerveDriveSubsystem.getInstance().driveRobotRelative(chassisSpeeds);
   }
 
   // Called once the command ends or is interrupted.
@@ -233,8 +233,7 @@ public class OrthogonalToTag extends Command {
   @Override
   public boolean isFinished() {
 
-    return timer.hasElapsed(20);
-    // || target.isEmpty();
+    return !RobotState.getInstance().visionInputs.hasTarget || timer.hasElapsed(5);
   }
 
   /** Helper Methods */

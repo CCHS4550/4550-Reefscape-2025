@@ -31,9 +31,6 @@ import java.util.stream.Collectors;
 
 public class Constants {
 
-  // Might be more specific than this.
-  public static final double WHEEL_CIRCUMFRENCE = Units.inchesToMeters(4 * Math.PI);
-
   public static Mode currentMode = Mode.REAL;
 
   public static enum Mode {
@@ -66,6 +63,8 @@ public class Constants {
   }
 
   public static class ConversionConstants {
+
+    public static final double WHEEL_CIRCUMFRENCE = Units.inchesToMeters(4 * Math.PI);
 
     //  rotations of the turn motor to one rotation of the wheel
     // how much of a rotation the wheel turns for one rotation of the turn motor
@@ -215,7 +214,7 @@ public class Constants {
     public static Pose2d INITIAL_POSE = new Pose2d(0, 0, new Rotation2d(0)); // must be in meters!
 
     /** This is important! This is the frequency at which odometry data is updated. */
-    public static final double ODOMETRY_FREQUENCY = 100;
+    public static final double ODOMETRY_FREQUENCY = 250;
   }
 
   public static class ArmConstants {

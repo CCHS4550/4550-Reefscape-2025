@@ -4,8 +4,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.helpers.CCMotorReplay;
 import frc.helpers.CCSparkMax;
 import frc.helpers.CCSparkSim;
-import frc.helpers.vision.PhotonVisionReplay;
-import frc.helpers.vision.PhotonVisionSim;
 import frc.maps.Constants;
 import frc.robot.controlschemes.*;
 import frc.robot.subsystems.Superstructure;
@@ -55,9 +53,7 @@ public class RobotContainer {
         IntakeSubsystem.getInstance(CCMotorReplay::new, IntakeIOReplay::new);
         WristSubsystem.getInstance(CCSparkMax::new, WristIOHardware::new);
 
-        // PhotonVisionAprilTag.getInstance();
-
-        // Superstructure.getInstance();
+        Superstructure.getInstance();
 
         break;
 
@@ -71,9 +67,7 @@ public class RobotContainer {
         IntakeSubsystem.getInstance(CCSparkSim::new, IntakeIOSim::new);
         WristSubsystem.getInstance(CCSparkSim::new, WristIOSim::new);
 
-        PhotonVisionSim.getInstance();
-
-        // Superstructure.getInstance();
+        Superstructure.getInstance();
 
         break;
 
@@ -87,9 +81,7 @@ public class RobotContainer {
         IntakeSubsystem.getInstance(CCMotorReplay::new, IntakeIOReplay::new);
         WristSubsystem.getInstance(CCMotorReplay::new, WristIOReplay::new);
 
-        PhotonVisionReplay.getInstance();
-
-        // Superstructure.getInstance();
+        Superstructure.getInstance();
 
         break;
     }

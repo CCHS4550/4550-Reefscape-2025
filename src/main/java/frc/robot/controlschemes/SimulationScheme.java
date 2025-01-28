@@ -36,7 +36,7 @@ public class SimulationScheme {
 
     /** z */
     controller.a().onTrue(new InstantCommand(() -> System.out.println("a")));
-    controller.a().onTrue(AlignCommands.frontAlignToReefLeft());
+    controller.a().and(AlignCommands.hasTarget()).onTrue(AlignCommands.frontAlignToReefLeft());
 
     /** x */
     controller.b().onTrue(new InstantCommand(() -> System.out.println("b")));
