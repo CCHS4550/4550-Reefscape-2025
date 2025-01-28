@@ -11,6 +11,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -34,18 +35,23 @@ public class ArmIOHardware implements ArmIO {
   State goalState;
 
   public ArmIOHardware(CCMotorController armMotor) {
+
+    System.err.println("ARM IN REAL");
+
     this.armMotor = armMotor;
     throughBore = (AbsoluteEncoder) armMotor.getDataportAbsoluteEncoder();
 
     pidController =
         new ProfiledPIDController(
-            2.5, 0, 0, new TrapezoidProfile.Constraints(.5, .25)); // do something for this
+            5, 0, .1, new TrapezoidProfile.Constraints(.5, .25)); // do something for this
 
     pidController.reset(throughBore.getPosition());
     // TODO Sysid
     feedForward = new ArmFeedforward(0, 0, 0, 0);
 
     goalState = new State(0, 0);
+
+    SmartDashboard.putData("Arm PID Controller", pidController);
   }
 
   @Override
@@ -70,7 +76,6 @@ public class ArmIOHardware implements ArmIO {
 
   @Override
   public void holdAtState(ArmState goalState) {
-    pidController.reset(getAbsoluteEncoderRadiansOffset());
     setVoltage(
         Volts.of(getPIDFFOutput(new State(Units.degreesToRadians(goalState.getAngle()), 0))));
   }
@@ -91,9 +96,9 @@ public class ArmIOHardware implements ArmIO {
     this.goalState = goalState;
 
     pidOutput = pidController.calculate(getAbsoluteEncoderRadiansOffset(), goalState);
-    ffOutput =
-        feedForward.calculate(
-            pidController.getSetpoint().position, pidController.getSetpoint().velocity);
+    // ffOutput =
+    //     feedForward.calculate(
+    //         pidController.getSetpoint().position, pidController.getSetpoint().velocity);
 
     return pidOutput;
   }

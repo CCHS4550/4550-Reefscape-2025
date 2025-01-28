@@ -149,7 +149,7 @@ public class SwerveDriveScheme implements ControlScheme {
                 swerve)
             .withName("Swerve Controller Command"));
 
-    configureButtons(swerve, controller);
+    // configureButtons(swerve, controller);
   }
 
   /**
@@ -174,7 +174,7 @@ public class SwerveDriveScheme implements ControlScheme {
 
     controller.y().onTrue(runOnce(() -> toggleFieldCentric()));
 
-    controller.a().onTrue(runOnce(() -> setFastMode())).onFalse(runOnce(() -> setSlowMode()));
+    // controller.a().onTrue(runOnce(() -> setFastMode())).onFalse(runOnce(() -> setSlowMode()));
   }
   /** Toggle field centric and robot centric driving. */
   private static void toggleFieldCentric() {

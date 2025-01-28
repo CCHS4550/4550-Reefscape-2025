@@ -34,9 +34,9 @@ public class IntakeSubsystem extends SubsystemBase {
     HAS_CORAL;
   }
 
-  public IntakeState previousState = IntakeState.IDLE;
-  public IntakeState currentState = IntakeState.IDLE;
-  public IntakeState wantedState = IntakeState.IDLE;
+  public static IntakeState previousState = IntakeState.IDLE;
+  public static IntakeState currentState = IntakeState.IDLE;
+  public static IntakeState wantedState = IntakeState.IDLE;
 
   /** Implementation of Singleton Pattern */
   public static IntakeSubsystem mInstance;

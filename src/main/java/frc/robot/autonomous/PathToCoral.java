@@ -5,9 +5,7 @@ import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.Waypoint;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
-import frc.robot.subsystems.Superstructure;
 import java.util.ArrayList;
 import java.util.List;
 // so many of the imports are unused lmao
@@ -39,12 +37,12 @@ public class PathToCoral {
         closestCoor = pos.nearest(redLeftSideCoors);
       }
     }
-    if (Superstructure.getInstance()
-        .getWantedSuperstate()
-        .equals(Superstructure.WantedSuperState.L4_BACK)) {
-      Rotation2d closestRotation = new Rotation2d(closestCoor.getRotation().getRadians() * -1);
-      closestCoor = new Pose2d(closestCoor.getTranslation(), closestRotation);
-    }
+    // if (Superstructure.getInstance()
+    //     .getWantedSuperstate()
+    //     .equals(Superstructure.WantedSuperState.L4_BACK)) {
+    //   Rotation2d closestRotation = new Rotation2d(closestCoor.getRotation().getRadians() * -1);
+    //   closestCoor = new Pose2d(closestCoor.getTranslation(), closestRotation);
+    // }
     return closestCoor;
   }
 

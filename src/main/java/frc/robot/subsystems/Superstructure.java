@@ -143,7 +143,8 @@ public class Superstructure extends SubsystemBase {
         elevator.setWantedState(ElevatorState.L4_BACK);
         wrist.setWantedState(WristState.L4_BACK);
         break;
-      case CLIMB_PREPARING: // IMPORTANT!!!! TODO - add in the positions these need to be in before
+      case CLIMB_PREPARING: // IMPORTANT!!!! TODO - add in the positions these need to be in
+        // before
         // we climb
         // arm.setWantedState(ArmState.CLIMB_PREPARING);
         // elevator.setWantedState(ElevatorState.CLIMB_PREPARING);

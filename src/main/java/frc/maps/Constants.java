@@ -268,9 +268,9 @@ public class Constants {
     public static final double WRIST_MOTOR_RADIANS_PER_SECOND_CONVERSION_FACTOR =
         WRIST_MOTOR_ROTATIONS_TO_WRIST_ROTATIONS_RADIANS / 60;
 
-    public static final double WRIST_THROUGHBORE_OFFSET = 1.0;
+    public static final double WRIST_THROUGHBORE_OFFSET = 1.0 + 0.652;
 
-    public static boolean WRIST_REVERSE = false;
+    public static boolean WRIST_REVERSE = true;
   }
 
   public static class AlgaeConstants {}

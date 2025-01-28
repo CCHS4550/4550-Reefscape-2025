@@ -23,6 +23,7 @@ public class WristSubsystem extends SubsystemBase {
 
   public enum WristState {
     // Placeholder Values
+    ZERO(0),
     DEFAULT_WITHINFRAME(Units.degreesToRadians(0)),
     L1_FRONT(Units.degreesToRadians(30)),
     L2L3_FRONT(Units.degreesToRadians(45)),
@@ -41,9 +42,9 @@ public class WristSubsystem extends SubsystemBase {
     }
   }
 
-  public WristState previousState = WristState.DEFAULT_WITHINFRAME;
-  public WristState currentState = WristState.DEFAULT_WITHINFRAME;
-  public WristState wantedState = WristState.DEFAULT_WITHINFRAME;
+  public static WristState previousState = WristState.DEFAULT_WITHINFRAME;
+  public static WristState currentState = WristState.DEFAULT_WITHINFRAME;
+  public static WristState wantedState = WristState.DEFAULT_WITHINFRAME;
 
   /** Implementation of Singleton Pattern */
   public static WristSubsystem mInstance;
@@ -95,6 +96,8 @@ public class WristSubsystem extends SubsystemBase {
 
   private void applyStates() {
     switch (currentState) {
+      case ZERO:
+        wristIO.holdAtState(WristState.ZERO);
       case DEFAULT_WITHINFRAME:
         wristIO.holdAtState(WristState.DEFAULT_WITHINFRAME);
 
@@ -121,6 +124,8 @@ public class WristSubsystem extends SubsystemBase {
   private WristState handleStateTransitions() {
     previousState = currentState;
     switch (wantedState) {
+      case ZERO:
+        return WristState.ZERO;
       case DEFAULT_WITHINFRAME:
         return WristState.DEFAULT_WITHINFRAME;
 

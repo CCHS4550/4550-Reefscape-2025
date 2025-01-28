@@ -41,7 +41,7 @@ public class WristIOHardware implements WristIO {
 
     wristPidController =
         new ProfiledPIDController(
-            0, 0, 0, new TrapezoidProfile.Constraints(0, 0)); // do something for this
+            .05, 0, 0, new TrapezoidProfile.Constraints(1, 1)); // do something for this
 
     wristPidController.reset(throughBore.getPosition());
     // TODO Sysid
@@ -92,11 +92,12 @@ public class WristIOHardware implements WristIO {
     this.goalState = goalState;
 
     pidOutput = wristPidController.calculate(getAbsoluteEncoderRadiansOffset(), goalState);
-    ffOutput =
-        wristFeedForward.calculate(
-            wristPidController.getSetpoint().position, wristPidController.getSetpoint().velocity);
+    // ffOutput =
+    //     wristFeedForward.calculate(
+    //         wristPidController.getSetpoint().position,
+    // wristPidController.getSetpoint().velocity);
 
-    return pidOutput + ffOutput;
+    return pidOutput;
   }
 
   @Override

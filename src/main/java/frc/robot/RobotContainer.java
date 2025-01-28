@@ -10,7 +10,6 @@ import frc.helpers.vision.VisionIO;
 import frc.maps.Constants;
 // import frc.robot.subsystems.Superstructure;
 import frc.robot.controlschemes.*;
-import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.algae.AlgaeIOReplay;
 import frc.robot.subsystems.algae.AlgaeIOSim;
 import frc.robot.subsystems.algae.AlgaeSubsystem;
@@ -38,16 +37,16 @@ import frc.robot.subsystems.wrist.WristSubsystem;
 
 public class RobotContainer {
 
-  AlgaeSubsystem algae;
-  ArmSubsystem arm;
-  ClimberSubsystem climber;
-  ElevatorSubsystem elevator;
-  IntakeSubsystem intake;
-  SwerveDriveSubsystem swerve;
-  WristSubsystem wrist;
+  AlgaeSubsystem algae = null;
+  ArmSubsystem arm = null;
+  ClimberSubsystem climber = null;
+  ElevatorSubsystem elevator = null;
+  IntakeSubsystem intake = null;
+  SwerveDriveSubsystem swerve = null;
+  WristSubsystem wrist = null;
 
-  VisionIO vision;
-  Superstructure superstructure;
+  VisionIO vision = null;
+  // Superstructure superstructure;
 
   /*
    * Initialize controllers.
@@ -70,7 +69,7 @@ public class RobotContainer {
 
         // vision = PhotonVisionAprilTag.getInstance();
 
-        superstructure = Superstructure.getInstance();
+        // superstructure = Superstructure.getInstance();
 
         break;
 
@@ -86,7 +85,7 @@ public class RobotContainer {
 
         vision = PhotonVisionSim.getInstance();
 
-        superstructure = Superstructure.getInstance();
+        // superstructure = Superstructure.getInstance();
 
         break;
 
@@ -112,25 +111,27 @@ public class RobotContainer {
     RobotState.getInstance().moduleEncodersInit();
     RobotState.getInstance().dashboardInit();
 
-    switch (Constants.currentMode) {
-      case REAL:
-        SwerveDriveScheme.configure(swerve, primaryController);
-        // teleOpMechScheme.configure(intake, arm, elevator, wrist, algae, climber, 1);
-        // autoMechScheme.configure(intake, arm, elevator, wrist, algae, superstructure, 2);
+    SwerveDriveScheme.configure(swerve, primaryController);
+    // teleOpMechScheme.configure(intake, arm, elevator, wrist, algae, climber, 1);
+    // autoMechScheme.configure(intake, arm, elevator, wrist, algae, superstructure, 2);
 
-        // CharacterizationScheme.configure(swerve, algae, arm, elevator, intake, wrist,
-        // primaryController);
-        break;
+    CharacterizationScheme.configure(
+        swerve, algae, arm, elevator, intake, wrist, primaryController);
 
-      case SIM:
-        SwerveDriveScheme.configure(swerve, primaryController);
+    // switch (Constants.currentMode) {
+    //   case REAL:
 
-        SimulationScheme.configure(
-            intake, arm, elevator, wrist, algae, superstructure, primaryController);
-        break;
+    //     break;
 
-      case REPLAY:
-        break;
-    }
+    //   case SIM:
+    //     SwerveDriveScheme.configure(swerve, primaryController);
+
+    //     SimulationScheme.configure(
+    //         intake, arm, elevator, wrist, algae, superstructure, primaryController);
+    //     break;
+
+    //   case REPLAY:
+    //     break;
+    // }
   }
 }
