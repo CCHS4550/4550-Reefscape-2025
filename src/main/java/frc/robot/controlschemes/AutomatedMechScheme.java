@@ -1,6 +1,7 @@
 package frc.robot.controlschemes;
-import com.pathplanner.lib.auto.NamedCommands;
+
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
+import frc.robot.subsystems.Superstructure;
 // import frc.robot.subsystems.Superstructure;
 // import frc.robot.subsystems.Superstructure.WantedSuperState;
 import frc.robot.subsystems.algae.AlgaeSubsystem;
@@ -8,7 +9,6 @@ import frc.robot.subsystems.algae.AlgaeSubsystem.AlgaeStates;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.intake.IntakeSubsystem;
-import frc.robot.subsystems.intake.IntakeSubsystem.IntakeState;
 import frc.robot.subsystems.wrist.WristSubsystem;
 
 public class AutomatedMechScheme {
@@ -20,13 +20,11 @@ public class AutomatedMechScheme {
       ElevatorSubsystem elevator,
       WristSubsystem wrist,
       AlgaeSubsystem algae,
-      //   Superstructure superstructure,
+      Superstructure superstructure,
       int port) {
     autoBoard = new CommandGenericHID(port);
 
     configureButtons(intake, arm, elevator, wrist, algae, superstructure, port);
-    
-
   }
 
   public static void configureButtons(
@@ -35,7 +33,7 @@ public class AutomatedMechScheme {
       ElevatorSubsystem elevator,
       WristSubsystem wrist,
       AlgaeSubsystem algae,
-      //   Superstructure superstructure,
+      Superstructure superstructure,
       int port) {
     autoBoard.button(1).onTrue(algae.setWantedStateCommand(AlgaeStates.STOW));
     autoBoard.button(2).onTrue(algae.setWantedStateCommand(AlgaeStates.INTAKE));
@@ -62,5 +60,4 @@ public class AutomatedMechScheme {
     //     .onTrue(superstructure.setWantedSuperstateCommand(WantedSuperState.L3_FRONT));
     // autoBoard.button(4).onTrue(superstructure.setWantedSuperstateCommand(WantedSuperState.L4_BACK));
   }
-  
 }

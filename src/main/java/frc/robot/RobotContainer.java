@@ -1,17 +1,14 @@
 package frc.robot;
 
-import com.sun.org.apache.bcel.internal.generic.NamedAndTyped;
-import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.helpers.CCMotorReplay;
 import frc.helpers.CCSparkMax;
 import frc.helpers.CCSparkSim;
 import frc.helpers.vision.PhotonVisionReplay;
 import frc.helpers.vision.PhotonVisionSim;
-import frc.helpers.vision.VisionIO;
 import frc.maps.Constants;
-import frc.robot.subsystems.Superstructure;
 import frc.robot.controlschemes.*;
+import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.algae.AlgaeIOReplay;
 import frc.robot.subsystems.algae.AlgaeIOSim;
 import frc.robot.subsystems.algae.AlgaeSubsystem;
@@ -39,17 +36,6 @@ import frc.robot.subsystems.wrist.WristSubsystem;
 
 public class RobotContainer {
 
-  AlgaeSubsystem algae = null;
-  ArmSubsystem arm = null;
-  ClimberSubsystem climber = null;
-  ElevatorSubsystem elevator = null;
-  IntakeSubsystem intake = null;
-  SwerveDriveSubsystem swerve = null;
-  WristSubsystem wrist = null;
-
-  VisionIO vision = null;
-  // Superstructure superstructure;
-
   /*
    * Initialize controllers.
    */
@@ -61,93 +47,88 @@ public class RobotContainer {
     switch (Constants.currentMode) {
       case REAL:
         System.out.println("Creating Real Robot.");
-        swerve = SwerveDriveSubsystem.getInstance(CCSparkMax::new, SwerveModuleIOHardware::new);
-        algae = AlgaeSubsystem.getInstance(CCMotorReplay::new, AlgaeIOReplay::new);
-        arm = ArmSubsystem.getInstance(CCSparkMax::new, ArmIOHardware::new);
-        climber = ClimberSubsystem.getInstance(CCMotorReplay::new, ClimberIOReplay::new);
-        elevator = ElevatorSubsystem.getInstance(CCMotorReplay::new, ElevatorIOReplay::new);
-        intake = IntakeSubsystem.getInstance(CCMotorReplay::new, IntakeIOReplay::new);
-        wrist = WristSubsystem.getInstance(CCSparkMax::new, WristIOHardware::new);
+        SwerveDriveSubsystem.getInstance(CCSparkMax::new, SwerveModuleIOHardware::new);
+        AlgaeSubsystem.getInstance(CCMotorReplay::new, AlgaeIOReplay::new);
+        ArmSubsystem.getInstance(CCSparkMax::new, ArmIOHardware::new);
+        ClimberSubsystem.getInstance(CCMotorReplay::new, ClimberIOReplay::new);
+        ElevatorSubsystem.getInstance(CCMotorReplay::new, ElevatorIOReplay::new);
+        IntakeSubsystem.getInstance(CCMotorReplay::new, IntakeIOReplay::new);
+        WristSubsystem.getInstance(CCSparkMax::new, WristIOHardware::new);
 
-        // vision = PhotonVisionAprilTag.getInstance();
+        // PhotonVisionAprilTag.getInstance();
 
-        // superstructure = Superstructure.getInstance();
+        // Superstructure.getInstance();
 
         break;
 
       case SIM:
         System.out.println("Creating Simulated Robot.");
-        swerve = SwerveDriveSubsystem.getInstance(CCSparkSim::new, SwerveModuleIOSim::new);
-        algae = AlgaeSubsystem.getInstance(CCSparkSim::new, AlgaeIOSim::new);
-        arm = ArmSubsystem.getInstance(CCSparkSim::new, ArmIOSim::new);
-        climber = ClimberSubsystem.getInstance(CCSparkMax::new, ClimberIOSim::new);
-        elevator = ElevatorSubsystem.getInstance(CCSparkSim::new, ElevatorIOSim::new);
-        intake = IntakeSubsystem.getInstance(CCSparkSim::new, IntakeIOSim::new);
-        wrist = WristSubsystem.getInstance(CCSparkSim::new, WristIOSim::new);
+        SwerveDriveSubsystem.getInstance(CCSparkSim::new, SwerveModuleIOSim::new);
+        AlgaeSubsystem.getInstance(CCSparkSim::new, AlgaeIOSim::new);
+        ArmSubsystem.getInstance(CCSparkSim::new, ArmIOSim::new);
+        ClimberSubsystem.getInstance(CCSparkMax::new, ClimberIOSim::new);
+        ElevatorSubsystem.getInstance(CCSparkSim::new, ElevatorIOSim::new);
+        IntakeSubsystem.getInstance(CCSparkSim::new, IntakeIOSim::new);
+        WristSubsystem.getInstance(CCSparkSim::new, WristIOSim::new);
 
-        vision = PhotonVisionSim.getInstance();
+        PhotonVisionSim.getInstance();
 
-        // superstructure = Superstructure.getInstance();
+        // Superstructure.getInstance();
 
         break;
 
       case REPLAY:
         System.out.println("Creating Replay Robot.");
-        swerve = SwerveDriveSubsystem.getInstance(CCMotorReplay::new, SwerveModuleIOReplay::new);
-        algae = AlgaeSubsystem.getInstance(CCMotorReplay::new, AlgaeIOReplay::new);
-        arm = ArmSubsystem.getInstance(CCMotorReplay::new, ArmIOReplay::new);
-        climber = ClimberSubsystem.getInstance(CCSparkMax::new, ClimberIOReplay::new);
-        elevator = ElevatorSubsystem.getInstance(CCMotorReplay::new, ElevatorIOReplay::new);
-        intake = IntakeSubsystem.getInstance(CCMotorReplay::new, IntakeIOReplay::new);
-        wrist = WristSubsystem.getInstance(CCMotorReplay::new, WristIOReplay::new);
+        SwerveDriveSubsystem.getInstance(CCMotorReplay::new, SwerveModuleIOReplay::new);
+        AlgaeSubsystem.getInstance(CCMotorReplay::new, AlgaeIOReplay::new);
+        ArmSubsystem.getInstance(CCMotorReplay::new, ArmIOReplay::new);
+        ClimberSubsystem.getInstance(CCSparkMax::new, ClimberIOReplay::new);
+        ElevatorSubsystem.getInstance(CCMotorReplay::new, ElevatorIOReplay::new);
+        IntakeSubsystem.getInstance(CCMotorReplay::new, IntakeIOReplay::new);
+        WristSubsystem.getInstance(CCMotorReplay::new, WristIOReplay::new);
 
-        vision = PhotonVisionReplay.getInstance();
+        PhotonVisionReplay.getInstance();
 
-        // superstructure = Superstructure.getInstance();
+        // Superstructure.getInstance();
 
         break;
     }
 
-    RobotState.getInstance().robotStateInit(swerve, algae, arm, elevator, intake, wrist, vision);
+    RobotState.getInstance().robotStateInit();
     RobotState.getInstance().poseInit();
     RobotState.getInstance().moduleEncodersInit();
     RobotState.getInstance().dashboardInit();
 
-    NamedCommands.registerCommand("to L1", Superstructure.getInstance().setWantedSuperstateCommand(WantedSuperState.L1_FRONT));
-    NamedCommands.registerCommand("to L2", Superstructure.getInstance().setWantedSuperstateCommand(WantedSuperState.L2_FRONT));
-    NamedCommands.registerCommand("to L3", Superstructure.getInstance().setWantedSuperstateCommand(WantedSuperState.L3_FRONT));
-    NamedCommands.registerCommand("to L4", Superstructure.getInstance().setWantedSuperstateCommand(WantedSuperState.L4_BACK));
+    switch (Constants.currentMode) {
+      case REAL:
+        SwerveDriveScheme.configure(SwerveDriveSubsystem.getInstance(), primaryController);
 
-    NamedCommands.registerCommand("intake", /*intake.intake()*/ intake.setWantedStateCommand(IntakeState.INTAKING_FRONT));
-    NamedCommands.registerCommand("outtake", /*intake.outtake()*/ intake.setWantedStateCommand(IntakeState.OUTTAKING_FRONT));
+        CharacterizationScheme.configure(
+            SwerveDriveSubsystem.getInstance(),
+            AlgaeSubsystem.getInstance(),
+            ArmSubsystem.getInstance(),
+            ElevatorSubsystem.getInstance(),
+            IntakeSubsystem.getInstance(),
+            WristSubsystem.getInstance(),
+            primaryController);
 
-    SwerveDriveScheme.configure(swerve, primaryController);
+        break;
 
-    // teleOpMechScheme.configure(intake, arm, elevator, wrist, algae, climber, 1);
-    // autoMechScheme.configure(intake, arm, elevator, wrist, algae, superstructure, 2);
+      case SIM:
+        SwerveDriveScheme.configure(SwerveDriveSubsystem.getInstance(), primaryController);
 
-    CharacterizationScheme.configure(
-        swerve, algae, arm, elevator, intake, wrist, primaryController);
+        SimulationScheme.configure(
+            IntakeSubsystem.getInstance(),
+            ArmSubsystem.getInstance(),
+            ElevatorSubsystem.getInstance(),
+            WristSubsystem.getInstance(),
+            AlgaeSubsystem.getInstance(),
+            Superstructure.getInstance(),
+            primaryController);
+        break;
 
-    // switch (Constants.currentMode) {
-    //   case REAL:
-
-    //     break;
-
-    //   case SIM:
-    //     SwerveDriveScheme.configure(swerve, primaryController);
-
-    //     SimulationScheme.configure(
-    //         intake, arm, elevator, wrist, algae, superstructure, primaryController);
-    //     break;
-
-    //   case REPLAY:
-    //     break;
-    // }
-    AutomatedMechScheme.configure(intake, arm, elevator, wrist, algae, Superstructure.getInstance() /*superstructure */, 2);
-    // CharacterizationScheme.configure(
-    //     swerve, algae, arm, elevator, intake, wrist, primaryController);
+      case REPLAY:
+        break;
+    }
   }
-
-  
 }

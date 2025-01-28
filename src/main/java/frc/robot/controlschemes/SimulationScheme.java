@@ -3,6 +3,7 @@ package frc.robot.controlschemes;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.autonomous.*;
+import frc.robot.subsystems.Superstructure;
 // import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.algae.AlgaeSubsystem;
 import frc.robot.subsystems.arm.ArmSubsystem;
@@ -18,10 +19,10 @@ public class SimulationScheme {
       ElevatorSubsystem elevator,
       WristSubsystem wrist,
       AlgaeSubsystem algae,
-      // Superstructure superstructure,
+      Superstructure superstructure,
       CommandXboxController controller) {
 
-    configureButtons(intake, arm, elevator, wrist, algae, controller);
+    configureButtons(intake, arm, elevator, wrist, algae, superstructure, controller);
   }
 
   public static void configureButtons(
@@ -30,7 +31,7 @@ public class SimulationScheme {
       ElevatorSubsystem elevator,
       WristSubsystem wrist,
       AlgaeSubsystem algae,
-      // Superstructure superstructure,
+      Superstructure superstructure,
       CommandXboxController controller) {
 
     /** z */

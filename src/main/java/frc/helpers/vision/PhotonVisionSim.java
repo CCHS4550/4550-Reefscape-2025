@@ -38,23 +38,24 @@ public class PhotonVisionSim extends SubsystemBase implements VisionIO {
   }
 
   /* Create Camera */
-  public PhotonCamera leftCamera;
-  public PhotonCamera rightCamera;
+  public static PhotonCamera leftCamera;
+  public static PhotonCamera rightCamera;
 
-  public VisionSystemSim visionSim;
+  public static VisionSystemSim visionSim;
 
-  PhotonCameraSim leftCameraSim;
-  PhotonCameraSim rightCameraSim;
+  static PhotonCameraSim leftCameraSim;
+  static PhotonCameraSim rightCameraSim;
 
   /* Camera 1 PhotonPoseEstimator. */
-  public PhotonPoseEstimator leftCamera_photonEstimator;
+  public static PhotonPoseEstimator leftCamera_photonEstimator;
   /* Camera 2 PhotonPoseEstimator. */
-  public PhotonPoseEstimator rightCamera_photonEstimator;
+  public static PhotonPoseEstimator rightCamera_photonEstimator;
 
   PhotonPoseEstimator[] photonEstimators;
 
-  public List<Map.Entry<PhotonPoseEstimator, PhotonPipelineResult>> results = new ArrayList<>();
-  public List<Map.Entry<PhotonPoseEstimator, PhotonPipelineResult>> condensedResults =
+  public static List<Map.Entry<PhotonPoseEstimator, PhotonPipelineResult>> results =
+      new ArrayList<>();
+  public static List<Map.Entry<PhotonPoseEstimator, PhotonPipelineResult>> condensedResults =
       new ArrayList<>();
 
   /** Creates a new Photonvision. */

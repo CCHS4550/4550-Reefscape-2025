@@ -22,6 +22,8 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.helpers.vision.PhotonVisionAprilTag;
+import frc.helpers.vision.PhotonVisionSim;
 import frc.helpers.vision.VisionIO;
 import frc.maps.Constants;
 import frc.robot.subsystems.algae.AlgaeSubsystem;
@@ -48,13 +50,6 @@ public class RobotState {
     }
     return instance;
   }
-
-  SwerveDriveSubsystem swerve;
-  AlgaeSubsystem algae;
-  ArmSubsystem arm;
-  ElevatorSubsystem elevator;
-  IntakeSubsystem intake;
-  WristSubsystem wrist;
 
   VisionIO vision;
 
@@ -92,31 +87,22 @@ public class RobotState {
         RealOdometryThread.getInstance().registerInput(() -> getRotation2d().getRadians());
   }
 
-  public void robotStateInit(
-      SwerveDriveSubsystem swerve,
-      AlgaeSubsystem algae,
-      ArmSubsystem arm,
-      ElevatorSubsystem elevator,
-      IntakeSubsystem intake,
-      WristSubsystem wrist,
-      VisionIO vision) {
-    this.swerve = swerve;
-    this.algae = algae;
-    this.arm = arm;
-    this.elevator = elevator;
-    this.intake = intake;
-    this.wrist = wrist;
-
-    this.vision = vision;
+  public void robotStateInit() {
+    if (Robot.isReal()) vision = PhotonVisionAprilTag.getInstance();
+    if (Robot.isSimulation()) vision = PhotonVisionSim.getInstance();
 
     swerveModulePositions[0] =
-        new SwerveModulePosition(0, new Rotation2d(swerve.frontRight.getTurnPosition()));
+        new SwerveModulePosition(
+            0, new Rotation2d(SwerveDriveSubsystem.getInstance().frontRight.getTurnPosition()));
     swerveModulePositions[1] =
-        new SwerveModulePosition(0, new Rotation2d(swerve.frontLeft.getTurnPosition()));
+        new SwerveModulePosition(
+            0, new Rotation2d(SwerveDriveSubsystem.getInstance().frontLeft.getTurnPosition()));
     swerveModulePositions[2] =
-        new SwerveModulePosition(0, new Rotation2d(swerve.backRight.getTurnPosition()));
+        new SwerveModulePosition(
+            0, new Rotation2d(SwerveDriveSubsystem.getInstance().backRight.getTurnPosition()));
     swerveModulePositions[3] =
-        new SwerveModulePosition(0, new Rotation2d(swerve.backLeft.getTurnPosition()));
+        new SwerveModulePosition(
+            0, new Rotation2d(SwerveDriveSubsystem.getInstance().backLeft.getTurnPosition()));
 
     previousSwerveModulePositions[0] = new SwerveModulePosition();
     previousSwerveModulePositions[1] = new SwerveModulePosition();
@@ -173,8 +159,10 @@ public class RobotState {
     }
 
     /** If high frequency odometry data is available, use it! */
-    sampleCountHF = swerve.swerveModuleInputs[0].odometryTimestamps.length;
-    sampleTimestampsHF = swerve.swerveModuleInputs[0].odometryTimestamps;
+    sampleCountHF =
+        SwerveDriveSubsystem.getInstance().swerveModuleInputs[0].odometryTimestamps.length;
+    sampleTimestampsHF =
+        SwerveDriveSubsystem.getInstance().swerveModuleInputs[0].odometryTimestamps;
 
     if (sampleCountHF > 0 && gyro.isConnected()) {
 
@@ -230,12 +218,12 @@ public class RobotState {
     SmartDashboard.putData(CommandScheduler.getInstance());
 
     /* Put all the subsystems on ShuffleBoard in their own "Subsystems" tab. */
-    Shuffleboard.getTab("Subsystems").add("Swerve Drive", swerve);
-    Shuffleboard.getTab("Subsystems").add("Algae", algae);
-    Shuffleboard.getTab("Subsystems").add("Arm", arm);
-    Shuffleboard.getTab("Subsystems").add("Elevator", elevator);
-    Shuffleboard.getTab("Subsystems").add("Wrist", wrist);
-    Shuffleboard.getTab("Subsystems").add("Intake", intake);
+    Shuffleboard.getTab("Subsystems").add("Swerve Drive", SwerveDriveSubsystem.getInstance());
+    Shuffleboard.getTab("Subsystems").add("Algae", AlgaeSubsystem.getInstance());
+    Shuffleboard.getTab("Subsystems").add("Arm", ArmSubsystem.getInstance());
+    Shuffleboard.getTab("Subsystems").add("Elevator", ElevatorSubsystem.getInstance());
+    Shuffleboard.getTab("Subsystems").add("Wrist", WristSubsystem.getInstance());
+    Shuffleboard.getTab("Subsystems").add("Intake", IntakeSubsystem.getInstance());
 
     /* Put the Pose Estimators on Dashboards */
     SmartDashboard.putData("Field", gameField);
@@ -283,101 +271,134 @@ public class RobotState {
     abs_Enc_FR_Offset_Entry =
         Shuffleboard.getTab("Encoders")
             .getLayout(absolute_encoders_offset_list.getTitle())
-            .add(swerve.frontRight.getName(), swerve.frontRight.getAbsoluteEncoderRadiansOffset())
+            .add(
+                SwerveDriveSubsystem.getInstance().frontRight.getName(),
+                SwerveDriveSubsystem.getInstance().frontRight.getAbsoluteEncoderRadiansOffset())
             .getEntry();
     abs_Enc_FL_Offset_Entry =
         Shuffleboard.getTab("Encoders")
             .getLayout(absolute_encoders_offset_list.getTitle())
-            .add(swerve.frontLeft.getName(), swerve.frontLeft.getAbsoluteEncoderRadiansOffset())
+            .add(
+                SwerveDriveSubsystem.getInstance().frontLeft.getName(),
+                SwerveDriveSubsystem.getInstance().frontLeft.getAbsoluteEncoderRadiansOffset())
             .getEntry();
     abs_Enc_BR_Offset_Entry =
         Shuffleboard.getTab("Encoders")
             .getLayout(absolute_encoders_offset_list.getTitle())
-            .add(swerve.backRight.getName(), swerve.backRight.getAbsoluteEncoderRadiansOffset())
+            .add(
+                SwerveDriveSubsystem.getInstance().backRight.getName(),
+                SwerveDriveSubsystem.getInstance().backRight.getAbsoluteEncoderRadiansOffset())
             .getEntry();
     abs_Enc_BL_Offset_Entry =
         Shuffleboard.getTab("Encoders")
             .getLayout(absolute_encoders_offset_list.getTitle())
-            .add(swerve.backLeft.getName(), swerve.backLeft.getAbsoluteEncoderRadiansOffset())
+            .add(
+                SwerveDriveSubsystem.getInstance().backLeft.getName(),
+                SwerveDriveSubsystem.getInstance().backLeft.getAbsoluteEncoderRadiansOffset())
             .getEntry();
 
     enc_FR_pos_Entry =
         Shuffleboard.getTab("Encoders")
             .getLayout(turn_encoders_positions.getTitle())
-            .add(swerve.frontRight.getName(), swerve.frontRight.getTurnPosition())
+            .add(
+                SwerveDriveSubsystem.getInstance().frontRight.getName(),
+                SwerveDriveSubsystem.getInstance().frontRight.getTurnPosition())
             .getEntry();
     enc_FL_pos_Entry =
         Shuffleboard.getTab("Encoders")
             .getLayout(turn_encoders_positions.getTitle())
-            .add(swerve.frontLeft.getName(), swerve.frontLeft.getTurnPosition())
+            .add(
+                SwerveDriveSubsystem.getInstance().frontLeft.getName(),
+                SwerveDriveSubsystem.getInstance().frontLeft.getTurnPosition())
             .getEntry();
     enc_BR_pos_Entry =
         Shuffleboard.getTab("Encoders")
             .getLayout(turn_encoders_positions.getTitle())
-            .add(swerve.backRight.getName(), swerve.backRight.getTurnPosition())
+            .add(
+                SwerveDriveSubsystem.getInstance().backRight.getName(),
+                SwerveDriveSubsystem.getInstance().backRight.getTurnPosition())
             .getEntry();
     enc_BL_pos_Entry =
         Shuffleboard.getTab("Encoders")
             .getLayout(turn_encoders_positions.getTitle())
-            .add(swerve.backLeft.getName(), swerve.backLeft.getTurnPosition())
+            .add(
+                SwerveDriveSubsystem.getInstance().backLeft.getName(),
+                SwerveDriveSubsystem.getInstance().backLeft.getTurnPosition())
             .getEntry();
 
     abs_Enc_FR_Raw_Entry =
         Shuffleboard.getTab("Encoders")
             .getLayout(absolute_encoders_no_offset_list.getTitle())
-            .add(swerve.frontRight.getName(), swerve.frontRight.getAbsoluteEncoderRadiansNoOffset())
+            .add(
+                SwerveDriveSubsystem.getInstance().frontRight.getName(),
+                SwerveDriveSubsystem.getInstance().frontRight.getAbsoluteEncoderRadiansNoOffset())
             .getEntry();
     abs_Enc_FL_Raw_Entry =
         Shuffleboard.getTab("Encoders")
             .getLayout(absolute_encoders_no_offset_list.getTitle())
-            .add(swerve.frontLeft.getName(), swerve.frontLeft.getAbsoluteEncoderRadiansNoOffset())
+            .add(
+                SwerveDriveSubsystem.getInstance().frontLeft.getName(),
+                SwerveDriveSubsystem.getInstance().frontLeft.getAbsoluteEncoderRadiansNoOffset())
             .getEntry();
     abs_Enc_BR_Raw_Entry =
         Shuffleboard.getTab("Encoders")
             .getLayout(absolute_encoders_no_offset_list.getTitle())
-            .add(swerve.backRight.getName(), swerve.backRight.getAbsoluteEncoderRadiansNoOffset())
+            .add(
+                SwerveDriveSubsystem.getInstance().backRight.getName(),
+                SwerveDriveSubsystem.getInstance().backRight.getAbsoluteEncoderRadiansNoOffset())
             .getEntry();
     abs_Enc_BL_Raw_Entry =
         Shuffleboard.getTab("Encoders")
             .getLayout(absolute_encoders_no_offset_list.getTitle())
-            .add(swerve.backLeft.getName(), swerve.backLeft.getAbsoluteEncoderRadiansNoOffset())
+            .add(
+                SwerveDriveSubsystem.getInstance().backLeft.getName(),
+                SwerveDriveSubsystem.getInstance().backLeft.getAbsoluteEncoderRadiansNoOffset())
             .getEntry();
   }
 
   public synchronized void updateSwerveModuleEncoders() {
-    abs_Enc_FR_Offset_Entry.setDouble(swerve.frontRight.getAbsoluteEncoderRadiansOffset());
-    abs_Enc_FL_Offset_Entry.setDouble(swerve.frontLeft.getAbsoluteEncoderRadiansOffset());
-    abs_Enc_BR_Offset_Entry.setDouble(swerve.backRight.getAbsoluteEncoderRadiansOffset());
-    abs_Enc_BL_Offset_Entry.setDouble(swerve.backLeft.getAbsoluteEncoderRadiansOffset());
+    abs_Enc_FR_Offset_Entry.setDouble(
+        SwerveDriveSubsystem.getInstance().frontRight.getAbsoluteEncoderRadiansOffset());
+    abs_Enc_FL_Offset_Entry.setDouble(
+        SwerveDriveSubsystem.getInstance().frontLeft.getAbsoluteEncoderRadiansOffset());
+    abs_Enc_BR_Offset_Entry.setDouble(
+        SwerveDriveSubsystem.getInstance().backRight.getAbsoluteEncoderRadiansOffset());
+    abs_Enc_BL_Offset_Entry.setDouble(
+        SwerveDriveSubsystem.getInstance().backLeft.getAbsoluteEncoderRadiansOffset());
 
-    abs_Enc_FR_Raw_Entry.setDouble(swerve.frontRight.getAbsoluteEncoderRadiansNoOffset());
-    abs_Enc_FL_Raw_Entry.setDouble(swerve.frontLeft.getAbsoluteEncoderRadiansNoOffset());
-    abs_Enc_BR_Raw_Entry.setDouble(swerve.backRight.getAbsoluteEncoderRadiansNoOffset());
-    abs_Enc_BL_Raw_Entry.setDouble(swerve.backLeft.getAbsoluteEncoderRadiansNoOffset());
+    abs_Enc_FR_Raw_Entry.setDouble(
+        SwerveDriveSubsystem.getInstance().frontRight.getAbsoluteEncoderRadiansNoOffset());
+    abs_Enc_FL_Raw_Entry.setDouble(
+        SwerveDriveSubsystem.getInstance().frontLeft.getAbsoluteEncoderRadiansNoOffset());
+    abs_Enc_BR_Raw_Entry.setDouble(
+        SwerveDriveSubsystem.getInstance().backRight.getAbsoluteEncoderRadiansNoOffset());
+    abs_Enc_BL_Raw_Entry.setDouble(
+        SwerveDriveSubsystem.getInstance().backLeft.getAbsoluteEncoderRadiansNoOffset());
 
-    enc_FR_pos_Entry.setDouble(swerve.frontRight.getTurnPosition());
-    enc_FL_pos_Entry.setDouble(swerve.frontLeft.getTurnPosition());
-    enc_BR_pos_Entry.setDouble(swerve.backRight.getTurnPosition());
-    enc_BL_pos_Entry.setDouble(swerve.backLeft.getTurnPosition());
+    enc_FR_pos_Entry.setDouble(SwerveDriveSubsystem.getInstance().frontRight.getTurnPosition());
+    enc_FL_pos_Entry.setDouble(SwerveDriveSubsystem.getInstance().frontLeft.getTurnPosition());
+    enc_BR_pos_Entry.setDouble(SwerveDriveSubsystem.getInstance().backRight.getTurnPosition());
+    enc_BL_pos_Entry.setDouble(SwerveDriveSubsystem.getInstance().backLeft.getTurnPosition());
   }
 
   /** Update odometry, not HF */
   public SwerveModulePosition[] updateSwerveModulePositionsPeriodic() {
     swerveModulePositions[0] =
         new SwerveModulePosition(
-            swerve.frontRight.getDrivePosition(),
-            new Rotation2d(swerve.frontRight.getTurnPosition()));
+            SwerveDriveSubsystem.getInstance().frontRight.getDrivePosition(),
+            new Rotation2d(SwerveDriveSubsystem.getInstance().frontRight.getTurnPosition()));
     swerveModulePositions[1] =
         new SwerveModulePosition(
-            swerve.frontLeft.getDrivePosition(),
-            new Rotation2d(swerve.frontLeft.getTurnPosition()));
+            SwerveDriveSubsystem.getInstance().frontLeft.getDrivePosition(),
+            new Rotation2d(SwerveDriveSubsystem.getInstance().frontLeft.getTurnPosition()));
     swerveModulePositions[2] =
         new SwerveModulePosition(
-            swerve.backRight.getDrivePosition(),
-            new Rotation2d(swerve.backRight.getTurnPosition()));
+            SwerveDriveSubsystem.getInstance().backRight.getDrivePosition(),
+            new Rotation2d(SwerveDriveSubsystem.getInstance().backRight.getTurnPosition()));
     swerveModulePositions[3] =
         new SwerveModulePosition(
-            swerve.backLeft.getDrivePosition(), new Rotation2d(swerve.backLeft.getTurnPosition()));
+            SwerveDriveSubsystem.getInstance().backLeft.getDrivePosition(),
+            new Rotation2d(SwerveDriveSubsystem.getInstance().backLeft.getTurnPosition()));
 
     Logger.recordOutput("currentModulePositions", swerveModulePositions);
 
@@ -388,14 +409,14 @@ public class RobotState {
   public synchronized SwerveModulePosition[][] getSwerveModulePositionArrayHF() {
 
     int[] numbers = {
-      swerve.swerveModuleInputs[0].odometryDrivePositionsMeters.length,
-      swerve.swerveModuleInputs[1].odometryDrivePositionsMeters.length,
-      swerve.swerveModuleInputs[2].odometryDrivePositionsMeters.length,
-      swerve.swerveModuleInputs[3].odometryDrivePositionsMeters.length,
-      swerve.swerveModuleInputs[0].odometryTurnPositions.length,
-      swerve.swerveModuleInputs[1].odometryTurnPositions.length,
-      swerve.swerveModuleInputs[2].odometryTurnPositions.length,
-      swerve.swerveModuleInputs[3].odometryTurnPositions.length,
+      SwerveDriveSubsystem.getInstance().swerveModuleInputs[0].odometryDrivePositionsMeters.length,
+      SwerveDriveSubsystem.getInstance().swerveModuleInputs[1].odometryDrivePositionsMeters.length,
+      SwerveDriveSubsystem.getInstance().swerveModuleInputs[2].odometryDrivePositionsMeters.length,
+      SwerveDriveSubsystem.getInstance().swerveModuleInputs[3].odometryDrivePositionsMeters.length,
+      SwerveDriveSubsystem.getInstance().swerveModuleInputs[0].odometryTurnPositions.length,
+      SwerveDriveSubsystem.getInstance().swerveModuleInputs[1].odometryTurnPositions.length,
+      SwerveDriveSubsystem.getInstance().swerveModuleInputs[2].odometryTurnPositions.length,
+      SwerveDriveSubsystem.getInstance().swerveModuleInputs[3].odometryTurnPositions.length,
     };
 
     int min = Arrays.stream(numbers).min().getAsInt();
@@ -405,20 +426,28 @@ public class RobotState {
     for (int i = 0; i < min; i++) {
       positions[i][0] =
           new SwerveModulePosition(
-              swerve.swerveModuleInputs[0].odometryDrivePositionsMeters[i],
-              swerve.swerveModuleInputs[0].odometryTurnPositions[i]);
+              SwerveDriveSubsystem.getInstance()
+                  .swerveModuleInputs[0]
+                  .odometryDrivePositionsMeters[i],
+              SwerveDriveSubsystem.getInstance().swerveModuleInputs[0].odometryTurnPositions[i]);
       positions[i][1] =
           new SwerveModulePosition(
-              swerve.swerveModuleInputs[1].odometryDrivePositionsMeters[i],
-              swerve.swerveModuleInputs[1].odometryTurnPositions[i]);
+              SwerveDriveSubsystem.getInstance()
+                  .swerveModuleInputs[1]
+                  .odometryDrivePositionsMeters[i],
+              SwerveDriveSubsystem.getInstance().swerveModuleInputs[1].odometryTurnPositions[i]);
       positions[i][2] =
           new SwerveModulePosition(
-              swerve.swerveModuleInputs[2].odometryDrivePositionsMeters[i],
-              swerve.swerveModuleInputs[2].odometryTurnPositions[i]);
+              SwerveDriveSubsystem.getInstance()
+                  .swerveModuleInputs[2]
+                  .odometryDrivePositionsMeters[i],
+              SwerveDriveSubsystem.getInstance().swerveModuleInputs[2].odometryTurnPositions[i]);
       positions[i][3] =
           new SwerveModulePosition(
-              swerve.swerveModuleInputs[3].odometryDrivePositionsMeters[i],
-              swerve.swerveModuleInputs[3].odometryTurnPositions[i]);
+              SwerveDriveSubsystem.getInstance()
+                  .swerveModuleInputs[3]
+                  .odometryDrivePositionsMeters[i],
+              SwerveDriveSubsystem.getInstance().swerveModuleInputs[3].odometryTurnPositions[i]);
     }
 
     if (min != 0) swerveModulePositions = positions[min - 1];
