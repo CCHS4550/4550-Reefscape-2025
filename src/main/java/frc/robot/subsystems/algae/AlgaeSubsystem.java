@@ -60,9 +60,9 @@ public class AlgaeSubsystem extends SubsystemBase {
     }
   }
 
-  public AlgaeStates previousState = AlgaeStates.STOW;
-  public AlgaeStates currentState = AlgaeStates.STOW;
-  public AlgaeStates wantedState = AlgaeStates.STOW;
+  public static AlgaeStates previousState = AlgaeStates.STOW;
+  public static AlgaeStates currentState = AlgaeStates.STOW;
+  public static AlgaeStates wantedState = AlgaeStates.STOW;
 
   /** Creates a new WristSubsystem. */
   private AlgaeSubsystem(CCMotorController.MotorFactory motorFactory, AlgaeIO.IOFactory ioFactory) {

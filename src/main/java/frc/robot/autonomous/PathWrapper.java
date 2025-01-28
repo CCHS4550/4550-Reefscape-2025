@@ -222,6 +222,14 @@ public class PathWrapper {
             Constants.SwerveConstants.ROBOT_CONFIG);
   }
 
+  public static PathPlannerTrajectory convertPathToTrajectory(
+      PathPlannerPath goToCoral, ChassisSpeeds chassisSpeeds, Rotation2d rotation2d) {
+    PathPlannerTrajectory traj =
+        goToCoral.generateTrajectory(
+            chassisSpeeds, rotation2d, Constants.SwerveConstants.ROBOT_CONFIG);
+    return traj;
+  }
+
   private static Command followTrajectory(PathPlannerTrajectory traj) {
     return new FollowPathCommand(traj);
   }

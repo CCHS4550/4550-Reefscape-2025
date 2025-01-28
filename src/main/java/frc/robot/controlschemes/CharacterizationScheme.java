@@ -4,14 +4,15 @@
 
 package frc.robot.controlschemes;
 
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.algae.AlgaeSubsystem;
 import frc.robot.subsystems.arm.ArmSubsystem;
-import frc.robot.subsystems.arm.ArmSubsystem.ArmState;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveDriveSubsystem;
 import frc.robot.subsystems.wrist.WristSubsystem;
+import frc.robot.subsystems.wrist.WristSubsystem.WristState;
 
 /** Add your docs here. */
 public class CharacterizationScheme {
@@ -57,8 +58,10 @@ public class CharacterizationScheme {
     // controller.x().onTrue(intake.sysIdDynamic(SysIdRoutine.Direction.kForward));
     // controller.y().onTrue(intake.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-    // controller.a().onTrue(wrist.runCharacterization());
-    controller.a().onTrue(arm.setWantedStateCommand(ArmState.ZERO));
+    // controller.a().onTrue(new InstantCommand(() -> System.out.println("andy")));
+    // controller.a().onTrue(new InstantCommand(() -> arm.setWantedState(ArmState.ZERO)));
+
+    controller.a().onTrue(new InstantCommand(() -> wrist.setWantedState(WristState.ZERO)));
 
     // controller.a().onTrue(swerve.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
     // controller.b().onTrue(swerve.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));

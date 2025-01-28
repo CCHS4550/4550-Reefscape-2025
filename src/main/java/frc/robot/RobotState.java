@@ -10,6 +10,7 @@ import com.studica.frc.AHRS.NavXComType;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.networktables.GenericEntry;
@@ -64,15 +65,15 @@ public class RobotState {
 
   public SwerveModulePosition[] swerveModulePositions = new SwerveModulePosition[4];
 
-  public int sampleCount;
-  public double[] sampleTimestamps;
-  public SwerveModulePosition[][] swerveModulePositionsArray;
+  public int sampleCountHF;
+  public double[] sampleTimestampsHF;
+  public SwerveModulePosition[][] swerveModulePositionsHF;
 
   // Initialize gyro
   public AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
   private final Queue<Double> gyroContainer;
-  public Rotation2d[] gyroAngle = new Rotation2d[] {};
-  public List<Rotation2d> gyroAnglePlusDeltas = new ArrayList<>();
+
+  public Rotation2d[] gyroAnglesHF = new Rotation2d[] {};
   public double gyroAngleSim = 0;
 
   private RobotState() {
@@ -150,34 +151,37 @@ public class RobotState {
             new Pose2d(0, 0, new Rotation2d()));
   }
 
+  /** Update the pose estimator with Odometry and Gyro Data (HF Functional) */
   public synchronized void updateOdometryPose() {
 
-    /** Send the high frequency odometry to an array */
-    gyroAngle =
+    gameField.setRobotPose(getPose());
+    lastPose = currentPose;
+
+    /** Send the high frequency gyro to an array */
+    gyroAnglesHF =
         gyroContainer.stream()
             .map((Double value) -> new Rotation2d(value))
             .toArray(Rotation2d[]::new);
     gyroContainer.clear();
 
-    /**
-     * Only just found out this method is basically useless unless your gyro has disconnected. Too
-     * tired to explain it rn.
-     */
-    gameField.setRobotPose(getPose());
-
-    lastPose = currentPose;
-
     if (!gyro.isConnected()) {
-      addModuleDeltas();
-      gyroAngle = gyroAnglePlusDeltas.toArray(new Rotation2d[0]);
+      /**
+       * If the gyro isn't connected, take the current values and estimate how much it has changed
+       * since then.
+       */
+      gyroAnglesHF = gyroAnglesPlusSwerveModuleDeltasHF();
     }
-    if (swerve.swerveModuleInputs[0].odometryTimestamps.length > 0 && gyro.isConnected()) {
-      sampleCount = swerve.swerveModuleInputs[0].odometryTimestamps.length;
-      sampleTimestamps = swerve.swerveModuleInputs[0].odometryTimestamps;
-      swerveModulePositionsArray = getModulePositionArray();
+
+    /** If high frequency odometry data is available, use it! */
+    sampleCountHF = swerve.swerveModuleInputs[0].odometryTimestamps.length;
+    sampleTimestampsHF = swerve.swerveModuleInputs[0].odometryTimestamps;
+
+    if (sampleCountHF > 0 && gyro.isConnected()) {
+
+      swerveModulePositionsHF = getSwerveModulePositionArrayHF();
 
       /** Update the SwerveDrivePoseEstimator with the Drivetrain encoders and such */
-      for (int i = 0; i < sampleCount; i++) {
+      for (int i = 0; i < sampleCountHF; i++) {
 
         // System.out.println("sampleTimeStamps size" + sampleTimestamps.length);
         // System.out.println("gyroAngle size" + gyroAngle.length);
@@ -185,21 +189,28 @@ public class RobotState {
         // swerveModulePositionsArray.length);
 
         poseEstimator.updateWithTime(
-            getSampleTimestamp(i), getGyroAngle(i), getSwerveModulePositionsArray(i));
-        Logger.recordOutput("High Frequency Gyro Angle", getGyroAngle(i));
-        Logger.recordOutput("High Frequency Odometry Positions", getSwerveModulePositionsArray(i));
+            getSampleTimestampArrayClampedHF(i),
+            getGyroAngleArrayClampedHF(i),
+            getSwerveModulePositionsArrayClampedHF(i));
+        Logger.recordOutput("High Frequency Gyro Angle", getGyroAngleArrayClampedHF(i));
+        Logger.recordOutput(
+            "High Frequency Odometry Positions", getSwerveModulePositionsArrayClampedHF(i));
       }
 
     } else {
-      poseEstimator.updateWithTime(
-          Timer.getFPGATimestamp() / 1e6, getRotation2d(), swerveModulePositions);
+      double currentTime = Timer.getFPGATimestamp();
+      poseEstimator.updateWithTime(currentTime, getRotation2d(), swerveModulePositions);
     }
 
     currentPose = getPose();
-    Logger.recordOutput("Estimated Pose", getPose());
-    Logger.recordOutput("Estimated Angle", getPose().getRotation().getDegrees());
+    Logger.recordOutput("SwerveDrivePoseEstimator/Estimated Pose", getPose());
+    Logger.recordOutput(
+        "SwerveDrivePoseEstimator/Estimated Angle Degrees", getPose().getRotation().getDegrees());
+    Logger.recordOutput(
+        "SwerveDrivePoseEstimator/Estimated Angle Radians", getPose().getRotation().getRadians());
   }
 
+  /** Update the pose estimator with PhotonVision Data */
   public synchronized void updateVisionPose() {
     /** Update the visionData to what the camera sees. */
     vision.updateInputs(visionInputs);
@@ -209,6 +220,8 @@ public class RobotState {
       poseEstimator.addVisionMeasurement(
           visionInputs.poseEstimates[i], visionInputs.timestampArray[i]);
     }
+
+    Logger.processInputs("Subsystem/Vision", visionInputs);
   }
 
   public synchronized void dashboardInit() {
@@ -331,7 +344,7 @@ public class RobotState {
             .getEntry();
   }
 
-  public synchronized void updateModuleEncoders() {
+  public synchronized void updateSwerveModuleEncoders() {
     abs_Enc_FR_Offset_Entry.setDouble(swerve.frontRight.getAbsoluteEncoderRadiansOffset());
     abs_Enc_FL_Offset_Entry.setDouble(swerve.frontLeft.getAbsoluteEncoderRadiansOffset());
     abs_Enc_BR_Offset_Entry.setDouble(swerve.backRight.getAbsoluteEncoderRadiansOffset());
@@ -348,7 +361,31 @@ public class RobotState {
     enc_BL_pos_Entry.setDouble(swerve.backLeft.getTurnPosition());
   }
 
-  public synchronized SwerveModulePosition[][] getModulePositionArray() {
+  /** Update odometry, not HF */
+  public SwerveModulePosition[] updateSwerveModulePositionsPeriodic() {
+    swerveModulePositions[0] =
+        new SwerveModulePosition(
+            swerve.frontRight.getDrivePosition(),
+            new Rotation2d(swerve.frontRight.getTurnPosition()));
+    swerveModulePositions[1] =
+        new SwerveModulePosition(
+            swerve.frontLeft.getDrivePosition(),
+            new Rotation2d(swerve.frontLeft.getTurnPosition()));
+    swerveModulePositions[2] =
+        new SwerveModulePosition(
+            swerve.backRight.getDrivePosition(),
+            new Rotation2d(swerve.backRight.getTurnPosition()));
+    swerveModulePositions[3] =
+        new SwerveModulePosition(
+            swerve.backLeft.getDrivePosition(), new Rotation2d(swerve.backLeft.getTurnPosition()));
+
+    Logger.recordOutput("currentModulePositions", swerveModulePositions);
+
+    return swerveModulePositions;
+  }
+
+  /** Read HF odometry data */
+  public synchronized SwerveModulePosition[][] getSwerveModulePositionArrayHF() {
 
     int[] numbers = {
       swerve.swerveModuleInputs[0].odometryDrivePositionsMeters.length,
@@ -389,93 +426,57 @@ public class RobotState {
     return positions;
   }
 
-  public synchronized void addModuleDeltas() {
-    gyroAnglePlusDeltas.clear();
+  /**
+   * Estimate gyro angle based on last known gyro inputs and change in module positions. Will get
+   * less accurate over time.
+   */
+  public synchronized Rotation2d[] gyroAnglesPlusSwerveModuleDeltasHF() {
+
+    List<Rotation2d> gyroAnglesPlusDeltasHF = new ArrayList<>();
 
     SwerveModulePosition[] previousPositions = swerveModulePositions;
 
-    for (int i = 0; i < (gyroAngle.length); i++) {
-      SwerveModulePosition[] samplePositions = getModulePositionArray()[i];
+    for (int i = 0; i < (gyroAnglesHF.length); i++) {
+      SwerveModulePosition[] samplePositions = swerveModulePositionsHF[i];
 
       Twist2d deltas =
           Constants.SwerveConstants.DRIVE_KINEMATICS.toTwist2d(previousPositions, samplePositions);
 
-      gyroAnglePlusDeltas.add(gyroAngle[i].plus(Rotation2d.fromRadians(deltas.dtheta)));
+      for (int j = 0; j < gyroAnglesHF.length; j++)
+        gyroAnglesHF[j] = gyroAnglesHF[gyroAnglesHF.length - 1];
+
+      gyroAnglesPlusDeltasHF.add(gyroAnglesHF[i].plus(Rotation2d.fromRadians(deltas.dtheta)));
 
       previousPositions = samplePositions;
     }
+
+    return gyroAnglesPlusDeltasHF.toArray(new Rotation2d[0]);
   }
 
-  public synchronized SwerveModulePosition[] updateModulePositions() {
-
-    // previousSwerveModulePositions = swerveModulePositions;
-
-    swerveModulePositions[0] =
-        new SwerveModulePosition(
-            swerve.frontRight.getDrivePosition(),
-            new Rotation2d(swerve.frontRight.getTurnPosition()));
-    swerveModulePositions[1] =
-        new SwerveModulePosition(
-            swerve.frontLeft.getDrivePosition(),
-            new Rotation2d(swerve.frontLeft.getTurnPosition()));
-    swerveModulePositions[2] =
-        new SwerveModulePosition(
-            swerve.backRight.getDrivePosition(),
-            new Rotation2d(swerve.backRight.getTurnPosition()));
-    swerveModulePositions[3] =
-        new SwerveModulePosition(
-            swerve.backLeft.getDrivePosition(), new Rotation2d(swerve.backLeft.getTurnPosition()));
-
-    Logger.recordOutput("currentModulePositions", swerveModulePositions);
-    Logger.recordOutput("previousModulePositions", previousSwerveModulePositions);
-
-    return swerveModulePositions;
-  }
-
-  public SwerveModulePosition[] getSwerveModulePositionsArray(int index) {
-    if (index > swerveModulePositionsArray.length - 1) {
-
-      return swerveModulePositionsArray[swerveModulePositionsArray.length - 1];
+  /**
+   * Clamping methods for allowing data reading past array length, since lengths are inconsistent.
+   */
+  public SwerveModulePosition[] getSwerveModulePositionsArrayClampedHF(int index) {
+    if (index > swerveModulePositionsHF.length - 1) {
+      return swerveModulePositionsHF[swerveModulePositionsHF.length - 1];
     }
-    return swerveModulePositionsArray[index];
+    return swerveModulePositionsHF[index];
   }
 
-  public double getSampleTimestamp(int index) {
-    if (index > sampleTimestamps.length - 1) {
+  public double getSampleTimestampArrayClampedHF(int index) {
+    if (index > sampleTimestampsHF.length - 1) {
 
-      return sampleTimestamps[sampleTimestamps.length - 1];
+      return sampleTimestampsHF[sampleTimestampsHF.length - 1];
     }
-    return sampleTimestamps[index];
+    return sampleTimestampsHF[index];
   }
 
-  public Rotation2d getGyroAngle(int index) {
-    if (index > gyroAngle.length - 1) {
-      return gyroAngle[gyroAngle.length - 1];
+  public Rotation2d getGyroAngleArrayClampedHF(int index) {
+    if (index > gyroAnglesHF.length - 1) {
+      return gyroAnglesHF[gyroAnglesHF.length - 1];
     }
-    return gyroAngle[index];
+    return gyroAnglesHF[index];
   }
-
-  public synchronized double[] getAverageTimestampArray() {
-
-    int inputQuantity = swerve.swerveModuleInputs[0].odometryTimestamps.length;
-
-    double[] averages = new double[inputQuantity];
-
-    for (int i = 0; i < inputQuantity; i++) {
-      double average =
-          (swerve.swerveModuleInputs[0].odometryTimestamps[i]
-                  + swerve.swerveModuleInputs[1].odometryTimestamps[i]
-                  + swerve.swerveModuleInputs[2].odometryTimestamps[i]
-                  + swerve.swerveModuleInputs[3].odometryTimestamps[i])
-              / 4;
-
-      averages[i] = average;
-    }
-
-    return averages;
-  }
-
-  /** Pose Helper Methods */
 
   /**
    * Gets the position of the robot in Pose2d format. Uses odometer reading. Includes the x, y, and
@@ -487,32 +488,9 @@ public class RobotState {
     return poseEstimator.getEstimatedPosition();
   }
 
-  // /** If Using REFERENCE POSE STRAT */
-  // public Optional<EstimatedRobotPose> getEstimatedGlobalPose(Pose2d prevEstimatedRobotPose) {
-  //   photonPoseEstimator.setReferencePose(prevEstimatedRobotPose);
-  //   return photonPoseEstimator.update();
-  // }
-
   public synchronized void printPos2d() {
     System.out.println(poseEstimator.getEstimatedPosition());
   }
-
-  // Returns the estimated transformation over the next tick (The change in
-  // position)
-  // private Transform2d getTickFutureTransform() {
-  //   return new Transform2d(
-  //       new Translation2d(
-  //           swerve.getFieldVelocity().vxMetersPerSecond * 0.02,
-  //           swerve.getFieldVelocity().vyMetersPerSecond * 0.02),
-  //       new Rotation2d(0.0));
-  // }
-
-  // // Returns the estimated robot position a tick from the current time (Theoretically?)
-  // private Pose2d getFutureTickPose() {
-  //   return getPose().plus(getTickFutureTransform().inverse());
-  // }
-
-  /** Odometry */
 
   /**
    * Resets the odometer readings using the gyro, SwerveModulePositions (defined in constructor),
@@ -528,12 +506,13 @@ public class RobotState {
    *
    * @param pos the Pose2d to set the odometry
    */
-  public synchronized void setOdometry(Pose2d pos) {
+  public synchronized void setOdometry(Translation2d translation) {
     poseEstimator.resetPosition(
-        getRotation2d(),
-        // pos.getRotation(),
-        swerveModulePositions,
-        pos);
+        getRotation2d(), swerveModulePositions, new Pose2d(translation, getRotation2d()));
+  }
+
+  public synchronized void setOdometry(Pose2d pose) {
+    poseEstimator.resetPosition(pose.getRotation(), swerveModulePositions, pose);
   }
 
   public synchronized void setOdometryAllianceFlip(Pose2d pos) {

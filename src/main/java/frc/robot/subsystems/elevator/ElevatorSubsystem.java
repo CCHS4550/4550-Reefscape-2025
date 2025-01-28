@@ -41,9 +41,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
   }
 
-  public ElevatorState previousState = ElevatorState.DEFAULT_WITHINFRAME;
-  public ElevatorState currentState = ElevatorState.DEFAULT_WITHINFRAME;
-  public ElevatorState wantedState = ElevatorState.DEFAULT_WITHINFRAME;
+  public static ElevatorState previousState = ElevatorState.DEFAULT_WITHINFRAME;
+  public static ElevatorState currentState = ElevatorState.DEFAULT_WITHINFRAME;
+  public static ElevatorState wantedState = ElevatorState.DEFAULT_WITHINFRAME;
 
   /** Implementation of Singleton Pattern */
   public static ElevatorSubsystem mInstance;

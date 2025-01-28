@@ -12,6 +12,7 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -23,6 +24,10 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotBase;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Constants {
 
@@ -263,9 +268,9 @@ public class Constants {
     public static final double WRIST_MOTOR_RADIANS_PER_SECOND_CONVERSION_FACTOR =
         WRIST_MOTOR_ROTATIONS_TO_WRIST_ROTATIONS_RADIANS / 60;
 
-    public static final double WRIST_THROUGHBORE_OFFSET = 1.0;
+    public static final double WRIST_THROUGHBORE_OFFSET = 1.0 + 0.652;
 
-    public static boolean WRIST_REVERSE = false;
+    public static boolean WRIST_REVERSE = true;
   }
 
   public static class AlgaeConstants {}
@@ -299,105 +304,92 @@ public class Constants {
     public static final double WRIST_KG = 0.15212;
   }
 
-  public class FieldPositionConstants {}
+  public class FieldPositionConstants {
 
-  public class MechanismPositions {
-    public static double ELEVATOR_INTAKE = 0;
-    public static double WRIST_INTAKE = 0;
+    public static final Transform2d FRONT_REEF_LEFT_OFFSET =
+        new Transform2d(Inches.of(-50), Inches.of(0), new Rotation2d());
 
-    public static double ELEVATOR_SHOOT = 0;
-    public static double WRIST_SHOOT = 15.619040489196777;
-    // public static double WRIST_SHOOT = 8.714315414428711;
+    public static final Transform2d FRONT_REEF_RIGHT_OFFSET =
+        new Transform2d(Inches.of(0), Inches.of(0), new Rotation2d());
 
-    public static double ELEVATOR_AMP = 77;
-    public static double WRIST_AMP = 50.5;
+    public static final Transform2d BACK_REEF_LEFT_OFFSET =
+        new Transform2d(Inches.of(0), Inches.of(0), new Rotation2d(Math.PI));
+    public static final Transform2d BACK_REEF_RIGHT_OFFSET =
+        new Transform2d(Inches.of(0), Inches.of(0), new Rotation2d(Math.PI));
 
-    public static double ELEVATOR_HUMAN_PLAYER = 0;
-    public static double WRIST_HUMAN_PLAYER = 0;
+    public static final Transform2d CORAL_STATION_LEFT_OFFSET =
+        new Transform2d(Inches.of(0), Inches.of(0), new Rotation2d());
+    public static final Transform2d CORAL_STATION_RIGHT_OFFSET =
+        new Transform2d(Inches.of(0), Inches.of(0), new Rotation2d());
 
-    public static double ELEVATOR_TOP = 75;
-
-    public static double WRIST_TRAVEL = 20;
-  }
-
-  public class XboxConstants {
-    // Joystick Axises
-    public static final int L_JOYSTICK_HORIZONTAL = 0;
-    public static final int L_JOYSTICK_VERTICAL = 1;
-    public static final int LT = 2;
-    public static final int RT = 3;
-    public static final int R_JOYSTICK_HORIZONTAL = 4;
-    public static final int R_JOYSTICK_VERTICAL = 5;
-
-    // Controller Buttons
-    public static final int A_BUTTON = 1;
-    public static final int B_BUTTON = 2;
-    public static final int X_BUTTON = 3;
-    public static final int Y_BUTTON = 4;
-    public static final int LB_BUTTON = 5;
-    public static final int RB_BUTTON = 6;
-    public static final int SELECT_BUTTON = 7;
-    public static final int START_BUTTON = 8;
-
-    // These buttons are when you push down the left and right circle pad
-    public static final int L_JOYSTICK_BUTTON = 9;
-    public static final int R_JOYSTICK_BUTTON = 10;
-
-    // D Pad Buttons
-    public static final int DPAD_UP = 0;
-    public static final int DPAD_UP_RIGHT = 45;
-    public static final int DPAD_RIGHT = 90;
-    public static final int DPAD_DOWN_RIGHT = 135;
-    public static final int DPAD_DOWN = 180;
-    public static final int DPAD_DOWN_LEFT = 225;
-    public static final int DPAD_LEFT = 270;
-    public static final int DPAD_UP_LEFT = 315;
-
-    // Controller Zeroes
-    public static final double ZERO = 0.15;
+    public static final Transform2d PROCESSOR_OFFSET =
+        new Transform2d(Inches.of(0), Inches.of(0), new Rotation2d());
   }
 
   public static class cameraOne {
-    public static final String CAMERA_ONE_NAME = "FrontCamera";
-    public static final int CAMERA_ONE_PIPELINE = 9;
+
+    public static final String CAMERA_ONE_NAME = "LeftCamera";
+
+    // (Robot pose is considered the center of rotation at the floor level, or Z = 0)
+    public static final Translation3d ROBOT_TO_CAMERA_TRANS =
+        new Translation3d(0.3302, 0.3048, 0.2032);
+    public static final Rotation3d ROBOT_TO_CAMERA_ROT =
+        new Rotation3d(0, Math.toRadians(-0), Math.toRadians(5));
+
     public static final Transform3d ROBOT_TO_CAM =
-        new Transform3d(
-            new Translation3d(Inches.of(9.3418), Inches.of(0), Inches.of(14.157)),
-            new Rotation3d(0, Units.degreesToRadians(0), Units.degreesToRadians(0)));
+        new Transform3d(ROBOT_TO_CAMERA_TRANS, ROBOT_TO_CAMERA_ROT);
   }
 
   public static class cameraTwo {
-    public static final String CAMERA_TWO_NAME = "BackCamera";
+    public static final String CAMERA_TWO_NAME = "RightCamera";
+
+    public static final Translation3d ROBOT_TO_CAMERA_TRANS =
+        new Translation3d(0.3302, -0.3048, 0.2032);
+
+    public static final Rotation3d ROBOT_TO_CAMERA_ROT =
+        new Rotation3d(0, Math.toRadians(-0), Math.toRadians(-5));
+
     public static final Transform3d ROBOT_TO_CAM =
-        new Transform3d(
-            new Translation3d(Inches.of(9.3418), Inches.of(0), Inches.of(14.157)),
-            new Rotation3d(0, Units.degreesToRadians(0), Units.degreesToRadians(0)));
+        new Transform3d(ROBOT_TO_CAMERA_TRANS, ROBOT_TO_CAMERA_ROT);
   }
 
-  /**
-   * Gotten from here
-   * https://firstfrc.blob.core.windows.net/frc2024/FieldAssets/2024LayoutMarkingDiagram.pdf
-   */
   public static class AprilTags {
-    public static final AprilTagFieldLayout aprilTagFieldLayout =
+    public static final AprilTagFieldLayout APRIL_TAG_FIELD_LAYOUT =
         AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
 
-    // public static int BLUE_SOURCE_LEFT = 1;
-    // public static int BLUE_SOURCE_RIGHT = 2;
-    // public static int RED_SPEAKER_BOTTOM = 3;
-    // public static int RED_SPEAKER_TOP = 4;
-    // public static int RED_AMP = 5;
-    // public static int BLUE_AMP = 6;
-    // public static int BLUE_SPEAKER_TOP = 7;
-    // public static int BLUE_SPEAKER_BUTTON = 8;
-    // public static int RED_SOURCE_LEFT = 9;
-    // public static int RED_SOURCE_RIGHT = 10;
-    // public static int RED_STAGE_BOTTOM = 11;
-    // public static int RED_STAGE_TOP = 12;
-    // public static int RED_STAGE_SIDE = 13;
-    // public static int BLUE_STAGE_SIDE = 14;
-    // public static int BLUE_STAGE_TOP = 15;
-    // public static int BLUE_STAGE_BOTTOM = 16;
+    public static final Map<Integer, Pose2d> TAG_PROPERTIES =
+        APRIL_TAG_FIELD_LAYOUT.getTags().stream()
+            .map(tag -> Map.entry(tag.ID, tag.pose.toPose2d()))
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+    public static final int[] TAG_IDS =
+        APRIL_TAG_FIELD_LAYOUT.getTags().stream().mapToInt(tag -> tag.ID).toArray();
+    public static final List<Pose2d> TAG_POSES =
+        APRIL_TAG_FIELD_LAYOUT.getTags().stream()
+            .map(tag -> tag.pose.toPose2d())
+            .collect(Collectors.toList());
+
+    public static final int[] REEF_IDS = {6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22};
+    public static final List<Pose2d> REEF_POSES =
+        Arrays.stream(REEF_IDS).mapToObj(id -> TAG_PROPERTIES.get(id)).collect(Collectors.toList());
+
+    public static final int[] CORAL_STATION_IDS = {1, 2, 12, 13};
+    public static final List<Pose2d> CORAL_STATION_POSES =
+        Arrays.stream(CORAL_STATION_IDS)
+            .mapToObj(id -> TAG_PROPERTIES.get(id))
+            .collect(Collectors.toList());
+
+    public static final int[] PROCESSOR_IDS = {3, 16};
+    public static final List<Pose2d> PROCESSOR_POSES =
+        Arrays.stream(PROCESSOR_IDS)
+            .mapToObj(id -> TAG_PROPERTIES.get(id))
+            .collect(Collectors.toList());
+
+    public static final int[] BARGE_IDS = {4, 5, 14, 15};
+    public static final List<Pose2d> BARGE_POSES =
+        Arrays.stream(BARGE_IDS)
+            .mapToObj(id -> TAG_PROPERTIES.get(id))
+            .collect(Collectors.toList());
   }
 
   // safely divide

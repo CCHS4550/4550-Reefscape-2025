@@ -29,34 +29,21 @@ public class Superstructure extends SubsystemBase {
   /** Implementation of Singleton Pattern */
   public static Superstructure mInstance;
 
-  public static Superstructure getInstance(
-      SwerveDriveSubsystem swerve,
-      AlgaeSubsystem algae,
-      ArmSubsystem arm,
-      ElevatorSubsystem elevator,
-      IntakeSubsystem intake,
-      WristSubsystem wrist) {
+  public static Superstructure getInstance() {
     if (mInstance == null) {
-      mInstance = new Superstructure(algae, arm, elevator, intake, wrist);
+      mInstance = new Superstructure();
     }
     return mInstance;
   }
 
-  public static Superstructure getInstance() {
-    return mInstance;
-  }
-
   /** Creates a new Superstructure. */
-  private Superstructure(
-      AlgaeSubsystem algae,
-      ArmSubsystem arm,
-      ElevatorSubsystem elevator,
-      IntakeSubsystem intake,
-      WristSubsystem wrist) {
-    this.algae = algae;
-    this.arm = arm;
-    this.elevator = elevator;
-    this.intake = intake;
+  private Superstructure() {
+    this.algae = AlgaeSubsystem.getInstance();
+    this.arm = ArmSubsystem.getInstance();
+    this.elevator = ElevatorSubsystem.getInstance();
+    this.intake = IntakeSubsystem.getInstance();
+    this.swerve = SwerveDriveSubsystem.getInstance();
+    this.wrist = WristSubsystem.getInstance();
   }
 
   /**
@@ -156,7 +143,8 @@ public class Superstructure extends SubsystemBase {
         elevator.setWantedState(ElevatorState.L4_BACK);
         wrist.setWantedState(WristState.L4_BACK);
         break;
-      case CLIMB_PREPARING: // IMPORTANT!!!! TODO - add in the positions these need to be in before
+      case CLIMB_PREPARING: // IMPORTANT!!!! TODO - add in the positions these need to be in
+        // before
         // we climb
         // arm.setWantedState(ArmState.CLIMB_PREPARING);
         // elevator.setWantedState(ElevatorState.CLIMB_PREPARING);

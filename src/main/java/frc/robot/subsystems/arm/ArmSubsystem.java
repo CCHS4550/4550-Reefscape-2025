@@ -40,9 +40,9 @@ public class ArmSubsystem extends SubsystemBase {
     }
   }
 
-  public ArmState previousState = ArmState.DEFAULT_WITHINFRAME;
-  public ArmState currentState = ArmState.DEFAULT_WITHINFRAME;
-  public ArmState wantedState = ArmState.DEFAULT_WITHINFRAME;
+  public static ArmState previousState;
+  public static ArmState currentState;
+  public static ArmState wantedState;
 
   /** Implementation of Singleton Pattern */
   public static ArmSubsystem mInstance;
@@ -61,6 +61,7 @@ public class ArmSubsystem extends SubsystemBase {
       CCMotorController.MotorFactory motorFactory, ArmIO.IOFactory ioFactory) {
     if (mInstance == null) {
       mInstance = new ArmSubsystem(motorFactory, ioFactory);
+      System.out.println("CREATING ARM");
     }
     return mInstance;
   }
@@ -88,12 +89,17 @@ public class ArmSubsystem extends SubsystemBase {
                 Constants.MotorConstants.ARM_REVERSE,
                 Constants.ArmConstants.ARM_MOTOR_ROTATIONS_TO_ARM_ROTATIONS_RADIANS,
                 Constants.ArmConstants.ARM_MOTOR_RADIANS_PER_SECOND_CONVERSION_FACTOR));
+
+    previousState = ArmState.DEFAULT_WITHINFRAME;
+    currentState = ArmState.DEFAULT_WITHINFRAME;
+    wantedState = ArmState.DEFAULT_WITHINFRAME;
   }
 
   private void applyStates() {
     switch (currentState) {
       case ZERO:
         armIO.holdAtState(ArmState.ZERO);
+
       case DEFAULT_WITHINFRAME:
         armIO.holdAtState(ArmState.DEFAULT_WITHINFRAME);
 
@@ -120,6 +126,9 @@ public class ArmSubsystem extends SubsystemBase {
   private ArmState handleStateTransitions() {
     previousState = currentState;
     switch (wantedState) {
+      case ZERO:
+        return ArmState.ZERO;
+
       case DEFAULT_WITHINFRAME:
         return ArmState.DEFAULT_WITHINFRAME;
 
@@ -143,12 +152,16 @@ public class ArmSubsystem extends SubsystemBase {
     }
   }
 
-  public void setWantedState(ArmState wantedState) {
-    this.wantedState = wantedState;
+  public void setWantedState(ArmState state) {
+    System.out.println("sdajkdfslfgjdgfk");
+    this.wantedState = state;
   }
 
-  public Command setWantedStateCommand(ArmState wantedSuperState) {
-    return new InstantCommand(() -> setWantedState(wantedSuperState));
+  public Command setWantedStateCommand(ArmState wantedState) {
+    System.out.println(wantedState);
+    System.out.println("sdajkdfslfgjdgfk");
+    // return runOnce(() -> System.out.println("ahfdsklgdgfjhglgk"));
+    return new InstantCommand(() -> setWantedState(wantedState));
   }
 
   public ArmState getWantedState() {
@@ -161,6 +174,11 @@ public class ArmSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    // System.out.println("currentState " + currentState);
+    // System.out.println("wantedState " + wantedState);
+
+    Logger.recordOutput("Subsystem/Arm/CurrentState", currentState.name());
+    Logger.recordOutput("Subsystem/Arm/WantedState", wantedState.name());
 
     // System.out.println(getPosition());
 
@@ -168,6 +186,7 @@ public class ArmSubsystem extends SubsystemBase {
     Logger.processInputs("Subsystem/Arm", armInputs);
 
     currentState = handleStateTransitions();
+    // currentState = ArmState.ZERO;
     applyStates();
 
     // This method will be called once per scheduler run

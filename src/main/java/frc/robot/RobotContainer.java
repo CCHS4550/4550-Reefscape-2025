@@ -39,16 +39,16 @@ import frc.robot.subsystems.wrist.WristSubsystem;
 
 public class RobotContainer {
 
-  AlgaeSubsystem algae;
-  ArmSubsystem arm;
-  ClimberSubsystem climber;
-  ElevatorSubsystem elevator;
-  IntakeSubsystem intake;
-  SwerveDriveSubsystem swerve;
-  WristSubsystem wrist;
+  AlgaeSubsystem algae = null;
+  ArmSubsystem arm = null;
+  ClimberSubsystem climber = null;
+  ElevatorSubsystem elevator = null;
+  IntakeSubsystem intake = null;
+  SwerveDriveSubsystem swerve = null;
+  WristSubsystem wrist = null;
 
-  VisionIO vision;
-  //  Superstructure superstructure;
+  VisionIO vision = null;
+  // Superstructure superstructure;
 
   /*
    * Initialize controllers.
@@ -57,8 +57,6 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    // teleOpMechScheme.configure(intake, arm, elevator, wrist, algae, climber, 1);
-    // autoMechScheme.configure(intake, arm, elevator, wrist, algae, superstructure, 2);
 
     switch (Constants.currentMode) {
       case REAL:
@@ -124,6 +122,28 @@ public class RobotContainer {
     NamedCommands.registerCommand("outtake", /*intake.outtake()*/ intake.setWantedStateCommand(IntakeState.OUTTAKING_FRONT));
 
     SwerveDriveScheme.configure(swerve, primaryController);
+
+    // teleOpMechScheme.configure(intake, arm, elevator, wrist, algae, climber, 1);
+    // autoMechScheme.configure(intake, arm, elevator, wrist, algae, superstructure, 2);
+
+    CharacterizationScheme.configure(
+        swerve, algae, arm, elevator, intake, wrist, primaryController);
+
+    // switch (Constants.currentMode) {
+    //   case REAL:
+
+    //     break;
+
+    //   case SIM:
+    //     SwerveDriveScheme.configure(swerve, primaryController);
+
+    //     SimulationScheme.configure(
+    //         intake, arm, elevator, wrist, algae, superstructure, primaryController);
+    //     break;
+
+    //   case REPLAY:
+    //     break;
+    // }
     AutomatedMechScheme.configure(intake, arm, elevator, wrist, algae, Superstructure.getInstance() /*superstructure */, 2);
     // CharacterizationScheme.configure(
     //     swerve, algae, arm, elevator, intake, wrist, primaryController);

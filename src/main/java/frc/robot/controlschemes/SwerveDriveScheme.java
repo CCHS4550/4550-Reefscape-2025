@@ -5,12 +5,12 @@ import static edu.wpi.first.wpilibj2.command.Commands.runOnce;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.helpers.ControlScheme;
 import frc.maps.Constants;
 import frc.robot.RobotState;
@@ -80,8 +80,8 @@ public class SwerveDriveScheme implements ControlScheme {
     // controller = new CommandXboxController(port);
 
     // Set to slow mode for recreation
-    setSlowMode();
-    // setFastMode();
+    // setSlowMode();
+    setFastMode();
 
     // Sends this command into the command scheduler on repeat! Very important!
     swerve.setDefaultCommand(
@@ -105,15 +105,12 @@ public class SwerveDriveScheme implements ControlScheme {
 
                   if (!orientationLocked) {
                     orientationLockAngle = RobotState.getInstance().getPoseAngleRadians();
-                    // turnSpeed = MathUtil.applyDeadband(controller.getRightX(), 0.05);
-                    turnSpeed = MathUtil.applyDeadband(controller.getRightX(), 0.05);
+                    turnSpeed = MathUtil.applyDeadband(controller.getRightY(), 0.05);
 
                   } else {
                     turnSpeed =
                         orientationLockPID.calculate(
-                                RobotState.getInstance().getPoseAngleRadians(),
-                                orientationLockAngle)
-                            * 2;
+                            RobotState.getInstance().getPoseAngleRadians(), orientationLockAngle);
                   }
 
                   turnSpeed *= 2.0 * Math.PI * turnSpeedModifier;
@@ -141,7 +138,7 @@ public class SwerveDriveScheme implements ControlScheme {
                             -turnSpeed,
                             RobotState.getInstance().getPoseRotation2d());
                     Logger.recordOutput("xSpeed", xSpeed);
-                    Logger.recordOutput("ySped", ySpeed);
+                    Logger.recordOutput("ySpeed", ySpeed);
 
                   } else {
                     // Relative to robot
@@ -152,12 +149,7 @@ public class SwerveDriveScheme implements ControlScheme {
                 swerve)
             .withName("Swerve Controller Command"));
 
-    configureButtons(
-        swerve,
-        //  shooter,
-        //   indexer,
-        //    port
-        controller);
+    // configureButtons(swerve, controller);
   }
 
   /**
@@ -167,73 +159,22 @@ public class SwerveDriveScheme implements ControlScheme {
    * @param port The controller port of the driving controller.
    */
   private static void configureButtons(
-      SwerveDriveSubsystem swerve,
-      //  Shooter shooter,
-      //   Indexer indexer,
-      //    int port
-      CommandXboxController controller) {
+      SwerveDriveSubsystem swerve, CommandXboxController controller) {
 
-    // controller.b().onTrue(runOnce(() -> toggleFieldCentric()));
-    controller
-        .b()
-        .onTrue(
-            runOnce(
-                () ->
-                    RobotState.getInstance()
-                        .poseEstimator
-                        .resetPosition(
-                            RobotState.getInstance().getRotation2d(),
-                            RobotState.getInstance().swerveModulePositions,
-                            new Pose2d())));
+    Trigger reefLeftTrigger = controller.leftTrigger().and(controller.x());
+    Trigger reefRightTrigger = controller.leftTrigger().and(controller.b());
 
-    controller.a().onTrue(runOnce(() -> RobotState.getInstance().zeroHeading()));
-    // controller.a().onTrue(runOnce(() -> swerveDrive.);
-    // controller.y().onTrue(sequence(swerveDrive.generatePathFindToPose(swerveDrive.getNearestSpeakerPose()),
-    //         runOnce(() -> OI.setRumble(0, 0.5))));
+    Trigger reefBackLeftTrigger = controller.leftTrigger().and(controller.x()).and(controller.y());
+    Trigger reefBackRightTrigger = controller.leftTrigger().and(controller.b()).and(controller.y());
 
-    // controller.b().onTrue((sequence(swerveDrive.generatePathFindToPose(new
-    // Pose2d(0, 0, new Rotation2d(0))),
-    // runOnce(() -> OI.setRumble(0, 0.5)))));
+    Trigger processorTrigger = controller.leftTrigger().and(controller.y());
 
-    // controller.x().onTrue(swerveDrive.resetTurnEncoders());
-    // .onTrue(runOnce(() -> toggleOrientationLock(swerveDrive)))
-    // .onFalse(runOnce(() -> toggleOrientationLock(swerveDrive)));
-    // controller.a().onTrue(runOnce(() -> swerveDrive.test2(12), swerveDrive));
-    // controller.y().onTrue(runOnce(() -> swerveDrive.test2(0), swerveDrive));
+    Trigger coralStationLeftTrigger = controller.rightTrigger().and(controller.x());
+    Trigger coralStationRightTrigger = controller.rightTrigger().and(controller.b());
 
-    // controller.rightBumper().whileTrue(parallel(shooter.shoot(() -> 0.2), indexer.index(() ->
-    // 0.3)));
-    // controller.leftBumper().onTrue(swerveDrive.generatePathFindToPose(swerveDrive.getAmpPose()));
+    controller.y().onTrue(runOnce(() -> toggleFieldCentric()));
 
-    controller
-        .rightTrigger()
-        .onTrue(runOnce(() -> setFastMode()))
-        .onFalse(runOnce(() -> setSlowMode()));
-    // controller
-    //     .rightTrigger()
-    //     .onTrue(runOnce(() -> setSlowMode()))
-    //     .onFalse(runOnce(() -> setNormalMode()));
-    // controller
-    //     .leftStick()
-    //     .onTrue(
-    //         new FollowPathCommandWithRumble(
-    //             pathToTrajectory.convertPathToTrajectory(
-    //                 PathToCoral.goToCoral(
-    //                     PathToCoral.closestSide(RobotState.getInstance().getPose(), 0)),
-    //                 SwerveDriveSubsystem.getInstance().getRobotRelativeSpeeds(),
-    //                 RobotState.getInstance().getRotation2d()),
-    //             controller));
-
-    // controller
-    //     .rightStick()
-    //     .onTrue(
-    //         new FollowPathCommandWithRumble(
-    //             pathToTrajectory.convertPathToTrajectory(
-    //                 PathToCoral.goToCoral(
-    //                     PathToCoral.closestSide(RobotState.getInstance().getPose(), 1)),
-    //                 SwerveDriveSubsystem.getInstance().getRobotRelativeSpeeds(),
-    //                 RobotState.getInstance().getRotation2d()),
-    //             controller));
+    // controller.a().onTrue(runOnce(() -> setFastMode())).onFalse(runOnce(() -> setSlowMode()));
   }
   /** Toggle field centric and robot centric driving. */
   private static void toggleFieldCentric() {
