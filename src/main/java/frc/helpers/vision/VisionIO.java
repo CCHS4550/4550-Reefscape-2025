@@ -53,7 +53,7 @@ public interface VisionIO {
     }
 
     // Find the element with the highest frequency
-    Integer plurality = null;
+    Integer plurality = -1;
     int maxCount = 0;
     for (Map.Entry<Integer, Integer> entry : frequencyMap.entrySet()) {
       if (entry.getValue() > maxCount) {

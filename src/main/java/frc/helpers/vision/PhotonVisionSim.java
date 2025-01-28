@@ -99,8 +99,8 @@ public class PhotonVisionSim extends SubsystemBase implements VisionIO {
 
     // Enable the raw and processed streams. These are enabled by default.
 
-    leftCameraSim.setMaxSightRange(2);
-    leftCameraSim.setMaxSightRange(2);
+    leftCameraSim.setMaxSightRange(4);
+    leftCameraSim.setMaxSightRange(4);
     leftCameraSim.enableRawStream(true);
     rightCameraSim.enableRawStream(true);
     leftCameraSim.enableProcessedStream(true);
@@ -128,14 +128,25 @@ public class PhotonVisionSim extends SubsystemBase implements VisionIO {
     /* Only an array in case we use multiple cameras. */
     results.clear();
 
-    if (visionSim.getCameraPose(leftCameraSim).isPresent()) {
+    if (visionSim.getCameraPose(leftCameraSim).isPresent()
+        && getVisionTargetSimList().stream()
+            .anyMatch(
+                target ->
+                    leftCameraSim.canSeeTargetPose(
+                        visionSim.getCameraPose(leftCameraSim).get(), target))) {
       results.add(
           Map.entry(
               leftCamera_photonEstimator,
               leftCameraSim.process(
                   10.0, visionSim.getCameraPose(leftCameraSim).get(), getVisionTargetSimList())));
     }
-    if (visionSim.getCameraPose(rightCameraSim).isPresent()) {
+
+    if (visionSim.getCameraPose(rightCameraSim).isPresent()
+        && getVisionTargetSimList().stream()
+            .anyMatch(
+                target ->
+                    rightCameraSim.canSeeTargetPose(
+                        visionSim.getCameraPose(rightCameraSim).get(), target))) {
       results.add(
           Map.entry(
               rightCamera_photonEstimator,
@@ -185,19 +196,26 @@ public class PhotonVisionSim extends SubsystemBase implements VisionIO {
     inputs.timestamp = Timer.getFPGATimestamp();
 
     /** If you have a target, then update the poseEstimate ArrayList to equal that. */
-    for (int i = 0; i < getVisionTargetSimList().size(); i++)
-      if (leftCameraSim.canSeeTargetPose(
-              visionSim.getCameraPose(leftCameraSim).get(), getVisionTargetSimList().get(i))
-          || rightCameraSim.canSeeTargetPose(
-              visionSim.getCameraPose(rightCameraSim).get(), getVisionTargetSimList().get(i))) {
+    if (visionSim.getCameraPose(leftCameraSim).isPresent()
+            && getVisionTargetSimList().stream()
+                .anyMatch(
+                    target ->
+                        leftCameraSim.canSeeTargetPose(
+                            visionSim.getCameraPose(leftCameraSim).get(), target))
+        || visionSim.getCameraPose(rightCameraSim).isPresent()
+            && getVisionTargetSimList().stream()
+                .anyMatch(
+                    target ->
+                        rightCameraSim.canSeeTargetPose(
+                            visionSim.getCameraPose(rightCameraSim).get(), target))) {
 
-        inputs.poseEstimates = new Pose2d[] {visionSim.getRobotPose().toPose2d()};
-        inputs.hasEstimate = true;
+      inputs.poseEstimates = new Pose2d[] {visionSim.getRobotPose().toPose2d()};
+      inputs.hasEstimate = true;
 
-      } else {
-        inputs.timestamp = inputs.timestamp;
-        inputs.hasEstimate = false;
-      }
+    } else {
+      inputs.timestamp = inputs.timestamp;
+      inputs.hasEstimate = false;
+    }
   }
 
   @Override

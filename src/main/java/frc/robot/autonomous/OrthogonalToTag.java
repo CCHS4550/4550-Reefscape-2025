@@ -74,7 +74,7 @@ public class OrthogonalToTag extends Command {
     /** Initialize a temporary PoseEstimator that lasts for this command's length. It will */
 
     // Use addRequirements() here to declare subsystem dependencies.
-    // addRequirements(SwerveDriveSubsystem.getInstance());
+    addRequirements(SwerveDriveSubsystem.getInstance());
   }
 
   // Called when the command is initially scheduled.
@@ -192,13 +192,13 @@ public class OrthogonalToTag extends Command {
           RobotState.getInstance().swerveModulePositions);
     }
 
-    // ChassisSpeeds chassisSpeeds =
-    //     SwerveDriveSubsystem.getInstance()
-    //         .swerveFollower
-    //         // .calculateRobotRelativeSpeeds(new Pose2d(0, 0,
-    //         // RobotState.getInstance().getAngleBetweenCurrentAndTargetPose(new Pose2d(0,
-    //         // 0,Rotation2d.fromDegrees(target.getYaw())))), new State());
-    //         .calculateRobotRelativeSpeeds(currentRelativePose, targetState);
+    ChassisSpeeds chassisSpeeds =
+        SwerveDriveSubsystem.getInstance()
+            .swerveFollower
+            // .calculateRobotRelativeSpeeds(new Pose2d(0, 0,
+            // RobotState.getInstance().getAngleBetweenCurrentAndTargetPose(new Pose2d(0,
+            // 0,Rotation2d.fromDegrees(target.getYaw())))), new State());
+            .calculateRobotRelativeSpeeds(currentRelativePose, targetState);
     // // Convert chassis speeds to individual module states
 
     double xPID = translationPID.calculate(currentRelativePose.getX(), targetState.pose.getX());
@@ -211,16 +211,16 @@ public class OrthogonalToTag extends Command {
     /** Add alliance transform! */
 
     /** Create a ChassisSpeeds object to represent how the robot should be moving at this time. */
-    ChassisSpeeds chassisSpeeds =
-        ChassisSpeeds.fromFieldRelativeSpeeds(
-            xPID, yPID, wantedRotationSpeeds, currentRelativePose.getRotation());
-    // SwerveDrive.getInstance()
-    //     .swerveFollower
-    //     .calculateRobotRelativeSpeeds(RobotState.getInstance().currentPose, wantedState);
-
-    // SwerveDriveSubsystem.getInstance().driveRobotRelative(chassisSpeeds);
+    // ChassisSpeeds chassisSpeeds =
+    //     ChassisSpeeds.fromFieldRelativeSpeeds(
+    //         xPID, yPID, wantedRotationSpeeds, currentRelativePose.getRotation());
+    SwerveDriveSubsystem.getInstance()
+        .swerveFollower
+        .calculateRobotRelativeSpeeds(RobotState.getInstance().currentPose, targetState);
 
     SwerveDriveSubsystem.getInstance().driveRobotRelative(chassisSpeeds);
+
+    // SwerveDriveSubsystem.getInstance().driveRobotRelative(chassisSpeeds);
   }
 
   // Called once the command ends or is interrupted.
@@ -233,7 +233,8 @@ public class OrthogonalToTag extends Command {
   @Override
   public boolean isFinished() {
 
-    return !RobotState.getInstance().visionInputs.hasTarget || timer.hasElapsed(5);
+    return timer.hasElapsed(5);
+    // || target.isEmpty();
   }
 
   /** Helper Methods */

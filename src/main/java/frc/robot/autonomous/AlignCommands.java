@@ -100,6 +100,7 @@ public class AlignCommands {
   }
 
   public static Trigger hasTarget() {
-    return new Trigger(() -> RobotState.getInstance().visionInputs.hasTarget);
+    return new Trigger(() -> RobotState.getInstance().visionInputs.hasTarget)
+        .and(() -> RobotState.getInstance().visionInputs.hasEstimate);
   }
 }
