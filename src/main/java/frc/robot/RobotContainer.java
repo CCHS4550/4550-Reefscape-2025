@@ -1,5 +1,7 @@
 package frc.robot;
 
+import com.sun.org.apache.bcel.internal.generic.NamedAndTyped;
+import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.helpers.CCMotorReplay;
 import frc.helpers.CCSparkMax;
@@ -8,7 +10,7 @@ import frc.helpers.vision.PhotonVisionReplay;
 import frc.helpers.vision.PhotonVisionSim;
 import frc.helpers.vision.VisionIO;
 import frc.maps.Constants;
-// import frc.robot.subsystems.Superstructure;
+import frc.robot.subsystems.Superstructure;
 import frc.robot.controlschemes.*;
 import frc.robot.subsystems.algae.AlgaeIOReplay;
 import frc.robot.subsystems.algae.AlgaeIOSim;
@@ -111,7 +113,16 @@ public class RobotContainer {
     RobotState.getInstance().moduleEncodersInit();
     RobotState.getInstance().dashboardInit();
 
+    NamedCommands.registerCommand("to L1", Superstructure.getInstance().setWantedSuperstateCommand(WantedSuperState.L1_FRONT));
+    NamedCommands.registerCommand("to L2", Superstructure.getInstance().setWantedSuperstateCommand(WantedSuperState.L2_FRONT));
+    NamedCommands.registerCommand("to L3", Superstructure.getInstance().setWantedSuperstateCommand(WantedSuperState.L3_FRONT));
+    NamedCommands.registerCommand("to L4", Superstructure.getInstance().setWantedSuperstateCommand(WantedSuperState.L4_BACK));
+
+    NamedCommands.registerCommand("intake", /*intake.intake()*/ intake.setWantedStateCommand(IntakeState.INTAKING_FRONT));
+    NamedCommands.registerCommand("outtake", /*intake.outtake()*/ intake.setWantedStateCommand(IntakeState.OUTTAKING_FRONT));
+
     SwerveDriveScheme.configure(swerve, primaryController);
+
     // teleOpMechScheme.configure(intake, arm, elevator, wrist, algae, climber, 1);
     // autoMechScheme.configure(intake, arm, elevator, wrist, algae, superstructure, 2);
 
@@ -133,5 +144,10 @@ public class RobotContainer {
     //   case REPLAY:
     //     break;
     // }
+    AutomatedMechScheme.configure(intake, arm, elevator, wrist, algae, Superstructure.getInstance() /*superstructure */, 2);
+    // CharacterizationScheme.configure(
+    //     swerve, algae, arm, elevator, intake, wrist, primaryController);
   }
+
+  
 }
