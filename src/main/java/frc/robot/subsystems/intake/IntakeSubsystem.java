@@ -34,46 +34,26 @@ public class IntakeSubsystem extends SubsystemBase {
     HAS_CORAL;
   }
 
-  public static IntakeState previousState = IntakeState.IDLE;
-  public static IntakeState currentState = IntakeState.IDLE;
-  public static IntakeState wantedState = IntakeState.IDLE;
+  public IntakeState previousState = IntakeState.IDLE;
+  public IntakeState currentState = IntakeState.IDLE;
+  public IntakeState wantedState = IntakeState.IDLE;
 
-  /** Implementation of Singleton Pattern */
-  public static IntakeSubsystem mInstance;
+  private final IntakeIO intakeIO;
 
-  private final IntakeIO io;
+  private CCMotorController.MotorFactory motorFactory;
+  private IntakeIO.IOFactory ioFactory;
 
-  private static CCMotorController.MotorFactory defaultMotorFactory = CCMotorReplay::new;
-  private static IntakeIO.IOFactory defaultIoFactory = IntakeIOReplay::new;
+  public final IntakeIOInputsAutoLogged intakeInputs = new IntakeIOInputsAutoLogged();
 
-  CCMotorController.MotorFactory motorFactory;
-  IntakeIO.IOFactory ioFactory;
 
-  public static final IntakeIOInputsAutoLogged intakeInputs = new IntakeIOInputsAutoLogged();
-
-  public static IntakeSubsystem getInstance(
-      CCMotorController.MotorFactory motorFactory, IntakeIO.IOFactory ioFactory) {
-    if (mInstance == null) {
-      mInstance = new IntakeSubsystem(motorFactory, ioFactory);
-    }
-    return mInstance;
-  }
-
-  public static IntakeSubsystem getInstance() {
-    if (mInstance == null) {
-      mInstance = new IntakeSubsystem(defaultMotorFactory, defaultIoFactory);
-      System.out.println("CREATING DEFAULT INTAKE");
-    }
-    return mInstance;
-  }
 
   /** Creates a new WristSubsystem. */
-  private IntakeSubsystem(
+  public IntakeSubsystem(
       CCMotorController.MotorFactory motorFactory, IntakeIO.IOFactory ioFactory) {
     this.motorFactory = motorFactory;
     this.ioFactory = ioFactory;
 
-    this.io =
+    this.intakeIO =
         ioFactory.create(
             motorFactory.create(
                 "intakeMotor1",
@@ -98,39 +78,39 @@ public class IntakeSubsystem extends SubsystemBase {
   private void applyStates() {
     switch (currentState) {
       case IDLE:
-        io.setInnerVoltage(Volts.of(0));
-        io.setOuterVoltage(Volts.of(0));
+        intakeIO.setInnerVoltage(Volts.of(0));
+        intakeIO.setOuterVoltage(Volts.of(0));
 
       case INTAKING_FRONT:
-        io.setInnerVoltage(Volts.of(5));
-        io.setOuterVoltage(Volts.of(5));
+        intakeIO.setInnerVoltage(Volts.of(5));
+        intakeIO.setOuterVoltage(Volts.of(5));
 
       case INTAKING_BACK:
-        io.setInnerVoltage(Volts.of(5));
-        io.setOuterVoltage(Volts.of(5));
+        intakeIO.setInnerVoltage(Volts.of(5));
+        intakeIO.setOuterVoltage(Volts.of(5));
 
         if (true) {
           wantedState = IntakeState.HAS_CORAL;
         }
       case OUTTAKING_FRONT:
-        io.setInnerVoltage(Volts.of(5));
-        io.setOuterVoltage(Volts.of(5));
+        intakeIO.setInnerVoltage(Volts.of(5));
+        intakeIO.setOuterVoltage(Volts.of(5));
 
       case OUTTAKING_BACK:
-        io.setInnerVoltage(Volts.of(5));
-        io.setOuterVoltage(Volts.of(5));
+        intakeIO.setInnerVoltage(Volts.of(5));
+        intakeIO.setOuterVoltage(Volts.of(5));
 
       case NO_CORAL:
-        io.setInnerVoltage(Volts.of(5));
-        io.setOuterVoltage(Volts.of(5));
+        intakeIO.setInnerVoltage(Volts.of(5));
+        intakeIO.setOuterVoltage(Volts.of(5));
 
       case HAS_CORAL:
-        io.setInnerVoltage(Volts.of(5));
-        io.setOuterVoltage(Volts.of(5));
+        intakeIO.setInnerVoltage(Volts.of(5));
+        intakeIO.setOuterVoltage(Volts.of(5));
 
       default:
-        io.setInnerVoltage(Volts.of(5));
-        io.setOuterVoltage(Volts.of(5));
+        intakeIO.setInnerVoltage(Volts.of(5));
+        intakeIO.setOuterVoltage(Volts.of(5));
     }
   }
 
@@ -184,7 +164,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    io.updateInputs(intakeInputs);
+    intakeIO.updateInputs(intakeInputs);
     Logger.processInputs("Subsystem/Intake", intakeInputs);
     currentState = handleStateTransitions();
     applyStates();
@@ -205,20 +185,20 @@ public class IntakeSubsystem extends SubsystemBase {
   public Command intake() {
     return this.startEnd(
         () -> {
-          io.setAllVoltage(Volts.of(5.0));
+          intakeIO.setAllVoltage(Volts.of(5.0));
         },
         () -> {
-          io.setAllVoltage(Volts.of(0.0));
+          intakeIO.setAllVoltage(Volts.of(0.0));
         });
   }
 
   public Command outtake() {
     return this.startEnd(
         () -> {
-          io.setAllVoltage(Volts.of(-5.0));
+          intakeIO.setAllVoltage(Volts.of(-5.0));
         },
         () -> {
-          io.setAllVoltage(Volts.of(0.0));
+          intakeIO.setAllVoltage(Volts.of(0.0));
         });
   }
 }

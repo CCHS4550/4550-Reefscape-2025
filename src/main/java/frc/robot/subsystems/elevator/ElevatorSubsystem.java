@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems.elevator;
 
+import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -11,6 +13,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.helpers.CCMotorController;
 import frc.helpers.CCSparkSim;
 import frc.maps.Constants;
@@ -41,45 +44,26 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
   }
 
-  public static ElevatorState previousState = ElevatorState.DEFAULT_WITHINFRAME;
-  public static ElevatorState currentState = ElevatorState.DEFAULT_WITHINFRAME;
-  public static ElevatorState wantedState = ElevatorState.DEFAULT_WITHINFRAME;
+  public ElevatorState previousState = ElevatorState.DEFAULT_WITHINFRAME;
+  public ElevatorState currentState = ElevatorState.DEFAULT_WITHINFRAME;
+  public ElevatorState wantedState = ElevatorState.DEFAULT_WITHINFRAME;
 
-  /** Implementation of Singleton Pattern */
-  public static ElevatorSubsystem mInstance;
-
-  private final ElevatorIO io;
-
-  private static CCMotorController.MotorFactory defaultMotorFactory = CCSparkSim::new;
-  private static ElevatorIO.IOFactory defaultIoFactory = ElevatorIOSim::new;
+  private final ElevatorIO elevatorIO;
+  
+  private SysIdRoutine sysIdRoutine;
 
   CCMotorController.MotorFactory motorFactory;
   ElevatorIO.IOFactory ioFactory;
 
-  private static final ElevatorIOInputsAutoLogged elevatorInputs = new ElevatorIOInputsAutoLogged();
+  public final ElevatorIOInputsAutoLogged elevatorInputs = new ElevatorIOInputsAutoLogged();
 
-  public static ElevatorSubsystem getInstance(
-      CCMotorController.MotorFactory motorFactory, ElevatorIO.IOFactory ioFactory) {
-    if (mInstance == null) {
-      mInstance = new ElevatorSubsystem(motorFactory, ioFactory);
-    }
-    return mInstance;
-  }
-
-  public static ElevatorSubsystem getInstance() {
-    if (mInstance == null) {
-      mInstance = new ElevatorSubsystem(defaultMotorFactory, defaultIoFactory);
-      System.out.println("CREATING DEFAULT ELEVATOR");
-    }
-    return mInstance;
-  }
 
   /** Creates a new WristSubsystem. */
-  private ElevatorSubsystem(
+  public ElevatorSubsystem(
       CCMotorController.MotorFactory motorFactory, ElevatorIO.IOFactory ioFactory) {
     this.motorFactory = motorFactory;
     this.ioFactory = ioFactory;
-    this.io =
+    this.elevatorIO =
         ioFactory.create(
             motorFactory.create(
                 "elevatorMotor1",
@@ -99,32 +83,44 @@ public class ElevatorSubsystem extends SubsystemBase {
                 Constants.MotorConstants.ELEVATOR_REVERSE[1],
                 Constants.ElevatorConstants.HEIGHT_METERS_PER_ELEVATOR_MOTOR_ROTATIONS,
                 Constants.ElevatorConstants.ELEVATOR_MOTOR_METERS_PER_SECOND_CONVERSION_FACTOR));
+
+  sysIdRoutine =
+  new SysIdRoutine(
+      new SysIdRoutine.Config(
+          Volts.per(Second).of(1),
+          Volts.of(2),
+          Seconds.of(2),
+          (state) -> Logger.recordOutput("SysIdTestState", state.toString())),
+      new SysIdRoutine.Mechanism(
+          (voltage) -> this.elevatorIO.setVoltage(voltage),
+          null, // No log consumer, since data is recorded by URCL
+          this));
   }
 
   private void applyStates() {
     switch (currentState) {
       case DEFAULT_WITHINFRAME:
-        io.holdAtState(ElevatorState.DEFAULT_WITHINFRAME);
+        elevatorIO.holdAtState(ElevatorState.DEFAULT_WITHINFRAME);
 
       case L1_FRONT:
-        io.holdAtState(ElevatorState.L1_FRONT);
+        elevatorIO.holdAtState(ElevatorState.L1_FRONT);
 
       case L2_FRONT:
-        io.holdAtState(ElevatorState.L2_FRONT);
+        elevatorIO.holdAtState(ElevatorState.L2_FRONT);
       case L3_FRONT:
-        io.holdAtState(ElevatorState.L3_FRONT);
+        elevatorIO.holdAtState(ElevatorState.L3_FRONT);
 
       case L4_BACK:
-        io.holdAtState(ElevatorState.L4_BACK);
+        elevatorIO.holdAtState(ElevatorState.L4_BACK);
 
       case CORAL_STATION_FRONT:
-        io.holdAtState(ElevatorState.CORAL_STATION_FRONT);
+        elevatorIO.holdAtState(ElevatorState.CORAL_STATION_FRONT);
 
       case CORAL_STATION_BACK:
-        io.holdAtState(ElevatorState.CORAL_STATION_BACK);
+        elevatorIO.holdAtState(ElevatorState.CORAL_STATION_BACK);
 
       default:
-        io.holdAtState(ElevatorState.DEFAULT_WITHINFRAME);
+        elevatorIO.holdAtState(ElevatorState.DEFAULT_WITHINFRAME);
     }
   }
 
@@ -170,7 +166,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    io.updateInputs(elevatorInputs);
+    elevatorIO.updateInputs(elevatorInputs);
     Logger.processInputs("Subsystem/Elevator", elevatorInputs);
     currentState = handleStateTransitions();
     applyStates();
@@ -181,20 +177,45 @@ public class ElevatorSubsystem extends SubsystemBase {
   public Command elevatorUp() {
     return this.startEnd(
         () -> {
-          io.setVoltage(Volts.of(5.0));
+          elevatorIO.setVoltage(Volts.of(5.0));
         },
         () -> {
-          io.setVoltage(Volts.of(0.0));
+          elevatorIO.setVoltage(Volts.of(0.0));
         });
   }
 
   public Command elevatorDown() {
     return this.startEnd(
         () -> {
-          io.setVoltage(Volts.of(-5.0));
+          elevatorIO.setVoltage(Volts.of(-5.0));
         },
         () -> {
-          io.setVoltage(Volts.of(0.0));
+          elevatorIO.setVoltage(Volts.of(0.0));
         });
   }
+
+  
+  /** SYSID METHODS */
+
+  // /**
+  //  * Used only in characterizing. Don't touch this.
+  // //  *
+  //  * @param direction
+  //  * @return the quasistatic characterization test
+  //  */
+  public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+    return sysIdRoutine.quasistatic(direction);
+  }
+
+  // /**
+  //  * Used only in characterizing. Don't touch this.
+  //  *
+  //  * @param direction
+  //  * @return the dynamic characterization test
+  //  */
+  public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+    return sysIdRoutine.dynamic(direction);
+  }
+
+
 }

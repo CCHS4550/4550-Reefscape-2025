@@ -147,37 +147,6 @@ public class WristIOHardware implements WristIO {
 
   /** SYSID METHODS */
 
-  // /**
-  //  * Used only in characterizing. Don't touch this.
-  //  *
-  //  * @param direction
-  //  * @return the quasistatic characterization test
-  //  */
-  @Override
-  public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
-    return sysIdRoutine.quasistatic(direction);
-  }
 
-  // /**
-  //  * Used only in characterizing. Don't touch this.
-  //  *
-  //  * @param direction
-  //  * @return the dynamic characterization test
-  //  */
-  @Override
-  public Command sysIdDynamic(SysIdRoutine.Direction direction) {
-    return sysIdRoutine.dynamic(direction);
-  }
 
-  SysIdRoutine sysIdRoutine =
-      new SysIdRoutine(
-          new SysIdRoutine.Config(
-              Volts.per(Second).of(.8),
-              Volts.of(.8),
-              Seconds.of(.8),
-              (state) -> Logger.recordOutput("SysIdTestState", state.toString())),
-          new SysIdRoutine.Mechanism(
-              (voltage) -> setVoltage(voltage),
-              null, // No log consumer, since data is recorded by URCL
-              WristSubsystem.getInstance()));
 }

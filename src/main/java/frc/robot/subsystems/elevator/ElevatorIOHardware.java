@@ -131,37 +131,4 @@ public class ElevatorIOHardware implements ElevatorIO {
     return throughBore.getPosition() * Constants.ElevatorConstants.AXLE_ROTATION_TO_HEIGHT_METERS;
   }
 
-  /** SYSID METHODS */
-
-  // /**
-  //  * Used only in characterizing. Don't touch this.
-  // //  *
-  //  * @param direction
-  //  * @return the quasistatic characterization test
-  //  */
-  public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
-    return sysIdRoutine.quasistatic(direction);
-  }
-
-  // /**
-  //  * Used only in characterizing. Don't touch this.
-  //  *
-  //  * @param direction
-  //  * @return the dynamic characterization test
-  //  */
-  public Command sysIdDynamic(SysIdRoutine.Direction direction) {
-    return sysIdRoutine.dynamic(direction);
-  }
-
-  SysIdRoutine sysIdRoutine =
-      new SysIdRoutine(
-          new SysIdRoutine.Config(
-              Volts.per(Second).of(1),
-              Volts.of(2),
-              Seconds.of(2),
-              (state) -> Logger.recordOutput("SysIdTestState", state.toString())),
-          new SysIdRoutine.Mechanism(
-              (voltage) -> setVoltage(voltage),
-              null, // No log consumer, since data is recorded by URCL
-              ElevatorSubsystem.getInstance()));
 }

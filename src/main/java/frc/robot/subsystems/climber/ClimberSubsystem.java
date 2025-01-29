@@ -18,36 +18,17 @@ import org.littletonrobotics.junction.Logger;
 public class ClimberSubsystem extends SubsystemBase {
 
   /** Implementation of Singleton Pattern */
-  public static ClimberSubsystem mInstance;
 
   private final ClimberIO climberIO;
-
-  private static CCMotorController.MotorFactory defaultMotorFactory = CCMotorReplay::new;
-  private static ClimberIO.IOFactory defaultIoFactory = ClimberIOReplay::new;
-
+  
   CCMotorController.MotorFactory motorFactory;
   ClimberIO.IOFactory ioFactory;
 
-  private static final ClimberIOInputsAutoLogged climberInputs = new ClimberIOInputsAutoLogged();
+  public final ClimberIOInputsAutoLogged climberInputs = new ClimberIOInputsAutoLogged();
 
-  public static ClimberSubsystem getInstance(
-      CCMotorController.MotorFactory motorFactory, ClimberIO.IOFactory ioFactory) {
-    if (mInstance == null) {
-      mInstance = new ClimberSubsystem(motorFactory, ioFactory);
-    }
-    return mInstance;
-  }
-
-  public static ClimberSubsystem getInstance() {
-    if (mInstance == null) {
-      mInstance = new ClimberSubsystem(defaultMotorFactory, defaultIoFactory);
-      System.out.println("CREATING DEFAULT CLIMBER");
-    }
-    return mInstance;
-  }
 
   /** Creates a new WristSubsystem. */
-  private ClimberSubsystem(
+  public ClimberSubsystem(
       CCMotorController.MotorFactory motorFactory, ClimberIO.IOFactory ioFactory) {
     this.motorFactory = motorFactory;
     this.ioFactory = ioFactory;

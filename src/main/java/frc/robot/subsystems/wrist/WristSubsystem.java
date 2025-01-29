@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems.wrist;
 
+import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -51,34 +53,17 @@ public class WristSubsystem extends SubsystemBase {
 
   public final WristIO wristIO;
 
-  private static CCMotorController.MotorFactory defaultMotorFactory = CCMotorReplay::new;
-  private static WristIO.IOFactory defaultIoFactory = WristIOReplay::new;
+  private SysIdRoutine sysIdRoutine;
 
-  CCMotorController.MotorFactory motorFactory;
-  WristIO.IOFactory ioFactory;
+  private CCMotorController.MotorFactory motorFactory;
+  private WristIO.IOFactory ioFactory;
 
   public static final WristIOInputsAutoLogged wristInputs = new WristIOInputsAutoLogged();
 
-  /** Singleton Practice */
-  public static WristSubsystem getInstance(
-      CCMotorController.MotorFactory motorFactory, WristIO.IOFactory ioFactory) {
-    if (mInstance == null) {
-      mInstance = new WristSubsystem(motorFactory, ioFactory);
-    }
-    return mInstance;
-  }
 
-  /** Singleton Practice */
-  public static WristSubsystem getInstance() {
-    if (mInstance == null) {
-      mInstance = new WristSubsystem(defaultMotorFactory, defaultIoFactory);
-      System.out.println("CREATING DEFAULT WRIST");
-    }
-    return mInstance;
-  }
 
   /** Creates a new WristSubsystem. */
-  private WristSubsystem(CCMotorController.MotorFactory motorFactory, WristIO.IOFactory ioFactory) {
+  public WristSubsystem(CCMotorController.MotorFactory motorFactory, WristIO.IOFactory ioFactory) {
     this.motorFactory = motorFactory;
     this.ioFactory = ioFactory;
     this.wristIO =
@@ -92,6 +77,18 @@ public class WristSubsystem extends SubsystemBase {
                 Constants.WristConstants.WRIST_REVERSE,
                 1,
                 1));
+
+    sysIdRoutine =
+                new SysIdRoutine(
+                    new SysIdRoutine.Config(
+                        Volts.per(Second).of(1),
+                        Volts.of(2),
+                        Seconds.of(2),
+                        (state) -> Logger.recordOutput("SysIdTestState", state.toString())),
+                    new SysIdRoutine.Mechanism(
+                        (voltage) -> wristIO.setVoltage(voltage),
+                        null, // No log consumer, since data is recorded by URCL
+                        this));
   }
 
   private void applyStates() {
@@ -202,5 +199,27 @@ public class WristSubsystem extends SubsystemBase {
         () -> {
           wristIO.setVoltage(Volts.of(0.0));
         });
+  }
+
+  /** SYSID METHODS */
+
+  // /**
+  //  * Used only in characterizing. Don't touch this.
+  // //  *
+  //  * @param direction
+  //  * @return the quasistatic characterization test
+  //  */
+  public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+    return sysIdRoutine.quasistatic(direction);
+  }
+
+  // /**
+  //  * Used only in characterizing. Don't touch this.
+  //  *
+  //  * @param direction
+  //  * @return the dynamic characterization test
+  //  */
+  public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+    return sysIdRoutine.dynamic(direction);
   }
 }

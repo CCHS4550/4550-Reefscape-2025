@@ -37,34 +37,30 @@ import org.littletonrobotics.junction.Logger;
 /** Class for controlling a swerve drive chassis. Consists of 4 SwerveModules and a gyro. */
 public class SwerveDriveSubsystem extends SubsystemBase {
 
-  public static SwerveDriveSubsystem mInstance;
-
   static final Lock odometryLock = new ReentrantLock();
 
-  private static CCMotorController.MotorFactory defaultMotorFactory = CCSparkSim::new;
-  private static SwerveModuleIO.ModuleFactory defaultModuleFactory = SwerveModuleIOSim::new;
+
+  private final SwerveModuleIO frontRight;
+  private final SwerveModuleIO frontLeft;
+  private final SwerveModuleIO backRight;
+  private final SwerveModuleIO backLeft;
+
+  private SwerveModuleIO[] swerveModules;
 
   private CCMotorController.MotorFactory motorFactory;
   private SwerveModuleIO.ModuleFactory moduleFactory;
 
-  public static final SwerveModuleInputsAutoLogged frontRightInputs =
-      new SwerveModuleInputsAutoLogged();
-  public static final SwerveModuleInputsAutoLogged frontLeftInputs =
-      new SwerveModuleInputsAutoLogged();
-  public static final SwerveModuleInputsAutoLogged backRightInputs =
-      new SwerveModuleInputsAutoLogged();
-  public static final SwerveModuleInputsAutoLogged backLeftInputs =
-      new SwerveModuleInputsAutoLogged();
-
-  public SwerveModuleInputsAutoLogged[] swerveModuleInputs;
-
-  public final SwerveModuleIO frontRight;
-  public final SwerveModuleIO frontLeft;
-  public final SwerveModuleIO backRight;
-  public final SwerveModuleIO backLeft;
-
   // * Must be in the order FR, FL, BR, BL */
-  private SwerveModuleIO[] swerveModules;
+  public final SwerveModuleInputsAutoLogged frontRightInputs =
+  new SwerveModuleInputsAutoLogged();
+public final SwerveModuleInputsAutoLogged frontLeftInputs =
+  new SwerveModuleInputsAutoLogged();
+public final SwerveModuleInputsAutoLogged backRightInputs =
+  new SwerveModuleInputsAutoLogged();
+public final SwerveModuleInputsAutoLogged backLeftInputs =
+  new SwerveModuleInputsAutoLogged();
+
+public SwerveModuleInputsAutoLogged[] swerveModuleInputs;
 
   public SwerveModuleState[] desiredModuleStates;
 
@@ -79,24 +75,8 @@ public class SwerveDriveSubsystem extends SubsystemBase {
   /** For old pathplanner */
   public final PPHolonomicDriveController swerveFollower;
 
-  /** Implementation of Singleton Pattern */
-  public static SwerveDriveSubsystem getInstance(
-      CCMotorController.MotorFactory motorFactory, SwerveModuleIO.ModuleFactory moduleFactory) {
-    if (mInstance == null) {
-      mInstance = new SwerveDriveSubsystem(motorFactory, moduleFactory);
-    }
-    return mInstance;
-  }
-
-  public static SwerveDriveSubsystem getInstance() {
-    if (mInstance == null) {
-      mInstance = new SwerveDriveSubsystem(defaultMotorFactory, defaultModuleFactory);
-    }
-    return mInstance;
-  }
-
   /** Constructor for the Swerve Drive Subsystem. */
-  private SwerveDriveSubsystem(
+  public SwerveDriveSubsystem(
       CCMotorController.MotorFactory motorFactory, SwerveModuleIO.ModuleFactory moduleFactory) {
     this.motorFactory = motorFactory;
     this.moduleFactory = moduleFactory;
@@ -227,8 +207,8 @@ public class SwerveDriveSubsystem extends SubsystemBase {
 
     swerveFollower =
         new PPHolonomicDriveController(
-            new com.pathplanner.lib.config.PIDConstants(1, 0, 0),
-            new com.pathplanner.lib.config.PIDConstants(1, 0, 0),
+            new com.pathplanner.lib.config.PIDConstants(4, 0, 0),
+            new com.pathplanner.lib.config.PIDConstants(4, 0, 0),
             .02);
 
     turnPIDProfiled =

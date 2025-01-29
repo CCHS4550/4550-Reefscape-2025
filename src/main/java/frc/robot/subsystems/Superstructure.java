@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.algae.AlgaeSubsystem;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.arm.ArmSubsystem.ArmState;
+import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.elevator.ElevatorSubsystem.ElevatorState;
 import frc.robot.subsystems.intake.IntakeSubsystem;
@@ -21,29 +22,26 @@ public class Superstructure extends SubsystemBase {
 
   AlgaeSubsystem algae;
   ArmSubsystem arm;
+  ClimberSubsystem climber;
   ElevatorSubsystem elevator;
   IntakeSubsystem intake;
   SwerveDriveSubsystem swerve;
   WristSubsystem wrist;
 
-  /** Implementation of Singleton Pattern */
-  public static Superstructure mInstance;
-
-  public static Superstructure getInstance() {
-    if (mInstance == null) {
-      mInstance = new Superstructure();
-    }
-    return mInstance;
-  }
-
   /** Creates a new Superstructure. */
-  private Superstructure() {
-    this.algae = AlgaeSubsystem.getInstance();
-    this.arm = ArmSubsystem.getInstance();
-    this.elevator = ElevatorSubsystem.getInstance();
-    this.intake = IntakeSubsystem.getInstance();
-    this.swerve = SwerveDriveSubsystem.getInstance();
-    this.wrist = WristSubsystem.getInstance();
+  public Superstructure(AlgaeSubsystem algae,
+  ArmSubsystem arm,
+  ClimberSubsystem climber,
+  ElevatorSubsystem elevator,
+  IntakeSubsystem intake,
+  SwerveDriveSubsystem swerve,
+  WristSubsystem wrist) {
+    this.algae = algae;
+    this.arm = arm;
+    this.elevator = elevator;
+    this.intake = intake;
+    this.swerve = swerve;
+    this.wrist = wrist;
   }
 
   /**

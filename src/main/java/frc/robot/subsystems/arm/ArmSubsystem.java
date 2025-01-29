@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems.arm;
 
+import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -12,6 +14,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.helpers.CCMotorController;
 import frc.helpers.CCMotorReplay;
 import frc.maps.Constants;
@@ -40,42 +43,22 @@ public class ArmSubsystem extends SubsystemBase {
     }
   }
 
-  public static ArmState previousState;
-  public static ArmState currentState;
-  public static ArmState wantedState;
-
-  /** Implementation of Singleton Pattern */
-  public static ArmSubsystem mInstance;
+  public ArmState previousState = ArmState.DEFAULT_WITHINFRAME;
+  public ArmState currentState = ArmState.DEFAULT_WITHINFRAME;
+  public ArmState wantedState = ArmState.DEFAULT_WITHINFRAME;
 
   private final ArmIO armIO;
 
-  private static CCMotorController.MotorFactory defaultMotorFactory = CCMotorReplay::new;
-  private static ArmIO.IOFactory defaultIoFactory = ArmIOReplay::new;
+  private SysIdRoutine sysIdRoutine;
 
-  CCMotorController.MotorFactory motorFactory;
-  ArmIO.IOFactory ioFactory;
+  private CCMotorController.MotorFactory motorFactory;
+  private ArmIO.IOFactory ioFactory;
 
-  private static ArmIOInputsAutoLogged armInputs = new ArmIOInputsAutoLogged();
+  public final ArmIOInputsAutoLogged armInputs = new ArmIOInputsAutoLogged();
 
-  public static ArmSubsystem getInstance(
-      CCMotorController.MotorFactory motorFactory, ArmIO.IOFactory ioFactory) {
-    if (mInstance == null) {
-      mInstance = new ArmSubsystem(motorFactory, ioFactory);
-      System.out.println("CREATING ARM");
-    }
-    return mInstance;
-  }
-
-  public static ArmSubsystem getInstance() {
-    if (mInstance == null) {
-      mInstance = new ArmSubsystem(defaultMotorFactory, defaultIoFactory);
-      System.out.println("CREATING DEFAULT ARM");
-    }
-    return mInstance;
-  }
 
   /** Creates a new WristSubsystem. */
-  private ArmSubsystem(CCMotorController.MotorFactory motorFactory, ArmIO.IOFactory ioFactory) {
+  public ArmSubsystem(CCMotorController.MotorFactory motorFactory, ArmIO.IOFactory ioFactory) {
     this.motorFactory = motorFactory;
     this.ioFactory = ioFactory;
     this.armIO =
@@ -89,10 +72,18 @@ public class ArmSubsystem extends SubsystemBase {
                 Constants.MotorConstants.ARM_REVERSE,
                 Constants.ArmConstants.ARM_MOTOR_ROTATIONS_TO_ARM_ROTATIONS_RADIANS,
                 Constants.ArmConstants.ARM_MOTOR_RADIANS_PER_SECOND_CONVERSION_FACTOR));
+      sysIdRoutine =
+                new SysIdRoutine(
+                    new SysIdRoutine.Config(
+                        Volts.per(Second).of(1),
+                        Volts.of(2),
+                        Seconds.of(2),
+                        (state) -> Logger.recordOutput("SysIdTestState", state.toString())),
+                    new SysIdRoutine.Mechanism(
+                        (voltage) -> armIO.setVoltage(voltage),
+                        null, // No log consumer, since data is recorded by URCL
+                        this));
 
-    previousState = ArmState.DEFAULT_WITHINFRAME;
-    currentState = ArmState.DEFAULT_WITHINFRAME;
-    wantedState = ArmState.DEFAULT_WITHINFRAME;
   }
 
   private void applyStates() {
@@ -208,4 +199,29 @@ public class ArmSubsystem extends SubsystemBase {
           armIO.setVoltage(Volts.of(0.0));
         });
   }
+
+
+    /** SYSID METHODS */
+
+  /**
+   * Used only in characterizing. Don't touch this.
+   *
+   * @param direction
+   * @return the quasistatic characterization test
+   */
+  public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+    return sysIdRoutine.quasistatic(direction);
+  }
+
+  // /**
+  //  * Used only in characterizing. Don't touch this.
+  //  *
+  //  * @param direction
+  //  * @return the dynamic characterization test
+  //  */
+  public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+    return sysIdRoutine.dynamic(direction);
+  }
+
+  
 }
