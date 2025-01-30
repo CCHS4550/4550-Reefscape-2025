@@ -208,8 +208,8 @@ public class SwerveDriveSubsystem extends SubsystemBase {
 
     swerveFollower =
         new PPHolonomicDriveController(
-            new com.pathplanner.lib.config.PIDConstants(4, 0, 0),
-            new com.pathplanner.lib.config.PIDConstants(4, 0, 0),
+            new com.pathplanner.lib.config.PIDConstants(2, 0, 0),
+            new com.pathplanner.lib.config.PIDConstants(2, 0, 0),
             .02);
 
     turnPIDProfiled =
@@ -232,7 +232,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     }
 
     // getAbsoluteEncoderoffsets();
-    Logger.recordOutput("SwerveModuleStates/Actual Module States", getCurrentModuleStates());
+    Logger.recordOutput("Swerve Drive Outputs/Actual Module States", getCurrentModuleStates());
   }
 
   /**
@@ -275,12 +275,12 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     //     desiredStates, Constants.SwerveConstants.MAX_DRIVE_SPEED_METERS_PER_SECOND_THEORETICAL);
     // Logger.recordOutput("SwerveModuleStates/SetpointsOptimized", desiredStates);
 
-    Logger.recordOutput("SwerveModuleStates/Desired Module States", desiredStates);
+    Logger.recordOutput("Swerve Drive Outputs/Desired Module States", desiredStates);
     frontRight.setDesiredState(desiredStates[0], openLoop);
     frontLeft.setDesiredState(desiredStates[1], openLoop);
     backRight.setDesiredState(desiredStates[2], openLoop);
     backLeft.setDesiredState(desiredStates[3], openLoop);
-    Logger.recordOutput("SwerveModuleStates/Processed Desired Module States", desiredStates);
+    Logger.recordOutput("Swerve Drive Outputs/Processed Desired Module States", desiredStates);
   }
 
   /* Returns the actual moduleStates */
@@ -317,7 +317,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
    * Used for Autobuilder in AutonomousScheme.java
    */
   public void driveRobotRelative(ChassisSpeeds chassisSpeeds) {
-    Logger.recordOutput("SwerveModuleStates/Desired Chassis Speeds", chassisSpeeds);
+    Logger.recordOutput("Swerve Drive Outputs/Desired Chassis Speeds", chassisSpeeds);
 
     SwerveModuleState[] moduleStates =
         Constants.SwerveConstants.DRIVE_KINEMATICS.toSwerveModuleStates(chassisSpeeds);

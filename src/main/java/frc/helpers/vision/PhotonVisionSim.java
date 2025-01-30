@@ -28,38 +28,28 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 
 public class PhotonVisionSim extends SubsystemBase implements VisionIO {
 
-  public static PhotonVisionSim mInstance;
-
-  public static PhotonVisionSim getInstance() {
-    if (mInstance == null) {
-      mInstance = new PhotonVisionSim();
-    }
-    return mInstance;
-  }
-
   /* Create Camera */
-  public static PhotonCamera leftCamera;
-  public static PhotonCamera rightCamera;
+  public PhotonCamera leftCamera;
+  public PhotonCamera rightCamera;
 
-  public static VisionSystemSim visionSim;
+  public VisionSystemSim visionSim;
 
-  static PhotonCameraSim leftCameraSim;
-  static PhotonCameraSim rightCameraSim;
+  public PhotonCameraSim leftCameraSim;
+  public PhotonCameraSim rightCameraSim;
 
   /* Camera 1 PhotonPoseEstimator. */
-  public static PhotonPoseEstimator leftCamera_photonEstimator;
+  public PhotonPoseEstimator leftCamera_photonEstimator;
   /* Camera 2 PhotonPoseEstimator. */
-  public static PhotonPoseEstimator rightCamera_photonEstimator;
+  public PhotonPoseEstimator rightCamera_photonEstimator;
 
-  PhotonPoseEstimator[] photonEstimators;
+  public PhotonPoseEstimator[] photonEstimators;
 
-  public static List<Map.Entry<PhotonPoseEstimator, PhotonPipelineResult>> results =
-      new ArrayList<>();
-  public static List<Map.Entry<PhotonPoseEstimator, PhotonPipelineResult>> condensedResults =
+  public List<Map.Entry<PhotonPoseEstimator, PhotonPipelineResult>> results = new ArrayList<>();
+  public List<Map.Entry<PhotonPoseEstimator, PhotonPipelineResult>> condensedResults =
       new ArrayList<>();
 
   /** Creates a new Photonvision. */
-  private PhotonVisionSim() {
+  public PhotonVisionSim() {
 
     leftCamera = new PhotonCamera(Constants.cameraOne.CAMERA_ONE_NAME);
     rightCamera = new PhotonCamera(Constants.cameraTwo.CAMERA_TWO_NAME);
@@ -101,15 +91,15 @@ public class PhotonVisionSim extends SubsystemBase implements VisionIO {
 
     leftCameraSim.setMaxSightRange(4);
     leftCameraSim.setMaxSightRange(4);
-    leftCameraSim.enableRawStream(true);
-    rightCameraSim.enableRawStream(true);
-    leftCameraSim.enableProcessedStream(true);
-    rightCameraSim.enableProcessedStream(true);
+    leftCameraSim.enableRawStream(false);
+    rightCameraSim.enableRawStream(false);
+    leftCameraSim.enableProcessedStream(false);
+    rightCameraSim.enableProcessedStream(false);
 
     // Enable drawing a wireframe visualization of the field to the camera streams.
     // This is extremely resource-intensive and is disabled by default.
-    leftCameraSim.enableDrawWireframe(true);
-    rightCameraSim.enableDrawWireframe(true);
+    leftCameraSim.enableDrawWireframe(false);
+    rightCameraSim.enableDrawWireframe(false);
   }
 
   /**
@@ -159,6 +149,19 @@ public class PhotonVisionSim extends SubsystemBase implements VisionIO {
 
     inputs.hasTarget =
         condensedResults.stream().anyMatch(result -> result.getValue().hasTargets()) ? true : false;
+    inputs.canSeeTarget =
+        visionSim.getCameraPose(leftCameraSim).isPresent()
+            && getVisionTargetSimList().stream()
+                .anyMatch(
+                    target ->
+                        leftCameraSim.canSeeTargetPose(
+                            visionSim.getCameraPose(leftCameraSim).get(), target))
+            && visionSim.getCameraPose(rightCameraSim).isPresent()
+            && getVisionTargetSimList().stream()
+                .anyMatch(
+                    target ->
+                        rightCameraSim.canSeeTargetPose(
+                            visionSim.getCameraPose(rightCameraSim).get(), target));
 
     Set<PhotonTrackedTarget> visibleCamera1Targets =
         results.stream()
@@ -216,6 +219,11 @@ public class PhotonVisionSim extends SubsystemBase implements VisionIO {
       inputs.timestamp = inputs.timestamp;
       inputs.hasEstimate = false;
     }
+  }
+
+  @Override
+  public List<Map.Entry<PhotonPoseEstimator, PhotonPipelineResult>> getPipelineResults() {
+    return results;
   }
 
   @Override

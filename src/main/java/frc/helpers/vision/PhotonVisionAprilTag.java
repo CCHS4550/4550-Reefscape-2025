@@ -25,33 +25,23 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 
 public class PhotonVisionAprilTag extends SubsystemBase implements VisionIO {
 
-  public static List<Map.Entry<PhotonPoseEstimator, PhotonPipelineResult>> results =
+  public List<Map.Entry<PhotonPoseEstimator, PhotonPipelineResult>> results = new ArrayList<>();
+  public List<Map.Entry<PhotonPoseEstimator, PhotonPipelineResult>> condensedResults =
       new ArrayList<>();
-  public static List<Map.Entry<PhotonPoseEstimator, PhotonPipelineResult>> condensedResults =
-      new ArrayList<>();
-
-  public static PhotonVisionAprilTag mInstance;
-
-  public static PhotonVisionAprilTag getInstance() {
-    if (mInstance == null) {
-      mInstance = new PhotonVisionAprilTag();
-    }
-    return mInstance;
-  }
 
   /* Create Camera */
-  public static PhotonCamera leftCamera;
-  public static PhotonCamera rightCamera;
+  public PhotonCamera leftCamera;
+  public PhotonCamera rightCamera;
 
   /* Camera 1 PhotonPoseEstimator. */
-  public static PhotonPoseEstimator leftCamera_photonEstimator;
+  public PhotonPoseEstimator leftCamera_photonEstimator;
   /* Camera 2 PhotonPoseEstimator. */
-  public static PhotonPoseEstimator rightCamera_photonEstimator;
+  public PhotonPoseEstimator rightCamera_photonEstimator;
 
-  PhotonPoseEstimator[] photonEstimators;
+  public PhotonPoseEstimator[] photonEstimators;
 
   /** Creates a new Photonvision. */
-  private PhotonVisionAprilTag() {
+  public PhotonVisionAprilTag() {
 
     // This will take a bit of tweaking to get right. I'm fairly certain that remotehost is defined
     // in the photonvision ui.
@@ -152,6 +142,11 @@ public class PhotonVisionAprilTag extends SubsystemBase implements VisionIO {
       inputs.timestamp = inputs.timestamp;
       inputs.hasEstimate = false;
     }
+  }
+
+  @Override
+  public List<Map.Entry<PhotonPoseEstimator, PhotonPipelineResult>> getPipelineResults() {
+    return results;
   }
 
   /**

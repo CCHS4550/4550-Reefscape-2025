@@ -8,17 +8,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class PhotonVisionReplay extends SubsystemBase implements VisionIO {
 
-  public static PhotonVisionReplay mInstance;
-
-  public static PhotonVisionReplay getInstance() {
-    if (mInstance == null) {
-      mInstance = new PhotonVisionReplay();
-    }
-    return mInstance;
-  }
-
   /** Creates a new Photonvision. */
-  private PhotonVisionReplay() {}
+  public PhotonVisionReplay() {}
 
   /**
    * IMPORTANT METHOD! Main method for updating PhotonVision Inputs!

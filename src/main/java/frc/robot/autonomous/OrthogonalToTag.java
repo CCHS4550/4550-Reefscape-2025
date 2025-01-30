@@ -15,7 +15,6 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.helpers.maps.Constants;
@@ -32,6 +31,7 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 public class OrthogonalToTag extends Command {
 
   SwerveDriveSubsystem swerve;
+  VisionIO vision;
 
   List<PhotonTrackedTarget> targets;
   double focusedTag;
@@ -59,19 +59,18 @@ public class OrthogonalToTag extends Command {
   /**
    * This command should rotate the robot such that it is orthogonal to the AprilTag in its vision.
    * UNTESTED
-   *
-   * @param transformation The transformation to apply to the apriltag position.
-   * @param focusedTag The tag to focus on throughout the command. -1 to use the current focused Id.
    */
   public OrthogonalToTag(
       Transform2d transformation,
       List<Pose2d> idList,
       boolean useBestTag,
-      SwerveDriveSubsystem swerve) {
+      SwerveDriveSubsystem swerve,
+      VisionIO vision) {
     this.transformation = transformation;
     this.idList = idList;
 
     this.swerve = swerve;
+    this.vision = vision;
 
     translationPID = swerve.translationPID;
     rotationPID = swerve.rotationPID;
@@ -142,6 +141,10 @@ public class OrthogonalToTag extends Command {
       targetX = getAverageX(getTransform3dList());
       targetY = getAverageY(getTransform3dList());
 
+      Logger.recordOutput("OrthogonalToTag/targetAngle", targetAngle);
+      Logger.recordOutput("OrthogonalToTag/targetX", targetX);
+      Logger.recordOutput("OrthogonalToTag/targetY", targetY);
+
       // new Transform2d(new Pose2d(), currentRelativePose);
 
       targetState.pose =
@@ -180,11 +183,11 @@ public class OrthogonalToTag extends Command {
     // once. We should only rely on swerve drive odometry.
     // poseRelativeToTargetEstimator.addVisionMeasurement(new Pose2d(new Translation2d(),
     // Rotation2d.fromDegrees(target.get().getYaw())), currentTime);
-
     // This is another place that might be a problem, as this is where the odometry is updated. We
     // have typically always used getRotation2dNegative() which has always worked fine.
     // I feel like this doesn't make much sense though but I'm a little scared to change it. If it
     // works, it works.
+
     if (RobotState.getInstance().sampleCountHF > 0) {
       for (int i = 0; i < RobotState.getInstance().sampleCountHF; i++) {
         poseRelativeToTargetEstimator.updateWithTime(
@@ -309,34 +312,17 @@ public class OrthogonalToTag extends Command {
     // if (RobotState.getInstance().visionInputs.focusedId != focusedTag)
     //   return new ArrayList<Transform3d>();
 
-    if (RobotBase.isSimulation())
-      return PhotonVisionSim.getInstance().results.stream()
-          .filter(
-              (result) ->
-                  result.getValue().hasTargets()
-                      && result.getValue().getBestTarget().fiducialId == focusedTag)
-          .map(
-              result ->
-                  result
-                      .getKey()
-                      .getRobotToCameraTransform()
-                      .plus(result.getValue().getBestTarget().getBestCameraToTarget()))
-          .collect(Collectors.toList());
-
-    if (RobotBase.isReal())
-      return PhotonVisionAprilTag.getInstance().results.stream()
-          .filter(
-              (result) ->
-                  result.getValue().hasTargets()
-                      && result.getValue().getBestTarget().fiducialId == focusedTag)
-          .map(
-              result ->
-                  result
-                      .getKey()
-                      .getRobotToCameraTransform()
-                      .plus(result.getValue().getBestTarget().getBestCameraToTarget()))
-          .collect(Collectors.toList());
-
-    return null;
+    return vision.getPipelineResults().stream()
+        .filter(
+            (result) ->
+                result.getValue().hasTargets()
+                    && result.getValue().getBestTarget().fiducialId == focusedTag)
+        .map(
+            result ->
+                result
+                    .getKey()
+                    .getRobotToCameraTransform()
+                    .plus(result.getValue().getBestTarget().getBestCameraToTarget()))
+        .collect(Collectors.toList());
   }
 }

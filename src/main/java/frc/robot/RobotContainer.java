@@ -5,6 +5,10 @@ import frc.helpers.maps.Constants;
 import frc.helpers.motorcontroller.CCMotorReplay;
 import frc.helpers.motorcontroller.CCSparkMax;
 import frc.helpers.motorcontroller.CCSparkSim;
+import frc.helpers.vision.PhotonVisionAprilTag;
+import frc.helpers.vision.PhotonVisionReplay;
+import frc.helpers.vision.PhotonVisionSim;
+import frc.helpers.vision.VisionIO;
 import frc.robot.controlschemes.CharacterizationScheme;
 import frc.robot.controlschemes.SimulationScheme;
 import frc.robot.controlschemes.SwerveDriveScheme;
@@ -48,6 +52,8 @@ public class RobotContainer {
   private final SwerveDriveSubsystem swerve;
   private final WristSubsystem wrist;
 
+  private final VisionIO vision;
+
   private final Superstructure superstructure;
 
   /*
@@ -69,6 +75,8 @@ public class RobotContainer {
         swerve = new SwerveDriveSubsystem(CCSparkMax::new, SwerveModuleIOHardware::new);
         wrist = new WristSubsystem(CCSparkMax::new, WristIOHardware::new);
 
+        vision = new PhotonVisionAprilTag();
+
         superstructure = new Superstructure(algae, arm, climber, elevator, intake, swerve, wrist);
 
         break;
@@ -82,6 +90,8 @@ public class RobotContainer {
         intake = new IntakeSubsystem(CCSparkSim::new, IntakeIOSim::new);
         swerve = new SwerveDriveSubsystem(CCSparkSim::new, SwerveModuleIOSim::new);
         wrist = new WristSubsystem(CCSparkSim::new, WristIOSim::new);
+
+        vision = new PhotonVisionSim();
 
         superstructure = new Superstructure(algae, arm, climber, elevator, intake, swerve, wrist);
 
@@ -97,6 +107,8 @@ public class RobotContainer {
         swerve = new SwerveDriveSubsystem(CCMotorReplay::new, SwerveModuleIOReplay::new);
         wrist = new WristSubsystem(CCMotorReplay::new, WristIOReplay::new);
 
+        vision = new PhotonVisionReplay();
+
         superstructure = new Superstructure(algae, arm, climber, elevator, intake, swerve, wrist);
 
         break;
@@ -110,9 +122,12 @@ public class RobotContainer {
         swerve = new SwerveDriveSubsystem(CCMotorReplay::new, SwerveModuleIOReplay::new);
         wrist = new WristSubsystem(CCMotorReplay::new, WristIOReplay::new);
 
+        vision = new PhotonVisionReplay();
+
         superstructure = new Superstructure(algae, arm, climber, elevator, intake, swerve, wrist);
     }
-    RobotState.getInstance().robotStateInit(algae, arm, climber, elevator, intake, swerve, wrist);
+    RobotState.getInstance()
+        .robotStateInit(algae, arm, climber, elevator, intake, swerve, wrist, vision);
     RobotState.getInstance().poseInit();
     RobotState.getInstance().moduleEncodersInit();
     RobotState.getInstance().dashboardInit();
@@ -162,6 +177,7 @@ public class RobotContainer {
             intake,
             swerve,
             wrist,
+            vision,
             superstructure,
             primaryController);
         break;

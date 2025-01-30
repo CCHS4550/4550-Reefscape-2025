@@ -33,10 +33,15 @@ public interface VisionIO {
 
     public boolean hasEstimate = false;
     public boolean hasTarget = false;
+    public boolean canSeeTarget = false;
   }
 
   /** Default method, defined in photonvision */
   public default void updateInputs(VisionIOInputs inputs) {}
+
+  public default List<Map.Entry<PhotonPoseEstimator, PhotonPipelineResult>> getPipelineResults() {
+    return new ArrayList<Map.Entry<PhotonPoseEstimator, PhotonPipelineResult>>();
+  }
 
   public default List<Map.Entry<PhotonPoseEstimator, PhotonPipelineResult>>
       condensePipelineResults() {

@@ -24,8 +24,6 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.helpers.maps.Constants;
-import frc.helpers.vision.PhotonVisionAprilTag;
-import frc.helpers.vision.PhotonVisionSim;
 import frc.helpers.vision.VisionIO;
 import frc.helpers.vision.VisionIOInputsAutoLogged;
 import frc.robot.autonomous.CustomAutoChooser;
@@ -69,6 +67,7 @@ public class RobotState {
   private IntakeSubsystem intake;
   private SwerveDriveSubsystem swerve;
   private WristSubsystem wrist;
+
   private VisionIO vision;
 
   private final AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
@@ -80,6 +79,7 @@ public class RobotState {
   public IntakeIOInputsAutoLogged intakeInputs;
   public SwerveModuleInputsAutoLogged[] moduleInputs;
   public WristIOInputsAutoLogged wristInputs;
+
   public final VisionIOInputsAutoLogged visionInputs = new VisionIOInputsAutoLogged();
 
   /** Module positions used for odometry */
@@ -118,24 +118,26 @@ public class RobotState {
       ElevatorSubsystem elevator,
       IntakeSubsystem intake,
       SwerveDriveSubsystem swerve,
-      WristSubsystem wrist) {
+      WristSubsystem wrist,
+      VisionIO vision) {
 
     this.algae = algae;
     this.arm = arm;
     this.climber = climber;
+    this.elevator = elevator;
     this.intake = intake;
     this.swerve = swerve;
     this.wrist = wrist;
 
+    this.vision = vision;
+
     algaeInputs = algae.algaeInputs;
     armInputs = arm.armInputs;
     climberInputs = climber.climberInputs;
+    elevatorInputs = elevator.elevatorInputs;
     intakeInputs = intake.intakeInputs;
     moduleInputs = swerve.swerveModuleInputs;
     wristInputs = wrist.wristInputs;
-
-    if (Robot.isReal()) vision = PhotonVisionAprilTag.getInstance();
-    if (Robot.isSimulation()) vision = PhotonVisionSim.getInstance();
 
     swerveModulePositions[0] =
         new SwerveModulePosition(0, new Rotation2d(swerve.frontRight.getTurnPosition()));
@@ -221,14 +223,14 @@ public class RobotState {
             getSampleTimestampArrayClampedHF(i),
             getGyroAngleArrayClampedHF(i),
             getSwerveModulePositionsArrayClampedHF(i));
-        Logger.recordOutput("High Frequency Gyro Angle", getGyroAngleArrayClampedHF(i));
+        Logger.recordOutput("HF/High Frequency Gyro Angle", getGyroAngleArrayClampedHF(i));
         Logger.recordOutput(
-            "High Frequency Odometry Positions", getSwerveModulePositionsArrayClampedHF(i));
+            "HF/High Frequency Odometry Positions", getSwerveModulePositionsArrayClampedHF(i));
       }
 
     } else {
-      double currentTime = Timer.getFPGATimestamp();
-      poseEstimator.updateWithTime(currentTime, getRotation2d(), swerveModulePositions);
+      poseEstimator.updateWithTime(
+          Timer.getFPGATimestamp(), getRotation2d(), swerveModulePositions);
     }
 
     currentPose = getPose();
@@ -624,14 +626,14 @@ public class RobotState {
 
       gyroAngleSim += Constants.SwerveConstants.DRIVE_KINEMATICS.toTwist2d(moduleDeltas).dtheta;
 
-      Logger.recordOutput("gyroAngleSim", gyroAngleSim);
+      Logger.recordOutput("gyro/gyroAngleSim", gyroAngleSim);
 
       previousSwerveModulePositions = currentSwerveModulePositions;
 
       return Rotation2d.fromRadians(gyroAngleSim);
     }
 
-    Logger.recordOutput("Gyro Rotation2d", gyro.getRotation2d());
+    Logger.recordOutput("gyro/gyro Rotation2d", gyro.getRotation2d());
     return gyro.getRotation2d();
     // .plus(Rotation2d.fromRadians(Math.PI));
   }

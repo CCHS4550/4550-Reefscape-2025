@@ -8,78 +8,86 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.*;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.helpers.maps.Constants;
+import frc.helpers.vision.VisionIO;
 import frc.robot.RobotState;
 import frc.robot.subsystems.swervedrive.SwerveDriveSubsystem;
 
 /** Add your docs here. */
 public class AlignCommands {
 
-  public static Command frontAlignToReefLeft(SwerveDriveSubsystem swerve) {
+  public static Command frontAlignToReefLeft(SwerveDriveSubsystem swerve, VisionIO vision) {
 
     return new OrthogonalToTag(
         Constants.FieldPositionConstants.FRONT_REEF_LEFT_OFFSET,
         Constants.AprilTags.REEF_POSES,
         false,
-        swerve);
+        swerve,
+        vision);
   }
 
-  public static Command frontAlignToReefRight(SwerveDriveSubsystem swerve) {
+  public static Command frontAlignToReefRight(SwerveDriveSubsystem swerve, VisionIO vision) {
     Command alignCommand =
         new OrthogonalToTag(
             Constants.FieldPositionConstants.FRONT_REEF_RIGHT_OFFSET,
             Constants.AprilTags.REEF_POSES,
             false,
-            swerve);
+            swerve,
+            vision);
     return alignCommand;
   }
 
-  public static Command backAlignToReefLeft(SwerveDriveSubsystem swerve) {
+  public static Command backAlignToReefLeft(SwerveDriveSubsystem swerve, VisionIO vision) {
     Command alignCommand =
         new OrthogonalToTag(
             Constants.FieldPositionConstants.BACK_REEF_LEFT_OFFSET,
             Constants.AprilTags.REEF_POSES,
             false,
-            swerve);
+            swerve,
+            vision);
     return aboutFace(swerve).andThen(alignCommand);
   }
 
-  public static Command backAlignToReefRight(SwerveDriveSubsystem swerve) {
+  public static Command backAlignToReefRight(SwerveDriveSubsystem swerve, VisionIO vision) {
     Command alignCommand =
         new OrthogonalToTag(
             Constants.FieldPositionConstants.BACK_REEF_RIGHT_OFFSET,
             Constants.AprilTags.REEF_POSES,
             false,
-            swerve);
+            swerve,
+            vision);
     return aboutFace(swerve).andThen(alignCommand);
   }
 
-  public static Command backAlignToCoralStationLeft(SwerveDriveSubsystem swerve) {
+  public static Command backAlignToCoralStationLeft(SwerveDriveSubsystem swerve, VisionIO vision) {
     Command alignCommand =
         new OrthogonalToTag(
             Constants.FieldPositionConstants.CORAL_STATION_LEFT_OFFSET,
             Constants.AprilTags.CORAL_STATION_POSES,
             false,
-            swerve);
+            swerve,
+            vision);
     return alignCommand;
   }
 
-  public static Command backAlignToCoralStationRight(SwerveDriveSubsystem swerve) {
+  public static Command backAlignToCoralStationRight(SwerveDriveSubsystem swerve, VisionIO vision) {
     Command alignCommand =
         new OrthogonalToTag(
             Constants.FieldPositionConstants.CORAL_STATION_RIGHT_OFFSET,
             Constants.AprilTags.CORAL_STATION_POSES,
             false,
-            swerve);
+            swerve,
+            vision);
     return alignCommand;
   }
 
-  public static Command AlignToProcessor(SwerveDriveSubsystem swerve) {
+  public static Command AlignToProcessor(SwerveDriveSubsystem swerve, VisionIO vision) {
     Command alignCommand =
         new OrthogonalToTag(
             Constants.FieldPositionConstants.PROCESSOR_OFFSET,
             Constants.AprilTags.PROCESSOR_POSES,
             false,
-            swerve);
+            swerve,
+            vision);
     return alignCommand;
   }
 
@@ -107,6 +115,7 @@ public class AlignCommands {
 
   public static Trigger hasTarget() {
     return new Trigger(() -> RobotState.getInstance().visionInputs.hasTarget)
-        .and(() -> RobotState.getInstance().visionInputs.hasEstimate);
+        .and(() -> RobotState.getInstance().visionInputs.hasEstimate)
+        .and(() -> RobotState.getInstance().visionInputs.canSeeTarget);
   }
 }

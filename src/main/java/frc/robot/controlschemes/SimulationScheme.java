@@ -2,6 +2,7 @@ package frc.robot.controlschemes;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.helpers.vision.VisionIO;
 import frc.robot.autonomous.*;
 import frc.robot.subsystems.Superstructure;
 // import frc.robot.subsystems.Superstructure;
@@ -23,11 +24,12 @@ public class SimulationScheme {
       IntakeSubsystem intake,
       SwerveDriveSubsystem swerve,
       WristSubsystem wrist,
+      VisionIO vision,
       Superstructure superstructure,
       CommandXboxController controller) {
 
     configureButtons(
-        algae, arm, climber, elevator, intake, swerve, wrist, superstructure, controller);
+        algae, arm, climber, elevator, intake, swerve, wrist, vision, superstructure, controller);
   }
 
   public static void configureButtons(
@@ -38,6 +40,7 @@ public class SimulationScheme {
       IntakeSubsystem intake,
       SwerveDriveSubsystem swerve,
       WristSubsystem wrist,
+      VisionIO vision,
       Superstructure superstructure,
       CommandXboxController controller) {
 
@@ -46,7 +49,7 @@ public class SimulationScheme {
     controller
         .a()
         .and(AlignCommands.hasTarget())
-        .onTrue(AlignCommands.frontAlignToReefLeft(swerve));
+        .onTrue(AlignCommands.frontAlignToReefLeft(swerve, vision));
 
     /** x */
     controller.b().onTrue(new InstantCommand(() -> System.out.println("b")));
