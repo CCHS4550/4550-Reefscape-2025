@@ -1,7 +1,5 @@
 package frc.robot.subsystems.arm;
 
-import static edu.wpi.first.units.Units.Second;
-import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
 import com.revrobotics.AbsoluteEncoder;
@@ -14,12 +12,10 @@ import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.helpers.CCMotorController;
 import frc.maps.Constants;
 import frc.robot.subsystems.arm.ArmSubsystem.ArmState;
 import java.util.function.BooleanSupplier;
-import org.littletonrobotics.junction.Logger;
 
 public class ArmIOHardware implements ArmIO {
 
@@ -146,38 +142,4 @@ public class ArmIOHardware implements ArmIO {
   public void stop() {
     armMotor.setVoltage(0);
   }
-
-  /** SYSID METHODS */
-
-  /**
-   * Used only in characterizing. Don't touch this.
-   *
-   * @param direction
-   * @return the quasistatic characterization test
-   */
-  public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
-    return sysIdRoutine.quasistatic(direction);
-  }
-
-  // /**
-  //  * Used only in characterizing. Don't touch this.
-  //  *
-  //  * @param direction
-  //  * @return the dynamic characterization test
-  //  */
-  public Command sysIdDynamic(SysIdRoutine.Direction direction) {
-    return sysIdRoutine.dynamic(direction);
-  }
-
-  SysIdRoutine sysIdRoutine =
-      new SysIdRoutine(
-          new SysIdRoutine.Config(
-              Volts.per(Second).of(1),
-              Volts.of(2),
-              Seconds.of(2),
-              (state) -> Logger.recordOutput("SysIdTestState", state.toString())),
-          new SysIdRoutine.Mechanism(
-              (voltage) -> setVoltage(voltage),
-              null, // No log consumer, since data is recorded by URCL
-              ArmSubsystem.getInstance()));
 }

@@ -29,13 +29,14 @@ public class Superstructure extends SubsystemBase {
   WristSubsystem wrist;
 
   /** Creates a new Superstructure. */
-  public Superstructure(AlgaeSubsystem algae,
-  ArmSubsystem arm,
-  ClimberSubsystem climber,
-  ElevatorSubsystem elevator,
-  IntakeSubsystem intake,
-  SwerveDriveSubsystem swerve,
-  WristSubsystem wrist) {
+  public Superstructure(
+      AlgaeSubsystem algae,
+      ArmSubsystem arm,
+      ClimberSubsystem climber,
+      ElevatorSubsystem elevator,
+      IntakeSubsystem intake,
+      SwerveDriveSubsystem swerve,
+      WristSubsystem wrist) {
     this.algae = algae;
     this.arm = arm;
     this.elevator = elevator;

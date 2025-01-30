@@ -11,21 +11,18 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.helpers.CCMotorController;
-import frc.helpers.CCMotorReplay;
 import frc.maps.Constants;
 import org.littletonrobotics.junction.Logger;
 
 public class ClimberSubsystem extends SubsystemBase {
 
   /** Implementation of Singleton Pattern */
-
   private final ClimberIO climberIO;
-  
+
   CCMotorController.MotorFactory motorFactory;
   ClimberIO.IOFactory ioFactory;
 
   public final ClimberIOInputsAutoLogged climberInputs = new ClimberIOInputsAutoLogged();
-
 
   /** Creates a new WristSubsystem. */
   public ClimberSubsystem(

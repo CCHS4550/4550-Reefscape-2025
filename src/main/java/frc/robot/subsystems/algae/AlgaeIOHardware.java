@@ -1,7 +1,5 @@
 package frc.robot.subsystems.algae;
 
-import static edu.wpi.first.units.Units.Second;
-import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
@@ -11,12 +9,9 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.helpers.CCMotorController;
 import frc.maps.Constants;
 import frc.robot.subsystems.algae.AlgaeSubsystem.AlgaeStates;
-import org.littletonrobotics.junction.Logger;
 
 public class AlgaeIOHardware implements AlgaeIO {
 
@@ -148,38 +143,4 @@ public class AlgaeIOHardware implements AlgaeIO {
   public double getAngleRads() {
     return wrist.getPosition() * WRIST_POSITION_COEFFICIENT;
   }
-
-  /** SYSID METHODS */
-
-  /**
-   * Used only in characterizing. Don't touch this.
-   *
-   * @param direction
-   * @return the quasistatic characterization test
-   */
-  public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
-    return sysIdRoutine.quasistatic(direction);
-  }
-
-  /**
-   * Used only in characterizing. Don't touch this.
-   *
-   * @param direction
-   * @return the dynamic characterization test
-   */
-  public Command sysIdDynamic(SysIdRoutine.Direction direction) {
-    return sysIdRoutine.dynamic(direction);
-  }
-
-  SysIdRoutine sysIdRoutine =
-      new SysIdRoutine(
-          new SysIdRoutine.Config(
-              Volts.per(Second).of(1),
-              Volts.of(1),
-              Seconds.of(2),
-              (state) -> Logger.recordOutput("SysIdTestState", state.toString())),
-          new SysIdRoutine.Mechanism(
-              (voltage) -> setWristVoltage(voltage),
-              null, // No log consumer, since data is recorded by URCL
-              AlgaeSubsystem.getInstance()));
 }

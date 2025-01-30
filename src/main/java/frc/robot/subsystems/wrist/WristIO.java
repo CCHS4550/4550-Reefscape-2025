@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.helpers.CCMotorController;
-import frc.robot.subsystems.arm.ArmSubsystem;
+import frc.robot.RobotState;
 import frc.robot.subsystems.wrist.WristSubsystem.WristState;
 import java.util.function.BooleanSupplier;
 import org.littletonrobotics.junction.AutoLog;
@@ -56,8 +56,10 @@ public interface WristIO {
     return () -> false;
   }
 
+  // This might cause a problem, look here if Robot State is called prematurely.
   default double getAbsoluteEncoderGlobalRadians() {
-    return getAbsoluteEncoderRadiansOffset() - ArmSubsystem.getInstance().getPosition();
+    return getAbsoluteEncoderRadiansOffset()
+        - RobotState.getInstance().armInputs.currentAngleRadians;
   }
 
   /**

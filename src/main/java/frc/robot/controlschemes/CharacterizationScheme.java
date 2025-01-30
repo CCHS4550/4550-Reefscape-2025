@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.algae.AlgaeSubsystem;
 import frc.robot.subsystems.arm.ArmSubsystem;
+import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveDriveSubsystem;
@@ -18,23 +19,25 @@ import frc.robot.subsystems.wrist.WristSubsystem.WristState;
 public class CharacterizationScheme {
 
   public static void configure(
-      SwerveDriveSubsystem swerve,
       AlgaeSubsystem algae,
       ArmSubsystem arm,
+      ClimberSubsystem climber,
       ElevatorSubsystem elevator,
       IntakeSubsystem intake,
+      SwerveDriveSubsystem swerve,
       WristSubsystem wrist,
       CommandXboxController controller) {
 
-    configureButtons(swerve, algae, arm, elevator, intake, wrist, controller);
+    configureButtons(algae, arm, climber, elevator, intake, swerve, wrist, controller);
   }
 
   public static void configureButtons(
-      SwerveDriveSubsystem swerve,
       AlgaeSubsystem algae,
       ArmSubsystem arm,
+      ClimberSubsystem climber,
       ElevatorSubsystem elevator,
       IntakeSubsystem intake,
+      SwerveDriveSubsystem swerve,
       WristSubsystem wrist,
       CommandXboxController controller) {
 

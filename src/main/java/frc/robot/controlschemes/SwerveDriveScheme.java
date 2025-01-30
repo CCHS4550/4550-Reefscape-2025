@@ -14,7 +14,13 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.helpers.ControlScheme;
 import frc.maps.Constants;
 import frc.robot.RobotState;
+import frc.robot.subsystems.algae.AlgaeSubsystem;
+import frc.robot.subsystems.arm.ArmSubsystem;
+import frc.robot.subsystems.climber.ClimberSubsystem;
+import frc.robot.subsystems.elevator.ElevatorSubsystem;
+import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveDriveSubsystem;
+import frc.robot.subsystems.wrist.WristSubsystem;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
@@ -45,10 +51,13 @@ public class SwerveDriveScheme implements ControlScheme {
    * @param controller The driving controller, initialized in RobotContainer.java.
    */
   public static void configure(
+      AlgaeSubsystem algae,
+      ArmSubsystem arm,
+      ClimberSubsystem climber,
+      ElevatorSubsystem elevator,
+      IntakeSubsystem intake,
       SwerveDriveSubsystem swerve,
-      //  Shooter shooter,
-      //   Indexer indexer,
-      //    int port
+      WristSubsystem wrist,
       CommandXboxController controller) {
 
     Shuffleboard.getTab("Diagnostics")
@@ -144,7 +153,7 @@ public class SwerveDriveScheme implements ControlScheme {
                     // Relative to robot
                     chassisSpeeds = new ChassisSpeeds(xSpeed, ySpeed, -turnSpeed);
                   }
-                  SwerveDriveSubsystem.getInstance().driveRobotRelative(chassisSpeeds);
+                  swerve.driveRobotRelative(chassisSpeeds);
                 },
                 swerve)
             .withName("Swerve Controller Command"));
@@ -159,7 +168,14 @@ public class SwerveDriveScheme implements ControlScheme {
    * @param port The controller port of the driving controller.
    */
   private static void configureButtons(
-      SwerveDriveSubsystem swerve, CommandXboxController controller) {
+      AlgaeSubsystem algae,
+      ArmSubsystem arm,
+      ClimberSubsystem climber,
+      ElevatorSubsystem elevator,
+      IntakeSubsystem intake,
+      SwerveDriveSubsystem swerve,
+      WristSubsystem wrist,
+      CommandXboxController controller) {
 
     Trigger reefLeftTrigger = controller.leftTrigger().and(controller.x());
     Trigger reefRightTrigger = controller.leftTrigger().and(controller.b());

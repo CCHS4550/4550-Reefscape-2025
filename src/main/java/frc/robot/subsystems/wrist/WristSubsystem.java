@@ -17,7 +17,6 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.helpers.CCMotorController;
-import frc.helpers.CCMotorReplay;
 import frc.maps.Constants;
 import org.littletonrobotics.junction.Logger;
 
@@ -48,9 +47,6 @@ public class WristSubsystem extends SubsystemBase {
   public static WristState currentState = WristState.DEFAULT_WITHINFRAME;
   public static WristState wantedState = WristState.DEFAULT_WITHINFRAME;
 
-  /** Implementation of Singleton Pattern */
-  public static WristSubsystem mInstance;
-
   public final WristIO wristIO;
 
   private SysIdRoutine sysIdRoutine;
@@ -58,9 +54,7 @@ public class WristSubsystem extends SubsystemBase {
   private CCMotorController.MotorFactory motorFactory;
   private WristIO.IOFactory ioFactory;
 
-  public static final WristIOInputsAutoLogged wristInputs = new WristIOInputsAutoLogged();
-
-
+  public final WristIOInputsAutoLogged wristInputs = new WristIOInputsAutoLogged();
 
   /** Creates a new WristSubsystem. */
   public WristSubsystem(CCMotorController.MotorFactory motorFactory, WristIO.IOFactory ioFactory) {
@@ -79,16 +73,16 @@ public class WristSubsystem extends SubsystemBase {
                 1));
 
     sysIdRoutine =
-                new SysIdRoutine(
-                    new SysIdRoutine.Config(
-                        Volts.per(Second).of(1),
-                        Volts.of(2),
-                        Seconds.of(2),
-                        (state) -> Logger.recordOutput("SysIdTestState", state.toString())),
-                    new SysIdRoutine.Mechanism(
-                        (voltage) -> wristIO.setVoltage(voltage),
-                        null, // No log consumer, since data is recorded by URCL
-                        this));
+        new SysIdRoutine(
+            new SysIdRoutine.Config(
+                Volts.per(Second).of(1),
+                Volts.of(2),
+                Seconds.of(2),
+                (state) -> Logger.recordOutput("SysIdTestState", state.toString())),
+            new SysIdRoutine.Mechanism(
+                (voltage) -> wristIO.setVoltage(voltage),
+                null, // No log consumer, since data is recorded by URCL
+                this));
   }
 
   private void applyStates() {

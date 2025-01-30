@@ -16,7 +16,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.helpers.CCMotorController;
-import frc.helpers.CCMotorReplay;
 import frc.maps.Constants;
 import org.littletonrobotics.junction.Logger;
 
@@ -56,7 +55,6 @@ public class ArmSubsystem extends SubsystemBase {
 
   public final ArmIOInputsAutoLogged armInputs = new ArmIOInputsAutoLogged();
 
-
   /** Creates a new WristSubsystem. */
   public ArmSubsystem(CCMotorController.MotorFactory motorFactory, ArmIO.IOFactory ioFactory) {
     this.motorFactory = motorFactory;
@@ -72,18 +70,17 @@ public class ArmSubsystem extends SubsystemBase {
                 Constants.MotorConstants.ARM_REVERSE,
                 Constants.ArmConstants.ARM_MOTOR_ROTATIONS_TO_ARM_ROTATIONS_RADIANS,
                 Constants.ArmConstants.ARM_MOTOR_RADIANS_PER_SECOND_CONVERSION_FACTOR));
-      sysIdRoutine =
-                new SysIdRoutine(
-                    new SysIdRoutine.Config(
-                        Volts.per(Second).of(1),
-                        Volts.of(2),
-                        Seconds.of(2),
-                        (state) -> Logger.recordOutput("SysIdTestState", state.toString())),
-                    new SysIdRoutine.Mechanism(
-                        (voltage) -> armIO.setVoltage(voltage),
-                        null, // No log consumer, since data is recorded by URCL
-                        this));
-
+    sysIdRoutine =
+        new SysIdRoutine(
+            new SysIdRoutine.Config(
+                Volts.per(Second).of(1),
+                Volts.of(2),
+                Seconds.of(2),
+                (state) -> Logger.recordOutput("SysIdTestState", state.toString())),
+            new SysIdRoutine.Mechanism(
+                (voltage) -> armIO.setVoltage(voltage),
+                null, // No log consumer, since data is recorded by URCL
+                this));
   }
 
   private void applyStates() {
@@ -200,8 +197,7 @@ public class ArmSubsystem extends SubsystemBase {
         });
   }
 
-
-    /** SYSID METHODS */
+  /** SYSID METHODS */
 
   /**
    * Used only in characterizing. Don't touch this.
@@ -222,6 +218,4 @@ public class ArmSubsystem extends SubsystemBase {
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
     return sysIdRoutine.dynamic(direction);
   }
-
-  
 }

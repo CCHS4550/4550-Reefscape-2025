@@ -27,7 +27,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.helpers.CCMotorController;
-import frc.helpers.CCSparkSim;
 import frc.maps.Constants;
 import frc.robot.RobotState;
 import java.util.concurrent.locks.Lock;
@@ -39,11 +38,10 @@ public class SwerveDriveSubsystem extends SubsystemBase {
 
   static final Lock odometryLock = new ReentrantLock();
 
-
-  private final SwerveModuleIO frontRight;
-  private final SwerveModuleIO frontLeft;
-  private final SwerveModuleIO backRight;
-  private final SwerveModuleIO backLeft;
+  public final SwerveModuleIO frontRight;
+  public final SwerveModuleIO frontLeft;
+  public final SwerveModuleIO backRight;
+  public final SwerveModuleIO backLeft;
 
   private SwerveModuleIO[] swerveModules;
 
@@ -51,16 +49,12 @@ public class SwerveDriveSubsystem extends SubsystemBase {
   private SwerveModuleIO.ModuleFactory moduleFactory;
 
   // * Must be in the order FR, FL, BR, BL */
-  public final SwerveModuleInputsAutoLogged frontRightInputs =
-  new SwerveModuleInputsAutoLogged();
-public final SwerveModuleInputsAutoLogged frontLeftInputs =
-  new SwerveModuleInputsAutoLogged();
-public final SwerveModuleInputsAutoLogged backRightInputs =
-  new SwerveModuleInputsAutoLogged();
-public final SwerveModuleInputsAutoLogged backLeftInputs =
-  new SwerveModuleInputsAutoLogged();
+  public final SwerveModuleInputsAutoLogged frontRightInputs = new SwerveModuleInputsAutoLogged();
+  public final SwerveModuleInputsAutoLogged frontLeftInputs = new SwerveModuleInputsAutoLogged();
+  public final SwerveModuleInputsAutoLogged backRightInputs = new SwerveModuleInputsAutoLogged();
+  public final SwerveModuleInputsAutoLogged backLeftInputs = new SwerveModuleInputsAutoLogged();
 
-public SwerveModuleInputsAutoLogged[] swerveModuleInputs;
+  public final SwerveModuleInputsAutoLogged[] swerveModuleInputs;
 
   public SwerveModuleState[] desiredModuleStates;
 

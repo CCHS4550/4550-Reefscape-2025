@@ -22,6 +22,7 @@ public class FollowPathCommand extends Command {
   Timer timer = new Timer();
 
   PathPlannerTrajectory trajectory;
+  SwerveDriveSubsystem swerve;
 
   Pose2d currentPose;
 
@@ -35,13 +36,14 @@ public class FollowPathCommand extends Command {
    *
    * @param trajectory the PathPlannerTrajectory
    */
-  public FollowPathCommand(PathPlannerTrajectory trajectory) {
-    translationPID = SwerveDriveSubsystem.getInstance().translationPID;
-    rotationPID = SwerveDriveSubsystem.getInstance().rotationPID;
+  public FollowPathCommand(PathPlannerTrajectory trajectory, SwerveDriveSubsystem swerve) {
+    this.swerve = swerve;
+    translationPID = swerve.translationPID;
+    rotationPID = swerve.rotationPID;
 
     this.trajectory = trajectory;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(SwerveDriveSubsystem.getInstance());
+    addRequirements(swerve);
   }
 
   // Called when the command is initially scheduled.
@@ -100,7 +102,7 @@ public class FollowPathCommand extends Command {
 
     Logger.recordOutput("wantedAutoPose", wantedState.pose);
 
-    SwerveDriveSubsystem.getInstance().driveRobotRelative(chassisSpeeds);
+    swerve.driveRobotRelative(chassisSpeeds);
     // SwerveDrive.getInstance().setModuleStates(moduleStates);
     // Logger.recordOutput("Autonomous Set moduleStates", moduleStates);
   }
@@ -109,7 +111,7 @@ public class FollowPathCommand extends Command {
   @Override
   public void end(boolean interrupted) {
     this.timer.stop();
-    SwerveDriveSubsystem.getInstance().stopModules();
+    swerve.stopModules();
   }
 
   // Returns true when the command should end.

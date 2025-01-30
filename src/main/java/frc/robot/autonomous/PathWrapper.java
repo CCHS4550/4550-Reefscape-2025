@@ -24,6 +24,8 @@ import java.util.Map;
 /** Largely inspired of off */
 public class PathWrapper {
 
+  SwerveDriveSubsystem swerve;
+
   // This is what is input to the PathWrapper
   public record AutoFile(String fileName, boolean isChoreoTraj) {}
 
@@ -44,7 +46,12 @@ public class PathWrapper {
    * @param files an AutoFiles array with all the auto files.
    */
   public PathWrapper(
-      CustomAutoChooser.AutoRoutine autoRoutine, Rotation2d initialHeading, AutoFile... files) {
+      SwerveDriveSubsystem swerve,
+      CustomAutoChooser.AutoRoutine autoRoutine,
+      Rotation2d initialHeading,
+      AutoFile... files) {
+
+    this.swerve = swerve;
 
     initialPath =
         files[0].isChoreoTraj
@@ -57,7 +64,7 @@ public class PathWrapper {
             : getPathPlannerTrajectoryAutoRoutine(
                 files[0].fileName, new ChassisSpeeds(), initialHeading);
 
-    followCommands.add(followTrajectory(initialTraj));
+    followCommands.add(followTrajectory(initialTraj, swerve));
 
     initialPose = initialTraj.getInitialPose();
     //  initialPath.getPreviewStartingHolonomicPose();
@@ -111,15 +118,15 @@ public class PathWrapper {
   }
 
   /** Primary Follow Commands */
-  public static Command followChoreo(String filename, ChassisSpeeds speeds, Rotation2d heading) {
+  public Command followChoreo(String filename, ChassisSpeeds speeds, Rotation2d heading) {
 
-    return new FollowPathCommand(getChoreoTrajectoryAutoRoutine(filename, speeds, heading));
+    return new FollowPathCommand(getChoreoTrajectoryAutoRoutine(filename, speeds, heading), swerve);
   }
 
-  public static Command followPathPlanner(
-      String filename, ChassisSpeeds speeds, Rotation2d heading) {
+  public Command followPathPlanner(String filename, ChassisSpeeds speeds, Rotation2d heading) {
 
-    return new FollowPathCommand(getPathPlannerTrajectoryAutoRoutine(filename, speeds, heading));
+    return new FollowPathCommand(
+        getPathPlannerTrajectoryAutoRoutine(filename, speeds, heading), swerve);
   }
 
   /** Get the PathPlannerTrajectory from a particular PathPlannerPath */
@@ -188,22 +195,24 @@ public class PathWrapper {
   }
 
   /** Helper Classes for general cases outside this class. */
-  public static Command followChoreo(String filename) {
+  public static Command followChoreo(String filename, SwerveDriveSubsystem swerve) {
     return new FollowPathCommand(
         getPathPlannerPathfromChoreo(filename)
             .generateTrajectory(
-                SwerveDriveSubsystem.getInstance().getRobotRelativeSpeeds(),
+                RobotState.getInstance().getRobotRelativeSpeeds(),
                 RobotState.getInstance().getPoseRotation2d(),
-                Constants.SwerveConstants.ROBOT_CONFIG));
+                Constants.SwerveConstants.ROBOT_CONFIG),
+        swerve);
   }
 
-  public static Command followPathPlanner(String filename) {
+  public static Command followPathPlanner(String filename, SwerveDriveSubsystem swerve) {
     return new FollowPathCommand(
         getPathPlannerPathfromPath(filename)
             .generateTrajectory(
-                SwerveDriveSubsystem.getInstance().getRobotRelativeSpeeds(),
+                RobotState.getInstance().getRobotRelativeSpeeds(),
                 RobotState.getInstance().getPoseRotation2d(),
-                Constants.SwerveConstants.ROBOT_CONFIG));
+                Constants.SwerveConstants.ROBOT_CONFIG),
+        swerve);
   }
 
   public static PathPlannerTrajectory getChoreoTrajectory(String filename) {
@@ -230,7 +239,7 @@ public class PathWrapper {
     return traj;
   }
 
-  private static Command followTrajectory(PathPlannerTrajectory traj) {
-    return new FollowPathCommand(traj);
+  private static Command followTrajectory(PathPlannerTrajectory traj, SwerveDriveSubsystem swerve) {
+    return new FollowPathCommand(traj, swerve);
   }
 }

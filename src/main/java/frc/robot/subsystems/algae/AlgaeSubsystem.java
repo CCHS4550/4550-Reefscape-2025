@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.helpers.CCMotorController;
-import frc.helpers.CCMotorReplay;
 import frc.maps.Constants;
 import org.littletonrobotics.junction.Logger;
 
@@ -20,14 +19,12 @@ public class AlgaeSubsystem extends SubsystemBase {
 
   private final AlgaeIO algaeIO;
 
-  SysIdRoutine sysIdRoutine;
+  private SysIdRoutine sysIdRoutine;
 
   private CCMotorController.MotorFactory motorFactory;
   private AlgaeIO.IOFactory ioFactory;
 
   public final AlgaeIOInputsAutoLogged algaeInputs = new AlgaeIOInputsAutoLogged();
-
-
 
   public enum AlgaeStates {
     INTAKE(Units.degreesToRadians(15)), // I have no idea what the right value is for this
@@ -75,18 +72,17 @@ public class AlgaeSubsystem extends SubsystemBase {
                 1.0,
                 1.0));
 
-
-                sysIdRoutine =
-                new SysIdRoutine(
-                    new SysIdRoutine.Config(
-                        Volts.per(Second).of(1),
-                        Volts.of(1),
-                        Seconds.of(2),
-                        (state) -> Logger.recordOutput("SysIdTestState", state.toString())),
-                    new SysIdRoutine.Mechanism(
-                        (voltage) -> algaeIO.setWristVoltage(voltage),
-                        null, // No log consumer, since data is recorded by URCL
-                        this));
+    sysIdRoutine =
+        new SysIdRoutine(
+            new SysIdRoutine.Config(
+                Volts.per(Second).of(1),
+                Volts.of(1),
+                Seconds.of(2),
+                (state) -> Logger.recordOutput("SysIdTestState", state.toString())),
+            new SysIdRoutine.Mechanism(
+                (voltage) -> algaeIO.setWristVoltage(voltage),
+                null, // No log consumer, since data is recorded by URCL
+                this));
   }
 
   private void applyStates() {
@@ -198,6 +194,4 @@ public class AlgaeSubsystem extends SubsystemBase {
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
     return sysIdRoutine.dynamic(direction);
   }
-
-  
 }

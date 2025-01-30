@@ -5,24 +5,17 @@
 package frc.robot.autonomous;
 
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotState;
+import frc.robot.subsystems.swervedrive.SwerveDriveSubsystem;
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /** Add your docs here. */
 public class CustomAutoChooser {
 
-  public static CustomAutoChooser mInstance;
-
-  public static CustomAutoChooser getInstance() {
-    if (mInstance == null) {
-      mInstance = new CustomAutoChooser();
-    }
-    return mInstance;
-  }
+  SwerveDriveSubsystem swerve;
 
   /** All the Auto Names. */
   public enum AutoRoutine {
@@ -37,19 +30,16 @@ public class CustomAutoChooser {
    * This is what puts the options on Smart Dashboard, but instead of doing it by itself, we have to
    * populate it manually.
    */
-  private final SendableChooser<AutoRoutine> autoChooser = new SendableChooser<>();
+  private final LoggedDashboardChooser<AutoRoutine> autoChooser =
+      new LoggedDashboardChooser<>("Autonomous Routine Chooser");
 
-  public CustomAutoChooser() {
+  public CustomAutoChooser(SwerveDriveSubsystem swerve) {
 
-    autoChooser.setDefaultOption("EMPTY", AutoRoutine.EMPTY);
+    autoChooser.addDefaultOption("EMPTY", AutoRoutine.EMPTY);
     autoChooser.addOption("Auto 1 Name", AutoRoutine.AUTOROUTINE1);
-    autoChooser.addOption("Auto 2 Name", AutoRoutine.AUTOROUTINE1);
-    autoChooser.addOption("Auto 3 Name", AutoRoutine.AUTOROUTINE1);
-    autoChooser.addOption("Auto 4 Name", AutoRoutine.AUTOROUTINE1);
-    SmartDashboard.putData("Custom AutoChooser", autoChooser);
-
-    // autoChooser.addOption("Auto 3 Name", Autos.AUTO3);
-
+    autoChooser.addOption("Auto 2 Name", AutoRoutine.AUTOROUTINE2);
+    autoChooser.addOption("Auto 3 Name", AutoRoutine.AUTOROUTINE3);
+    autoChooser.addOption("Auto 4 Name", AutoRoutine.AUTOROUTINE4);
   }
 
   /**
@@ -75,6 +65,7 @@ public class CustomAutoChooser {
 
     PathWrapper pathWrapper1 =
         new PathWrapper(
+            swerve,
             AutoRoutine.AUTOROUTINE1,
             Rotation2d.fromRadians(Math.PI),
             new PathWrapper.AutoFile("examplepath.0", true),
@@ -104,7 +95,7 @@ public class CustomAutoChooser {
 
   public Command getSelectedCustomCommand() {
 
-    switch (autoChooser.getSelected()) {
+    switch (autoChooser.get()) {
         //   case AUTO1:
         //     return auto1Command();
       case AUTOROUTINE1:
@@ -129,7 +120,8 @@ public class CustomAutoChooser {
    * @param pathname - The path name, no extension.
    * @return - A follow Command!
    */
-  public static Command followChoreoTestCommand(String pathname, Rotation2d initialHeading) {
+  public static Command followChoreoTestCommand(
+      String pathname, Rotation2d initialHeading, SwerveDriveSubsystem swerve) {
 
     return new SequentialCommandGroup(
         new InstantCommand(
@@ -146,10 +138,11 @@ public class CustomAutoChooser {
         //         .getInitialState()
         //         .positionMeters,
         //     PathWrapper.getChoreoTrajectory(pathname).getInitialState().heading))),
-        new FollowPathCommand(PathWrapper.getChoreoTrajectory(pathname)));
+        new FollowPathCommand(PathWrapper.getChoreoTrajectory(pathname), swerve));
   }
 
-  public static Command followPathPlannerTestCommand(String pathname, Rotation2d initialHeading) {
+  public static Command followPathPlannerTestCommand(
+      String pathname, Rotation2d initialHeading, SwerveDriveSubsystem swerve) {
     return new SequentialCommandGroup(
         new InstantCommand(
             () ->
@@ -160,6 +153,6 @@ public class CustomAutoChooser {
                             .get()
                             .getTranslation())),
         new InstantCommand(() -> RobotState.getInstance().setRotation2d(initialHeading)),
-        new FollowPathCommand(PathWrapper.getPathPlannerTrajectory(pathname)));
+        new FollowPathCommand(PathWrapper.getPathPlannerTrajectory(pathname), swerve));
   }
 }

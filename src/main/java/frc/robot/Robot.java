@@ -36,7 +36,9 @@ import org.littletonrobotics.urcl.URCL;
  */
 public class Robot extends LoggedRobot {
 
+  private RobotState robotState;
   private RobotContainer robotContainer;
+
   CustomAutoChooser autoChooser;
 
   private boolean browningOut = false;
@@ -45,8 +47,6 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void robotInit() {
-
-    autoChooser = new CustomAutoChooser();
 
     Constants.getCurrentMode();
     System.out.println(Constants.currentMode);
@@ -103,7 +103,9 @@ public class Robot extends LoggedRobot {
     // Start AdvantageKit logger
     Logger.start();
 
+    robotState = RobotState.getInstance();
     robotContainer = new RobotContainer();
+    autoChooser = robotState.autoChooserInit();
   }
 
   /** This function is called periodically during all modes. */
@@ -112,12 +114,7 @@ public class Robot extends LoggedRobot {
 
     switch (Constants.currentMode) {
       case REAL:
-
-        // Remove later
-        DriverStation.silenceJoystickConnectionWarning(true);
-
-        RobotState.getInstance().updateDashboard();
-        // RobotState.getInstance().updateVisionPose();
+        RobotState.getInstance().dashboardPeriodic();
 
         if (RobotController.getBatteryVoltage() < 10) {
           browningOut = true;
@@ -135,6 +132,7 @@ public class Robot extends LoggedRobot {
       case REPLAY:
         break;
     }
+
     RobotState.getInstance().updateOdometryPose();
     RobotState.getInstance().updateSwerveModulePositionsPeriodic();
     RobotState.getInstance().updateVisionPose();

@@ -101,7 +101,6 @@ public class RobotContainer {
 
         break;
     }
-
     RobotState.getInstance().robotStateInit(algae, arm, climber, elevator, intake, swerve, wrist);
     RobotState.getInstance().poseInit();
     RobotState.getInstance().moduleEncodersInit();
@@ -109,30 +108,18 @@ public class RobotContainer {
 
     switch (Constants.currentMode) {
       case REAL:
-        SwerveDriveScheme.configure(swerve, primaryController);
-
+        SwerveDriveScheme.configure(
+            algae, arm, climber, elevator, intake, swerve, wrist, primaryController);
         CharacterizationScheme.configure(
-            swerve,
-            algae,
-            arm,
-            elevator,
-            intake,
-            wrist,
-            primaryController);
+            algae, arm, climber, elevator, intake, swerve, wrist, primaryController);
 
         break;
 
       case SIM:
-        SwerveDriveScheme.configure(swerve, primaryController);
-
+        SwerveDriveScheme.configure(
+            algae, arm, climber, elevator, intake, swerve, wrist, primaryController);
         SimulationScheme.configure(
-            intake,
-            arm,
-            elevator,
-            wrist,
-            algae,
-            superstructure,
-            primaryController);
+            algae, arm, climber, elevator, intake, swerve, wrist, primaryController);
         break;
 
       case REPLAY:

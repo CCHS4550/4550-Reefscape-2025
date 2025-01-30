@@ -1,7 +1,5 @@
 package frc.robot.subsystems.elevator;
 
-import static edu.wpi.first.units.Units.Second;
-import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
 import com.revrobotics.RelativeEncoder;
@@ -13,12 +11,10 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.helpers.CCMotorController;
 import frc.maps.Constants;
 import frc.robot.subsystems.elevator.ElevatorSubsystem.ElevatorState;
 import java.util.function.BooleanSupplier;
-import org.littletonrobotics.junction.Logger;
 
 public class ElevatorIOHardware implements ElevatorIO {
 
@@ -130,5 +126,4 @@ public class ElevatorIOHardware implements ElevatorIO {
   public double getAbsoluteHeightMetersNoOffset() {
     return throughBore.getPosition() * Constants.ElevatorConstants.AXLE_ROTATION_TO_HEIGHT_METERS;
   }
-
 }

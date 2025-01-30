@@ -14,89 +14,95 @@ import frc.robot.subsystems.swervedrive.SwerveDriveSubsystem;
 /** Add your docs here. */
 public class AlignCommands {
 
-  public static Command frontAlignToReefLeft() {
+  public static Command frontAlignToReefLeft(SwerveDriveSubsystem swerve) {
 
     return new OrthogonalToTag(
         Constants.FieldPositionConstants.FRONT_REEF_LEFT_OFFSET,
         Constants.AprilTags.REEF_POSES,
-        false);
+        false,
+        swerve);
   }
 
-  public static Command frontAlignToReefRight() {
+  public static Command frontAlignToReefRight(SwerveDriveSubsystem swerve) {
     Command alignCommand =
         new OrthogonalToTag(
             Constants.FieldPositionConstants.FRONT_REEF_RIGHT_OFFSET,
             Constants.AprilTags.REEF_POSES,
-            false);
+            false,
+            swerve);
     return alignCommand;
   }
 
-  public static Command backAlignToReefLeft() {
+  public static Command backAlignToReefLeft(SwerveDriveSubsystem swerve) {
     Command alignCommand =
         new OrthogonalToTag(
             Constants.FieldPositionConstants.BACK_REEF_LEFT_OFFSET,
             Constants.AprilTags.REEF_POSES,
-            false);
-    return aboutFace().andThen(alignCommand);
+            false,
+            swerve);
+    return aboutFace(swerve).andThen(alignCommand);
   }
 
-  public static Command backAlignToReefRight() {
+  public static Command backAlignToReefRight(SwerveDriveSubsystem swerve) {
     Command alignCommand =
         new OrthogonalToTag(
             Constants.FieldPositionConstants.BACK_REEF_RIGHT_OFFSET,
             Constants.AprilTags.REEF_POSES,
-            false);
-    return aboutFace().andThen(alignCommand);
+            false,
+            swerve);
+    return aboutFace(swerve).andThen(alignCommand);
   }
 
-  public static Command backAlignToCoralStationLeft() {
+  public static Command backAlignToCoralStationLeft(SwerveDriveSubsystem swerve) {
     Command alignCommand =
         new OrthogonalToTag(
             Constants.FieldPositionConstants.CORAL_STATION_LEFT_OFFSET,
             Constants.AprilTags.CORAL_STATION_POSES,
-            false);
+            false,
+            swerve);
     return alignCommand;
   }
 
-  public static Command backAlignToCoralStationRight() {
+  public static Command backAlignToCoralStationRight(SwerveDriveSubsystem swerve) {
     Command alignCommand =
         new OrthogonalToTag(
             Constants.FieldPositionConstants.CORAL_STATION_RIGHT_OFFSET,
             Constants.AprilTags.CORAL_STATION_POSES,
-            false);
+            false,
+            swerve);
     return alignCommand;
   }
 
-  public static Command AlignToProcessor() {
+  public static Command AlignToProcessor(SwerveDriveSubsystem swerve) {
     Command alignCommand =
         new OrthogonalToTag(
             Constants.FieldPositionConstants.PROCESSOR_OFFSET,
             Constants.AprilTags.PROCESSOR_POSES,
-            false);
+            false,
+            swerve);
     return alignCommand;
   }
 
-  public static Command aboutFace() {
+  public static Command aboutFace(SwerveDriveSubsystem swerve) {
     double targetAngle = RobotState.getInstance().getPoseAngleRadians() + Math.PI;
     return new FunctionalCommand(
         () -> {
-          SwerveDriveSubsystem.getInstance().rotationPID.reset();
+          swerve.rotationPID.reset();
         },
         () -> {
           double rotation =
-              SwerveDriveSubsystem.getInstance()
-                  .rotationPID
-                  .calculate(RobotState.getInstance().getPoseAngleRadians(), targetAngle);
+              swerve.rotationPID.calculate(
+                  RobotState.getInstance().getPoseAngleRadians(), targetAngle);
           ChassisSpeeds chassisSpeeds =
               ChassisSpeeds.fromFieldRelativeSpeeds(
                   0, 0, rotation, RobotState.getInstance().getPoseRotation2d());
-          SwerveDriveSubsystem.getInstance().driveRobotRelative(chassisSpeeds);
+          swerve.driveRobotRelative(chassisSpeeds);
         },
-        (bool) -> SwerveDriveSubsystem.getInstance().stopModules(),
+        (bool) -> swerve.stopModules(),
         () ->
             (Math.abs(targetAngle) - Math.abs(RobotState.getInstance().getPoseAngleRadians()))
                 < 0.05,
-        SwerveDriveSubsystem.getInstance());
+        swerve);
   }
 
   public static Trigger hasTarget() {

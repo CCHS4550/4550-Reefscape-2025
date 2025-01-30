@@ -31,6 +31,8 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 
 public class OrthogonalToTag extends Command {
 
+  SwerveDriveSubsystem swerve;
+
   List<PhotonTrackedTarget> targets;
   double focusedTag;
   Rotation2d targetAngle;
@@ -61,12 +63,18 @@ public class OrthogonalToTag extends Command {
    * @param transformation The transformation to apply to the apriltag position.
    * @param focusedTag The tag to focus on throughout the command. -1 to use the current focused Id.
    */
-  public OrthogonalToTag(Transform2d transformation, List<Pose2d> idList, boolean useBestTag) {
+  public OrthogonalToTag(
+      Transform2d transformation,
+      List<Pose2d> idList,
+      boolean useBestTag,
+      SwerveDriveSubsystem swerve) {
     this.transformation = transformation;
     this.idList = idList;
 
-    translationPID = SwerveDriveSubsystem.getInstance().translationPID;
-    rotationPID = SwerveDriveSubsystem.getInstance().rotationPID;
+    this.swerve = swerve;
+
+    translationPID = swerve.translationPID;
+    rotationPID = swerve.rotationPID;
 
     if (useBestTag) this.focusedTag = RobotState.getInstance().visionInputs.focusedId;
 
@@ -74,7 +82,7 @@ public class OrthogonalToTag extends Command {
     /** Initialize a temporary PoseEstimator that lasts for this command's length. It will */
 
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(SwerveDriveSubsystem.getInstance());
+    addRequirements(swerve);
   }
 
   // Called when the command is initially scheduled.
@@ -193,8 +201,7 @@ public class OrthogonalToTag extends Command {
     }
 
     ChassisSpeeds chassisSpeeds =
-        SwerveDriveSubsystem.getInstance()
-            .swerveFollower
+        swerve.swerveFollower
             // .calculateRobotRelativeSpeeds(new Pose2d(0, 0,
             // RobotState.getInstance().getAngleBetweenCurrentAndTargetPose(new Pose2d(0,
             // 0,Rotation2d.fromDegrees(target.getYaw())))), new State());
@@ -214,11 +221,10 @@ public class OrthogonalToTag extends Command {
     // ChassisSpeeds chassisSpeeds =
     //     ChassisSpeeds.fromFieldRelativeSpeeds(
     //         xPID, yPID, wantedRotationSpeeds, currentRelativePose.getRotation());
-    SwerveDriveSubsystem.getInstance()
-        .swerveFollower
-        .calculateRobotRelativeSpeeds(RobotState.getInstance().currentPose, targetState);
+    swerve.swerveFollower.calculateRobotRelativeSpeeds(
+        RobotState.getInstance().currentPose, targetState);
 
-    SwerveDriveSubsystem.getInstance().driveRobotRelative(chassisSpeeds);
+    swerve.driveRobotRelative(chassisSpeeds);
 
     // SwerveDriveSubsystem.getInstance().driveRobotRelative(chassisSpeeds);
   }

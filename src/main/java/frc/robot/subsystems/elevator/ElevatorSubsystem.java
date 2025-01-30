@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.helpers.CCMotorController;
-import frc.helpers.CCSparkSim;
 import frc.maps.Constants;
 import org.littletonrobotics.junction.Logger;
 
@@ -49,14 +48,13 @@ public class ElevatorSubsystem extends SubsystemBase {
   public ElevatorState wantedState = ElevatorState.DEFAULT_WITHINFRAME;
 
   private final ElevatorIO elevatorIO;
-  
+
   private SysIdRoutine sysIdRoutine;
 
-  CCMotorController.MotorFactory motorFactory;
-  ElevatorIO.IOFactory ioFactory;
+  private CCMotorController.MotorFactory motorFactory;
+  private ElevatorIO.IOFactory ioFactory;
 
   public final ElevatorIOInputsAutoLogged elevatorInputs = new ElevatorIOInputsAutoLogged();
-
 
   /** Creates a new WristSubsystem. */
   public ElevatorSubsystem(
@@ -84,17 +82,17 @@ public class ElevatorSubsystem extends SubsystemBase {
                 Constants.ElevatorConstants.HEIGHT_METERS_PER_ELEVATOR_MOTOR_ROTATIONS,
                 Constants.ElevatorConstants.ELEVATOR_MOTOR_METERS_PER_SECOND_CONVERSION_FACTOR));
 
-  sysIdRoutine =
-  new SysIdRoutine(
-      new SysIdRoutine.Config(
-          Volts.per(Second).of(1),
-          Volts.of(2),
-          Seconds.of(2),
-          (state) -> Logger.recordOutput("SysIdTestState", state.toString())),
-      new SysIdRoutine.Mechanism(
-          (voltage) -> this.elevatorIO.setVoltage(voltage),
-          null, // No log consumer, since data is recorded by URCL
-          this));
+    sysIdRoutine =
+        new SysIdRoutine(
+            new SysIdRoutine.Config(
+                Volts.per(Second).of(1),
+                Volts.of(2),
+                Seconds.of(2),
+                (state) -> Logger.recordOutput("SysIdTestState", state.toString())),
+            new SysIdRoutine.Mechanism(
+                (voltage) -> this.elevatorIO.setVoltage(voltage),
+                null, // No log consumer, since data is recorded by URCL
+                this));
   }
 
   private void applyStates() {
@@ -194,7 +192,6 @@ public class ElevatorSubsystem extends SubsystemBase {
         });
   }
 
-  
   /** SYSID METHODS */
 
   // /**
@@ -216,6 +213,4 @@ public class ElevatorSubsystem extends SubsystemBase {
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
     return sysIdRoutine.dynamic(direction);
   }
-
-
 }
