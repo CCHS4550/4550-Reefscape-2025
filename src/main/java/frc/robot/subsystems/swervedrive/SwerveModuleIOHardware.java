@@ -36,7 +36,6 @@ public class SwerveModuleIOHardware implements SwerveModuleIO {
   private AnalogEncoder absoluteEncoder;
   private double absoluteEncoderOffset;
   private String name;
-  private double absolutePosition;
 
   // Queue inputs from odometry thread
   private final Queue<Double> timestampContainer;
@@ -298,10 +297,6 @@ public class SwerveModuleIOHardware implements SwerveModuleIO {
             + "\nTurn Encoder: "
             + turnMotor.getPosition()
             + "\n");
-  }
-
-  public void resetAbsoluteEncoder() {
-    absolutePosition = 0;
   }
 
   public void printAbsoluteEncoder() {

@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.helpers.ControlScheme;
 import frc.helpers.maps.Constants;
 import frc.robot.RobotState;
+import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.algae.AlgaeSubsystem;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.climber.ClimberSubsystem;
@@ -58,6 +59,7 @@ public class SwerveDriveScheme implements ControlScheme {
       IntakeSubsystem intake,
       SwerveDriveSubsystem swerve,
       WristSubsystem wrist,
+      Superstructure superstructure,
       CommandXboxController controller) {
 
     Shuffleboard.getTab("Diagnostics")
@@ -175,6 +177,7 @@ public class SwerveDriveScheme implements ControlScheme {
       IntakeSubsystem intake,
       SwerveDriveSubsystem swerve,
       WristSubsystem wrist,
+      Superstructure superstructure,
       CommandXboxController controller) {
 
     Trigger reefLeftTrigger = controller.leftTrigger().and(controller.x());

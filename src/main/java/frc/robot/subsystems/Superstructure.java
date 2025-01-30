@@ -200,7 +200,7 @@ public class Superstructure extends SubsystemBase {
         //   break;
 
       default:
-        currentSuperState = currentSuperState.WITHIN_FRAME_PERIMETER_DEFAULT;
+        currentSuperState = CurrentSuperState.WITHIN_FRAME_PERIMETER_DEFAULT;
     }
     return currentSuperState;
   }

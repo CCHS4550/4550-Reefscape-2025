@@ -50,15 +50,11 @@ public class ArmSubsystem extends SubsystemBase {
 
   private final SysIdRoutine sysIdRoutine;
 
-  private final CCMotorController.MotorFactory motorFactory;
-  private final ArmIO.IOFactory ioFactory;
-
   public final ArmIOInputsAutoLogged armInputs = new ArmIOInputsAutoLogged();
 
   /** Creates a new WristSubsystem. */
   public ArmSubsystem(CCMotorController.MotorFactory motorFactory, ArmIO.IOFactory ioFactory) {
-    this.motorFactory = motorFactory;
-    this.ioFactory = ioFactory;
+
     this.armIO =
         ioFactory.create(
             motorFactory.create(

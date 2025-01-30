@@ -43,23 +43,19 @@ public class WristSubsystem extends SubsystemBase {
     }
   }
 
-  public static WristState previousState = WristState.DEFAULT_WITHINFRAME;
-  public static WristState currentState = WristState.DEFAULT_WITHINFRAME;
-  public static WristState wantedState = WristState.DEFAULT_WITHINFRAME;
+  public WristState previousState = WristState.DEFAULT_WITHINFRAME;
+  public WristState currentState = WristState.DEFAULT_WITHINFRAME;
+  public WristState wantedState = WristState.DEFAULT_WITHINFRAME;
 
   public final WristIO wristIO;
 
   private final SysIdRoutine sysIdRoutine;
 
-  private final CCMotorController.MotorFactory motorFactory;
-  private final WristIO.IOFactory ioFactory;
-
   public final WristIOInputsAutoLogged wristInputs = new WristIOInputsAutoLogged();
 
   /** Creates a new WristSubsystem. */
   public WristSubsystem(CCMotorController.MotorFactory motorFactory, WristIO.IOFactory ioFactory) {
-    this.motorFactory = motorFactory;
-    this.ioFactory = ioFactory;
+
     this.wristIO =
         ioFactory.create(
             motorFactory.create(

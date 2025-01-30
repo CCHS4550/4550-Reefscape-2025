@@ -51,16 +51,12 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   private final SysIdRoutine sysIdRoutine;
 
-  private final CCMotorController.MotorFactory motorFactory;
-  private final ElevatorIO.IOFactory ioFactory;
-
   public final ElevatorIOInputsAutoLogged elevatorInputs = new ElevatorIOInputsAutoLogged();
 
   /** Creates a new WristSubsystem. */
   public ElevatorSubsystem(
       CCMotorController.MotorFactory motorFactory, ElevatorIO.IOFactory ioFactory) {
-    this.motorFactory = motorFactory;
-    this.ioFactory = ioFactory;
+
     this.elevatorIO =
         ioFactory.create(
             motorFactory.create(

@@ -37,6 +37,8 @@ import org.littletonrobotics.urcl.URCL;
 public class Robot extends LoggedRobot {
 
   private RobotState robotState;
+
+  @SuppressWarnings("unused")
   private RobotContainer robotContainer;
 
   CustomAutoChooser autoChooser;

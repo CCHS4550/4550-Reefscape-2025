@@ -121,17 +121,49 @@ public class RobotContainer {
     switch (Constants.currentMode) {
       case REAL:
         SwerveDriveScheme.configure(
-            algae, arm, climber, elevator, intake, swerve, wrist, primaryController);
+            algae,
+            arm,
+            climber,
+            elevator,
+            intake,
+            swerve,
+            wrist,
+            superstructure,
+            primaryController);
         CharacterizationScheme.configure(
-            algae, arm, climber, elevator, intake, swerve, wrist, primaryController);
+            algae,
+            arm,
+            climber,
+            elevator,
+            intake,
+            swerve,
+            wrist,
+            superstructure,
+            primaryController);
 
         break;
 
       case SIM:
         SwerveDriveScheme.configure(
-            algae, arm, climber, elevator, intake, swerve, wrist, primaryController);
+            algae,
+            arm,
+            climber,
+            elevator,
+            intake,
+            swerve,
+            wrist,
+            superstructure,
+            primaryController);
         SimulationScheme.configure(
-            algae, arm, climber, elevator, intake, swerve, wrist, primaryController);
+            algae,
+            arm,
+            climber,
+            elevator,
+            intake,
+            swerve,
+            wrist,
+            superstructure,
+            primaryController);
         break;
 
       case REPLAY:

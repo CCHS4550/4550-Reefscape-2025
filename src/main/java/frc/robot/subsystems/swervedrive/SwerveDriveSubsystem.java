@@ -45,9 +45,6 @@ public class SwerveDriveSubsystem extends SubsystemBase {
 
   private final SysIdRoutine sysIdRoutine;
 
-  private final CCMotorController.MotorFactory motorFactory;
-  private final SwerveModuleIO.ModuleFactory moduleFactory;
-
   // * Must be in the order FR, FL, BR, BL */
   public final SwerveModuleInputsAutoLogged frontRightInputs = new SwerveModuleInputsAutoLogged();
   public final SwerveModuleInputsAutoLogged frontLeftInputs = new SwerveModuleInputsAutoLogged();
@@ -72,8 +69,6 @@ public class SwerveDriveSubsystem extends SubsystemBase {
   /** Constructor for the Swerve Drive Subsystem. */
   public SwerveDriveSubsystem(
       CCMotorController.MotorFactory motorFactory, SwerveModuleIO.ModuleFactory moduleFactory) {
-    this.motorFactory = motorFactory;
-    this.moduleFactory = moduleFactory;
 
     frontRight =
         moduleFactory.create(

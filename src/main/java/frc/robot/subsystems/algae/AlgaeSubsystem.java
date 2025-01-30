@@ -21,9 +21,6 @@ public class AlgaeSubsystem extends SubsystemBase {
 
   private final SysIdRoutine sysIdRoutine;
 
-  private final CCMotorController.MotorFactory motorFactory;
-  private final AlgaeIO.IOFactory ioFactory;
-
   public final AlgaeIOInputsAutoLogged algaeInputs = new AlgaeIOInputsAutoLogged();
 
   public enum AlgaeStates {
@@ -48,12 +45,10 @@ public class AlgaeSubsystem extends SubsystemBase {
 
   /** Creates a new WristSubsystem. */
   public AlgaeSubsystem(CCMotorController.MotorFactory motorFactory, AlgaeIO.IOFactory ioFactory) {
-    this.motorFactory = motorFactory;
-    this.ioFactory = ioFactory;
 
     this.algaeIO =
         ioFactory.create(
-            this.motorFactory.create(
+            motorFactory.create(
                 "algaeWristMotor",
                 "algaeWrist",
                 Constants.MotorConstants.ALGAE_WRIST,
@@ -62,7 +57,7 @@ public class AlgaeSubsystem extends SubsystemBase {
                 Constants.MotorConstants.ALGAE_WRIST_REVERSE,
                 1.0,
                 1.0),
-            this.motorFactory.create(
+            motorFactory.create(
                 "algaeIntakeMotor",
                 "algaeIntake",
                 Constants.MotorConstants.ALGAE_INTAKE,

@@ -10,7 +10,6 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.AnalogEncoder;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.simulation.AnalogEncoderSim;
 import frc.helpers.maps.Constants;
 import frc.helpers.motorcontroller.CCMotorController;
@@ -39,10 +38,6 @@ public class SwerveModuleIOSim implements SwerveModuleIO {
   private AnalogEncoderSim absoluteEncoder;
   private double absoluteEncoderOffset;
   private String name;
-  private double absolutePosition;
-
-  private double previoustimeStamp;
-  private double timeStamp;
 
   private double drivePositionSim;
   private double turnPositionSim;
@@ -73,8 +68,6 @@ public class SwerveModuleIOSim implements SwerveModuleIO {
     this.absoluteEncoder = new AnalogEncoderSim(new AnalogEncoder(absoluteEncoderChannel));
     this.absoluteEncoder.set(0);
 
-    this.absolutePosition = getAbsoluteEncoderDistance();
-
     // this.absoluteEncoder.setPositionOffset(absoluteEncoderOffset);
     this.absoluteEncoderOffset = absoluteEncoderOffset;
     // turningPIDController = new SparkPIDController(.5, 0, 0);
@@ -93,9 +86,6 @@ public class SwerveModuleIOSim implements SwerveModuleIO {
 
     this.name = name;
     resetEncoders();
-
-    timeStamp = Timer.getFPGATimestamp();
-    previoustimeStamp = timeStamp;
 
     drivePositionSim = 0;
     turnPositionSim = 0;
@@ -327,10 +317,6 @@ public class SwerveModuleIOSim implements SwerveModuleIO {
             + "\n");
   }
 
-  public void resetAbsoluteEncoder() {
-    absolutePosition = 0;
-  }
-
   public void printAbsoluteEncoder() {
     System.out.println(name + ": " + absoluteEncoder.get());
   }
@@ -363,13 +349,6 @@ public class SwerveModuleIOSim implements SwerveModuleIO {
 
   public double getDriveEncoderVelocity() {
     return driveMotor.getVelocity();
-  }
-
-  private double getTimestampChange() {
-    previoustimeStamp = timeStamp;
-    timeStamp = Timer.getFPGATimestamp();
-    Logger.recordOutput("Period Sim", timeStamp - previoustimeStamp);
-    return timeStamp - previoustimeStamp;
   }
 
   /**
