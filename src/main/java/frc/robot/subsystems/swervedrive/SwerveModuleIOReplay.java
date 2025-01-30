@@ -5,7 +5,7 @@
 package frc.robot.subsystems.swervedrive;
 
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import frc.helpers.CCMotorController;
+import frc.helpers.motorcontroller.CCMotorController;
 import java.util.function.DoubleSupplier;
 
 /** Add your docs here. */

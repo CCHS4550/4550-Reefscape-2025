@@ -1,4 +1,4 @@
-package frc.helpers;
+package frc.helpers.motorcontroller;
 
 import com.revrobotics.*;
 import com.revrobotics.spark.SparkMax;

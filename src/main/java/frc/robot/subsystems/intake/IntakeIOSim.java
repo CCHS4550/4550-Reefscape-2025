@@ -2,7 +2,7 @@ package frc.robot.subsystems.intake;
 
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.simulation.AnalogInputSim;
-import frc.helpers.CCMotorController;
+import frc.helpers.motorcontroller.CCMotorController;
 
 public class IntakeIOSim implements IntakeIO {
 

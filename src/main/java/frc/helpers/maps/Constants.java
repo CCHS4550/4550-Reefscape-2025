@@ -1,4 +1,4 @@
-package frc.maps;
+package frc.helpers.maps;
 
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Inches;

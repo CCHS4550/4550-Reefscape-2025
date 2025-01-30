@@ -2,7 +2,7 @@ package frc.robot.subsystems.algae;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.units.measure.Voltage;
-import frc.helpers.CCMotorController;
+import frc.helpers.motorcontroller.CCMotorController;
 import frc.robot.subsystems.algae.AlgaeSubsystem.AlgaeStates;
 import org.littletonrobotics.junction.AutoLog;
 
@@ -10,13 +10,7 @@ public interface AlgaeIO {
 
   @AutoLog
   class AlgaeIOInputs {
-    // public double wristAngleRads;
-    // public double wristAppliedVolts;
-    // public double wristCurrentDrawAmps;
-    // public double wristAngularMomentum; // rads per second
 
-    // public double intakeAppliedVolts;
-    // public double intakeCurrentDrawAmps;
     public double currentAngleDegrees = 0.0;
     public double currentAngleRadians = 0.0;
 

@@ -4,7 +4,7 @@
 
 package frc.robot.subsystems.climber;
 
-import frc.helpers.CCMotorController;
+import frc.helpers.motorcontroller.CCMotorController;
 
 /** Add your docs here. */
 public class ClimberIOReplay implements ClimberIO {

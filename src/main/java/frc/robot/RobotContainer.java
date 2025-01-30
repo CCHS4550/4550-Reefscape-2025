@@ -1,10 +1,10 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.helpers.CCMotorReplay;
-import frc.helpers.CCSparkMax;
-import frc.helpers.CCSparkSim;
-import frc.maps.Constants;
+import frc.helpers.maps.Constants;
+import frc.helpers.motorcontroller.CCMotorReplay;
+import frc.helpers.motorcontroller.CCSparkMax;
+import frc.helpers.motorcontroller.CCSparkSim;
 import frc.robot.controlschemes.CharacterizationScheme;
 import frc.robot.controlschemes.SimulationScheme;
 import frc.robot.controlschemes.SwerveDriveScheme;
@@ -40,15 +40,15 @@ import frc.robot.subsystems.wrist.WristSubsystem;
 
 public class RobotContainer {
 
-  AlgaeSubsystem algae;
-  ArmSubsystem arm;
-  ClimberSubsystem climber;
-  ElevatorSubsystem elevator;
-  IntakeSubsystem intake;
-  SwerveDriveSubsystem swerve;
-  WristSubsystem wrist;
+  private final AlgaeSubsystem algae;
+  private final ArmSubsystem arm;
+  private final ClimberSubsystem climber;
+  private final ElevatorSubsystem elevator;
+  private final IntakeSubsystem intake;
+  private final SwerveDriveSubsystem swerve;
+  private final WristSubsystem wrist;
 
-  Superstructure superstructure;
+  private final Superstructure superstructure;
 
   /*
    * Initialize controllers.
@@ -100,12 +100,24 @@ public class RobotContainer {
         superstructure = new Superstructure(algae, arm, climber, elevator, intake, swerve, wrist);
 
         break;
+      default:
+        System.out.println("Creating Default Robot. (Replay)");
+        algae = new AlgaeSubsystem(CCMotorReplay::new, AlgaeIOReplay::new);
+        arm = new ArmSubsystem(CCMotorReplay::new, ArmIOReplay::new);
+        climber = new ClimberSubsystem(CCMotorReplay::new, ClimberIOReplay::new);
+        elevator = new ElevatorSubsystem(CCMotorReplay::new, ElevatorIOReplay::new);
+        intake = new IntakeSubsystem(CCMotorReplay::new, IntakeIOReplay::new);
+        swerve = new SwerveDriveSubsystem(CCMotorReplay::new, SwerveModuleIOReplay::new);
+        wrist = new WristSubsystem(CCMotorReplay::new, WristIOReplay::new);
+
+        superstructure = new Superstructure(algae, arm, climber, elevator, intake, swerve, wrist);
     }
     RobotState.getInstance().robotStateInit(algae, arm, climber, elevator, intake, swerve, wrist);
     RobotState.getInstance().poseInit();
     RobotState.getInstance().moduleEncodersInit();
     RobotState.getInstance().dashboardInit();
 
+    /** Configure controls. */
     switch (Constants.currentMode) {
       case REAL:
         SwerveDriveScheme.configure(

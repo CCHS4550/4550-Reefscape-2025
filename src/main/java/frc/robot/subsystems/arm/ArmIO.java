@@ -4,7 +4,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import frc.helpers.CCMotorController;
+import frc.helpers.motorcontroller.CCMotorController;
 import frc.robot.subsystems.arm.ArmSubsystem.ArmState;
 import java.util.function.BooleanSupplier;
 import org.littletonrobotics.junction.AutoLog;

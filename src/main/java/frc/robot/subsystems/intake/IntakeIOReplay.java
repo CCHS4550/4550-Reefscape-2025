@@ -4,7 +4,7 @@
 
 package frc.robot.subsystems.intake;
 
-import frc.helpers.CCMotorController;
+import frc.helpers.motorcontroller.CCMotorController;
 
 /** Add your docs here. */
 public class IntakeIOReplay implements IntakeIO {

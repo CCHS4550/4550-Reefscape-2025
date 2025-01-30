@@ -3,7 +3,7 @@
 // the WPILib BSD license file in the root directory of this project.
 package frc.robot.subsystems.arm;
 
-import frc.helpers.CCMotorController;
+import frc.helpers.motorcontroller.CCMotorController;
 
 /** Add your docs here. */
 public class ArmIOReplay implements ArmIO {

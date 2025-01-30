@@ -2,8 +2,8 @@ package frc.robot.subsystems.intake;
 
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.AnalogInput;
-import frc.helpers.CCMotorController;
-import frc.maps.Constants;
+import frc.helpers.maps.Constants;
+import frc.helpers.motorcontroller.CCMotorController;
 
 public class IntakeIOHardware implements IntakeIO {
 

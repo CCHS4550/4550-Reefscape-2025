@@ -23,11 +23,11 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.helpers.maps.Constants;
 import frc.helpers.vision.PhotonVisionAprilTag;
 import frc.helpers.vision.PhotonVisionSim;
 import frc.helpers.vision.VisionIO;
 import frc.helpers.vision.VisionIOInputsAutoLogged;
-import frc.maps.Constants;
 import frc.robot.autonomous.CustomAutoChooser;
 import frc.robot.subsystems.algae.AlgaeIOInputsAutoLogged;
 import frc.robot.subsystems.algae.AlgaeSubsystem;
@@ -71,6 +71,8 @@ public class RobotState {
   private WristSubsystem wrist;
   private VisionIO vision;
 
+  private final AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
+
   public AlgaeIOInputsAutoLogged algaeInputs;
   public ArmIOInputsAutoLogged armInputs;
   public ClimberIOInputsAutoLogged climberInputs;
@@ -84,18 +86,16 @@ public class RobotState {
   public SwerveModulePosition[] previousSwerveModulePositions = new SwerveModulePosition[4];
 
   public SwerveModulePosition[] currentSwerveModulePositions = new SwerveModulePosition[4];
-
   public SwerveModulePosition[] swerveModulePositions = new SwerveModulePosition[4];
 
+  // High frequency odometry objects (HF)
   public int sampleCountHF;
   public double[] sampleTimestampsHF;
   public SwerveModulePosition[][] swerveModulePositionsHF;
-
-  // Initialize gyro
-  public AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
-  private final Queue<Double> gyroContainer;
-
+  public final Queue<Double> gyroContainer =
+      RealOdometryThread.getInstance().registerInput(() -> getRotation2d().getRadians());
   public Rotation2d[] gyroAnglesHF = new Rotation2d[] {};
+
   public double gyroAngleSim = 0;
 
   private RobotState() {
@@ -109,9 +109,6 @@ public class RobotState {
               }
             })
         .start();
-
-    gyroContainer =
-        RealOdometryThread.getInstance().registerInput(() -> getRotation2d().getRadians());
   }
 
   public void robotStateInit(

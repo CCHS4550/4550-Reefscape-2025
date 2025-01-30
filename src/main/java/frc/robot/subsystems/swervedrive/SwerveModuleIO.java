@@ -2,7 +2,7 @@ package frc.robot.subsystems.swervedrive;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import frc.helpers.CCMotorController;
+import frc.helpers.motorcontroller.CCMotorController;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.AutoLog;
 
@@ -16,7 +16,6 @@ public interface SwerveModuleIO {
     public double driveAppliedVolts = 0.0;
     public double driveCurrentAmps = 0.0;
 
-    // public boolean turnConnected = false;
     public Rotation2d turnPosition = new Rotation2d();
     public double turnVelocityRadPerSec = 0.0;
     public double turnAppliedVolts = 0.0;

@@ -4,7 +4,7 @@ package frc.helpers;
 
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.Joystick;
-import frc.maps.ControlMap;
+import frc.helpers.maps.ControlMap;
 
 // This controllers are user input
 // It also has the normalize method cuz IDK where else to put it

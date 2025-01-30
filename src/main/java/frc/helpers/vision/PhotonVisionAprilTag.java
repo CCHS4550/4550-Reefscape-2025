@@ -7,7 +7,7 @@ package frc.helpers.vision;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.maps.Constants;
+import frc.helpers.maps.Constants;
 import frc.robot.RobotState;
 import java.util.ArrayList;
 import java.util.List;

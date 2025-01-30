@@ -1,4 +1,4 @@
-package frc.maps;
+package frc.helpers.maps;
 
 public interface ControlMap {
   // Joystick Axises

@@ -12,8 +12,8 @@ import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
-import frc.helpers.CCMotorController;
-import frc.maps.Constants;
+import frc.helpers.maps.Constants;
+import frc.helpers.motorcontroller.CCMotorController;
 import frc.robot.subsystems.arm.ArmSubsystem.ArmState;
 import java.util.function.BooleanSupplier;
 
