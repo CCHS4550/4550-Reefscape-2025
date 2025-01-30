@@ -48,10 +48,10 @@ public class ArmSubsystem extends SubsystemBase {
 
   private final ArmIO armIO;
 
-  private SysIdRoutine sysIdRoutine;
+  private final SysIdRoutine sysIdRoutine;
 
-  private CCMotorController.MotorFactory motorFactory;
-  private ArmIO.IOFactory ioFactory;
+  private final CCMotorController.MotorFactory motorFactory;
+  private final ArmIO.IOFactory ioFactory;
 
   public final ArmIOInputsAutoLogged armInputs = new ArmIOInputsAutoLogged();
 

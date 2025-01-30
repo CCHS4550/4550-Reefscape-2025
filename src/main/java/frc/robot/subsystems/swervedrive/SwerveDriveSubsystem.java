@@ -17,8 +17,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
-import edu.wpi.first.units.VelocityUnit;
-import edu.wpi.first.units.VoltageUnit;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -43,10 +41,12 @@ public class SwerveDriveSubsystem extends SubsystemBase {
   public final SwerveModuleIO backRight;
   public final SwerveModuleIO backLeft;
 
-  private SwerveModuleIO[] swerveModules;
+  private final SwerveModuleIO[] swerveModules;
 
-  private CCMotorController.MotorFactory motorFactory;
-  private SwerveModuleIO.ModuleFactory moduleFactory;
+  private final SysIdRoutine sysIdRoutine;
+
+  private final CCMotorController.MotorFactory motorFactory;
+  private final SwerveModuleIO.ModuleFactory moduleFactory;
 
   // * Must be in the order FR, FL, BR, BL */
   public final SwerveModuleInputsAutoLogged frontRightInputs = new SwerveModuleInputsAutoLogged();
@@ -172,6 +172,18 @@ public class SwerveDriveSubsystem extends SubsystemBase {
             "Back Left");
 
     swerveModules = new SwerveModuleIO[] {frontRight, frontLeft, backRight, backLeft};
+
+    sysIdRoutine =
+        new SysIdRoutine(
+            new SysIdRoutine.Config(
+                Volts.per(Second).of(1),
+                Volts.of(5),
+                Seconds.of(5),
+                (state) -> Logger.recordOutput("SysIdTestState", state.toString())),
+            new SysIdRoutine.Mechanism(
+                (voltage) -> setDriveVoltages(voltage),
+                null, // No log consumer, since data is recorded by URCL
+                this));
 
     swerveModuleInputs =
         new SwerveModuleInputsAutoLogged[] {
@@ -318,43 +330,6 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     setModuleStates(moduleStates);
   }
 
-  private final VelocityUnit<VoltageUnit> VoltsPerSecond = Volts.per(Second);
-
-  SysIdRoutine sysIdRoutine =
-      new SysIdRoutine(
-          new SysIdRoutine.Config(
-              VoltsPerSecond.of(1),
-              Volts.of(3),
-              Seconds.of(3),
-              (state) ->
-                  org.littletonrobotics.junction.Logger.recordOutput(
-                      "SysIdTestState", state.toString())),
-          new SysIdRoutine.Mechanism(
-              (voltage) -> setDriveVoltages(voltage),
-              null, // No log consumer, since data is recorded by URCL
-              this));
-
-  /* SysID Factory Methods */
-  /**
-   * Used only in characterizing. Don't touch this.
-   *
-   * @param direction
-   * @return the quasistatic characterization test
-   */
-  public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
-    return sysIdRoutine.quasistatic(direction);
-  }
-
-  /**
-   * Used only in characterizing. Don't touch this.
-   *
-   * @param direction
-   * @return the dynamic characterization test
-   */
-  public Command sysIdDynamic(SysIdRoutine.Direction direction) {
-    return sysIdRoutine.dynamic(direction);
-  }
-
   /**
    * Used only in Characterizing. Don't touch this. Sets the provided voltages and locks the wheels
    * to 0 radians.
@@ -423,5 +398,26 @@ public class SwerveDriveSubsystem extends SubsystemBase {
       angle += 2 * Math.PI;
     }
     return angle;
+  }
+
+  /* SysID Factory Methods */
+  /**
+   * Used only in characterizing. Don't touch this.
+   *
+   * @param direction
+   * @return the quasistatic characterization test
+   */
+  public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+    return sysIdRoutine.quasistatic(direction);
+  }
+
+  /**
+   * Used only in characterizing. Don't touch this.
+   *
+   * @param direction
+   * @return the dynamic characterization test
+   */
+  public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+    return sysIdRoutine.dynamic(direction);
   }
 }

@@ -39,8 +39,8 @@ public class IntakeSubsystem extends SubsystemBase {
 
   private final IntakeIO intakeIO;
 
-  private CCMotorController.MotorFactory motorFactory;
-  private IntakeIO.IOFactory ioFactory;
+  private final CCMotorController.MotorFactory motorFactory;
+  private final IntakeIO.IOFactory ioFactory;
 
   public final IntakeIOInputsAutoLogged intakeInputs = new IntakeIOInputsAutoLogged();
 

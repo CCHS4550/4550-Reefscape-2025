@@ -7,9 +7,7 @@ import org.littletonrobotics.junction.AutoLog;
 public interface ClimberIO {
 
   @AutoLog
-  class ClimberIOInputs {
-
-  }
+  class ClimberIOInputs {}
 
   default void updateInputs(ClimberIOInputs inputs) {}
 

@@ -19,10 +19,10 @@ public class AlgaeSubsystem extends SubsystemBase {
 
   private final AlgaeIO algaeIO;
 
-  private SysIdRoutine sysIdRoutine;
+  private final SysIdRoutine sysIdRoutine;
 
-  private CCMotorController.MotorFactory motorFactory;
-  private AlgaeIO.IOFactory ioFactory;
+  private final CCMotorController.MotorFactory motorFactory;
+  private final AlgaeIO.IOFactory ioFactory;
 
   public final AlgaeIOInputsAutoLogged algaeInputs = new AlgaeIOInputsAutoLogged();
 

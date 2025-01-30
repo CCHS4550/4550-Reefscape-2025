@@ -8,7 +8,7 @@ public interface IntakeIO {
 
   @AutoLog
   class IntakeIOInputs {
-    
+
     public double appliedInnerVoltage = 0.0;
     public double appliedOuterVoltagae = 0.0;
 

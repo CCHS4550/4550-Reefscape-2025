@@ -49,10 +49,10 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   private final ElevatorIO elevatorIO;
 
-  private SysIdRoutine sysIdRoutine;
+  private final SysIdRoutine sysIdRoutine;
 
-  private CCMotorController.MotorFactory motorFactory;
-  private ElevatorIO.IOFactory ioFactory;
+  private final CCMotorController.MotorFactory motorFactory;
+  private final ElevatorIO.IOFactory ioFactory;
 
   public final ElevatorIOInputsAutoLogged elevatorInputs = new ElevatorIOInputsAutoLogged();
 
@@ -192,7 +192,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         });
   }
 
-  /** SYSID METHODS */
+  /* SysID Factory Methods */
 
   // /**
   //  * Used only in characterizing. Don't touch this.

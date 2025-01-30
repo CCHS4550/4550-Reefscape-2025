@@ -49,10 +49,10 @@ public class WristSubsystem extends SubsystemBase {
 
   public final WristIO wristIO;
 
-  private SysIdRoutine sysIdRoutine;
+  private final SysIdRoutine sysIdRoutine;
 
-  private CCMotorController.MotorFactory motorFactory;
-  private WristIO.IOFactory ioFactory;
+  private final CCMotorController.MotorFactory motorFactory;
+  private final WristIO.IOFactory ioFactory;
 
   public final WristIOInputsAutoLogged wristInputs = new WristIOInputsAutoLogged();
 
@@ -194,8 +194,7 @@ public class WristSubsystem extends SubsystemBase {
           wristIO.setVoltage(Volts.of(0.0));
         });
   }
-
-  /** SYSID METHODS */
+  /* SysID Factory Methods */
 
   // /**
   //  * Used only in characterizing. Don't touch this.
