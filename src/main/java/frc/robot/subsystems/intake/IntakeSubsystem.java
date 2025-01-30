@@ -39,16 +39,11 @@ public class IntakeSubsystem extends SubsystemBase {
 
   private final IntakeIO intakeIO;
 
-  private final CCMotorController.MotorFactory motorFactory;
-  private final IntakeIO.IOFactory ioFactory;
-
   public final IntakeIOInputsAutoLogged intakeInputs = new IntakeIOInputsAutoLogged();
 
   /** Creates a new WristSubsystem. */
   public IntakeSubsystem(
       CCMotorController.MotorFactory motorFactory, IntakeIO.IOFactory ioFactory) {
-    this.motorFactory = motorFactory;
-    this.ioFactory = ioFactory;
 
     this.intakeIO =
         ioFactory.create(

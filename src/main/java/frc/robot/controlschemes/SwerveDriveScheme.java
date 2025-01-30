@@ -160,7 +160,8 @@ public class SwerveDriveScheme implements ControlScheme {
                 swerve)
             .withName("Swerve Controller Command"));
 
-    // configureButtons(swerve, controller);
+    configureButtons(
+        algae, arm, climber, elevator, intake, swerve, wrist, superstructure, controller);
   }
 
   /**
