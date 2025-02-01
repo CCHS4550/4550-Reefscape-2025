@@ -130,7 +130,7 @@ public class PhotonVisionAprilTag extends SubsystemBase implements VisionIO {
     // Resetting the poseEstimates every period?
     inputs.poseEstimates = new Pose2d[0];
 
-    inputs.timestamp = estimateAverageTimestamp(results);
+    inputs.averageTimestamp = estimateAverageTimestamp(results);
 
     /** If you have a target, then update the poseEstimate ArrayList to equal that. */
     if (hasAnyTarget(results)) {
@@ -139,7 +139,7 @@ public class PhotonVisionAprilTag extends SubsystemBase implements VisionIO {
       inputs.hasEstimate = true;
 
     } else {
-      inputs.timestamp = inputs.timestamp;
+      inputs.averageTimestamp = inputs.averageTimestamp;
       inputs.hasEstimate = false;
     }
   }

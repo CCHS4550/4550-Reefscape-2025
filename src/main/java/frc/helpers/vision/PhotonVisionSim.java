@@ -124,6 +124,11 @@ public class PhotonVisionSim extends SubsystemBase implements VisionIO {
                 target ->
                     leftCameraSim.canSeeTargetPose(
                         visionSim.getCameraPose(leftCameraSim).get(), target))) {
+      Logger.recordOutput(
+          "Subsystem/Vision/Left Camera Pose", visionSim.getCameraPose(leftCameraSim).get());
+      Logger.recordOutput(
+          "Subsystem/Vision/Left Camera Pose Exists",
+          visionSim.getCameraPose(leftCameraSim).isPresent());
       results.add(
           Map.entry(
               leftCamera_photonEstimator,
@@ -137,6 +142,11 @@ public class PhotonVisionSim extends SubsystemBase implements VisionIO {
                 target ->
                     rightCameraSim.canSeeTargetPose(
                         visionSim.getCameraPose(rightCameraSim).get(), target))) {
+      Logger.recordOutput(
+          "Subsystem/Vision/Right Camera Pose", visionSim.getCameraPose(rightCameraSim).get());
+      Logger.recordOutput(
+          "Subsystem/Vision/Right Camera Pose Exists",
+          visionSim.getCameraPose(rightCameraSim).isPresent());
       results.add(
           Map.entry(
               rightCamera_photonEstimator,
@@ -144,24 +154,17 @@ public class PhotonVisionSim extends SubsystemBase implements VisionIO {
                   10.0, visionSim.getCameraPose(rightCameraSim).get(), getVisionTargetSimList())));
     }
 
+    // for (Map.Entry<PhotonPoseEstimator, PhotonPipelineResult> result : results) {
+    //   Logger.recordOutput("Subsystem/Vision/PhotonPipelineResult", result.getValue());
+    // }
+
+    // Logger.recordOutput("Subsystem/Vision/results.size()", results.size());
+
     condensedResults = results;
     condensedResults = condensePipelineResults();
 
     inputs.hasTarget =
         condensedResults.stream().anyMatch(result -> result.getValue().hasTargets()) ? true : false;
-    inputs.canSeeTarget =
-        visionSim.getCameraPose(leftCameraSim).isPresent()
-            && getVisionTargetSimList().stream()
-                .anyMatch(
-                    target ->
-                        leftCameraSim.canSeeTargetPose(
-                            visionSim.getCameraPose(leftCameraSim).get(), target))
-            && visionSim.getCameraPose(rightCameraSim).isPresent()
-            && getVisionTargetSimList().stream()
-                .anyMatch(
-                    target ->
-                        rightCameraSim.canSeeTargetPose(
-                            visionSim.getCameraPose(rightCameraSim).get(), target));
 
     Set<PhotonTrackedTarget> visibleCamera1Targets =
         results.stream()
@@ -196,7 +199,7 @@ public class PhotonVisionSim extends SubsystemBase implements VisionIO {
     // Resetting the poseEstimates every period?
     inputs.poseEstimates = new Pose2d[0];
 
-    inputs.timestamp = Timer.getFPGATimestamp();
+    inputs.averageTimestamp = Timer.getFPGATimestamp();
 
     /** If you have a target, then update the poseEstimate ArrayList to equal that. */
     if (visionSim.getCameraPose(leftCameraSim).isPresent()
@@ -216,7 +219,7 @@ public class PhotonVisionSim extends SubsystemBase implements VisionIO {
       inputs.hasEstimate = true;
 
     } else {
-      inputs.timestamp = inputs.timestamp;
+      inputs.averageTimestamp = inputs.averageTimestamp;
       inputs.hasEstimate = false;
     }
   }
@@ -245,13 +248,14 @@ public class PhotonVisionSim extends SubsystemBase implements VisionIO {
 
   public List<VisionTargetSim> getVisionTargetSimList() {
     // System.out.println(visionSim.getVisionTargets().size());
+    Logger.recordOutput(
+        "Subsystem/Vision/visionSim.getVisionTargets().size()",
+        visionSim.getVisionTargets().size());
     return new ArrayList<VisionTargetSim>(visionSim.getVisionTargets());
   }
 
   @Override
   public void periodic() {
-
-    Logger.recordOutput("VisionData/HasTarget?", RobotState.getInstance().visionInputs.hasEstimate);
 
     // This method will be called once per scheduler run
   }

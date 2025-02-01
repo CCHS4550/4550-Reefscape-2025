@@ -22,7 +22,7 @@ public interface VisionIO {
   @AutoLog
   class VisionIOInputs {
     public Pose2d[] poseEstimates = new Pose2d[0];
-    public double timestamp = 0;
+    public double averageTimestamp = 0;
     public double[] timestampArray = new double[0];
 
     public int focusedId = 0;
@@ -33,7 +33,6 @@ public interface VisionIO {
 
     public boolean hasEstimate = false;
     public boolean hasTarget = false;
-    public boolean canSeeTarget = false;
   }
 
   /** Default method, defined in photonvision */
