@@ -246,7 +246,8 @@ public class OrthogonalToTag extends Command {
       Logger.recordOutput("OrthogonalToTag/Finding Error", true);
 
       // double distanceMetersErr =
-      //     RobotState.getInstance().getPose().getTranslation().getDistance(globalTargetPose.getTranslation());
+      //
+      // RobotState.getInstance().getPose().getTranslation().getDistance(globalTargetPose.getTranslation());
       // double angleDegreesErr =
       //     Math.abs(
       //     RobotState.getInstance().getPose().minus(globalTargetPose.getRotation()).getDegrees());
