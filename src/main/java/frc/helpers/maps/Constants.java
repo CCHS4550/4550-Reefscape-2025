@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class Constants {
 
@@ -195,9 +196,9 @@ public class Constants {
 
     // Front to back
     public static final double WHEEL_BASE =
-        Units.inchesToMeters(24.7500000000); // from drive shaft to drive shaft. Previous was
+        Units.inchesToMeters(24.750000); // from drive shaft to drive shaft. Previous was
     // Right to Left                                                            // 27
-    public static final double TRACK_WIDTH = Units.inchesToMeters(24.750000);
+    public static final double TRACK_WIDTH = Units.inchesToMeters(22.750000);
 
     public static final double RADIUS = Math.sqrt(2) * (WHEEL_BASE / 2);
 
@@ -209,7 +210,8 @@ public class Constants {
             new Translation2d(-WHEEL_BASE / 2, -TRACK_WIDTH / 2),
             new Translation2d(-WHEEL_BASE / 2, TRACK_WIDTH / 2));
 
-    public static Pose2d INITIAL_POSE = new Pose2d(0, 0, new Rotation2d(0)); // must be in meters!
+    public static final Pose2d INITIAL_POSE =
+        new Pose2d(0, 0, new Rotation2d(0)); // must be in meters!
 
     /** This is important! This is the frequency at which odometry data is updated. */
     public static final double ODOMETRY_FREQUENCY = 250;
@@ -340,28 +342,28 @@ public class Constants {
         new Transform2d(Inches.of(0), Inches.of(0), new Rotation2d());
   }
 
+  /** Back Camera */
   public static class cameraOne {
 
-    public static final String CAMERA_ONE_NAME = "LeftCamera";
+    public static final String CAMERA_ONE_NAME = "Back Camera";
 
     // (Robot pose is considered the center of rotation at the floor level, or Z = 0)
     public static final Translation3d ROBOT_TO_CAMERA_TRANS =
-        new Translation3d(0.3302, 0.3048, 0.2032);
+        new Translation3d(-0.378716, 0, 0.271038);
     public static final Rotation3d ROBOT_TO_CAMERA_ROT =
-        new Rotation3d(0, Math.toRadians(-0), Math.toRadians(5));
+        new Rotation3d(0, Math.toRadians(9.369898), Math.PI);
 
     public static final Transform3d ROBOT_TO_CAM =
         new Transform3d(ROBOT_TO_CAMERA_TRANS, ROBOT_TO_CAMERA_ROT);
   }
 
   public static class cameraTwo {
-    public static final String CAMERA_TWO_NAME = "RightCamera";
+    public static final String CAMERA_TWO_NAME = "Front Camera";
 
     public static final Translation3d ROBOT_TO_CAMERA_TRANS =
-        new Translation3d(0.3302, -0.3048, 0.2032);
+        new Translation3d(0.344237, 0, 0.177780);
 
-    public static final Rotation3d ROBOT_TO_CAMERA_ROT =
-        new Rotation3d(0, Math.toRadians(-0), Math.toRadians(-5));
+    public static final Rotation3d ROBOT_TO_CAMERA_ROT = new Rotation3d(0, Math.toRadians(0), 0);
 
     public static final Transform3d ROBOT_TO_CAM =
         new Transform3d(ROBOT_TO_CAMERA_TRANS, ROBOT_TO_CAMERA_ROT);
@@ -383,9 +385,19 @@ public class Constants {
             .map(tag -> tag.pose.toPose2d())
             .collect(Collectors.toList());
 
+    public static final Map<Integer, Pose2d> TAG_MAP =
+        IntStream.range(0, TAG_IDS.length)
+            .boxed()
+            .collect(Collectors.toMap(i -> TAG_IDS[i], TAG_POSES::get));
+
     public static final int[] REEF_IDS = {6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22};
     public static final List<Pose2d> REEF_POSES =
         Arrays.stream(REEF_IDS).mapToObj(id -> TAG_PROPERTIES.get(id)).collect(Collectors.toList());
+
+    public static final Map<Integer, Pose2d> REEF_MAP =
+        IntStream.range(0, REEF_IDS.length)
+            .boxed()
+            .collect(Collectors.toMap(i -> REEF_IDS[i], REEF_POSES::get));
 
     public static final int[] CORAL_STATION_IDS = {1, 2, 12, 13};
     public static final List<Pose2d> CORAL_STATION_POSES =
@@ -393,17 +405,32 @@ public class Constants {
             .mapToObj(id -> TAG_PROPERTIES.get(id))
             .collect(Collectors.toList());
 
+    public static final Map<Integer, Pose2d> CORAL_STATION_MAP =
+        IntStream.range(0, CORAL_STATION_IDS.length)
+            .boxed()
+            .collect(Collectors.toMap(i -> CORAL_STATION_IDS[i], CORAL_STATION_POSES::get));
+
     public static final int[] PROCESSOR_IDS = {3, 16};
     public static final List<Pose2d> PROCESSOR_POSES =
         Arrays.stream(PROCESSOR_IDS)
             .mapToObj(id -> TAG_PROPERTIES.get(id))
             .collect(Collectors.toList());
 
+    public static final Map<Integer, Pose2d> PROCESSOR_MAP =
+        IntStream.range(0, PROCESSOR_IDS.length)
+            .boxed()
+            .collect(Collectors.toMap(i -> PROCESSOR_IDS[i], PROCESSOR_POSES::get));
+
     public static final int[] BARGE_IDS = {4, 5, 14, 15};
     public static final List<Pose2d> BARGE_POSES =
         Arrays.stream(BARGE_IDS)
             .mapToObj(id -> TAG_PROPERTIES.get(id))
             .collect(Collectors.toList());
+
+    public static final Map<Integer, Pose2d> BARGE_MAP =
+        IntStream.range(0, BARGE_IDS.length)
+            .boxed()
+            .collect(Collectors.toMap(i -> BARGE_IDS[i], BARGE_POSES::get));
   }
 
   // safely divide

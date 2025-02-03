@@ -199,8 +199,8 @@ public class SwerveDriveSubsystem extends SubsystemBase {
 
     turnPID = new PIDController(.05, .1, 0);
 
-    translationPID = new PIDController(.5, 0, 0);
-    rotationPID = new PIDController(2, 0, 0);
+    translationPID = new PIDController(2, 0, 0);
+    rotationPID = new PIDController(5, 0, 0);
     rotationPID.enableContinuousInput(-Math.PI, Math.PI);
 
     SmartDashboard.putData("Swerve Translation PID", translationPID);

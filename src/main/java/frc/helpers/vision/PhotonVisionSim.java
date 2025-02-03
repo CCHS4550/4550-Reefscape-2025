@@ -93,13 +93,13 @@ public class PhotonVisionSim extends SubsystemBase implements VisionIO {
     leftCameraSim.setMaxSightRange(4);
     leftCameraSim.enableRawStream(false);
     rightCameraSim.enableRawStream(false);
-    leftCameraSim.enableProcessedStream(false);
-    rightCameraSim.enableProcessedStream(false);
+    leftCameraSim.enableProcessedStream(true);
+    rightCameraSim.enableProcessedStream(true);
 
     // Enable drawing a wireframe visualization of the field to the camera streams.
     // This is extremely resource-intensive and is disabled by default.
-    leftCameraSim.enableDrawWireframe(false);
-    rightCameraSim.enableDrawWireframe(false);
+    leftCameraSim.enableDrawWireframe(true);
+    rightCameraSim.enableDrawWireframe(true);
   }
 
   /**
