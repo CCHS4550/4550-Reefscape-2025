@@ -90,7 +90,7 @@ public class WristIOHardware implements WristIO {
     pidOutput = wristPidController.calculate(getAbsoluteEncoderRadiansOffset(), goalState);
     // ffOutput =
     //     wristFeedForward.calculate(
-    //         wristPidController.getSetpoint().position,
+    //         getAbsoluteEncoderRadiansOffset(),
     // wristPidController.getSetpoint().velocity);
 
     return pidOutput;

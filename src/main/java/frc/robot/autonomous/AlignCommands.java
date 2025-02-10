@@ -44,7 +44,7 @@ public class AlignCommands {
             false,
             swerve,
             vision);
-    return aboutFace(swerve).andThen(alignCommand);
+    return alignCommand;
   }
 
   public static Command backAlignToReefRight(SwerveDriveSubsystem swerve, VisionIO vision) {
@@ -55,7 +55,7 @@ public class AlignCommands {
             false,
             swerve,
             vision);
-    return aboutFace(swerve).andThen(alignCommand);
+    return alignCommand;
   }
 
   public static Command backAlignToCoralStationLeft(SwerveDriveSubsystem swerve, VisionIO vision) {

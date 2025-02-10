@@ -94,7 +94,7 @@ public class ArmIOHardware implements ArmIO {
     pidOutput = pidController.calculate(getAbsoluteEncoderRadiansOffset(), goalState);
     // ffOutput =
     //     feedForward.calculate(
-    //         pidController.getSetpoint().position, pidController.getSetpoint().velocity);
+    //         getAbsoluteEncoderRadiansOffset(), pidController.getSetpoint().velocity);
 
     return pidOutput;
   }

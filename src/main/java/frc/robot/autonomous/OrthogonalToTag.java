@@ -354,12 +354,18 @@ public class OrthogonalToTag extends Command {
                         .plus(result.getValue().getBestTarget().getBestCameraToTarget()))
             .collect(Collectors.toList());
 
-    vision.getPipelineResults().stream().filter(result -> result.getValue().hasTargets())
-    .filter(result -> result.getValue().getBestTarget().fiducialId == focusedTag)
-    .forEach(transform -> {
-      Logger.recordOutput("OrthogonalToTag/" + transform.getKey() + "/robotToCameraTransform", transform.getKey().getRobotToCameraTransform());
-      Logger.recordOutput("OrthogonalToTag/" + transform.getKey() + "/cameraToTarget", transform.getValue().getBestTarget().getBestCameraToTarget());
-    });
+    vision.getPipelineResults().stream()
+        .filter(result -> result.getValue().hasTargets())
+        .filter(result -> result.getValue().getBestTarget().fiducialId == focusedTag)
+        .forEach(
+            transform -> {
+              Logger.recordOutput(
+                  "OrthogonalToTag/" + transform.getKey() + "/robotToCameraTransform",
+                  transform.getKey().getRobotToCameraTransform());
+              Logger.recordOutput(
+                  "OrthogonalToTag/" + transform.getKey() + "/cameraToTarget",
+                  transform.getValue().getBestTarget().getBestCameraToTarget());
+            });
 
     return list;
   }
