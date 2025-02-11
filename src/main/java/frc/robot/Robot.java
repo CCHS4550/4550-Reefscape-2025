@@ -50,7 +50,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void robotInit() {
 
-    Constants.getCurrentMode();
+    Constants.setCurrentMode();
     System.out.println(Constants.currentMode);
 
     SmartDashboard.putBoolean("Browning Out?", browningOut);

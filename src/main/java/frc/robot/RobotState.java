@@ -5,8 +5,9 @@
 package frc.robot;
 
 import choreo.util.ChoreoAllianceFlipUtil;
-import com.studica.frc.AHRS;
-import com.studica.frc.AHRS.NavXComType;
+import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.Pigeon2Configuration;
+import com.ctre.phoenix6.hardware.Pigeon2;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -15,6 +16,8 @@ import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
@@ -70,7 +73,13 @@ public class RobotState {
 
   private VisionIO vision;
 
-  private final AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
+  /** NavX Gyroscope */
+  // private final AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
+
+  /** Pigeon 2 Gyroscope (Better) */
+  private final Pigeon2 pigeonGyro = new Pigeon2(Constants.MotorConstants.PIGEON);
+
+  private final StatusSignal<Angle> yaw = pigeonGyro.getYaw();
 
   public AlgaeIOInputsAutoLogged algaeInputs;
   public ArmIOInputsAutoLogged armInputs;
@@ -92,24 +101,14 @@ public class RobotState {
   public int sampleCountHF;
   public double[] sampleTimestampsHF;
   public SwerveModulePosition[][] swerveModulePositionsHF;
-  public final Queue<Double> gyroContainer =
-      RealOdometryThread.getInstance().registerInput(() -> getRotation2d().getRadians());
+  // private final Queue<Double> gyroTimestampContainer =
+  // RealOdometryThread.getInstance().makeTimestampContainer();
+  private final Queue<Double> gyroContainer =
+      RealOdometryThread.getInstance().registerInput(yaw::getValueAsDouble);
+  private final StatusSignal<AngularVelocity> yawVelocity = pigeonGyro.getAngularVelocityZWorld();
   public Rotation2d[] gyroAnglesHF = new Rotation2d[] {};
 
   public double gyroAngleSim = 0;
-
-  private RobotState() {
-
-    new Thread(
-            () -> {
-              try {
-                Thread.sleep(1000);
-                zeroHeading();
-              } catch (Exception e) {
-              }
-            })
-        .start();
-  }
 
   public void robotStateInit(
       AlgaeSubsystem algae,
@@ -138,6 +137,12 @@ public class RobotState {
     intakeInputs = intake.intakeInputs;
     moduleInputs = swerve.swerveModuleInputs;
     wristInputs = wrist.wristInputs;
+
+    pigeonGyro.getConfigurator().apply(new Pigeon2Configuration());
+    pigeonGyro.getConfigurator().setYaw(0.0);
+    yaw.setUpdateFrequency(Constants.SwerveConstants.ODOMETRY_FREQUENCY);
+    yawVelocity.setUpdateFrequency(50.0);
+    pigeonGyro.optimizeBusUtilization();
 
     swerveModulePositions[0] =
         new SwerveModulePosition(0, new Rotation2d(swerve.frontRight.getTurnPosition()));
@@ -191,11 +196,11 @@ public class RobotState {
     /** Send the high frequency gyro to an array */
     gyroAnglesHF =
         gyroContainer.stream()
-            .map((Double value) -> new Rotation2d(value))
+            .map((Double value) -> Rotation2d.fromDegrees(value))
             .toArray(Rotation2d[]::new);
     gyroContainer.clear();
 
-    if (!gyro.isConnected()) {
+    if (!pigeonGyro.isConnected()) {
       /**
        * If the gyro isn't connected, take the current values and estimate how much it has changed
        * since then.
@@ -207,7 +212,7 @@ public class RobotState {
     sampleCountHF = swerve.swerveModuleInputs[0].odometryTimestamps.length;
     sampleTimestampsHF = swerve.swerveModuleInputs[0].odometryTimestamps;
 
-    if (sampleCountHF > 0 && gyro.isConnected()) {
+    if (sampleCountHF > 0 && pigeonGyro.isConnected()) {
 
       swerveModulePositionsHF = getSwerveModulePositionArrayHF();
 
@@ -562,18 +567,10 @@ public class RobotState {
     return;
   }
 
-  /** Gyroscope Methods (NavX) */
+  /** Gyroscope Methods (Pigeon2) */
   public synchronized void zeroHeading() {
-    gyro.reset();
+    pigeonGyro.reset();
     setOdometry(new Pose2d(getPose().getX(), getPose().getY(), new Rotation2d(0)));
-  }
-
-  public synchronized double getPitch() {
-    return gyro.getPitch() - 1.14;
-  }
-
-  public synchronized double getRoll() {
-    return gyro.getRoll();
   }
 
   /**
@@ -582,7 +579,7 @@ public class RobotState {
    * @return The facing direction of the gyro, between -360 and 360 degrees.
    */
   public synchronized double getHeading() {
-    return Math.IEEEremainder(gyro.getYaw(), 360);
+    return Math.IEEEremainder(pigeonGyro.getYaw().getValueAsDouble(), 360);
   }
 
   public synchronized Rotation2d getPoseRotation2d() {
@@ -633,8 +630,8 @@ public class RobotState {
       return Rotation2d.fromRadians(gyroAngleSim);
     }
 
-    Logger.recordOutput("gyro/gyro Rotation2d", gyro.getRotation2d());
-    return gyro.getRotation2d();
+    Logger.recordOutput("gyro/gyro Rotation2d", pigeonGyro.getRotation2d());
+    return pigeonGyro.getRotation2d();
     // .plus(Rotation2d.fromRadians(Math.PI));
   }
 

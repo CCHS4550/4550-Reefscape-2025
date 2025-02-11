@@ -55,7 +55,7 @@ public class Constants {
     return isBlue;
   }
 
-  public static void getCurrentMode() {
+  public static void setCurrentMode() {
     if (RobotBase.isReal()) {
       currentMode = Mode.REAL;
     } else if (RobotBase.isSimulation()) {
@@ -140,6 +140,8 @@ public class Constants {
 
     public static final int ALGAE_INTAKE = 17;
     public static final boolean ALGAE_INTAKE_REVERSE = false;
+
+    public static final int PIGEON = 25;
   }
 
   public static class SwerveConstants {
