@@ -41,7 +41,7 @@ public class SwerveDriveScheme implements ControlScheme {
         return fieldCentric;
       };
 
-  private static DoubleSupplier driveSpeedModifier = () -> 1.00;
+  private static DoubleSupplier driveSpeedModifier = () -> .2;
 
   private static double turnSpeedModifier = 0.5;
 
@@ -160,8 +160,8 @@ public class SwerveDriveScheme implements ControlScheme {
                 swerve)
             .withName("Swerve Controller Command"));
 
-    configureButtons(
-        algae, arm, climber, elevator, intake, swerve, wrist, superstructure, controller);
+    // configureButtons(
+    // algae, arm, climber, elevator, intake, swerve, wrist, superstructure, controller);
   }
 
   /**

@@ -38,7 +38,7 @@ public class WristIOHardware implements WristIO {
 
     wristPidController =
         new ProfiledPIDController(
-            .05, 0, 0, new TrapezoidProfile.Constraints(1, 1)); // do something for this
+            .0, 0, 0, new TrapezoidProfile.Constraints(1, 1)); // do something for this
 
     wristPidController.reset(throughBore.getPosition());
     // TODO Sysid

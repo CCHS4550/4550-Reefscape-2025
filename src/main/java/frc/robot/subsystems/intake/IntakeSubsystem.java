@@ -12,9 +12,6 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.helpers.Elastic;
-import frc.helpers.Elastic.Notification.NotificationLevel;
-import frc.helpers.OI;
 import frc.helpers.maps.Constants;
 import frc.helpers.motorcontroller.CCMotorController;
 import org.littletonrobotics.junction.Logger;
@@ -159,19 +156,19 @@ public class IntakeSubsystem extends SubsystemBase {
     intakeIO.updateInputs(intakeInputs);
     Logger.processInputs("Subsystem/Intake", intakeInputs);
     currentState = handleStateTransitions();
-    applyStates();
+    // applyStates();
     // This method will be called once per scheduler run
-    if (Timer.getFPGATimestamp() - lastDetectedBeamBreakTimestamp > 0.25) {
-      OI.setRumble(0, 0.5);
-      Elastic.Notification notification = new Elastic.Notification();
-      Elastic.sendNotification(
-          notification
-              .withLevel(NotificationLevel.INFO)
-              .withTitle("Piece intaken")
-              .withDescription("Piece intaken")
-              .withDisplaySeconds(3.0));
-      lastDetectedBeamBreakTimestamp = 999999999999.999999 * 99999999.99999;
-    }
+    // if (Timer.getFPGATimestamp() - lastDetectedBeamBreakTimestamp > 0.25) {
+    //   OI.setRumble(0, 0.5);
+    //   Elastic.Notification notification = new Elastic.Notification();
+    //   Elastic.sendNotification(
+    //       notification
+    //           .withLevel(NotificationLevel.INFO)
+    //           .withTitle("Piece intaken")
+    //           .withDescription("Piece intaken")
+    //           .withDisplaySeconds(3.0));
+    //   lastDetectedBeamBreakTimestamp = 999999999999.999999 * 99999999.99999;
+    // }
   }
 
   public Command intake() {

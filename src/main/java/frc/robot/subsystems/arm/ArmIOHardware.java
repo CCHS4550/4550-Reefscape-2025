@@ -39,7 +39,7 @@ public class ArmIOHardware implements ArmIO {
 
     armPidController =
         new ProfiledPIDController(
-            5, 0, .1, new TrapezoidProfile.Constraints(.5, .25)); // do something for this
+            0, 0, 0, new TrapezoidProfile.Constraints(.5, .25)); // do something for this
 
     armPidController.reset(throughBore.getPosition());
     // TODO Sysid

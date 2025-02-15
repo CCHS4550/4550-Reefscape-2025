@@ -228,6 +228,8 @@ public class SwerveDriveSubsystem extends SubsystemBase {
 
     for (int i = 0; i < swerveModules.length; i++) {
       swerveModules[i].updateInputs(swerveModuleInputs[i]);
+      Logger.recordOutput(
+          swerveModules[i].getName() + "/getTurnPosition", swerveModules[i].getTurnPosition());
       Logger.processInputs("Subsystem/Drive/" + swerveModules[i].getName(), swerveModuleInputs[i]);
     }
 

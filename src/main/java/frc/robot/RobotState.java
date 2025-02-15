@@ -111,6 +111,8 @@ public class RobotState {
 
   public double gyroAngleSim = 0;
 
+  boolean useHF = false;
+
   public void robotStateInit(
       AlgaeSubsystem algae,
       ArmSubsystem arm,
@@ -142,7 +144,6 @@ public class RobotState {
     pigeonGyro.getConfigurator().apply(new Pigeon2Configuration());
     pigeonGyro.getConfigurator().setYaw(0.0);
     yaw.setUpdateFrequency(Constants.SwerveConstants.ODOMETRY_FREQUENCY);
-    yawVelocity.setUpdateFrequency(50.0);
     pigeonGyro.optimizeBusUtilization();
 
     swerveModulePositions[0] =
@@ -213,7 +214,7 @@ public class RobotState {
     sampleCountHF = swerve.swerveModuleInputs[0].odometryTimestamps.length;
     sampleTimestampsHF = swerve.swerveModuleInputs[0].odometryTimestamps;
 
-    if (sampleCountHF > 0 && pigeonGyro.isConnected()) {
+    if (sampleCountHF > 0 && pigeonGyro.isConnected() && useHF) {
 
       swerveModulePositionsHF = getSwerveModulePositionArrayHF();
 
@@ -235,6 +236,7 @@ public class RobotState {
       }
 
     } else {
+
       poseEstimator.updateWithTime(
           Timer.getFPGATimestamp(), getRotation2d(), swerveModulePositions);
     }
@@ -276,18 +278,15 @@ public class RobotState {
     Shuffleboard.getTab("Subsystems").add("Swerve Drive", swerve);
     Shuffleboard.getTab("Subsystems").add("Wrist", wrist);
 
-    /* Put the Pose Estimators on Dashboards */
-    SmartDashboard.putData("Field", gameField);
-  }
-
-  public synchronized void dashboardPeriodic() {
-
     SmartDashboard.putNumber("Robot X Position", poseEstimator.getEstimatedPosition().getX());
     SmartDashboard.putNumber("Robot Y Position", poseEstimator.getEstimatedPosition().getY());
     SmartDashboard.putNumber(
         "Robot Rads Angle", poseEstimator.getEstimatedPosition().getRotation().getRadians());
     SmartDashboard.putNumber(
         "Robot Degrees Angle", poseEstimator.getEstimatedPosition().getRotation().getDegrees());
+
+    /* Put the Pose Estimators on Dashboards */
+    SmartDashboard.putData("Field", gameField);
   }
 
   public GenericEntry yActual, yGoal, xActual, xGoal, barrelActual, barrelGoal;
@@ -418,7 +417,7 @@ public class RobotState {
         new SwerveModulePosition(
             swerve.backLeft.getDrivePosition(), new Rotation2d(swerve.backLeft.getTurnPosition()));
 
-    Logger.recordOutput("currentModulePositions", swerveModulePositions);
+    // Logger.recordOutput("currentModulePositions", swerveModulePositions);
 
     return swerveModulePositions;
   }
@@ -633,6 +632,7 @@ public class RobotState {
 
     Logger.recordOutput("gyro/gyro Rotation2d", pigeonGyro.getRotation2d());
     return pigeonGyro.getRotation2d();
+
     // .plus(Rotation2d.fromRadians(Math.PI));
   }
 

@@ -46,9 +46,7 @@ public class SimulationScheme {
 
     /** z */
     controller.a().onTrue(new InstantCommand(() -> System.out.println("a")));
-    controller
-        .a()
-        .onTrue(AlignCommands.frontAlignToReefLeft(swerve, vision));
+    controller.a().whileTrue(AlignCommands.frontAlignToReefLeft(swerve, vision));
 
     /** x */
     controller.b().onTrue(new InstantCommand(() -> System.out.println("b")));

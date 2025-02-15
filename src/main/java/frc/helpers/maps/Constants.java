@@ -92,53 +92,53 @@ public class Constants {
   public static class MotorConstants {
 
     // Swerve Drive Base Motor & CAN ID Constants
-    public static final int FRONT_RIGHT_DRIVE = 1;
+    public static final int FRONT_RIGHT_DRIVE = 7;
     public static final boolean FRONT_RIGHT_DRIVE_REVERSE = false;
     public static final double FRONT_RIGHT_DRIVE_ENCODER = 1;
-    public static final int FRONT_RIGHT_TURN = 2;
+    public static final int FRONT_RIGHT_TURN = 8;
     public static final boolean FRONT_RIGHT_TURN_REVERSE = true;
     public static final double FRONT_RIGHT_TURN_ENCODER = 1;
 
-    public static final int FRONT_LEFT_DRIVE = 3;
+    public static final int FRONT_LEFT_DRIVE = 4;
     public static final boolean FRONT_LEFT_DRIVE_REVERSE = true;
     public static final double FRONT_LEFT_DRIVE_ENCODER = 1;
-    public static final int FRONT_LEFT_TURN = 4;
+    public static final int FRONT_LEFT_TURN = 3;
     public static final boolean FRONT_LEFT_TURN_REVERSE = true;
     public static final double FRONT_LEFT_TURN_ENCODER = 1;
 
-    public static final int BACK_RIGHT_DRIVE = 5;
+    public static final int BACK_RIGHT_DRIVE = 10;
     public static final boolean BACK_RIGHT_DRIVE_REVERSE = false;
     public static final double BACK_RIGHT_DRIVE_ENCODER = 1;
-    public static final int BACK_RIGHT_TURN = 6;
+    public static final int BACK_RIGHT_TURN = 11;
     public static final boolean BACK_RIGHT_TURN_REVERSE = true;
     public static final double BACK_RIGHT_TURN_ENCODER = 1;
 
-    public static final int BACK_LEFT_DRIVE = 7;
+    public static final int BACK_LEFT_DRIVE = 1;
     public static final boolean BACK_LEFT_DRIVE_REVERSE = true;
     public static final double BACK_LEFT_DRIVE_ENCODER = 1;
-    public static final int BACK_LEFT_TURN = 8;
+    public static final int BACK_LEFT_TURN = 2;
     public static final boolean BACK_LEFT_TURN_REVERSE = true;
     public static final double BACK_LEFT_TURN_ENCODER = 1;
 
     public static final int CLIMBER = 9;
     public static final boolean CLIMBER_REVERSE = false;
 
-    public static final int[] ELEVATOR = {10, 11};
+    public static final int[] ELEVATOR = {12, 13};
     public static final boolean[] ELEVATOR_REVERSE = {false, true};
 
-    public static final int ARM = 12;
+    public static final int ARM = 14;
     public static final boolean ARM_REVERSE = false;
 
-    public static final int WRIST = 13;
+    public static final int WRIST = 15;
     public static final boolean WRIST_REVERSE = false;
 
-    public static final int[] INTAKE = {14, 15};
+    public static final int[] INTAKE = {16, 17};
     public static final boolean[] INTAKE_REVERSE = {false, true};
 
-    public static final int ALGAE_WRIST = 16;
+    public static final int ALGAE_WRIST = 5;
     public static final boolean ALGAE_WRIST_REVERSE = false;
 
-    public static final int ALGAE_INTAKE = 17;
+    public static final int ALGAE_INTAKE = 6;
     public static final boolean ALGAE_INTAKE_REVERSE = false;
 
     public static final int PIGEON = 25;
@@ -147,10 +147,10 @@ public class Constants {
   public static class SwerveConstants {
 
     // Absolute Encoder Ports
-    public static final int FRONT_RIGHT_ABSOLUTE_ENCODER = 1;
-    public static final int FRONT_LEFT_ABSOLUTE_ENCODER = 0;
-    public static final int BACK_RIGHT_ABSOLUTE_ENCODER = 2;
-    public static final int BACK_LEFT_ABSOLUTE_ENCODER = 3;
+    public static final int FRONT_RIGHT_ABSOLUTE_ENCODER = 2;
+    public static final int FRONT_LEFT_ABSOLUTE_ENCODER = 1;
+    public static final int BACK_RIGHT_ABSOLUTE_ENCODER = 3;
+    public static final int BACK_LEFT_ABSOLUTE_ENCODER = 0;
 
     public static final double FRONT_RIGHT_ABSOLUTE_ENCODER_OFFSET = 2.974;
     public static final double FRONT_LEFT_ABSOLUTE_ENCODER_OFFSET = 4.540;
@@ -216,7 +216,7 @@ public class Constants {
         new Pose2d(0, 0, new Rotation2d(0)); // must be in meters!
 
     /** This is important! This is the frequency at which odometry data is updated. */
-    public static final double ODOMETRY_FREQUENCY = 250;
+    public static final double ODOMETRY_FREQUENCY = 100;
   }
 
   public static class ArmConstants {
@@ -251,11 +251,11 @@ public class Constants {
     public static final double ELEVATOR_THROUGHBORE_OFFSET = 1.0;
 
     public static double[] elevatorPositions = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    public static double elevatorMaxVelocity = 90;
-    public static double elevatorMaxAcceleration = 90;
-    public static double elevatorKP = 90;
-    public static double elevatorKI = 90;
-    public static double elevatorKD = 90;
+    public static double elevatorMaxVelocity = 0;
+    public static double elevatorMaxAcceleration = 0;
+    public static double elevatorKP = 0;
+    public static double elevatorKI = 0;
+    public static double elevatorKD = 0;
   }
 
   public static class WristConstants {

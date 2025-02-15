@@ -116,8 +116,6 @@ public class Robot extends LoggedRobot {
 
     switch (Constants.currentMode) {
       case REAL:
-        RobotState.getInstance().dashboardPeriodic();
-
         if (RobotController.getBatteryVoltage() < 10) {
           browningOut = true;
         } else {
@@ -135,6 +133,7 @@ public class Robot extends LoggedRobot {
         break;
     }
 
+    RobotState.getInstance().updateSwerveModuleEncoders();
     RobotState.getInstance().updateOdometryPose();
     RobotState.getInstance().updateSwerveModulePositionsPeriodic();
     RobotState.getInstance().updateVisionPose();

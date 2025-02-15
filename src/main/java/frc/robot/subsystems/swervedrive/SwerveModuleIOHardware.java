@@ -67,7 +67,7 @@ public class SwerveModuleIOHardware implements SwerveModuleIO {
     // turningPIDController = new SparkPIDController(.5, 0, 0);
     // turningPIDController = new SparkPIDController();
 
-    turningPIDController = new PIDController(0.4, 0, 0);
+    turningPIDController = new PIDController(0.5, 0, 0);
     turningPIDController.enableContinuousInput(0, 2 * Math.PI);
     drivingPidController = new PIDController(1, 0, 0);
 
@@ -255,6 +255,9 @@ public class SwerveModuleIOHardware implements SwerveModuleIO {
   public void setTurnPosition(DoubleSupplier angle) {
     double turnOutput =
         turningPIDController.calculate(getAbsoluteEncoderRadiansOffset(), angle.getAsDouble());
+
+    Logger.recordOutput(name + "/current turn Position", turnOutput);
+    Logger.recordOutput(name + "/desirerd turnPID", turnOutput);
     // turnMotor.setVoltage(turnOutput);
     turnMotor.set(turnOutput);
     /* TODO Change back */
