@@ -65,7 +65,9 @@ public class Superstructure extends SubsystemBase {
     /** Position to Score L4 */
     L4_BACK,
     /** In position to climb */
-    CLIMB_PREPARING
+    CLIMB_PREPARING,
+    /** FOR TESTING ONLY */
+    TEST
     /** Climber actively working */
     // CLIMBING,
     /** Do anything to help robot get off the ground. */
@@ -88,7 +90,9 @@ public class Superstructure extends SubsystemBase {
     /** Position to Score L4 */
     L4_BACK,
     /** In position to climb */
-    CLIMB_PREPARING
+    CLIMB_PREPARING,
+    /** FOR TESTING ONLY */
+    TEST
     /** Climber actively working */
     // CLIMBING,
     /** Do anything to help robot get off the ground. */
@@ -102,9 +106,9 @@ public class Superstructure extends SubsystemBase {
   public void applyStates() {
     switch (currentSuperState) {
       case WITHIN_FRAME_PERIMETER_DEFAULT:
-        arm.setWantedState(ArmState.DEFAULT_WITHINFRAME);
-        elevator.setWantedState(ElevatorState.DEFAULT_WITHINFRAME);
-        wrist.setWantedState(WristState.DEFAULT_WITHINFRAME);
+        // arm.setWantedState(ArmState.DEFAULT_WITHINFRAME);
+        // elevator.setWantedState(ElevatorState.DEFAULT_WITHINFRAME);
+        // wrist.setWantedState(WristState.DEFAULT_WITHINFRAME);
         break;
 
       case CORAL_STATION_BACK:

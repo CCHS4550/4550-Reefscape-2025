@@ -48,7 +48,7 @@ public class AlgaeIOHardware implements AlgaeIO {
   @Override
   public void updateInputs(AlgaeIOInputs inputs) {
 
-    System.out.println("ALGAE IS REAL");
+    // System.out.println("ALGAE IS REAL");
     // inputs.wristAngleRads = wrist.getRawPosition() * WRIST_POSITION_COEFFICIENT;
     // inputs.wristAppliedVolts = wrist.getBusVoltage() * wrist.getAppliedOutput(); //might just be
     // get bus voltage

@@ -445,6 +445,6 @@ public class Constants {
   }
 
   public static int beamBrakePort() {
-    return 0; // fill with actual port the beam brake is in
+    return 7; // fill with actual port the beam brake is in
   }
 }

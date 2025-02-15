@@ -79,8 +79,6 @@ public class RobotState {
   /** Pigeon 2 Gyroscope (Better) */
   private final Pigeon2 pigeonGyro = new Pigeon2(Constants.MotorConstants.PIGEON);
 
-  private final StatusSignal<Angle> yaw = pigeonGyro.getYaw();
-
   public AlgaeIOInputsAutoLogged algaeInputs;
   public ArmIOInputsAutoLogged armInputs;
   public ClimberIOInputsAutoLogged climberInputs;
@@ -101,11 +99,14 @@ public class RobotState {
   public int sampleCountHF;
   public double[] sampleTimestampsHF;
   public SwerveModulePosition[][] swerveModulePositionsHF;
+
+  private final StatusSignal<Angle> yaw = pigeonGyro.getYaw();
+  private final StatusSignal<AngularVelocity> yawVelocity = pigeonGyro.getAngularVelocityZWorld();
   // private final Queue<Double> gyroTimestampContainer =
   // RealOdometryThread.getInstance().makeTimestampContainer();
   private final Queue<Double> gyroContainer =
       RealOdometryThread.getInstance().registerInput(yaw::getValueAsDouble);
-  private final StatusSignal<AngularVelocity> yawVelocity = pigeonGyro.getAngularVelocityZWorld();
+
   public Rotation2d[] gyroAnglesHF = new Rotation2d[] {};
 
   public double gyroAngleSim = 0;

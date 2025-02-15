@@ -9,6 +9,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import frc.helpers.maps.Constants;
@@ -44,6 +45,8 @@ public class WristIOHardware implements WristIO {
     wristFeedForward = new ArmFeedforward(0, 0, 0, 0);
 
     goalState = new State(0, 0);
+
+    SmartDashboard.putData("Wrist PID Controller", wristPidController);
   }
 
   @Override

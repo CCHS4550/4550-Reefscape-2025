@@ -22,7 +22,7 @@ public class ArmIOHardware implements ArmIO {
   CCMotorController armMotor;
   AbsoluteEncoder throughBore;
 
-  ProfiledPIDController pidController;
+  ProfiledPIDController armPidController;
   ArmFeedforward feedForward;
 
   double pidOutput;
@@ -37,17 +37,18 @@ public class ArmIOHardware implements ArmIO {
     this.armMotor = armMotor;
     throughBore = (AbsoluteEncoder) armMotor.getDataportAbsoluteEncoder();
 
-    pidController =
+    armPidController =
         new ProfiledPIDController(
             5, 0, .1, new TrapezoidProfile.Constraints(.5, .25)); // do something for this
 
-    pidController.reset(throughBore.getPosition());
+    armPidController.reset(throughBore.getPosition());
     // TODO Sysid
-    feedForward = new ArmFeedforward(0, 0, 0, 0);
+    /** Have to find Ks */
+    feedForward = new ArmFeedforward(0, 1.34, 1.87, 0.09);
 
     goalState = new State(0, 0);
 
-    SmartDashboard.putData("Arm PID Controller", pidController);
+    SmartDashboard.putData("Arm PID Controller", armPidController);
   }
 
   @Override
@@ -61,9 +62,9 @@ public class ArmIOHardware implements ArmIO {
 
     inputs.appliedVoltage = getVoltage();
 
-    inputs.setpointAngleRadians = pidController.getSetpoint().position;
-    inputs.setpointAngleDegrees = Units.radiansToDegrees(pidController.getSetpoint().position);
-    inputs.setpointVelocity = pidController.getSetpoint().velocity;
+    inputs.setpointAngleRadians = armPidController.getSetpoint().position;
+    inputs.setpointAngleDegrees = Units.radiansToDegrees(armPidController.getSetpoint().position);
+    inputs.setpointVelocity = armPidController.getSetpoint().velocity;
 
     inputs.goalAngleRadians = goalState.position;
     inputs.goalAngleDegrees = Units.radiansToDegrees(goalState.position);
@@ -91,7 +92,7 @@ public class ArmIOHardware implements ArmIO {
 
     this.goalState = goalState;
 
-    pidOutput = pidController.calculate(getAbsoluteEncoderRadiansOffset(), goalState);
+    pidOutput = armPidController.calculate(getAbsoluteEncoderRadiansOffset(), goalState);
     // ffOutput =
     //     feedForward.calculate(
     //         getAbsoluteEncoderRadiansOffset(), pidController.getSetpoint().velocity);
