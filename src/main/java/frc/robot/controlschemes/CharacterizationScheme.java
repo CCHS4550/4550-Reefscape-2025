@@ -5,6 +5,7 @@
 package frc.robot.controlschemes;
 
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.algae.AlgaeSubsystem;
 import frc.robot.subsystems.arm.ArmSubsystem;
@@ -68,9 +69,9 @@ public class CharacterizationScheme {
 
     // controller.a().onTrue(new InstantCommand(() -> wrist.setWantedState(WristState.ZERO)));
 
-    // controller.a().onTrue(swerve.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    // controller.b().onTrue(swerve.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    // controller.x().onTrue(swerve.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    // controller.y().onTrue(swerve.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    controller.a().onTrue(swerve.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    controller.b().onTrue(swerve.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    controller.x().onTrue(swerve.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    controller.y().onTrue(swerve.sysIdDynamic(SysIdRoutine.Direction.kReverse));
   }
 }

@@ -232,7 +232,7 @@ public class Constants {
     public static final double ARM_MOTOR_RADIANS_PER_SECOND_CONVERSION_FACTOR =
         ARM_MOTOR_ROTATIONS_TO_ARM_ROTATIONS_RADIANS / 60;
 
-    public static final double ARM_THROUGHBORE_OFFSET = 5.877;
+    public static final double ARM_THROUGHBORE_OFFSET = 0;
   }
 
   public static class ElevatorConstants {
@@ -248,7 +248,7 @@ public class Constants {
     public static final double ELEVATOR_MOTOR_METERS_PER_SECOND_CONVERSION_FACTOR =
         HEIGHT_METERS_PER_ELEVATOR_MOTOR_ROTATIONS / 60;
 
-    public static final double ELEVATOR_THROUGHBORE_OFFSET = 1.0;
+    public static final double ELEVATOR_THROUGHBORE_OFFSET = 0;
 
     public static double[] elevatorPositions = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     public static double elevatorMaxVelocity = 0;
@@ -269,7 +269,7 @@ public class Constants {
     public static final double WRIST_MOTOR_RADIANS_PER_SECOND_CONVERSION_FACTOR =
         WRIST_MOTOR_ROTATIONS_TO_WRIST_ROTATIONS_RADIANS / 60;
 
-    public static final double WRIST_THROUGHBORE_OFFSET = 1.0 + 0.652;
+    public static final double WRIST_THROUGHBORE_OFFSET = 0;
 
     public static boolean WRIST_REVERSE = true;
 
