@@ -17,7 +17,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
@@ -104,7 +103,8 @@ public class RobotState {
   public SwerveModulePosition[][] swerveModulePositionsHF;
 
   private final StatusSignal<Angle> yaw = pigeonGyro.getYaw();
-  private final StatusSignal<AngularVelocity> yawVelocity = pigeonGyro.getAngularVelocityZWorld();
+  // private final StatusSignal<AngularVelocity> yawVelocity =
+  // pigeonGyro.getAngularVelocityZWorld();
   // private final Queue<Double> gyroTimestampContainer =
   // RealOdometryThread.getInstance().makeTimestampContainer();
   private final Queue<Double> gyroContainer =
