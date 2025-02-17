@@ -45,6 +45,13 @@ public class SwerveDriveScheme implements ControlScheme {
 
   private static double turnSpeedModifier = 0.5;
 
+  private static PIDController orientationLockPID;
+
+  static {
+    orientationLockPID = new PIDController(.5, 0, 0);
+    orientationLockPID.enableContinuousInput(-Math.PI, Math.PI);
+  }
+
   /**
    * Configures the basic driving as well as buttons.
    *
@@ -82,13 +89,6 @@ public class SwerveDriveScheme implements ControlScheme {
             Constants.SwerveConstants.DRIVE_RATE_LIMIT * 2,
             -Constants.SwerveConstants.DRIVE_RATE_LIMIT * 2,
             0);
-    // SlewRateLimiter turnRateLimiter =
-    //     new SlewRateLimiter(Constants.SwerveConstants.TURN_RATE_LIMIT / 1.5);
-
-    PIDController orientationLockPID = new PIDController(.5, 0, 0);
-
-    orientationLockPID.enableContinuousInput(-Math.PI, Math.PI);
-    // controller = new CommandXboxController(port);
 
     // Set to slow mode for recreation
     // setSlowMode();
@@ -126,16 +126,8 @@ public class SwerveDriveScheme implements ControlScheme {
 
                   turnSpeed *= 2.0 * Math.PI * turnSpeedModifier;
 
-                  // Limits acceleration and speed
-                  // Possibly change the speed limiting to somewhere else (maybe a normalize
-                  // function)
                   xSpeed = xRateLimiter.calculate(xSpeed);
                   ySpeed = yRateLimiter.calculate(ySpeed);
-                  // turnSpeed = turnRateLimiter.calculate(turnSpeed);
-
-                  // SmartDashboard.putNumber("xSpeed", xSpeed);
-                  // SmartDashboard.putNumber("ySpeed", ySpeed);
-                  // SmartDashboard.putNumber("turnSpeed", turnSpeed);
 
                   // Constructs desired chassis speeds
                   ChassisSpeeds chassisSpeeds;
