@@ -76,8 +76,9 @@ public class OrthogonalToTag extends Command {
     this.swerve = swerve;
     this.vision = vision;
 
-    translationPID = new PIDController(5, 0, 0);
-    rotationPID = new PIDController(5, 0, 0);
+    translationPID = new PIDController(.1, 0, 0);
+    rotationPID = new PIDController(.1, 0, 0);
+    rotationPID.enableContinuousInput(-Math.PI, Math.PI);
 
     if (useBestTag) this.focusedTag = RobotState.getInstance().visionInputs.focusedId;
 
@@ -94,15 +95,16 @@ public class OrthogonalToTag extends Command {
     poseRelativeToTargetEstimator =
         new SwerveDrivePoseEstimator(
             Constants.SwerveConstants.DRIVE_KINEMATICS,
-            RobotState.getInstance().getPoseRotation2d(),
+            RobotState.getInstance().getRotation2d(),
             RobotState.getInstance().swerveModulePositions,
-            new Pose2d(0, 0, new Rotation2d()));
+            new Pose2d(0, 0, RobotState.getInstance().getPoseRotation2d()));
 
-    Pose2d samplePose =
+    Pose2d closestTag =
         RobotState.getInstance().getPose().nearest(idList).nearest(Constants.AprilTags.TAG_POSES);
+    Logger.recordOutput("OrthogonalToTag/closestTag", closestTag);
 
     for (int i = 0; i < Constants.AprilTags.TAG_POSES.size(); i++) {
-      if (samplePose.equals(Constants.AprilTags.TAG_POSES.get(i)))
+      if (closestTag.equals(Constants.AprilTags.TAG_POSES.get(i)))
         focusedTag = Constants.AprilTags.TAG_IDS[i];
     }
 
@@ -176,40 +178,38 @@ public class OrthogonalToTag extends Command {
     if (targetState.pose == null) {
       targetState.pose =
           new Pose2d(
-              Constants.AprilTags.TAG_MAP
-                  .get(focusedTag)
-                  .plus(transformation)
-                  .getTranslation()
-                  .minus(RobotState.getInstance().getPose().getTranslation()),
-              Constants.AprilTags.TAG_MAP.get(focusedTag).plus(transformation).getRotation());
-      targetState.heading =
-          Constants.AprilTags.TAG_MAP.get(focusedTag).plus(transformation).getRotation();
+                  Constants.AprilTags.TAG_MAP
+                      .get(focusedTag)
+                      .getTranslation()
+                      .minus(RobotState.getInstance().getPose().getTranslation()),
+                  Constants.AprilTags.TAG_MAP.get(focusedTag).getRotation().unaryMinus())
+              .rotateBy(currentRelativePose.getRotation());
+      // .plus(transformation);
+      targetState.heading = targetState.pose.getRotation();
     }
 
     Logger.recordOutput("OrthogonalToTag/targetPose", targetState.pose);
 
     /** Update Odometry Pose Estimation */
-    if (RobotState.getInstance().visionInputs.hasTarget == false) {
-      if (RobotState.getInstance().sampleCountHF > 0
-          && RobotState.getInstance().pigeonGyro.isConnected()
-          && RobotState.getInstance().useHF) {
-        for (int i = 0; i < RobotState.getInstance().sampleCountHF; i++) {
-          poseRelativeToTargetEstimator.updateWithTime(
-              RobotState.getInstance().sampleTimestampsHF[i],
-              RobotState.getInstance().gyroAnglesHF[i],
-              RobotState.getInstance().swerveModulePositionsHF[i]);
-
-          Logger.recordOutput("OrthogonalToTag/Using HF", true);
-        }
-      } else {
-
+    if (RobotState.getInstance().sampleCountHF > 0
+        && RobotState.getInstance().pigeonGyro.isConnected()
+        && RobotState.getInstance().useHF) {
+      for (int i = 0; i < RobotState.getInstance().sampleCountHF; i++) {
         poseRelativeToTargetEstimator.updateWithTime(
-            Timer.getFPGATimestamp(),
-            RobotState.getInstance().getPoseRotation2d(),
-            RobotState.getInstance().swerveModulePositions);
+            RobotState.getInstance().sampleTimestampsHF[i],
+            RobotState.getInstance().gyroAnglesHF[i],
+            RobotState.getInstance().swerveModulePositionsHF[i]);
 
-        Logger.recordOutput("OrthogonalToTag/Using HF", false);
+        Logger.recordOutput("OrthogonalToTag/Using HF", true);
       }
+    } else {
+
+      poseRelativeToTargetEstimator.updateWithTime(
+          Timer.getTimestamp(),
+          RobotState.getInstance().getRotation2d(),
+          RobotState.getInstance().swerveModulePositions);
+
+      Logger.recordOutput("OrthogonalToTag/Using HF", false);
     }
 
     globalTargetPose =

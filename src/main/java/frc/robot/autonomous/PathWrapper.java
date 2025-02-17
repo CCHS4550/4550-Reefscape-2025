@@ -66,7 +66,7 @@ public class PathWrapper {
 
     followCommands.add(followTrajectory(initialTraj, swerve));
 
-    initialPose = initialTraj.getInitialPose();
+    initialPose = new Pose2d(initialTraj.getInitialPose().getTranslation(), initialHeading);
     //  initialPath.getPreviewStartingHolonomicPose();
 
     for (int i = 1; i < files.length; i++) {

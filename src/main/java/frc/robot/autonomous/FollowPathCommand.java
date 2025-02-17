@@ -40,7 +40,7 @@ public class FollowPathCommand extends Command {
     this.swerve = swerve;
     translationPID = new PIDController(5, 0, 0);
     rotationPID = new PIDController(5, 0, 0);
-    rotationPID.enableContinuousInput(0, Math.PI);
+    rotationPID.enableContinuousInput(-Math.PI, Math.PI);
 
     this.trajectory = trajectory;
     // Use addRequirements() here to declare subsystem dependencies.

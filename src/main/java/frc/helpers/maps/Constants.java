@@ -330,7 +330,7 @@ public class Constants {
   public class FieldPositionConstants {
 
     public static final Transform2d FRONT_REEF_LEFT_OFFSET =
-        new Transform2d(Inches.of(-30), Inches.of(0), new Rotation2d());
+        new Transform2d(Inches.of(0), Inches.of(0), new Rotation2d());
 
     public static final Transform2d FRONT_REEF_RIGHT_OFFSET =
         new Transform2d(Inches.of(0), Inches.of(0), new Rotation2d());
