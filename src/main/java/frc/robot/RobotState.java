@@ -247,6 +247,7 @@ public class RobotState {
     }
 
     currentPose = getPose();
+
     Logger.recordOutput("SwerveDrivePoseEstimator/Estimated Pose", getPose());
     Logger.recordOutput(
         "SwerveDrivePoseEstimator/Estimated Angle Degrees", getPose().getRotation().getDegrees());

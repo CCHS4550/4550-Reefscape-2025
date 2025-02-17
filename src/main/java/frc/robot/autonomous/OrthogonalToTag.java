@@ -44,6 +44,8 @@ public class OrthogonalToTag extends Command {
   private Transform2d transformation;
   private List<Pose2d> idList;
 
+  private Pose2d globalInitialPose;
+
   private Pose2d globalTargetPose;
   private Pose2d globalCurrentPose;
 
@@ -76,8 +78,8 @@ public class OrthogonalToTag extends Command {
     this.swerve = swerve;
     this.vision = vision;
 
-    translationPID = new PIDController(.1, 0, 0);
-    rotationPID = new PIDController(.1, 0, 0);
+    translationPID = new PIDController(3, 0, 0);
+    rotationPID = new PIDController(5, 0, 0);
     rotationPID.enableContinuousInput(-Math.PI, Math.PI);
 
     if (useBestTag) this.focusedTag = RobotState.getInstance().visionInputs.focusedId;
@@ -90,6 +92,8 @@ public class OrthogonalToTag extends Command {
   @Override
   public void initialize() {
 
+    globalInitialPose = RobotState.getInstance().getPose();
+
     exitCommand = false;
 
     poseRelativeToTargetEstimator =
@@ -97,7 +101,7 @@ public class OrthogonalToTag extends Command {
             Constants.SwerveConstants.DRIVE_KINEMATICS,
             RobotState.getInstance().getRotation2d(),
             RobotState.getInstance().swerveModulePositions,
-            new Pose2d(0, 0, RobotState.getInstance().getPoseRotation2d()));
+            new Pose2d(0, 0, new Rotation2d()));
 
     Pose2d closestTag =
         RobotState.getInstance().getPose().nearest(idList).nearest(Constants.AprilTags.TAG_POSES);
@@ -182,9 +186,10 @@ public class OrthogonalToTag extends Command {
                       .get(focusedTag)
                       .getTranslation()
                       .minus(RobotState.getInstance().getPose().getTranslation()),
-                  Constants.AprilTags.TAG_MAP.get(focusedTag).getRotation().unaryMinus())
-              .rotateBy(currentRelativePose.getRotation());
-      // .plus(transformation);
+                  Constants.AprilTags.TAG_MAP.get(focusedTag).getRotation())
+              .rotateBy(RobotState.getInstance().getPoseRotation2d().unaryMinus())
+              .plus(new Transform2d(0, 0, Rotation2d.fromRadians(Math.PI)))
+              .plus(transformation);
       targetState.heading = targetState.pose.getRotation();
     }
 
@@ -212,13 +217,11 @@ public class OrthogonalToTag extends Command {
       Logger.recordOutput("OrthogonalToTag/Using HF", false);
     }
 
-    globalTargetPose =
-        RobotState.getInstance().getPose().plus(new Transform2d(new Pose2d(), targetState.pose));
-    Logger.recordOutput("OrthogonalToTag/globalTargetPose", globalTargetPose);
-
-    globalCurrentPose =
-        RobotState.getInstance().getPose().plus(new Transform2d(new Pose2d(), currentRelativePose));
+    globalCurrentPose = globalInitialPose.plus(new Transform2d(new Pose2d(), currentRelativePose));
     Logger.recordOutput("OrthogonalToTag/globalCurrentPose", globalCurrentPose);
+
+    globalTargetPose = globalInitialPose.plus(new Transform2d(new Pose2d(), targetState.pose));
+    Logger.recordOutput("OrthogonalToTag/globalTargetPose", globalTargetPose);
 
     /** Calculate speeds and set robot */
     // ChassisSpeeds chassisSpeeds =
@@ -266,7 +269,7 @@ public class OrthogonalToTag extends Command {
 
     if (distanceMetersErr < .05 && angleDegreesErr < 5) exitCommand = true;
 
-    return timer.hasElapsed(15);
+    return exitCommand || timer.hasElapsed(7);
   }
 
   /** Helper Methods */

@@ -136,7 +136,7 @@ public class Robot extends LoggedRobot {
     RobotState.getInstance().updateSwerveModuleEncoders();
     RobotState.getInstance().updateOdometryPose();
     RobotState.getInstance().updateSwerveModulePositionsPeriodic();
-    RobotState.getInstance().updateVisionPose();
+    // RobotState.getInstance().updateVisionPose();
 
     // Runs the Scheduler. This is responsible for polling buttons, adding
     // newly-scheduled

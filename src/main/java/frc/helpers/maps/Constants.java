@@ -330,23 +330,23 @@ public class Constants {
   public class FieldPositionConstants {
 
     public static final Transform2d FRONT_REEF_LEFT_OFFSET =
-        new Transform2d(Inches.of(0), Inches.of(0), new Rotation2d());
+        new Transform2d(Inches.of(-37.250000), Inches.of(0), new Rotation2d());
 
     public static final Transform2d FRONT_REEF_RIGHT_OFFSET =
-        new Transform2d(Inches.of(0), Inches.of(0), new Rotation2d());
+        new Transform2d(Inches.of(-37.250000), Inches.of(0), new Rotation2d());
 
     public static final Transform2d BACK_REEF_LEFT_OFFSET =
-        new Transform2d(Inches.of(0), Inches.of(0), new Rotation2d(Math.PI));
+        new Transform2d(Inches.of(-37.250000), Inches.of(0), new Rotation2d(Math.PI));
     public static final Transform2d BACK_REEF_RIGHT_OFFSET =
-        new Transform2d(Inches.of(0), Inches.of(0), new Rotation2d(Math.PI));
+        new Transform2d(Inches.of(-37.250000), Inches.of(0), new Rotation2d(Math.PI));
 
     public static final Transform2d CORAL_STATION_LEFT_OFFSET =
-        new Transform2d(Inches.of(0), Inches.of(0), new Rotation2d());
+        new Transform2d(Inches.of(-37.250000), Inches.of(0), new Rotation2d());
     public static final Transform2d CORAL_STATION_RIGHT_OFFSET =
-        new Transform2d(Inches.of(0), Inches.of(0), new Rotation2d());
+        new Transform2d(Inches.of(-37.250000), Inches.of(0), new Rotation2d());
 
     public static final Transform2d PROCESSOR_OFFSET =
-        new Transform2d(Inches.of(0), Inches.of(0), new Rotation2d());
+        new Transform2d(Inches.of(-37.250000), Inches.of(0), new Rotation2d());
   }
 
   /** Back Camera */
