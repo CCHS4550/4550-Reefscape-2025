@@ -8,7 +8,5 @@ import frc.helpers.motorcontroller.CCMotorController;
 
 /** Add your docs here. */
 public class IntakeIOReplay implements IntakeIO {
-  public IntakeIOReplay(CCMotorController innerMotor, CCMotorController outerMotor) {
-    System.err.println("INTAKE IN REPLAY");
-  }
+  public IntakeIOReplay(CCMotorController motor) {}
 }

@@ -1,5 +1,5 @@
 {
- "name":"RCg3 - R- D4C4 - Buffalo",
+ "name":"RCg3 - R- D4C4 - Trenton",
  "version":1,
  "snapshot":{
   "waypoints":[
@@ -7,7 +7,7 @@
     {"x":4.035118579864502, "y":2.2340192794799805, "heading":4.1887902047863905, "intervals":9, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
     {"x":3.991938591003418, "y":2.7459137439727783, "heading":4.1887902047863905, "intervals":25, "split":true, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
     {"x":1.5888853073120115, "y":0.6795462965965271, "heading":4.08426930718, "intervals":25, "split":true, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
-    {"x":3.737426519393921, "y":2.8998703956604004, "heading":4.1887902047863905, "intervals":40, "split":true, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false}],
+    {"x":3.737426519393921, "y":2.8998703956604004, "heading":4.1887902047863905, "intervals":40, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false}],
   "constraints":[
     {"from":"first", "to":null, "data":{"type":"StopPoint", "props":{}}, "enabled":true},
     {"from":"last", "to":null, "data":{"type":"StopPoint", "props":{}}, "enabled":true},
@@ -24,7 +24,7 @@
     {"x":{"exp":"4.035118579864502 m", "val":4.035118579864502}, "y":{"exp":"2.2340192794799805 m", "val":2.2340192794799805}, "heading":{"exp":"240 deg", "val":4.1887902047863905}, "intervals":9, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
     {"x":{"exp":"3.991938591003418 m", "val":3.991938591003418}, "y":{"exp":"2.7459137439727783 m", "val":2.7459137439727783}, "heading":{"exp":"240 deg", "val":4.1887902047863905}, "intervals":25, "split":true, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
     {"x":{"exp":"1.5888853073120117 m", "val":1.5888853073120115}, "y":{"exp":"0.6795462965965271 m", "val":0.6795462965965271}, "heading":{"exp":"4.08426930718 rad", "val":4.08426930718}, "intervals":25, "split":true, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
-    {"x":{"exp":"3.737426519393921 m", "val":3.737426519393921}, "y":{"exp":"2.8998703956604004 m", "val":2.8998703956604004}, "heading":{"exp":"240 deg", "val":4.1887902047863905}, "intervals":40, "split":true, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false}],
+    {"x":{"exp":"3.737426519393921 m", "val":3.737426519393921}, "y":{"exp":"2.8998703956604004 m", "val":2.8998703956604004}, "heading":{"exp":"240 deg", "val":4.1887902047863905}, "intervals":40, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false}],
   "constraints":[
     {"from":"first", "to":null, "data":{"type":"StopPoint", "props":{}}, "enabled":true},
     {"from":"last", "to":null, "data":{"type":"StopPoint", "props":{}}, "enabled":true},

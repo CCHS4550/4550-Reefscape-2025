@@ -22,15 +22,16 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   public enum ElevatorState {
     // Placeholder Values
-    DEFAULT_WITHINFRAME(Constants.ElevatorConstants.elevatorPositions[0]),
-    L1_FRONT(Constants.ElevatorConstants.elevatorPositions[1]),
-    L2_FRONT(Constants.ElevatorConstants.elevatorPositions[2]),
-    L3_FRONT(Constants.ElevatorConstants.elevatorPositions[3]),
-    L4_BACK(Constants.ElevatorConstants.elevatorPositions[4]),
-    A1(Constants.ElevatorConstants.elevatorPositions[5]),
-    A2(Constants.ElevatorConstants.elevatorPositions[6]),
-    CORAL_STATION_FRONT(Constants.ElevatorConstants.elevatorPositions[7]),
-    CORAL_STATION_BACK(Constants.ElevatorConstants.elevatorPositions[8]);
+    DEFAULT_WITHINFRAME(0),
+    L1_FRONT(0),
+    L2_FRONT(0),
+    L3_FRONT(0),
+    L4_BACK(0),
+    A1(0),
+    A2(0),
+    CORAL_STATION_FRONT(0),
+    CORAL_STATION_BACK(0),
+    CLIMB_PREPARING(0);
 
     private final double heightMeters;
 
@@ -113,6 +114,9 @@ public class ElevatorSubsystem extends SubsystemBase {
       case CORAL_STATION_BACK:
         elevatorIO.holdAtState(ElevatorState.CORAL_STATION_BACK);
 
+      case CLIMB_PREPARING:
+        elevatorIO.holdAtState(ElevatorState.CLIMB_PREPARING);
+
       default:
         elevatorIO.holdAtState(ElevatorState.DEFAULT_WITHINFRAME);
     }
@@ -162,7 +166,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   public void periodic() {
     elevatorIO.updateInputs(elevatorInputs);
     Logger.processInputs("Subsystem/Elevator", elevatorInputs);
-    currentState = handleStateTransitions();
+    if (wantedState != currentState) currentState = handleStateTransitions();
     applyStates();
 
     // This method will be called once per scheduler run

@@ -13,12 +13,17 @@ public class ClimberIOHardware implements ClimberIO {
 
   @Override
   public void winchDown() {
-    winchMotor.setVoltage(3, 60);
+    winchMotor.setVoltage(12, 60);
   }
 
   @Override
   public void winchUp() {
-    winchMotor.setVoltage(-3, 60);
+    winchMotor.setVoltage(-12, 60);
+  }
+
+  @Override
+  public void winchStop() {
+    winchMotor.setVoltage(0);
   }
 
   @Override

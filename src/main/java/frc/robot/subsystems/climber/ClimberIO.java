@@ -15,6 +15,8 @@ public interface ClimberIO {
 
   default void winchUp() {}
 
+  default void winchStop() {}
+
   default void setVoltage(Voltage voltage) {}
 
   @FunctionalInterface

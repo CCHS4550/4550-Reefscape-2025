@@ -30,7 +30,8 @@ public class WristSubsystem extends SubsystemBase {
     L2L3_FRONT(Units.degreesToRadians(45)),
     L4_BACK(Units.degreesToRadians(110)),
     CORAL_STATION_FRONT(Units.degreesToRadians(15)),
-    CORAL_STATION_BACK(Units.degreesToRadians(120));
+    CORAL_STATION_BACK(Units.degreesToRadians(120)),
+    CLIMB_PREPARING(Units.degreesToRadians(10));
 
     private final double angleRadians;
 
@@ -165,7 +166,7 @@ public class WristSubsystem extends SubsystemBase {
   public void periodic() {
     wristIO.updateInputs(wristInputs);
     Logger.processInputs("Subsystem/Wrist", wristInputs);
-    currentState = handleStateTransitions();
+    if (wantedState != currentState) currentState = handleStateTransitions();
     applyStates();
 
     // This method will be called once per scheduler run

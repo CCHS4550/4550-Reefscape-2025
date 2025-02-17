@@ -14,7 +14,7 @@ import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveDriveSubsystem;
 import frc.robot.subsystems.wrist.WristSubsystem;
 
-public class SimulationScheme {
+public class TestingScheme {
 
   public static void configure(
       AlgaeSubsystem algae,

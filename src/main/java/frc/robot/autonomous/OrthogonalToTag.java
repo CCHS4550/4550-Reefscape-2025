@@ -76,8 +76,8 @@ public class OrthogonalToTag extends Command {
     this.swerve = swerve;
     this.vision = vision;
 
-    translationPID = swerve.translationPID;
-    rotationPID = swerve.rotationPID;
+    translationPID = new PIDController(5, 0, 0);
+    rotationPID = new PIDController(5, 0, 0);
 
     if (useBestTag) this.focusedTag = RobotState.getInstance().visionInputs.focusedId;
 
@@ -171,21 +171,28 @@ public class OrthogonalToTag extends Command {
               .plus(new Transform2d(new Pose2d(), currentRelativePose));
       targetState.pose = targetState.pose.plus(transformation);
       targetState.heading = targetState.pose.getRotation();
-
-      globalTargetPose =
-          RobotState.getInstance().getPose().plus(new Transform2d(new Pose2d(), targetState.pose));
-
-      Logger.recordOutput("OrthogonalToTag/globalTargetPose", globalTargetPose);
-
-      Logger.recordOutput("OrthogonalToTag/targetPose", targetState.pose);
     }
 
-    if (targetState.pose == null)
-      targetState.pose = Constants.AprilTags.TAG_MAP.get(focusedTag).plus(transformation);
+    if (targetState.pose == null) {
+      targetState.pose =
+          new Pose2d(
+              Constants.AprilTags.TAG_MAP
+                  .get(focusedTag)
+                  .plus(transformation)
+                  .getTranslation()
+                  .minus(RobotState.getInstance().getPose().getTranslation()),
+              Constants.AprilTags.TAG_MAP.get(focusedTag).plus(transformation).getRotation());
+      targetState.heading =
+          Constants.AprilTags.TAG_MAP.get(focusedTag).plus(transformation).getRotation();
+    }
+
+    Logger.recordOutput("OrthogonalToTag/targetPose", targetState.pose);
 
     /** Update Odometry Pose Estimation */
     if (RobotState.getInstance().visionInputs.hasTarget == false) {
-      if (RobotState.getInstance().sampleCountHF > 0) {
+      if (RobotState.getInstance().sampleCountHF > 0
+          && RobotState.getInstance().pigeonGyro.isConnected()
+          && RobotState.getInstance().useHF) {
         for (int i = 0; i < RobotState.getInstance().sampleCountHF; i++) {
           poseRelativeToTargetEstimator.updateWithTime(
               RobotState.getInstance().sampleTimestampsHF[i],
@@ -205,65 +212,31 @@ public class OrthogonalToTag extends Command {
       }
     }
 
+    globalTargetPose =
+        RobotState.getInstance().getPose().plus(new Transform2d(new Pose2d(), targetState.pose));
+    Logger.recordOutput("OrthogonalToTag/globalTargetPose", globalTargetPose);
+
     globalCurrentPose =
         RobotState.getInstance().getPose().plus(new Transform2d(new Pose2d(), currentRelativePose));
     Logger.recordOutput("OrthogonalToTag/globalCurrentPose", globalCurrentPose);
 
-    /** */
+    /** Calculate speeds and set robot */
+    // ChassisSpeeds chassisSpeeds =
+    //     swerve.swerveFollower.calculateRobotRelativeSpeeds(currentRelativePose, targetState);
 
-    /** Quick Check */
-    if (targetState.pose == null) exitCommand = true;
-    if (targetState.heading == null) exitCommand = true;
+    /** Alternative method of sending robot to pose */
+    double xPID = translationPID.calculate(currentRelativePose.getX(), targetState.pose.getX());
+    double yPID = translationPID.calculate(currentRelativePose.getY(), targetState.pose.getY());
+    double wantedRotationSpeeds =
+        rotationPID.calculate(
+            currentRelativePose.getRotation().getRadians(), targetState.heading.getRadians());
+    ChassisSpeeds chassisSpeeds =
+        ChassisSpeeds.fromFieldRelativeSpeeds(
+            xPID, yPID, wantedRotationSpeeds, currentRelativePose.getRotation());
 
-    Logger.recordOutput("OrthogonalToTag/poseIsNotNull", targetState.pose != null);
-    if (targetState.pose != null) {
+    Logger.recordOutput("OrthogonalToTag/ChassisSpeeds", chassisSpeeds);
 
-      Logger.recordOutput("OrthogonalToTag/Finding Error", true);
-      double distanceMetersErr =
-          RobotState.getInstance()
-              .getPose()
-              .getTranslation()
-              .getDistance(globalTargetPose.getTranslation());
-      double angleDegreesErr =
-          Math.abs(
-              RobotState.getInstance()
-                  .getPoseRotation2d()
-                  .minus(globalTargetPose.getRotation())
-                  .getDegrees());
-      // distanceMetersErr =
-      //     currentRelativePose.getTranslation().getDistance(targetState.pose.getTranslation());
-      // angleDegreesErr =
-      //     Math.abs(
-      //
-      // currentRelativePose.getRotation().minus(targetState.pose.getRotation()).getDegrees());
-
-      Logger.recordOutput("OrthogonalToTag/distanceMetersErr", distanceMetersErr);
-      Logger.recordOutput("OrthogonalToTag/angleDegreesErr", angleDegreesErr);
-
-      if (distanceMetersErr < .05 && angleDegreesErr < 5) exitCommand = true;
-    } else {
-      Logger.recordOutput("OrthogonalToTag/Finding Error", false);
-    }
-
-    if (!exitCommand) {
-      /** Calculate speeds and set robot */
-      // ChassisSpeeds chassisSpeeds =
-      //     swerve.swerveFollower.calculateRobotRelativeSpeeds(currentRelativePose, targetState);
-
-      /** Alternative method of sending robot to pose */
-      double xPID = translationPID.calculate(currentRelativePose.getX(), targetState.pose.getX());
-      double yPID = translationPID.calculate(currentRelativePose.getY(), targetState.pose.getY());
-      double wantedRotationSpeeds =
-          rotationPID.calculate(
-              currentRelativePose.getRotation().getRadians(), targetState.heading.getRadians());
-      ChassisSpeeds chassisSpeeds =
-          ChassisSpeeds.fromFieldRelativeSpeeds(
-              xPID, yPID, wantedRotationSpeeds, currentRelativePose.getRotation());
-
-      Logger.recordOutput("OrthogonalToTag/ChassisSpeeds", chassisSpeeds);
-
-      swerve.driveRobotRelative(chassisSpeeds);
-    }
+    swerve.driveRobotRelative(chassisSpeeds);
   }
 
   // Called once the command ends or is interrupted.
@@ -275,6 +248,23 @@ public class OrthogonalToTag extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+
+    double distanceMetersErr =
+        RobotState.getInstance()
+            .getPose()
+            .getTranslation()
+            .getDistance(globalTargetPose.getTranslation());
+    double angleDegreesErr =
+        Math.abs(
+            RobotState.getInstance()
+                .getPoseRotation2d()
+                .minus(globalTargetPose.getRotation())
+                .getDegrees());
+
+    Logger.recordOutput("OrthogonalToTag/distanceMetersErr", distanceMetersErr);
+    Logger.recordOutput("OrthogonalToTag/angleDegreesErr", angleDegreesErr);
+
+    if (distanceMetersErr < .05 && angleDegreesErr < 5) exitCommand = true;
 
     return timer.hasElapsed(15);
   }

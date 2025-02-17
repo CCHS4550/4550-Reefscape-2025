@@ -124,7 +124,7 @@ public class AlgaeSubsystem extends SubsystemBase {
     algaeIO.updateInputs(algaeInputs);
     Logger.processInputs("Subsystem/Algae", algaeInputs);
 
-    currentState = handleStateTransitions();
+    if (wantedState != currentState) currentState = handleStateTransitions();
     applyStates();
   }
   // This method will be called once per scheduler run

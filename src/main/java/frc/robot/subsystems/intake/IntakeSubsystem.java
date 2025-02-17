@@ -8,7 +8,6 @@ import static edu.wpi.first.units.Units.Volts;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -45,21 +44,12 @@ public class IntakeSubsystem extends SubsystemBase {
     this.intakeIO =
         ioFactory.create(
             motorFactory.create(
-                "intakeMotor1",
-                "intake1",
-                Constants.MotorConstants.INTAKE[0],
+                "intakeMotor",
+                "intake",
+                Constants.MotorConstants.INTAKE,
                 MotorType.kBrushless,
                 IdleMode.kBrake,
-                Constants.MotorConstants.INTAKE_REVERSE[0],
-                1,
-                1),
-            motorFactory.create(
-                "intakeMotor2",
-                "intake2",
-                Constants.MotorConstants.INTAKE[1],
-                MotorType.kBrushless,
-                IdleMode.kBrake,
-                Constants.MotorConstants.INTAKE_REVERSE[1],
+                Constants.MotorConstants.INTAKE_REVERSE,
                 1,
                 1));
   }
@@ -67,39 +57,29 @@ public class IntakeSubsystem extends SubsystemBase {
   private void applyStates() {
     switch (currentState) {
       case IDLE:
-        intakeIO.setInnerVoltage(Volts.of(0));
-        intakeIO.setOuterVoltage(Volts.of(0));
 
       case INTAKING_FRONT:
-        intakeIO.setInnerVoltage(Volts.of(5));
-        intakeIO.setOuterVoltage(Volts.of(5));
+        intakeIO.intake(Volts.of(5));
+
+        if (intakeInputs.hasCoral) {
+          wantedState = IntakeState.HAS_CORAL;
+        }
 
       case INTAKING_BACK:
-        intakeIO.setInnerVoltage(Volts.of(5));
-        intakeIO.setOuterVoltage(Volts.of(5));
+        intakeIO.intake(Volts.of(-5));
 
-        if (true) {
+        if (intakeInputs.hasCoral) {
           wantedState = IntakeState.HAS_CORAL;
         }
       case OUTTAKING_FRONT:
-        intakeIO.setInnerVoltage(Volts.of(5));
-        intakeIO.setOuterVoltage(Volts.of(5));
+        intakeIO.intake(Volts.of(5));
 
       case OUTTAKING_BACK:
-        intakeIO.setInnerVoltage(Volts.of(5));
-        intakeIO.setOuterVoltage(Volts.of(5));
-
-      case NO_CORAL:
-        intakeIO.setInnerVoltage(Volts.of(5));
-        intakeIO.setOuterVoltage(Volts.of(5));
 
       case HAS_CORAL:
-        intakeIO.setInnerVoltage(Volts.of(5));
-        intakeIO.setOuterVoltage(Volts.of(5));
+        intakeIO.intake(Volts.of(0.01));
 
       default:
-        intakeIO.setInnerVoltage(Volts.of(5));
-        intakeIO.setOuterVoltage(Volts.of(5));
     }
   }
 
@@ -110,21 +90,18 @@ public class IntakeSubsystem extends SubsystemBase {
         return IntakeState.IDLE;
 
       case INTAKING_FRONT:
-        return IntakeState.IDLE;
+        return IntakeState.INTAKING_FRONT;
 
       case INTAKING_BACK:
         return IntakeState.IDLE;
       case OUTTAKING_FRONT:
-        return IntakeState.IDLE;
+        return IntakeState.OUTTAKING_FRONT;
 
       case OUTTAKING_BACK:
-        return IntakeState.IDLE;
-
-      case NO_CORAL:
-        return IntakeState.IDLE;
+        return IntakeState.OUTTAKING_BACK;
 
       case HAS_CORAL:
-        return IntakeState.IDLE;
+        return IntakeState.HAS_CORAL;
 
       default:
         return IntakeState.IDLE;
@@ -139,23 +116,23 @@ public class IntakeSubsystem extends SubsystemBase {
     return new InstantCommand(() -> setWantedState(wantedSuperState));
   }
 
-  public IntakeState getElevatorState() {
-    return currentState;
-  }
+  // public void lastDetectedBeamBreakTimestamp() {
+  //   if (intakeInputs.beamBreakVoltage < 1.0) {
+  //     lastDetectedBeamBreakTimestamp = Timer.getFPGATimestamp();
+  //   } else {
+  //     lastDetectedBeamBreakTimestamp = 9999999999999.9 * 999999.9;
+  //   } // auto return a stupid high double so the math wont lead to a false positive
+  // }
 
-  public void lastDetectedBeamBreakTimestamp() {
-    if (intakeInputs.beamBreakVoltage < 1.0) {
-      lastDetectedBeamBreakTimestamp = Timer.getFPGATimestamp();
-    } else {
-      lastDetectedBeamBreakTimestamp = 9999999999999.9 * 999999.9;
-    } // auto return a stupid high double so the math wont lead to a false positive
+  public boolean hasCoral() {
+    return intakeInputs.hasCoral;
   }
 
   @Override
   public void periodic() {
     intakeIO.updateInputs(intakeInputs);
     Logger.processInputs("Subsystem/Intake", intakeInputs);
-    currentState = handleStateTransitions();
+    if (wantedState != currentState) currentState = handleStateTransitions();
     // applyStates();
     // This method will be called once per scheduler run
     // if (Timer.getFPGATimestamp() - lastDetectedBeamBreakTimestamp > 0.25) {
@@ -169,25 +146,5 @@ public class IntakeSubsystem extends SubsystemBase {
     //           .withDisplaySeconds(3.0));
     //   lastDetectedBeamBreakTimestamp = 999999999999.999999 * 99999999.99999;
     // }
-  }
-
-  public Command intake() {
-    return this.startEnd(
-        () -> {
-          intakeIO.setAllVoltage(Volts.of(5.0));
-        },
-        () -> {
-          intakeIO.setAllVoltage(Volts.of(0.0));
-        });
-  }
-
-  public Command outtake() {
-    return this.startEnd(
-        () -> {
-          intakeIO.setAllVoltage(Volts.of(-5.0));
-        },
-        () -> {
-          intakeIO.setAllVoltage(Volts.of(0.0));
-        });
   }
 }

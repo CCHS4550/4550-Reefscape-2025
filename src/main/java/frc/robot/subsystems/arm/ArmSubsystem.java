@@ -29,7 +29,8 @@ public class ArmSubsystem extends SubsystemBase {
     L2L3_FRONT(Units.degreesToRadians(45)),
     L4_BACK(Units.degreesToRadians(110)),
     CORAL_STATION_FRONT(Units.degreesToRadians(15)),
-    CORAL_STATION_BACK(Units.degreesToRadians(120));
+    CORAL_STATION_BACK(Units.degreesToRadians(120)),
+    CLIMB_PREPARING(Units.degreesToRadians(150));
 
     public final double angleRadians;
 
@@ -66,6 +67,7 @@ public class ArmSubsystem extends SubsystemBase {
                 Constants.MotorConstants.ARM_REVERSE,
                 Constants.ArmConstants.ARM_MOTOR_ROTATIONS_TO_ARM_ROTATIONS_RADIANS,
                 Constants.ArmConstants.ARM_MOTOR_RADIANS_PER_SECOND_CONVERSION_FACTOR));
+
     sysIdRoutine =
         new SysIdRoutine(
             new SysIdRoutine.Config(
@@ -166,31 +168,11 @@ public class ArmSubsystem extends SubsystemBase {
     armIO.updateInputs(armInputs);
     Logger.processInputs("Subsystem/Arm", armInputs);
 
-    currentState = handleStateTransitions();
+    if (wantedState != currentState) currentState = handleStateTransitions();
     // currentState = ArmState.ZERO;
     applyStates();
 
     // This method will be called once per scheduler run
-  }
-
-  public Command armUp() {
-    return this.startEnd(
-        () -> {
-          armIO.setVoltage(Volts.of(5.0));
-        },
-        () -> {
-          armIO.setVoltage(Volts.of(0.0));
-        });
-  }
-
-  public Command armDown() {
-    return this.startEnd(
-        () -> {
-          armIO.setVoltage(Volts.of(-5.0));
-        },
-        () -> {
-          armIO.setVoltage(Volts.of(0.0));
-        });
   }
 
   /** SYSID METHODS */

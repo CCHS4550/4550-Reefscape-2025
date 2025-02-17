@@ -9,23 +9,22 @@ public interface IntakeIO {
   @AutoLog
   class IntakeIOInputs {
 
-    public double appliedInnerVoltage = 0.0;
-    public double appliedOuterVoltagae = 0.0;
+    public double appliedVoltage = 0.0;
 
     public boolean hasCoral = false;
-    public double beamBreakVoltage;
+    public boolean beamBroke = false;
   }
 
   default void updateInputs(IntakeIOInputs inputs) {}
 
-  default void setOuterVoltage(Voltage voltage) {}
+  default void intake(Voltage volts) {}
 
-  default void setInnerVoltage(Voltage voltage) {}
-
-  default void setAllVoltage(Voltage voltage) {}
+  default boolean hasCoral() {
+    return false;
+  }
 
   @FunctionalInterface
   interface IOFactory {
-    IntakeIO create(CCMotorController innerMotor, CCMotorController outerMotor);
+    IntakeIO create(CCMotorController intakeMotor);
   }
 }

@@ -1,42 +1,35 @@
 package frc.robot.subsystems.intake;
 
 import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.DigitalInput;
 import frc.helpers.maps.Constants;
 import frc.helpers.motorcontroller.CCMotorController;
 
 public class IntakeIOHardware implements IntakeIO {
 
-  CCMotorController innerMotor;
-  CCMotorController outerMotor;
-  private final AnalogInput beamBreak;
+  private CCMotorController intakeMotor;
+  private DigitalInput beamBreak;
 
-  public IntakeIOHardware(CCMotorController innerMotor, CCMotorController outerMotor) {
-    this.innerMotor = innerMotor;
-    this.outerMotor = outerMotor;
-    beamBreak = new AnalogInput(Constants.beamBrakePort());
+  public IntakeIOHardware(CCMotorController motor) {
+    this.intakeMotor = motor;
+    beamBreak = new DigitalInput(Constants.IntakeConstants.BEAM_BREAK_PORT);
   }
 
   @Override
   public void updateInputs(IntakeIOInputs inputs) {
-    inputs.appliedInnerVoltage = innerMotor.getVoltage();
-    inputs.appliedOuterVoltagae = outerMotor.getVoltage();
-    inputs.beamBreakVoltage = beamBreak.getVoltage();
+    inputs.appliedVoltage = intakeMotor.getVoltage();
+
+    inputs.beamBroke = beamBreak.get();
+    inputs.hasCoral = inputs.beamBroke;
   }
 
   @Override
-  public void setInnerVoltage(Voltage voltage) {
-    innerMotor.setVoltage(voltage.magnitude());
+  public void intake(Voltage volts) {
+    intakeMotor.setVoltage(volts.magnitude());
   }
 
   @Override
-  public void setOuterVoltage(Voltage voltage) {
-    outerMotor.setVoltage(voltage.magnitude());
-  }
-
-  @Override
-  public void setAllVoltage(Voltage voltage) {
-    innerMotor.setVoltage(voltage.magnitude());
-    outerMotor.setVoltage(voltage.magnitude());
+  public boolean hasCoral() {
+    return beamBreak.get();
   }
 }

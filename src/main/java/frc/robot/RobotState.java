@@ -30,6 +30,7 @@ import frc.helpers.maps.Constants;
 import frc.helpers.vision.VisionIO;
 import frc.helpers.vision.VisionIOInputsAutoLogged;
 import frc.robot.autonomous.CustomAutoChooser;
+import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.algae.AlgaeIOInputsAutoLogged;
 import frc.robot.subsystems.algae.AlgaeSubsystem;
 import frc.robot.subsystems.arm.ArmIOInputsAutoLogged;
@@ -73,11 +74,13 @@ public class RobotState {
 
   private VisionIO vision;
 
+  private Superstructure superstructure;
+
   /** NavX Gyroscope */
   // private final AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
 
   /** Pigeon 2 Gyroscope (Better) */
-  private final Pigeon2 pigeonGyro = new Pigeon2(Constants.MotorConstants.PIGEON);
+  public final Pigeon2 pigeonGyro = new Pigeon2(Constants.MotorConstants.PIGEON);
 
   public AlgaeIOInputsAutoLogged algaeInputs;
   public ArmIOInputsAutoLogged armInputs;
@@ -111,7 +114,7 @@ public class RobotState {
 
   public double gyroAngleSim = 0;
 
-  boolean useHF = false;
+  public boolean useHF = false;
 
   public void robotStateInit(
       AlgaeSubsystem algae,
@@ -121,7 +124,8 @@ public class RobotState {
       IntakeSubsystem intake,
       SwerveDriveSubsystem swerve,
       WristSubsystem wrist,
-      VisionIO vision) {
+      VisionIO vision,
+      Superstructure superstructure) {
 
     this.algae = algae;
     this.arm = arm;
@@ -132,6 +136,8 @@ public class RobotState {
     this.wrist = wrist;
 
     this.vision = vision;
+
+    this.superstructure = superstructure;
 
     algaeInputs = algae.algaeInputs;
     armInputs = arm.armInputs;
@@ -176,7 +182,7 @@ public class RobotState {
   public SwerveDrivePoseEstimator poseEstimator;
 
   public synchronized CustomAutoChooser autoChooserInit() {
-    return new CustomAutoChooser(swerve);
+    return new CustomAutoChooser(swerve, superstructure, vision);
   }
 
   public synchronized void poseInit() {

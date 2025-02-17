@@ -38,8 +38,9 @@ public class FollowPathCommand extends Command {
    */
   public FollowPathCommand(PathPlannerTrajectory trajectory, SwerveDriveSubsystem swerve) {
     this.swerve = swerve;
-    translationPID = swerve.translationPID;
-    rotationPID = swerve.rotationPID;
+    translationPID = new PIDController(5, 0, 0);
+    rotationPID = new PIDController(5, 0, 0);
+    rotationPID.enableContinuousInput(0, Math.PI);
 
     this.trajectory = trajectory;
     // Use addRequirements() here to declare subsystem dependencies.
@@ -118,33 +119,22 @@ public class FollowPathCommand extends Command {
   @Override
   public boolean isFinished() {
 
-    /** This all from 2910 */
-    // var currentPose = RobotState.getInstance().currentPose;
-    // var desiredPose = trajectory.getEndState().positionMeters;
-    // double driveX = RobotState.getInstance().currentPose.getX();
-    // double driveY = RobotState.getInstance().currentPose.getY();
-    // double driveRotation = RobotState.getInstance().currentPose.getRotation().getRadians();
-
-    // double desiredX = trajectory.getEndState().positionMeters.getX();
-    // double desiredY = trajectory.getEndState().positionMeters.getY();
-    // double desiredRotation =
-    //         trajectory.getEndState().positionMeters.getAngle().getRadians();
-
-    // double xError = Math.abs(desiredX - driveX);
-    // double yError = Math.abs(desiredY - driveY);
-    // double rotationError = Math.abs(desiredRotation - driveRotation);
-
-    // return (xError < 0.10
-    // && yError < 0.10
-    // && rotationError < 0.10)
-    // ||
-    // return false;
+    double translationError =
+        Math.abs(
+            trajectory
+                .getEndState()
+                .pose
+                .getTranslation()
+                .getDistance(RobotState.getInstance().getPose().getTranslation()));
+    double rotationError =
+        Math.abs(
+            RobotState.getInstance().getPoseAngleDegrees()
+                - trajectory.getEndState().heading.getDegrees());
 
     return timer.hasElapsed(trajectory.getTotalTimeSeconds())
-        && Math.abs(
-                RobotState.getInstance().getPoseAngleDegrees()
-                    - trajectory.getEndState().heading.getDegrees())
-            < 1;
+        && translationError < 1
+        && rotationError < 1;
+
     // return timer.hasElapsed(20);
   }
 }

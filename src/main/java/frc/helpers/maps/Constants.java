@@ -132,8 +132,8 @@ public class Constants {
     public static final int WRIST = 15;
     public static final boolean WRIST_REVERSE = false;
 
-    public static final int[] INTAKE = {16, 17};
-    public static final boolean[] INTAKE_REVERSE = {false, true};
+    public static final int INTAKE = 16;
+    public static final boolean INTAKE_REVERSE = false;
 
     public static final int ALGAE_WRIST = 5;
     public static final boolean ALGAE_WRIST_REVERSE = false;
@@ -249,6 +249,7 @@ public class Constants {
         HEIGHT_METERS_PER_ELEVATOR_MOTOR_ROTATIONS / 60;
 
     public static final double ELEVATOR_THROUGHBORE_OFFSET = 0;
+    public static final int HALL_EFFECT_PORT = 0;
 
     public static double[] elevatorPositions = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     public static double elevatorMaxVelocity = 0;
@@ -289,6 +290,10 @@ public class Constants {
     // private static final double SHOULDER_VELOCITY_CONSTRAINT =
     //     WRIST_VELOCITY / WRIST_VELOCITY_COEFFICIENT;
 
+  }
+
+  public static class IntakeConstants {
+    public static final int BEAM_BREAK_PORT = 0;
   }
 
   public static class AlgaeConstants {}

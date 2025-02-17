@@ -9,8 +9,8 @@ import frc.helpers.vision.PhotonVisionAprilTag;
 import frc.helpers.vision.PhotonVisionReplay;
 import frc.helpers.vision.PhotonVisionSim;
 import frc.helpers.vision.VisionIO;
-import frc.robot.controlschemes.SimulationScheme;
 import frc.robot.controlschemes.SwerveDriveScheme;
+import frc.robot.controlschemes.TestingScheme;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.algae.AlgaeIOHardware;
 import frc.robot.subsystems.algae.AlgaeIOReplay;
@@ -126,7 +126,8 @@ public class RobotContainer {
         superstructure = new Superstructure(algae, arm, climber, elevator, intake, swerve, wrist);
     }
     RobotState.getInstance()
-        .robotStateInit(algae, arm, climber, elevator, intake, swerve, wrist, vision);
+        .robotStateInit(
+            algae, arm, climber, elevator, intake, swerve, wrist, vision, superstructure);
     RobotState.getInstance().poseInit();
     RobotState.getInstance().moduleEncodersInit();
     RobotState.getInstance().dashboardInit();
@@ -168,7 +169,7 @@ public class RobotContainer {
             wrist,
             superstructure,
             primaryController);
-        SimulationScheme.configure(
+        TestingScheme.configure(
             algae,
             arm,
             climber,
