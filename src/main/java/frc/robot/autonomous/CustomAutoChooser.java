@@ -27,13 +27,13 @@ public class CustomAutoChooser {
   public enum AutoRoutine {
 
     /** Left Cage 1, 4 piece */
-    PITTSBURGH,
+    SHANGHAI,
     /** Left Cage 2 Taxi */
     CENTENNIAL,
     /** Left Cage 3 Taxi */
     ENGLEWOOD,
     /** Left Wall, 1 piece and Collect */
-    PORTLAND,
+    TOKYO,
     /** Left Wall 2 piece */
     DENVER,
     /** Right Cage 1, 4 piece */
@@ -43,19 +43,19 @@ public class CustomAutoChooser {
     /** Right Cage 1, 2 piece */
     HOUSTON,
     /** Right Cage 3, 1 piece */
-    BUFFALO,
+    BEIJING,
     /** Right Cage 3, 3 piece */
     SACRAMENTO,
     /** Right Cage 3, 2 piece */
-    TRENTON,
+    ATLANTA,
     /** Right Wall, 1 piece */
-    CHICAGO,
+    BARCELONA,
     /** Right Wall, 2 piece */
-    AUSTIN,
+    PARIS,
     /** Middle, 1 piece */
     SEATTLE,
     /** Middle, 1 piece */
-    CHARLOTTE,
+    MUMBAI,
     /** Left Cage 1, 3 piece */
     MANHATTAN,
     /** Left Wall Taxi */
@@ -82,20 +82,20 @@ public class CustomAutoChooser {
         .forEach(auto -> autoChooser.addOption(auto.toString(), auto));
   }
 
-  public Command runPittsburgh() {
+  public Command runShanghai() {
 
     PathWrapper pathWrapper =
         new PathWrapper(
             swerve,
-            AutoRoutine.PITTSBURGH,
+            AutoRoutine.SHANGHAI,
             Rotation2d.fromRadians(Math.PI),
-            new PathWrapper.AutoFile("LCg1 - I2K4L4J4 - Pittsburgh.0", true),
-            new PathWrapper.AutoFile("LCg1 - I2K4L4J4 - Pittsburgh.1", true),
-            new PathWrapper.AutoFile("LCg1 - I2K4L4J4 - Pittsburgh.2", true),
-            new PathWrapper.AutoFile("LCg1 - I2K4L4J4 - Pittsburgh.3", true),
-            new PathWrapper.AutoFile("LCg1 - I2K4L4J4 - Pittsburgh.4", true),
-            new PathWrapper.AutoFile("LCg1 - I2K4L4J4 - Pittsburgh.5", true),
-            new PathWrapper.AutoFile("LCg1 - I2K4L4J4 - Pittsburgh.6", true));
+            new PathWrapper.AutoFile("LCg1 - I2K4L4J4 - Shanghai.0", true),
+            new PathWrapper.AutoFile("LCg1 - I2K4L4J4 - Shanghai.1", true),
+            new PathWrapper.AutoFile("LCg1 - I2K4L4J4 - Shanghai.2", true),
+            new PathWrapper.AutoFile("LCg1 - I2K4L4J4 - Shanghai.3", true),
+            new PathWrapper.AutoFile("LCg1 - I2K4L4J4 - Shanghai.4", true),
+            new PathWrapper.AutoFile("LCg1 - I2K4L4J4 - Shanghai.5", true),
+            new PathWrapper.AutoFile("LCg1 - I2K4L4J4 - Shanghai.6", true));
 
     SequentialCommandGroup c = new SequentialCommandGroup();
 
@@ -148,15 +148,15 @@ public class CustomAutoChooser {
     return c;
   }
 
-  public Command runPortland() {
+  public Command runTokyo() {
 
     PathWrapper pathWrapper =
         new PathWrapper(
             swerve,
             AutoRoutine.CENTENNIAL,
             Rotation2d.fromRadians(Math.PI),
-            new PathWrapper.AutoFile("LW - A4 - Portland.0", true),
-            new PathWrapper.AutoFile("LW - A4 - Portland.1", true));
+            new PathWrapper.AutoFile("LW - A4 - Tokyo.0", true),
+            new PathWrapper.AutoFile("LW - A4 - Tokyo.1", true));
 
     SequentialCommandGroup c = new SequentialCommandGroup();
     // Do not add file extensions!
@@ -269,14 +269,14 @@ public class CustomAutoChooser {
     return c;
   }
 
-  public Command runBuffalo() {
+  public Command runBeijing() {
 
     PathWrapper pathWrapper =
         new PathWrapper(
             swerve,
             AutoRoutine.CENTENNIAL,
             Rotation2d.fromRadians(Math.PI),
-            new PathWrapper.AutoFile("RCg3 - D4 - Buffalo.0", true));
+            new PathWrapper.AutoFile("RCg3 - D4 - Beijing.0", true));
 
     SequentialCommandGroup c = new SequentialCommandGroup();
     // Do not add file extensions!
@@ -313,16 +313,16 @@ public class CustomAutoChooser {
     return c;
   }
 
-  public Command runTrenton() {
+  public Command runAtlanta() {
 
     PathWrapper pathWrapper =
         new PathWrapper(
             swerve,
             AutoRoutine.CENTENNIAL,
             Rotation2d.fromRadians(Math.PI),
-            new PathWrapper.AutoFile("RCg3 - R- D4C4 - Trenton.0", true),
-            new PathWrapper.AutoFile("RCg3 - R- D4C4 - Trenton.1", true),
-            new PathWrapper.AutoFile("RCg3 - R- D4C4 - Trenton.2", true));
+            new PathWrapper.AutoFile("RCg3 - R- D4C4 - Atlanta.0", true),
+            new PathWrapper.AutoFile("RCg3 - R- D4C4 - Atlanta.1", true),
+            new PathWrapper.AutoFile("RCg3 - R- D4C4 - Atlanta.2", true));
 
     SequentialCommandGroup c = new SequentialCommandGroup();
     // Do not add file extensions!
@@ -335,14 +335,14 @@ public class CustomAutoChooser {
     return c;
   }
 
-  public Command runChicago() {
+  public Command runBarcelona() {
 
     PathWrapper pathWrapper =
         new PathWrapper(
             swerve,
             AutoRoutine.CENTENNIAL,
             Rotation2d.fromRadians(Math.PI),
-            new PathWrapper.AutoFile("RW - B4 - Chicago.0", true));
+            new PathWrapper.AutoFile("RW - B4 - Barcelona.0", true));
 
     SequentialCommandGroup c = new SequentialCommandGroup();
     // Do not add file extensions!
@@ -353,16 +353,16 @@ public class CustomAutoChooser {
     return c;
   }
 
-  public Command runAustin() {
+  public Command runParis() {
 
     PathWrapper pathWrapper =
         new PathWrapper(
             swerve,
             AutoRoutine.CENTENNIAL,
             Rotation2d.fromRadians(Math.PI),
-            new PathWrapper.AutoFile("RW - B4A4 - Austin.0", true),
-            new PathWrapper.AutoFile("RW - B4A4 - Austin.1", true),
-            new PathWrapper.AutoFile("RW - B4A4 - Austin.2", true));
+            new PathWrapper.AutoFile("RW - B4A4 - Paris.0", true),
+            new PathWrapper.AutoFile("RW - B4A4 - Paris.1", true),
+            new PathWrapper.AutoFile("RW - B4A4 - Paris.2", true));
 
     SequentialCommandGroup c = new SequentialCommandGroup();
     // Do not add file extensions!
@@ -393,14 +393,14 @@ public class CustomAutoChooser {
     return c;
   }
 
-  public Command runCharlotte() {
+  public Command runMumbai() {
 
     PathWrapper pathWrapper =
         new PathWrapper(
             swerve,
             AutoRoutine.CENTENNIAL,
             Rotation2d.fromRadians(Math.PI),
-            new PathWrapper.AutoFile("Z - H4 - Charlotte.0", true));
+            new PathWrapper.AutoFile("Z - H4 - Mumbai.0", true));
 
     SequentialCommandGroup c = new SequentialCommandGroup();
     // Do not add file extensions!
@@ -468,14 +468,14 @@ public class CustomAutoChooser {
   public Command getSelectedCustomCommand() {
 
     switch (autoChooser.get()) {
-      case PITTSBURGH:
-        return runPittsburgh();
+      case SHANGHAI:
+        return runShanghai();
       case CENTENNIAL:
         return runCentennial();
       case ENGLEWOOD:
         return runEnglewood();
-      case PORTLAND:
-        return runPortland();
+      case TOKYO:
+        return runTokyo();
       case DENVER:
         return runDenver();
       case DETROIT:
@@ -484,20 +484,20 @@ public class CustomAutoChooser {
         return runSanDiego();
       case HOUSTON:
         return runHouston();
-      case BUFFALO:
-        return runBuffalo();
+      case BEIJING:
+        return runBeijing();
       case SACRAMENTO:
         return runSacramento();
-      case TRENTON:
-        return runTrenton();
-      case CHICAGO:
-        return runChicago();
-      case AUSTIN:
-        return runAustin();
+      case ATLANTA:
+        return runAtlanta();
+      case BARCELONA:
+        return runBarcelona();
+      case PARIS:
+        return runParis();
       case SEATTLE:
         return runSeattle();
-      case CHARLOTTE:
-        return runCharlotte();
+      case MUMBAI:
+        return runMumbai();
       case MANHATTAN:
         return runManhattan();
       case AURORA:
