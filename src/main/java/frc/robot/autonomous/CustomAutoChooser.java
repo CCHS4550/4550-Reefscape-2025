@@ -82,20 +82,20 @@ public class CustomAutoChooser {
         .forEach(auto -> autoChooser.addOption(auto.toString(), auto));
   }
 
-  public Command runPittsburg() {
+  public Command runPittsburgh() {
 
     PathWrapper pathWrapper =
         new PathWrapper(
             swerve,
             AutoRoutine.PITTSBURG,
             Rotation2d.fromRadians(Math.PI),
-            new PathWrapper.AutoFile("LCg1 - I2K4L4J4 - Pittsburg.0", true),
-            new PathWrapper.AutoFile("LCg1 - I2K4L4J4 - Pittsburg.1", true),
-            new PathWrapper.AutoFile("LCg1 - I2K4L4J4 - Pittsburg.2", true),
-            new PathWrapper.AutoFile("LCg1 - I2K4L4J4 - Pittsburg.3", true),
-            new PathWrapper.AutoFile("LCg1 - I2K4L4J4 - Pittsburg.4", true),
-            new PathWrapper.AutoFile("LCg1 - I2K4L4J4 - Pittsburg.5", true),
-            new PathWrapper.AutoFile("LCg1 - I2K4L4J4 - Pittsburg.6", true));
+            new PathWrapper.AutoFile("LCg1 - I2K4L4J4 - Pittsburgh.0", true),
+            new PathWrapper.AutoFile("LCg1 - I2K4L4J4 - Pittsburgh.1", true),
+            new PathWrapper.AutoFile("LCg1 - I2K4L4J4 - Pittsburgh.2", true),
+            new PathWrapper.AutoFile("LCg1 - I2K4L4J4 - Pittsburgh.3", true),
+            new PathWrapper.AutoFile("LCg1 - I2K4L4J4 - Pittsburgh.4", true),
+            new PathWrapper.AutoFile("LCg1 - I2K4L4J4 - Pittsburgh.5", true),
+            new PathWrapper.AutoFile("LCg1 - I2K4L4J4 - Pittsburgh.6", true));
 
     SequentialCommandGroup c = new SequentialCommandGroup();
 
@@ -469,7 +469,7 @@ public class CustomAutoChooser {
 
     switch (autoChooser.get()) {
       case PITTSBURG:
-        return runPittsburg();
+        return runPittsburgh();
       case CENTENNIAL:
         return runCentennial();
       case ENGLEWOOD:

@@ -159,15 +159,18 @@ public class Constants {
 
     // Robot Constants (change with SysId)
     // max speed in free sprint: used in getting velocities of swerve modules
-    public static final double MAX_DRIVE_SPEED_METERS_PER_SECOND_THEORETICAL = 3.71;
+    public static final double MAX_DRIVE_SPEED_METERS_PER_SECOND_THEORETICAL = 5.633;
 
     // Velocity Limits
     public static final double MAX_DRIVE_SPEED_METERS_PER_SECOND = 5;
-    public static final double MAX_ANGULAR_SPEED_RADIANS_PER_SECOND = 4 * Math.PI;
+    public static final double MAX_ANGULAR_SPEED_RADIANS_PER_SECOND = 13.195;
+    // public static final double MAX_ANGULAR_SPEED_RADIANS_PER_SECOND = 4 * Math.PI;
 
     // Rate Limiters (acceleration)
-    public static final double DRIVE_RATE_LIMIT = MAX_DRIVE_SPEED_METERS_PER_SECOND * 1.5;
-    public static final double TURN_RATE_LIMIT = MAX_ANGULAR_SPEED_RADIANS_PER_SECOND;
+    // public static final double DRIVE_RATE_LIMIT = MAX_DRIVE_SPEED_METERS_PER_SECOND * 1.5;
+    public static final double DRIVE_RATE_LIMIT = 8.731;
+    // public static final double TURN_RATE_LIMIT = MAX_ANGULAR_SPEED_RADIANS_PER_SECOND;
+    public static final double TURN_RATE_LIMIT = 36.038;
 
     public static final PathConstraints AUTO_PATH_CONSTRAINTS =
         new PathConstraints(
