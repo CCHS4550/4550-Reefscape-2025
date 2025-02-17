@@ -52,12 +52,18 @@ public class SwerveDriveScheme implements ControlScheme {
     orientationLockPID.enableContinuousInput(-Math.PI, Math.PI);
   }
 
-  /**
-   * Configures the basic driving as well as buttons.
-   *
-   * @param swerve The SwerveDrive object being configured.
-   * @param controller The driving controller, initialized in RobotContainer.java.
-   */
+/**
+ * Configures the basic driving as well as buttons.
+ * @param algae Algae Subsystem
+ * @param arm Arm Subsystem
+ * @param climber Climber Subsystem
+ * @param elevator Elevator Subsystem
+ * @param intake Intake Subsystem
+ * @param swerve Swerve Drive Subsystem
+ * @param wrist Wrist Subsystem
+ * @param superstructure Superstructure 
+ * @param controller Controller to bind controls to.
+ */
   public static void configure(
       AlgaeSubsystem algae,
       ArmSubsystem arm,
@@ -156,12 +162,18 @@ public class SwerveDriveScheme implements ControlScheme {
     // algae, arm, climber, elevator, intake, swerve, wrist, superstructure, controller);
   }
 
-  /**
-   * Configures buttons and their respective commands.
-   *
-   * @param swerveDrive The SwerveDrive object being configured.
-   * @param port The controller port of the driving controller.
-   */
+/**
+ * Configures buttons and their respective commands.
+ * @param algae
+ * @param arm
+ * @param climber
+ * @param elevator
+ * @param intake
+ * @param swerve
+ * @param wrist
+ * @param superstructure
+ * @param controller
+ */
   private static void configureButtons(
       AlgaeSubsystem algae,
       ArmSubsystem arm,
