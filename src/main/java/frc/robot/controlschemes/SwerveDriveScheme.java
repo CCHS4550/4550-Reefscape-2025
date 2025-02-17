@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.helpers.ControlScheme;
 import frc.helpers.maps.Constants;
 import frc.robot.RobotState;
 import frc.robot.subsystems.Superstructure;
@@ -30,7 +29,7 @@ import org.littletonrobotics.junction.Logger;
  * Control scheme for swerve drive. Includes movement, the toggle between field centric and robot
  * centric, and a button to zero the gyro.
  */
-public class SwerveDriveScheme implements ControlScheme {
+public class SwerveDriveScheme {
 
   // private static CommandXboxController controller;
   private static boolean fieldCentric = true;
