@@ -27,7 +27,7 @@ public class CustomAutoChooser {
   public enum AutoRoutine {
 
     /** Left Cage 1, 4 piece */
-    PITTSBURG,
+    PITTSBURGH,
     /** Left Cage 2 Taxi */
     CENTENNIAL,
     /** Left Cage 3 Taxi */
@@ -87,7 +87,7 @@ public class CustomAutoChooser {
     PathWrapper pathWrapper =
         new PathWrapper(
             swerve,
-            AutoRoutine.PITTSBURG,
+            AutoRoutine.PITTSBURGH,
             Rotation2d.fromRadians(Math.PI),
             new PathWrapper.AutoFile("LCg1 - I2K4L4J4 - Pittsburgh.0", true),
             new PathWrapper.AutoFile("LCg1 - I2K4L4J4 - Pittsburgh.1", true),
@@ -468,7 +468,7 @@ public class CustomAutoChooser {
   public Command getSelectedCustomCommand() {
 
     switch (autoChooser.get()) {
-      case PITTSBURG:
+      case PITTSBURGH:
         return runPittsburgh();
       case CENTENNIAL:
         return runCentennial();

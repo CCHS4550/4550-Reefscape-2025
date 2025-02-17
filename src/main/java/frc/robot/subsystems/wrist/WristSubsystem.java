@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.helpers.maps.Constants;
 import frc.helpers.motorcontroller.CCMotorController;
+import frc.robot.RobotState;
 import org.littletonrobotics.junction.Logger;
 
 public class WristSubsystem extends SubsystemBase {
@@ -158,8 +159,9 @@ public class WristSubsystem extends SubsystemBase {
     return wantedState;
   }
 
-  public double getPosition() {
-    return wristIO.getAbsoluteEncoderRadiansOffset();
+  public double getGlobalPosition() {
+    return wristIO.getAbsoluteEncoderRadiansOffset()
+        - RobotState.getInstance().armInputs.currentAngleRadians;
   }
 
   @Override
