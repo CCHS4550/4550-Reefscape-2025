@@ -9,6 +9,7 @@ public interface ClimberIO {
   @AutoLog
   class ClimberIOInputs {
     double appliedVoltage = 0.0;
+  
   }
 
   default void updateInputs(ClimberIOInputs inputs) {}
