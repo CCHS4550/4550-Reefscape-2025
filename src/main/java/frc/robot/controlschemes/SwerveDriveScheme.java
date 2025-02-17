@@ -51,18 +51,19 @@ public class SwerveDriveScheme {
     orientationLockPID.enableContinuousInput(-Math.PI, Math.PI);
   }
 
-/**
- * Configures the basic driving as well as buttons.
- * @param algae Algae Subsystem
- * @param arm Arm Subsystem
- * @param climber Climber Subsystem
- * @param elevator Elevator Subsystem
- * @param intake Intake Subsystem
- * @param swerve Swerve Drive Subsystem
- * @param wrist Wrist Subsystem
- * @param superstructure Superstructure 
- * @param controller Controller to bind controls to.
- */
+  /**
+   * Configures the basic driving as well as buttons.
+   *
+   * @param algae Algae Subsystem
+   * @param arm Arm Subsystem
+   * @param climber Climber Subsystem
+   * @param elevator Elevator Subsystem
+   * @param intake Intake Subsystem
+   * @param swerve Swerve Drive Subsystem
+   * @param wrist Wrist Subsystem
+   * @param superstructure Superstructure
+   * @param controller Controller to bind controls to.
+   */
   public static void configure(
       AlgaeSubsystem algae,
       ArmSubsystem arm,
@@ -161,18 +162,19 @@ public class SwerveDriveScheme {
     // algae, arm, climber, elevator, intake, swerve, wrist, superstructure, controller);
   }
 
-/**
- * Configures buttons and their respective commands.
- * @param algae
- * @param arm
- * @param climber
- * @param elevator
- * @param intake
- * @param swerve
- * @param wrist
- * @param superstructure
- * @param controller
- */
+  /**
+   * Configures buttons and their respective commands.
+   *
+   * @param algae
+   * @param arm
+   * @param climber
+   * @param elevator
+   * @param intake
+   * @param swerve
+   * @param wrist
+   * @param superstructure
+   * @param controller
+   */
   private static void configureButtons(
       AlgaeSubsystem algae,
       ArmSubsystem arm,

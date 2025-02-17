@@ -26,6 +26,10 @@ public interface CCMotorController {
     return 0;
   }
 
+  default double getCurrent() {
+    return 0;
+  }
+
   default void setVoltageFromSpeed(double speed) {}
 
   /* The actual speed in whatever units. */

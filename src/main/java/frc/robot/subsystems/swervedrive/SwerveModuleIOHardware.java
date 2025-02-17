@@ -92,6 +92,16 @@ public class SwerveModuleIOHardware implements SwerveModuleIO {
   @Override
   public void updateInputs(SwerveModuleInputs inputs) {
 
+    inputs.drivePositionMeters = getDrivePosition();
+    inputs.driveVelocityMetersPerSec = getDriveEncoderVelocity();
+    inputs.driveAppliedVolts = getDriveVoltage();
+    inputs.driveCurrentAmps = driveMotor.getCurrent();
+
+    inputs.turnPosition = Rotation2d.fromRadians(getTurnPosition());
+    inputs.turnVelocityRadPerSec = getTurnEncoderVelocity();
+    inputs.turnAppliedVolts = getTurnVoltage();
+    inputs.turnCurrentAmps = turnMotor.getCurrent();
+
     // Update odometry inputs
     inputs.odometryTimestamps =
         timestampContainer.stream().mapToDouble((Double value) -> value).toArray();

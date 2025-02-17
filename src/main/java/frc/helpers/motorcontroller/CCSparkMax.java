@@ -159,6 +159,11 @@ public class CCSparkMax extends SparkMax implements CCMotorController {
   }
 
   @Override
+  public double getCurrent() {
+    return super.getOutputCurrent();
+  }
+
+  @Override
   public void setVoltageFromSpeed(double speed) {
     super.setVoltage(speed * voltageConversionFactor);
     realMotor.voltage = speed * voltageConversionFactor;

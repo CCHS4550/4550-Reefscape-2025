@@ -14,7 +14,6 @@ import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.elevator.ElevatorSubsystem.ElevatorState;
 import frc.robot.subsystems.intake.IntakeSubsystem;
-import frc.robot.subsystems.intake.IntakeSubsystem.IntakeState;
 import frc.robot.subsystems.swervedrive.SwerveDriveSubsystem;
 import frc.robot.subsystems.wrist.WristSubsystem;
 import frc.robot.subsystems.wrist.WristSubsystem.WristState;
@@ -185,20 +184,12 @@ public class Superstructure extends SubsystemBase {
   }
 
   public Command intakeCoralStation() {
-    return intake.setWantedStateCommand(IntakeState.INTAKING_FRONT);
+    return intake.intakeCoralStation();
   }
 
   public Command outtakeGlobal() {
-    if (elevator.currentState == ElevatorState.L4_BACK) return outtakeBack();
-    else return outtakeFront();
-  }
-
-  public Command outtakeFront() {
-    return intake.setWantedStateCommand(IntakeState.OUTTAKING_FRONT);
-  }
-
-  public Command outtakeBack() {
-    return intake.setWantedStateCommand(IntakeState.OUTTAKING_BACK);
+    if (elevator.currentState == ElevatorState.L4_BACK) return intake.outtakeBack();
+    else return intake.outtakeFront();
   }
 
   @Override
