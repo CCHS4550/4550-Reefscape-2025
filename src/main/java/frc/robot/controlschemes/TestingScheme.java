@@ -24,12 +24,12 @@ public class TestingScheme {
       IntakeSubsystem intake,
       SwerveDriveSubsystem swerve,
       WristSubsystem wrist,
-      VisionIO vision,
       Superstructure superstructure,
+      VisionIO vision,
       CommandXboxController controller) {
 
     configureButtons(
-        algae, arm, climber, elevator, intake, swerve, wrist, vision, superstructure, controller);
+        algae, arm, climber, elevator, intake, swerve, wrist, superstructure, vision, controller);
   }
 
   public static void configureButtons(
@@ -40,8 +40,8 @@ public class TestingScheme {
       IntakeSubsystem intake,
       SwerveDriveSubsystem swerve,
       WristSubsystem wrist,
-      VisionIO vision,
       Superstructure superstructure,
+      VisionIO vision,
       CommandXboxController controller) {
 
     /** z */

@@ -145,6 +145,7 @@ public class RobotContainer {
             wrist,
             superstructure,
             primaryController);
+
         // CharacterizationScheme.configure(
         //     algae,
         //     arm,
@@ -177,8 +178,8 @@ public class RobotContainer {
             intake,
             swerve,
             wrist,
-            vision,
             superstructure,
+            vision,
             primaryController);
         break;
 

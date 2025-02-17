@@ -58,7 +58,7 @@ public class AlignCommands {
     return alignCommand;
   }
 
-  public static Command backAlignToCoralStationLeft(SwerveDriveSubsystem swerve, VisionIO vision) {
+  public static Command frontAlignToCoralStationLeft(SwerveDriveSubsystem swerve, VisionIO vision) {
     Command alignCommand =
         new OrthogonalToTag(
             Constants.FieldPositionConstants.CORAL_STATION_LEFT_OFFSET,
@@ -69,7 +69,8 @@ public class AlignCommands {
     return alignCommand;
   }
 
-  public static Command backAlignToCoralStationRight(SwerveDriveSubsystem swerve, VisionIO vision) {
+  public static Command frontAlignToCoralStationRight(
+      SwerveDriveSubsystem swerve, VisionIO vision) {
     Command alignCommand =
         new OrthogonalToTag(
             Constants.FieldPositionConstants.CORAL_STATION_RIGHT_OFFSET,

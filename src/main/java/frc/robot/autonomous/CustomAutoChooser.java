@@ -4,8 +4,6 @@
 
 package frc.robot.autonomous;
 
-import static edu.wpi.first.wpilibj2.command.Commands.waitSeconds;
-
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -435,18 +433,16 @@ public class CustomAutoChooser {
     c.addCommands(AlignCommands.frontAlignToReefLeft(swerve, vision));
     /* Pick up */
     c.addCommands(pathWrapper.getFollowCommand(1));
-    c.addCommands(AlignCommands.backAlignToCoralStationRight(swerve, vision));
+    c.addCommands(AlignCommands.frontAlignToCoralStationRight(swerve, vision));
     /* Score */
     c.addCommands(pathWrapper.getFollowCommand(2));
     c.addCommands(AlignCommands.backAlignToReefLeft(swerve, vision));
     /* Pick up */
     c.addCommands(pathWrapper.getFollowCommand(3));
-    c.addCommands(AlignCommands.backAlignToCoralStationRight(swerve, vision));
+    c.addCommands(AlignCommands.frontAlignToCoralStationRight(swerve, vision));
     /* Score */
     c.addCommands(pathWrapper.getFollowCommand(4));
     c.addCommands(AlignCommands.backAlignToReefRight(swerve, vision));
-
-    c.addCommands(waitSeconds(5));
 
     return c;
   }

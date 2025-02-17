@@ -136,7 +136,7 @@ public class Robot extends LoggedRobot {
     RobotState.getInstance().updateSwerveModuleEncoders();
     RobotState.getInstance().updateOdometryPose();
     RobotState.getInstance().updateSwerveModulePositionsPeriodic();
-    // RobotState.getInstance().updateVisionPose();
+    RobotState.getInstance().updateVisionPose();
 
     // Runs the Scheduler. This is responsible for polling buttons, adding
     // newly-scheduled
@@ -159,8 +159,6 @@ public class Robot extends LoggedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    // AutoBuilderScheme.getPathPlannerAutoCommand().schedule();
-    // AutoBuilderScheme.getCustomAuto().schedule();
     autoChooser.getSelectedCustomCommand().schedule();
 
     System.out.println("Autonomous Routine Scheduled!");

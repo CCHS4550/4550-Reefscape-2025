@@ -38,7 +38,7 @@ public class FollowPathCommand extends Command {
    */
   public FollowPathCommand(PathPlannerTrajectory trajectory, SwerveDriveSubsystem swerve) {
     this.swerve = swerve;
-    translationPID = new PIDController(5, 0, 0);
+    translationPID = new PIDController(2, 0, 0);
     rotationPID = new PIDController(5, 0, 0);
     rotationPID.enableContinuousInput(-Math.PI, Math.PI);
 
@@ -132,9 +132,7 @@ public class FollowPathCommand extends Command {
                 - trajectory.getEndState().heading.getDegrees());
 
     return timer.hasElapsed(trajectory.getTotalTimeSeconds())
-        && translationError < 1
-        && rotationError < 1;
-
-    // return timer.hasElapsed(20);
+        || (translationError < 1 && rotationError < 1)
+        || timer.hasElapsed(7);
   }
 }

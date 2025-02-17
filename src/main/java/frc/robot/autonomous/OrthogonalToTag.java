@@ -78,8 +78,8 @@ public class OrthogonalToTag extends Command {
     this.swerve = swerve;
     this.vision = vision;
 
-    translationPID = new PIDController(3, 0, 0);
-    rotationPID = new PIDController(5, 0, 0);
+    translationPID = new PIDController(1, 0, 0);
+    rotationPID = new PIDController(1, 0, 0);
     rotationPID.enableContinuousInput(-Math.PI, Math.PI);
 
     if (useBestTag) this.focusedTag = RobotState.getInstance().visionInputs.focusedId;
@@ -142,6 +142,7 @@ public class OrthogonalToTag extends Command {
 
     /** Update Target Pose */
     if (getTransform3dList().size() > 0) {
+      // if (false) {
 
       // vision
       //     .getPipelineResults()
@@ -175,7 +176,12 @@ public class OrthogonalToTag extends Command {
       targetState.pose =
           new Pose2d(targetX, targetY, targetAngle)
               .plus(new Transform2d(new Pose2d(), currentRelativePose));
-      targetState.pose = targetState.pose.plus(transformation);
+
+      targetState.pose =
+          targetState
+              .pose
+              .plus(new Transform2d(0, 0, Rotation2d.fromRadians(Math.PI)))
+              .plus(transformation);
       targetState.heading = targetState.pose.getRotation();
     }
 
