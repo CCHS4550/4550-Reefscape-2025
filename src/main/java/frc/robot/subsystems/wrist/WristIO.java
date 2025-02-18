@@ -20,6 +20,8 @@ public interface WristIO {
     public double currentAngleDegrees = 0.0;
     public double currentAngleRadians = 0.0;
 
+    public double currentVelocity = 0.0;
+
     public double pidOutput = 0.0;
     public double ffOutput = 0.0;
     public double appliedVoltage = 0.0;

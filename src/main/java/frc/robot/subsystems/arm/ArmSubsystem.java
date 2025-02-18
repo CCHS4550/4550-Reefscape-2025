@@ -94,7 +94,7 @@ public class ArmSubsystem extends SubsystemBase {
 
       case L1_FRONT:
         armIO.holdAtState(ArmState.L1_FRONT);
-        System.out.println("L1");
+        
         break;
 
       case L2L3_FRONT:
@@ -184,7 +184,6 @@ public class ArmSubsystem extends SubsystemBase {
     Logger.processInputs("Subsystem/Arm", armInputs);
 
     if (wantedState != currentState) currentState = handleStateTransitions();
-    // // currentState = ArmState.ZERO;
     applyStates();
 
     // // This method will be called once per scheduler run

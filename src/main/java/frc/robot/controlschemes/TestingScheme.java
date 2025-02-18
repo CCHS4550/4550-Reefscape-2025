@@ -46,19 +46,19 @@ public class TestingScheme {
 
     /** z */
     controller.a().onTrue(new InstantCommand(() -> System.out.println("a")));
-    controller.a().whileTrue(AlignCommands.frontAlignToReefLeft(swerve, vision));
+    // controller.a().whileTrue(AlignCommands.frontAlignToReefLeft(swerve, vision));
 
     /** x */
     controller.b().onTrue(new InstantCommand(() -> System.out.println("b")));
-    controller.b().whileTrue(arm.setVoltage(0.15));
+    controller.b().whileTrue(arm.setVoltage(1.2));
 
     /** c */
     controller.x().onTrue(new InstantCommand(() -> System.out.println("x")));
-    controller.x().whileTrue(wrist.setVoltage(0.25));
+    controller.x().whileTrue(wrist.setVoltage(0.6));
 
     /** v */
     controller.y().onTrue(new InstantCommand(() -> System.out.println("y")));
-    controller.y().whileTrue(elevator.setVoltage(3));
+    // controller.y().whileTrue(elevator.setVoltage(3));
 
     // controller.a().onTrue(alignToTagCommand);
 

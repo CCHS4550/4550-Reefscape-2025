@@ -42,7 +42,7 @@ public class WristIOHardware implements WristIO {
 
     wristPidController =
         new ProfiledPIDController(
-            5, 0, 0, new TrapezoidProfile.Constraints(.25, .5)); // do something for this
+            3.5, .5, 0.1, new TrapezoidProfile.Constraints(40, 15)); // do something for this
 
     double min = ((-2 * Math.PI) - Constants.WristConstants.WRIST_THROUGHBORE_OFFSET) * .75;
     double max = -Constants.WristConstants.WRIST_THROUGHBORE_OFFSET * .75;
@@ -63,9 +63,8 @@ public class WristIOHardware implements WristIO {
   @Override
   public void updateInputs(WristIOInputs inputs) {
     inputs.currentRotations = -throughBore.getPosition();
-
     inputs.currentAngleDegrees = Units.radiansToDegrees(getAbsoluteEncoderGlobalRadians());
-    inputs.currentAngleRadians = getAbsoluteEncoderGlobalRadians();
+    inputs.currentVelocity = -throughBore.getVelocity() * Math.PI * 2 / 60;
 
     inputs.pidOutput = this.pidOutput;
     inputs.ffOutput = this.ffOutput;
@@ -106,7 +105,7 @@ public class WristIOHardware implements WristIO {
         wristFeedForward.calculate(
             getAbsoluteEncoderRadiansOffset(), wristPidController.getSetpoint().velocity);
 
-    return pidOutput;
+    return pidOutput + ffOutput;
   }
 
   @Override
@@ -149,7 +148,7 @@ public class WristIOHardware implements WristIO {
 
   @Override
   public void setVoltage(Voltage voltage) {
-    // wristMotor.setVoltage(voltage.magnitude());
+    wristMotor.setVoltage(voltage.magnitude());
   }
 
   @Override

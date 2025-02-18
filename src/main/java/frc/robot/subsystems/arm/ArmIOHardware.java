@@ -39,7 +39,7 @@ public class ArmIOHardware implements ArmIO {
 
     armPidController =
         new ProfiledPIDController(
-            3.5, 0, 0, new TrapezoidProfile.Constraints(1, .5)); // do something for this
+            1.7, .5, 0.1, new TrapezoidProfile.Constraints(15, 15)); // do something for this
 
     double min = ((-2 * Math.PI) - Constants.ArmConstants.ARM_THROUGHBORE_OFFSET);
     double max = -Constants.ArmConstants.ARM_THROUGHBORE_OFFSET;
@@ -47,7 +47,8 @@ public class ArmIOHardware implements ArmIO {
     armPidController.reset(throughBore.getPosition());
     // TODO Sysid
     /** Have to find Ks */
-    feedForward = new ArmFeedforward(.15, 1.34, 1.87, 0.09);
+    // feedForward = new ArmFeedforward(.15, 1.34, 1.2, 0.09);
+    feedForward = new ArmFeedforward(.15, 1.06, 1.2, 0.09);
 
     goalState = new State(0, 0);
 
@@ -61,6 +62,8 @@ public class ArmIOHardware implements ArmIO {
 
     inputs.currentAngleDegrees = Units.radiansToDegrees(getAbsoluteEncoderRadiansOffset());
     inputs.currentAngleRadians = getAbsoluteEncoderRadiansOffset();
+
+    inputs.currentVelocity = -throughBore.getVelocity() * Math.PI * 2 / 60;
 
     inputs.pidOutput = this.pidOutput;
     inputs.ffOutput = this.ffOutput;
@@ -101,7 +104,7 @@ public class ArmIOHardware implements ArmIO {
         feedForward.calculate(
             getAbsoluteEncoderRadiansOffset(), armPidController.getSetpoint().velocity);
 
-    return pidOutput;
+    return pidOutput + ffOutput;
   }
 
   @Override
@@ -140,7 +143,7 @@ public class ArmIOHardware implements ArmIO {
 
   @Override
   public void setVoltage(Voltage voltage) {
-    // armMotor.setVoltage(voltage.magnitude());
+    armMotor.setVoltage(voltage.magnitude());
   }
 
   @Override

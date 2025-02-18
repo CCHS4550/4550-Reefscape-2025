@@ -18,6 +18,7 @@ public interface ArmIO {
 
     public double currentAngleDegrees;
     public double currentAngleRadians;
+    public double currentVelocity;
 
     public double pidOutput;
     public double ffOutput;
