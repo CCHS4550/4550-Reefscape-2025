@@ -9,6 +9,7 @@ import frc.helpers.vision.PhotonVisionAprilTag;
 import frc.helpers.vision.PhotonVisionReplay;
 import frc.helpers.vision.PhotonVisionSim;
 import frc.helpers.vision.VisionIO;
+import frc.robot.controlschemes.MechanismScheme;
 import frc.robot.controlschemes.SwerveDriveScheme;
 import frc.robot.controlschemes.TestingScheme;
 import frc.robot.subsystems.Superstructure;
@@ -145,6 +146,19 @@ public class RobotContainer {
             wrist,
             superstructure,
             primaryController);
+        MechanismScheme.configure(
+            algae, arm, climber, elevator, intake, swerve, wrist, superstructure, 1);
+        // TestingScheme.configure(
+        //     algae,
+        //     arm,
+        //     climber,
+        //     elevator,
+        //     intake,
+        //     swerve,
+        //     wrist,
+        //     superstructure,
+        //     vision,
+        //     primaryController);
 
         // CharacterizationScheme.configure(
         //     algae,

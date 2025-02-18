@@ -12,6 +12,7 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -85,27 +86,36 @@ public class ArmSubsystem extends SubsystemBase {
     switch (currentState) {
       case ZERO:
         armIO.holdAtState(ArmState.ZERO);
+        break;
 
       case DEFAULT_WITHINFRAME:
         armIO.holdAtState(ArmState.DEFAULT_WITHINFRAME);
+        break;
 
       case L1_FRONT:
         armIO.holdAtState(ArmState.L1_FRONT);
+        System.out.println("L1");
+        break;
 
       case L2L3_FRONT:
         armIO.holdAtState(ArmState.L2L3_FRONT);
+        break;
 
       case L4_BACK:
         armIO.holdAtState(ArmState.L4_BACK);
+        break;
 
       case CORAL_STATION_FRONT:
         armIO.holdAtState(ArmState.CORAL_STATION_FRONT);
+        break;
 
       case CORAL_STATION_BACK:
         armIO.holdAtState(ArmState.CORAL_STATION_BACK);
+        break;
 
       default:
         armIO.holdAtState(ArmState.DEFAULT_WITHINFRAME);
+        break;
     }
   }
 
@@ -155,6 +165,11 @@ public class ArmSubsystem extends SubsystemBase {
     return armIO.getAbsoluteEncoderRadiansOffset();
   }
 
+  public Command setVoltage(double volts) {
+    return Commands.startEnd(
+        () -> armIO.setVoltage(Volts.of(volts)), () -> armIO.setVoltage(Volts.of(0)));
+  }
+
   @Override
   public void periodic() {
     // System.out.println("currentState " + currentState);
@@ -169,10 +184,10 @@ public class ArmSubsystem extends SubsystemBase {
     Logger.processInputs("Subsystem/Arm", armInputs);
 
     if (wantedState != currentState) currentState = handleStateTransitions();
-    // currentState = ArmState.ZERO;
+    // // currentState = ArmState.ZERO;
     applyStates();
 
-    // This method will be called once per scheduler run
+    // // This method will be called once per scheduler run
   }
 
   /** SYSID METHODS */

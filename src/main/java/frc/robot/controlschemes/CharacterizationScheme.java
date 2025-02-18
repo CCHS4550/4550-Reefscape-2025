@@ -64,14 +64,23 @@ public class CharacterizationScheme {
     // controller.x().onTrue(intake.sysIdDynamic(SysIdRoutine.Direction.kForward));
     // controller.y().onTrue(intake.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
+    controller
+        .a()
+        .whileTrue(
+            wrist
+                .sysIdQuasistatic(SysIdRoutine.Direction.kForward)
+                .andThen(wrist.sysIdQuasistatic(SysIdRoutine.Direction.kReverse))
+                .andThen(wrist.sysIdDynamic(SysIdRoutine.Direction.kForward))
+                .andThen(wrist.sysIdDynamic(SysIdRoutine.Direction.kReverse)));
+
     // controller.a().onTrue(new InstantCommand(() -> System.out.println("andy")));
     // controller.a().onTrue(new InstantCommand(() -> arm.setWantedState(ArmState.ZERO)));
 
     // controller.a().onTrue(new InstantCommand(() -> wrist.setWantedState(WristState.ZERO)));
 
-    controller.a().onTrue(swerve.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    controller.b().onTrue(swerve.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    controller.x().onTrue(swerve.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    controller.y().onTrue(swerve.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    // controller.a().onTrue(swerve.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    // controller.b().onTrue(swerve.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    // controller.x().onTrue(swerve.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    // controller.y().onTrue(swerve.sysIdDynamic(SysIdRoutine.Direction.kReverse));
   }
 }

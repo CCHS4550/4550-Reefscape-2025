@@ -13,6 +13,9 @@ public interface ArmIO {
 
   @AutoLog
   class ArmIOInputs {
+
+    public double currentRotations;
+
     public double currentAngleDegrees;
     public double currentAngleRadians;
 

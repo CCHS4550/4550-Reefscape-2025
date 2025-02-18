@@ -124,7 +124,7 @@ public class Constants {
     public static final boolean CLIMBER_REVERSE = false;
 
     public static final int[] ELEVATOR = {12, 13};
-    public static final boolean[] ELEVATOR_REVERSE = {false, true};
+    public static final boolean[] ELEVATOR_REVERSE = {true, true};
 
     public static final int ARM = 14;
     public static final boolean ARM_REVERSE = false;
@@ -235,7 +235,7 @@ public class Constants {
     public static final double ARM_MOTOR_RADIANS_PER_SECOND_CONVERSION_FACTOR =
         ARM_MOTOR_ROTATIONS_TO_ARM_ROTATIONS_RADIANS / 60;
 
-    public static final double ARM_THROUGHBORE_OFFSET = 0;
+    public static final double ARM_THROUGHBORE_OFFSET = -0.512;
   }
 
   public static class ElevatorConstants {
@@ -273,9 +273,9 @@ public class Constants {
     public static final double WRIST_MOTOR_RADIANS_PER_SECOND_CONVERSION_FACTOR =
         WRIST_MOTOR_ROTATIONS_TO_WRIST_ROTATIONS_RADIANS / 60;
 
-    public static final double WRIST_THROUGHBORE_OFFSET = 0;
+    public static final double WRIST_THROUGHBORE_OFFSET = -0.663;
 
-    public static boolean WRIST_REVERSE = true;
+    public static final boolean WRIST_REVERSE = false;
 
     // private static final double WRIST_GEAR_RATIO = 1.0;
     // private static final double WRIST_POSITION_COEFFICIENT =

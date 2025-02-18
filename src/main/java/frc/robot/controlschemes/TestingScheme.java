@@ -50,12 +50,15 @@ public class TestingScheme {
 
     /** x */
     controller.b().onTrue(new InstantCommand(() -> System.out.println("b")));
+    controller.b().whileTrue(arm.setVoltage(0.15));
 
     /** c */
     controller.x().onTrue(new InstantCommand(() -> System.out.println("x")));
+    controller.x().whileTrue(wrist.setVoltage(0.25));
 
     /** v */
     controller.y().onTrue(new InstantCommand(() -> System.out.println("y")));
+    controller.y().whileTrue(elevator.setVoltage(3));
 
     // controller.a().onTrue(alignToTagCommand);
 

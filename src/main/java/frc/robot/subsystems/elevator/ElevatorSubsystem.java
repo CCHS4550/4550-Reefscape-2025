@@ -11,6 +11,7 @@ import static edu.wpi.first.units.Units.Volts;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -96,29 +97,38 @@ public class ElevatorSubsystem extends SubsystemBase {
     switch (currentState) {
       case DEFAULT_WITHINFRAME:
         elevatorIO.holdAtState(ElevatorState.DEFAULT_WITHINFRAME);
+        break;
 
       case L1_FRONT:
         elevatorIO.holdAtState(ElevatorState.L1_FRONT);
+        break;
 
       case L2_FRONT:
         elevatorIO.holdAtState(ElevatorState.L2_FRONT);
+        break;
       case L3_FRONT:
         elevatorIO.holdAtState(ElevatorState.L3_FRONT);
+        break;
 
       case L4_BACK:
         elevatorIO.holdAtState(ElevatorState.L4_BACK);
+        break;
 
       case CORAL_STATION_FRONT:
         elevatorIO.holdAtState(ElevatorState.CORAL_STATION_FRONT);
+        break;
 
       case CORAL_STATION_BACK:
         elevatorIO.holdAtState(ElevatorState.CORAL_STATION_BACK);
+        break;
 
       case CLIMB_PREPARING:
         elevatorIO.holdAtState(ElevatorState.CLIMB_PREPARING);
+        break;
 
       default:
         elevatorIO.holdAtState(ElevatorState.DEFAULT_WITHINFRAME);
+        break;
     }
   }
 
@@ -166,8 +176,8 @@ public class ElevatorSubsystem extends SubsystemBase {
   public void periodic() {
     elevatorIO.updateInputs(elevatorInputs);
     Logger.processInputs("Subsystem/Elevator", elevatorInputs);
-    if (wantedState != currentState) currentState = handleStateTransitions();
-    applyStates();
+    // if (wantedState != currentState) currentState = handleStateTransitions();
+    // applyStates();
 
     // This method will be called once per scheduler run
   }
@@ -190,6 +200,11 @@ public class ElevatorSubsystem extends SubsystemBase {
         () -> {
           elevatorIO.setVoltage(Volts.of(0.0));
         });
+  }
+
+  public Command setVoltage(double volts) {
+    return Commands.startEnd(
+        () -> elevatorIO.setVoltage(Volts.of(volts)), () -> elevatorIO.setVoltage(Volts.of(0)));
   }
 
   /* SysID Factory Methods */

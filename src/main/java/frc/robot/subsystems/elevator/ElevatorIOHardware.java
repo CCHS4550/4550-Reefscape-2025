@@ -19,10 +19,11 @@ import java.util.function.BooleanSupplier;
 
 public class ElevatorIOHardware implements ElevatorIO {
 
-  CCMotorController elevatorLeft;
-  CCMotorController elevatorRight;
+  CCMotorController elevatorBottom;
+  CCMotorController elevatorTop;
 
-  RelativeEncoder throughBore;
+  RelativeEncoder elevatorEncoderBottom;
+  RelativeEncoder elevatorEncoderTop;
 
   ProfiledPIDController elevatorPidController;
 
@@ -33,11 +34,17 @@ public class ElevatorIOHardware implements ElevatorIO {
 
   State goalState;
 
-  public ElevatorIOHardware(CCMotorController elevatorLeft, CCMotorController elevatorRight) {
-    this.elevatorLeft = elevatorLeft;
-    this.elevatorRight = elevatorRight;
+  public ElevatorIOHardware(CCMotorController elevatorBottom, CCMotorController elevatorTop) {
+    this.elevatorBottom = elevatorBottom;
+    this.elevatorTop = elevatorTop;
 
-    throughBore = (RelativeEncoder) elevatorLeft.getAlternateEncoder();
+    elevatorEncoderBottom = (RelativeEncoder) elevatorBottom.getEncoder();
+    elevatorEncoderTop = (RelativeEncoder) elevatorTop.getEncoder();
+
+    elevatorEncoderBottom.setPosition(0);
+    elevatorEncoderTop.setPosition(0);
+
+    // throughBore = (RelativeEncoder) elevatorBottom.getAlternateEncoder();
 
     elevatorPidController =
         new ProfiledPIDController(
@@ -48,7 +55,7 @@ public class ElevatorIOHardware implements ElevatorIO {
                 Constants.ElevatorConstants.elevatorMaxVelocity,
                 Constants.ElevatorConstants.elevatorMaxAcceleration));
 
-    elevatorPidController.reset(throughBore.getPosition());
+    elevatorPidController.reset(getAbsoluteHeightMetersOffset());
     // TODO Sysid
     elevatorFeedForward = new ElevatorFeedforward(0, 0, 0, 0);
 
@@ -110,13 +117,14 @@ public class ElevatorIOHardware implements ElevatorIO {
 
   @Override
   public void setVoltage(Voltage voltage) {
-    elevatorLeft.setVoltage(voltage.magnitude());
-    elevatorRight.setVoltage(voltage.magnitude());
+    elevatorBottom.setVoltage(voltage.magnitude());
+    // elevatorTop.setVoltage(voltage.magnitude());
   }
 
   @Override
   public double getAbsoluteHeightMetersOffset() {
-    return (throughBore.getPosition() * Constants.ElevatorConstants.AXLE_ROTATION_TO_HEIGHT_METERS)
+    return (getAbsoluteHeightMetersNoOffset()
+            * Constants.ElevatorConstants.AXLE_ROTATION_TO_HEIGHT_METERS)
         - Constants.ElevatorConstants.ELEVATOR_THROUGHBORE_OFFSET;
   }
 
@@ -127,6 +135,7 @@ public class ElevatorIOHardware implements ElevatorIO {
    */
   @Override
   public double getAbsoluteHeightMetersNoOffset() {
-    return throughBore.getPosition() * Constants.ElevatorConstants.AXLE_ROTATION_TO_HEIGHT_METERS;
+    return ((elevatorEncoderBottom.getPosition() + elevatorEncoderTop.getPosition()) / 2)
+        * Constants.ElevatorConstants.AXLE_ROTATION_TO_HEIGHT_METERS;
   }
 }

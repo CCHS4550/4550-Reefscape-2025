@@ -12,13 +12,13 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.helpers.maps.Constants;
 import frc.helpers.motorcontroller.CCMotorController;
-import frc.robot.RobotState;
 import org.littletonrobotics.junction.Logger;
 
 public class WristSubsystem extends SubsystemBase {
@@ -27,7 +27,7 @@ public class WristSubsystem extends SubsystemBase {
     // Placeholder Values
     ZERO(0),
     DEFAULT_WITHINFRAME(Units.degreesToRadians(0)),
-    L1_FRONT(Units.degreesToRadians(30)),
+    L1_FRONT(Units.degreesToRadians(15)),
     L2L3_FRONT(Units.degreesToRadians(45)),
     L4_BACK(Units.degreesToRadians(110)),
     CORAL_STATION_FRONT(Units.degreesToRadians(15)),
@@ -45,9 +45,9 @@ public class WristSubsystem extends SubsystemBase {
     }
   }
 
-  public WristState previousState = WristState.DEFAULT_WITHINFRAME;
-  public WristState currentState = WristState.DEFAULT_WITHINFRAME;
-  public WristState wantedState = WristState.DEFAULT_WITHINFRAME;
+  public WristState previousState = WristState.ZERO;
+  public WristState currentState = WristState.ZERO;
+  public WristState wantedState = WristState.ZERO;
 
   public final WristIO wristIO;
 
@@ -73,9 +73,9 @@ public class WristSubsystem extends SubsystemBase {
     sysIdRoutine =
         new SysIdRoutine(
             new SysIdRoutine.Config(
-                Volts.per(Second).of(1),
-                Volts.of(2),
-                Seconds.of(2),
+                Volts.per(Second).of(.3),
+                Volts.of(.4),
+                Seconds.of(1),
                 (state) -> Logger.recordOutput("SysIdTestState", state.toString())),
             new SysIdRoutine.Mechanism(
                 (voltage) -> wristIO.setVoltage(voltage),
@@ -87,26 +87,35 @@ public class WristSubsystem extends SubsystemBase {
     switch (currentState) {
       case ZERO:
         wristIO.holdAtState(WristState.ZERO);
+        break;
       case DEFAULT_WITHINFRAME:
         wristIO.holdAtState(WristState.DEFAULT_WITHINFRAME);
+        break;
 
       case L1_FRONT:
         wristIO.holdAtState(WristState.L1_FRONT);
+        System.out.println("L1");
+        break;
 
       case L2L3_FRONT:
         wristIO.holdAtState(WristState.L2L3_FRONT);
+        break;
 
       case L4_BACK:
         wristIO.holdAtState(WristState.L4_BACK);
+        break;
 
       case CORAL_STATION_FRONT:
         wristIO.holdAtState(WristState.CORAL_STATION_FRONT);
+        break;
 
       case CORAL_STATION_BACK:
         wristIO.holdAtState(WristState.CORAL_STATION_BACK);
+        break;
 
       default:
         wristIO.holdAtState(WristState.DEFAULT_WITHINFRAME);
+        break;
     }
   }
 
@@ -159,13 +168,17 @@ public class WristSubsystem extends SubsystemBase {
     return wantedState;
   }
 
-  public double getGlobalPosition() {
-    return wristIO.getAbsoluteEncoderRadiansOffset()
-        - RobotState.getInstance().armInputs.currentAngleRadians;
-  }
+  // public double getGlobalPosition() {
+  //   return wristIO.getAbsoluteEncoderRadiansOffset()
+  //       - RobotState.getInstance().armInputs.currentAngleRadians;
+  // }
 
   @Override
   public void periodic() {
+
+    Logger.recordOutput("Subsystem/Wrist/CurrentState", currentState.name());
+    Logger.recordOutput("Subsystem/Wrist/WantedState", wantedState.name());
+
     wristIO.updateInputs(wristInputs);
     Logger.processInputs("Subsystem/Wrist", wristInputs);
     if (wantedState != currentState) currentState = handleStateTransitions();
@@ -192,6 +205,11 @@ public class WristSubsystem extends SubsystemBase {
         () -> {
           wristIO.setVoltage(Volts.of(0.0));
         });
+  }
+
+  public Command setVoltage(double volts) {
+    return Commands.startEnd(
+        () -> wristIO.setVoltage(Volts.of(volts)), () -> wristIO.setVoltage(Volts.of(0)));
   }
   /* SysID Factory Methods */
 

@@ -39,12 +39,15 @@ public class ArmIOHardware implements ArmIO {
 
     armPidController =
         new ProfiledPIDController(
-            0, 0, 0, new TrapezoidProfile.Constraints(.5, .25)); // do something for this
+            3.5, 0, 0, new TrapezoidProfile.Constraints(1, .5)); // do something for this
 
+    double min = ((-2 * Math.PI) - Constants.ArmConstants.ARM_THROUGHBORE_OFFSET);
+    double max = -Constants.ArmConstants.ARM_THROUGHBORE_OFFSET;
+    armPidController.enableContinuousInput(min, max);
     armPidController.reset(throughBore.getPosition());
     // TODO Sysid
     /** Have to find Ks */
-    feedForward = new ArmFeedforward(0, 1.34, 1.87, 0.09);
+    feedForward = new ArmFeedforward(.15, 1.34, 1.87, 0.09);
 
     goalState = new State(0, 0);
 
@@ -53,6 +56,8 @@ public class ArmIOHardware implements ArmIO {
 
   @Override
   public void updateInputs(ArmIOInputs inputs) {
+
+    inputs.currentRotations = -throughBore.getPosition();
 
     inputs.currentAngleDegrees = Units.radiansToDegrees(getAbsoluteEncoderRadiansOffset());
     inputs.currentAngleRadians = getAbsoluteEncoderRadiansOffset();
@@ -72,15 +77,14 @@ public class ArmIOHardware implements ArmIO {
   }
 
   @Override
-  public void holdAtState(ArmState goalState) {
-    setVoltage(
-        Volts.of(getPIDFFOutput(new State(Units.degreesToRadians(goalState.getAngle()), 0))));
+  public void holdAtState(ArmState armState) {
+    setVoltage(Volts.of(getPIDFFOutput(new State(armState.getAngle(), 0))));
   }
 
-  public Command goToGoalState(State goalState, ArmSubsystem arm) {
+  public Command goToGoalState(State state, ArmSubsystem arm) {
     return new FunctionalCommand(
         () -> {},
-        () -> setVoltage(Volts.of(getPIDFFOutput(goalState))),
+        () -> setVoltage(Volts.of(getPIDFFOutput(state))),
         (end) -> stop(),
         atSetpoint(),
         arm);
@@ -88,14 +92,14 @@ public class ArmIOHardware implements ArmIO {
 
   /** Called continuously */
   @Override
-  public double getPIDFFOutput(State goalState) {
+  public double getPIDFFOutput(State state) {
 
-    this.goalState = goalState;
+    this.goalState = state;
 
-    pidOutput = armPidController.calculate(getAbsoluteEncoderRadiansOffset(), goalState);
-    // ffOutput =
-    //     feedForward.calculate(
-    //         getAbsoluteEncoderRadiansOffset(), pidController.getSetpoint().velocity);
+    pidOutput = armPidController.calculate(getAbsoluteEncoderRadiansOffset(), state);
+    ffOutput =
+        feedForward.calculate(
+            getAbsoluteEncoderRadiansOffset(), armPidController.getSetpoint().velocity);
 
     return pidOutput;
   }
@@ -114,8 +118,10 @@ public class ArmIOHardware implements ArmIO {
   //  MAKE 0 PARALLEL OFF THE GROUND; STANDARD UNIT CIRCLE NOTATION.
   @Override
   public double getAbsoluteEncoderRadiansOffset() {
+    double value =
+        getAbsoluteEncoderRadiansNoOffset() - Constants.ArmConstants.ARM_THROUGHBORE_OFFSET;
 
-    return getAbsoluteEncoderRadiansNoOffset() - Constants.ArmConstants.ARM_THROUGHBORE_OFFSET;
+    return value;
   }
 
   /**
@@ -125,13 +131,16 @@ public class ArmIOHardware implements ArmIO {
    */
   @Override
   public double getAbsoluteEncoderRadiansNoOffset() {
-    // System.out.println(throughBore.getPosition());
-    return (armMotor.getPosition() * 2 * Math.PI);
+    double rev = -throughBore.getPosition();
+    // unwrap(rev);
+
+    double radiansNoOffset = (rev * 2 * Math.PI);
+    return radiansNoOffset;
   }
 
   @Override
   public void setVoltage(Voltage voltage) {
-    armMotor.setVoltage(voltage.magnitude());
+    // armMotor.setVoltage(voltage.magnitude());
   }
 
   @Override
@@ -142,5 +151,18 @@ public class ArmIOHardware implements ArmIO {
   @Override
   public void stop() {
     armMotor.setVoltage(0);
+  }
+
+  private double prev = Double.NaN;
+  private int offset = 0;
+
+  public double unwrap(double value) {
+    if (!Double.isNaN(prev)) {
+      // Compute number of wraps using precise modular arithmetic
+      double delta = value - prev;
+      offset += Math.rint(delta); // More precise rounding method
+    }
+
+    return value + offset;
   }
 }

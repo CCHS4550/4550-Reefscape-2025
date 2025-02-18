@@ -15,6 +15,8 @@ public interface WristIO {
 
   @AutoLog
   class WristIOInputs {
+    public double currentRotations = 0.0;
+
     public double currentAngleDegrees = 0.0;
     public double currentAngleRadians = 0.0;
 

@@ -17,6 +17,7 @@ import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveDriveSubsystem;
 import frc.robot.subsystems.wrist.WristSubsystem;
 import frc.robot.subsystems.wrist.WristSubsystem.WristState;
+import org.littletonrobotics.junction.Logger;
 
 public class Superstructure extends SubsystemBase {
 
@@ -66,6 +67,8 @@ public class Superstructure extends SubsystemBase {
     L4_BACK,
     /** In position to climb */
     CLIMB_PREPARING,
+
+    ZERO,
     /** FOR TESTING ONLY */
     TEST
     /** Climber actively working */
@@ -80,6 +83,12 @@ public class Superstructure extends SubsystemBase {
 
   public void applyStates() {
     switch (currentSuperState) {
+      case ZERO:
+        arm.setWantedState(ArmState.ZERO);
+        // elevator.setWantedState(ElevatorState.CORAL_STATION_BACK);
+        wrist.setWantedState(WristState.ZERO);
+        break;
+
       case WITHIN_FRAME_PERIMETER_DEFAULT:
         // arm.setWantedState(ArmState.DEFAULT_WITHINFRAME);
         // elevator.setWantedState(ElevatorState.DEFAULT_WITHINFRAME);
@@ -88,45 +97,46 @@ public class Superstructure extends SubsystemBase {
 
       case CORAL_STATION_BACK:
         arm.setWantedState(ArmState.CORAL_STATION_BACK);
-        elevator.setWantedState(ElevatorState.CORAL_STATION_BACK);
+        // elevator.setWantedState(ElevatorState.CORAL_STATION_BACK);
         wrist.setWantedState(WristState.CORAL_STATION_BACK);
         break;
 
       case CORAL_STATION_FRONT:
         arm.setWantedState(ArmState.CORAL_STATION_FRONT);
-        elevator.setWantedState(ElevatorState.CORAL_STATION_FRONT);
+        // elevator.setWantedState(ElevatorState.CORAL_STATION_FRONT);
         wrist.setWantedState(WristState.CORAL_STATION_FRONT);
         break;
 
       case L1_FRONT:
         arm.setWantedState(ArmState.L1_FRONT);
-        elevator.setWantedState(ElevatorState.L1_FRONT);
+        // elevator.setWantedState(ElevatorState.L1_FRONT);
         wrist.setWantedState(WristState.L1_FRONT);
         break;
 
       case L2_FRONT:
         arm.setWantedState(ArmState.L2L3_FRONT);
-        elevator.setWantedState(ElevatorState.L2_FRONT);
+        // elevator.setWantedState(ElevatorState.L2_FRONT);
         wrist.setWantedState(WristState.L2L3_FRONT);
         break;
 
       case L3_FRONT:
         arm.setWantedState(ArmState.L2L3_FRONT);
-        elevator.setWantedState(ElevatorState.L3_FRONT);
+        // elevator.setWantedState(ElevatorState.L3_FRONT);
         wrist.setWantedState(WristState.L2L3_FRONT);
         break;
 
       case L4_BACK:
         arm.setWantedState(ArmState.L4_BACK);
-        elevator.setWantedState(ElevatorState.L4_BACK);
+        // elevator.setWantedState(ElevatorState.L4_BACK);
         wrist.setWantedState(WristState.L4_BACK);
         break;
       case CLIMB_PREPARING:
         arm.setWantedState(ArmState.CLIMB_PREPARING);
-        elevator.setWantedState(ElevatorState.CLIMB_PREPARING);
+        // elevator.setWantedState(ElevatorState.CLIMB_PREPARING);
         wrist.setWantedState(WristState.CLIMB_PREPARING);
         break;
       default:
+        break;
     }
   }
 
@@ -134,41 +144,35 @@ public class Superstructure extends SubsystemBase {
     previousSuperState = currentSuperState;
     switch (wantedSuperState) {
       case WITHIN_FRAME_PERIMETER_DEFAULT:
-        currentSuperState = SuperState.WITHIN_FRAME_PERIMETER_DEFAULT;
-        break;
+        return currentSuperState = SuperState.WITHIN_FRAME_PERIMETER_DEFAULT;
+
+      case ZERO:
+        return currentSuperState = SuperState.ZERO;
 
       case CORAL_STATION_BACK:
-        currentSuperState = SuperState.CORAL_STATION_BACK;
-        break;
+        return currentSuperState = SuperState.CORAL_STATION_BACK;
 
       case CORAL_STATION_FRONT:
-        currentSuperState = SuperState.CORAL_STATION_FRONT;
-        break;
+        return currentSuperState = SuperState.CORAL_STATION_FRONT;
 
       case L1_FRONT:
-        currentSuperState = SuperState.L1_FRONT;
-        break;
+        return currentSuperState = SuperState.L1_FRONT;
 
       case L2_FRONT:
-        currentSuperState = SuperState.L2_FRONT;
-        break;
+        return currentSuperState = SuperState.L2_FRONT;
 
       case L3_FRONT:
-        currentSuperState = SuperState.L3_FRONT;
-        break;
+        return currentSuperState = SuperState.L3_FRONT;
 
       case L4_BACK:
-        currentSuperState = SuperState.L4_BACK;
-        break;
+        return currentSuperState = SuperState.L4_BACK;
 
       case CLIMB_PREPARING:
-        currentSuperState = SuperState.CLIMB_PREPARING;
-        break;
+        return currentSuperState = SuperState.CLIMB_PREPARING;
 
       default:
-        currentSuperState = SuperState.WITHIN_FRAME_PERIMETER_DEFAULT;
+        return currentSuperState = SuperState.WITHIN_FRAME_PERIMETER_DEFAULT;
     }
-    return currentSuperState;
   }
 
   public void setWantedSuperstate(SuperState wantedSuperState) {
@@ -196,6 +200,8 @@ public class Superstructure extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
 
+    Logger.recordOutput("Subsystem/Superstructure/WantedSuperState", wantedSuperState);
+    Logger.recordOutput("Subsystem/Superstructure/CurrentSuperState", currentSuperState);
     if (wantedSuperState != currentSuperState) currentSuperState = handleStateTransitions();
     applyStates();
   }

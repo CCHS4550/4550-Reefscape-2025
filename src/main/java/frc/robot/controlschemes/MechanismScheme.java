@@ -41,42 +41,43 @@ public class MechanismScheme {
       Superstructure superstructure,
       int port) {
 
-    Trigger yellow1 = buttonBoard.button(1);
-    Trigger yellow2 = buttonBoard.button(2);
+    Trigger yellowTop = buttonBoard.button(1);
+    Trigger yellowBottom = buttonBoard.button(2);
 
-    Trigger white1 = buttonBoard.button(1);
-    Trigger white2 = buttonBoard.button(2);
+    Trigger whiteTop = buttonBoard.button(3);
+    Trigger whiteBottom = buttonBoard.button(4);
 
-    Trigger blue1 = buttonBoard.button(1);
-    Trigger blue2 = buttonBoard.button(2);
+    Trigger blueTop = buttonBoard.button(5);
+    Trigger blueBottom = buttonBoard.button(6);
 
-    Trigger green1 = buttonBoard.button(1);
-    Trigger green2 = buttonBoard.button(2);
+    Trigger greenTop = buttonBoard.button(7);
+    Trigger greenBottom = buttonBoard.button(8);
 
-    Trigger red1 = buttonBoard.button(1);
-    Trigger red2 = buttonBoard.button(2);
+    Trigger redTop = buttonBoard.button(9);
+    Trigger redBottom = buttonBoard.button(10);
 
-    Trigger black1 = buttonBoard.button(1);
-    Trigger black2 = buttonBoard.button(2);
+    Trigger blackTop = buttonBoard.button(11);
+    Trigger blackBottom = buttonBoard.button(12);
 
-    yellow1.onTrue(superstructure.intakeCoralStation());
-    yellow2.onTrue(superstructure.outtakeGlobal());
+    yellowTop.onTrue(superstructure.intakeCoralStation());
+    yellowBottom.onTrue(superstructure.outtakeGlobal());
 
     /** Unmapped controls. Will probably be algae processor. */
-    white1.onTrue(superstructure.setWantedSuperstateCommand(null));
-    white2.onTrue(superstructure.setWantedSuperstateCommand(null));
+    whiteTop.onTrue(superstructure.setWantedSuperstateCommand(SuperState.ZERO));
+    // whiteBottom.onTrue(superstructure.setWantedSuperstateCommand(SuperState.ZERO));
 
-    blue1.onTrue(superstructure.setWantedSuperstateCommand(SuperState.L1_FRONT));
-    blue2.onTrue(superstructure.setWantedSuperstateCommand(SuperState.L2_FRONT));
+    blueTop.onTrue(superstructure.setWantedSuperstateCommand(SuperState.L1_FRONT));
+    // blueTop.onTrue(new InstantCommand(() -> System.out.println("asdfsjfkdglfh")));
+    blueBottom.onTrue(superstructure.setWantedSuperstateCommand(SuperState.L2_FRONT));
 
-    green1.onTrue(superstructure.setWantedSuperstateCommand(SuperState.L4_BACK));
-    green2.onTrue(superstructure.setWantedSuperstateCommand(SuperState.L3_FRONT));
+    greenTop.onTrue(superstructure.setWantedSuperstateCommand(SuperState.L4_BACK));
+    greenBottom.onTrue(superstructure.setWantedSuperstateCommand(SuperState.L3_FRONT));
 
-    red1.onTrue(
+    redTop.onTrue(
         superstructure.setWantedSuperstateCommand(SuperState.WITHIN_FRAME_PERIMETER_DEFAULT));
-    red2.onTrue(superstructure.setWantedSuperstateCommand(SuperState.CLIMB_PREPARING));
+    redBottom.onTrue(superstructure.setWantedSuperstateCommand(SuperState.CLIMB_PREPARING));
 
-    black1.whileTrue(climber.climberUp());
-    black2.whileTrue(climber.climberDown());
+    blackTop.whileTrue(climber.climberUp());
+    blackBottom.whileTrue(climber.climberDown());
   }
 }
