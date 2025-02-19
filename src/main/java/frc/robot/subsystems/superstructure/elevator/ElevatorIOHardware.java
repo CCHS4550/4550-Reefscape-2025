@@ -1,4 +1,4 @@
-package frc.robot.subsystems.elevator;
+package frc.robot.subsystems.superstructure.elevator;
 
 import static edu.wpi.first.units.Units.Volts;
 
@@ -9,12 +9,13 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import frc.helpers.maps.Constants;
 import frc.helpers.motorcontroller.CCMotorController;
-import frc.robot.subsystems.elevator.ElevatorSubsystem.ElevatorState;
+import frc.robot.subsystems.superstructure.elevator.ElevatorSubsystem.ElevatorState;
 import java.util.function.BooleanSupplier;
 
 public class ElevatorIOHardware implements ElevatorIO {
@@ -24,6 +25,8 @@ public class ElevatorIOHardware implements ElevatorIO {
 
   RelativeEncoder elevatorEncoderBottom;
   RelativeEncoder elevatorEncoderTop;
+
+  DigitalInput hallEffect = new DigitalInput(Constants.ElevatorConstants.HALL_EFFECT_PORT);
 
   ProfiledPIDController elevatorPidController;
 
@@ -57,7 +60,7 @@ public class ElevatorIOHardware implements ElevatorIO {
 
     elevatorPidController.setIntegratorRange(-3, 3);
 
-    elevatorPidController.reset(getAbsoluteHeightMetersOffset());
+    elevatorPidController.reset(getHeightMeters());
     // TODO Sysid
     elevatorFeedForward = new ElevatorFeedforward(0, 0, 0, 0);
 
@@ -68,12 +71,18 @@ public class ElevatorIOHardware implements ElevatorIO {
 
   @Override
   public void updateInputs(ElevatorIOInputs inputs) {
-    inputs.currentPositionRotations = Units.radiansToDegrees(getAbsoluteHeightMetersOffset());
+
+    inputs.currentPositionMeters = getHeightMeters();
+    inputs.currentVelocityMetersPerSecond = getVelocityMetersPerSecond();
+
+    inputs.hallEffectTripped = !hallEffect.get();
 
     inputs.pidOutput = this.pidOutput;
     inputs.ffOutput = this.ffOutput;
 
     inputs.appliedVoltage = getVoltage();
+
+    inputs.pidError = elevatorPidController.getPositionError();
 
     inputs.setpointAngleRadians = elevatorPidController.getSetpoint().position;
     inputs.setpointAngleDegrees =
@@ -106,7 +115,7 @@ public class ElevatorIOHardware implements ElevatorIO {
 
     this.goalState = goalState;
 
-    pidOutput = elevatorPidController.calculate(getAbsoluteHeightMetersOffset(), goalState);
+    pidOutput = elevatorPidController.calculate(getHeightMeters(), goalState);
     ffOutput = elevatorFeedForward.calculate(elevatorPidController.getSetpoint().velocity);
 
     return pidOutput + ffOutput;
@@ -114,7 +123,7 @@ public class ElevatorIOHardware implements ElevatorIO {
 
   @Override
   public BooleanSupplier atSetpoint() {
-    return () -> Math.abs(getAbsoluteHeightMetersOffset()) <= 5.0;
+    return () -> Math.abs(getHeightMeters()) <= 5.0;
   }
 
   @Override
@@ -123,26 +132,31 @@ public class ElevatorIOHardware implements ElevatorIO {
     // elevatorTop.setVoltage(voltage.magnitude());
   }
 
-  @Override
-  public double getAbsoluteHeightMetersOffset() {
-    return (getAbsoluteHeightMetersNoOffset()
-            * Constants.ElevatorConstants.AXLE_ROTATION_TO_HEIGHT_METERS)
-        - Constants.ElevatorConstants.ELEVATOR_THROUGHBORE_OFFSET;
-  }
-
   /**
    * Gets the reading of the absolute encoder with offset. Used for getting the offset.
    *
    * @return The value of the absolute encoder in radians without the offset applied.
    */
   @Override
-  public double getAbsoluteHeightMetersNoOffset() {
+  public double getHeightMeters() {
     return ((elevatorEncoderBottom.getPosition() + elevatorEncoderTop.getPosition()) / 2)
-        * Constants.ElevatorConstants.AXLE_ROTATION_TO_HEIGHT_METERS;
+        * Constants.ElevatorConstants.HEIGHT_METERS_PER_ELEVATOR_MOTOR_ROTATIONS;
+  }
+
+  @Override
+  public double getVelocityMetersPerSecond() {
+    return ((elevatorEncoderBottom.getPosition() + elevatorEncoderTop.getPosition()) / 2)
+        * Constants.ElevatorConstants.ELEVATOR_MOTOR_METERS_PER_SECOND_CONVERSION_FACTOR;
+  }
+
+  @Override
+  public void resetEncoder() {
+    elevatorEncoderBottom.setPosition(0);
+    elevatorEncoderTop.setPosition(0);
   }
 
   @Override
   public void resetPID() {
-    elevatorPidController.reset(getAbsoluteHeightMetersOffset());
+    elevatorPidController.reset(getHeightMeters());
   }
 }

@@ -111,6 +111,10 @@ public class Robot extends LoggedRobot {
     robotContainer = new RobotContainer();
     autoChooser = robotState.autoChooserInit();
 
+    RobotState.getInstance().poseInit();
+    RobotState.getInstance().swerveModuleEncodersInit();
+    RobotState.getInstance().dashboardInit();
+
     RobotState.getInstance().resetPIDControllers();
   }
 
@@ -137,9 +141,10 @@ public class Robot extends LoggedRobot {
         break;
     }
 
-    RobotState.getInstance().updateSwerveModuleEncoders();
-    RobotState.getInstance().updateOdometryPose();
+    RobotState.getInstance().swerveModuleEncodersPeriodic();
     RobotState.getInstance().updateSwerveModulePositionsPeriodic();
+
+    RobotState.getInstance().updateOdometryPose();
     RobotState.getInstance().updateVisionPose();
 
     // Runs the Scheduler. This is responsible for polling buttons, adding
@@ -163,7 +168,7 @@ public class Robot extends LoggedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    // RobotState.getInstance().resetPIDControllers();
+    RobotState.getInstance().resetPIDControllers();
     autoChooser.getSelectedCustomCommand().schedule();
 
     System.out.println("Autonomous Routine Scheduled!");
@@ -186,7 +191,7 @@ public class Robot extends LoggedRobot {
   /** This function is called once when test mode is enabled. */
   @Override
   public void testInit() {
-    // RobotState.getInstance().resetPIDControllers();
+    RobotState.getInstance().resetPIDControllers();
   }
 
   /** This function is called periodically during test mode. */

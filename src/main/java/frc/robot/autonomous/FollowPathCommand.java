@@ -140,6 +140,9 @@ public class FollowPathCommand extends Command {
             RobotState.getInstance().getPoseAngleDegrees()
                 - trajectory.getEndState().heading.getDegrees());
 
+    Logger.recordOutput("FollowPathCommand/translationError", translationError);
+    Logger.recordOutput("FollowPathCommand/rotationErrro", rotationError);
+
     // return timer.hasElapsed(trajectory.getTotalTimeSeconds())
     return (translationError < 1 && rotationError < 1) || timer.hasElapsed(7);
   }

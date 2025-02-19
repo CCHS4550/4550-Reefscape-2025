@@ -8,15 +8,15 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.algae.AlgaeSubsystem;
-import frc.robot.subsystems.arm.ArmSubsystem;
-import frc.robot.subsystems.arm.ArmSubsystem.ArmState;
 import frc.robot.subsystems.climber.ClimberSubsystem;
-import frc.robot.subsystems.elevator.ElevatorSubsystem;
-import frc.robot.subsystems.elevator.ElevatorSubsystem.ElevatorState;
 import frc.robot.subsystems.intake.IntakeSubsystem;
+import frc.robot.subsystems.superstructure.arm.ArmSubsystem;
+import frc.robot.subsystems.superstructure.arm.ArmSubsystem.ArmState;
+import frc.robot.subsystems.superstructure.elevator.ElevatorSubsystem;
+import frc.robot.subsystems.superstructure.elevator.ElevatorSubsystem.ElevatorState;
+import frc.robot.subsystems.superstructure.wrist.WristSubsystem;
+import frc.robot.subsystems.superstructure.wrist.WristSubsystem.WristState;
 import frc.robot.subsystems.swervedrive.SwerveDriveSubsystem;
-import frc.robot.subsystems.wrist.WristSubsystem;
-import frc.robot.subsystems.wrist.WristSubsystem.WristState;
 import org.littletonrobotics.junction.Logger;
 
 public class Superstructure extends SubsystemBase {

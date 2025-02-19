@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems.elevator;
+package frc.robot.subsystems.superstructure.elevator;
 
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Seconds;
@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.helpers.maps.Constants;
 import frc.helpers.motorcontroller.CCMotorController;
@@ -55,6 +56,8 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   public final ElevatorIOInputsAutoLogged elevatorInputs = new ElevatorIOInputsAutoLogged();
 
+  Trigger hallEffectTripped = new Trigger(() -> elevatorInputs.hallEffectTripped);
+
   /** Creates a new WristSubsystem. */
   public ElevatorSubsystem(
       CCMotorController.MotorFactory motorFactory, ElevatorIO.IOFactory ioFactory) {
@@ -91,6 +94,12 @@ public class ElevatorSubsystem extends SubsystemBase {
                 (voltage) -> this.elevatorIO.setVoltage(voltage),
                 null, // No log consumer, since data is recorded by URCL
                 this));
+
+    hallEffectTripped.onTrue(resetEncoderCommand());
+  }
+
+  private Command resetEncoderCommand() {
+    return new InstantCommand(() -> elevatorIO.resetEncoder(), this);
   }
 
   private void applyStates() {
@@ -209,7 +218,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         });
   }
 
-  public Command setVoltage(double volts) {
+  public Command testVoltageCommand(double volts) {
     return Commands.startEnd(
         () -> elevatorIO.setVoltage(Volts.of(volts)), () -> elevatorIO.setVoltage(Volts.of(0)));
   }

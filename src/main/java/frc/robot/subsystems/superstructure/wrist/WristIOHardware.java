@@ -1,4 +1,4 @@
-package frc.robot.subsystems.arm;
+package frc.robot.subsystems.superstructure.wrist;
 
 import static edu.wpi.first.units.Units.Volts;
 
@@ -14,69 +14,66 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import frc.helpers.maps.Constants;
 import frc.helpers.motorcontroller.CCMotorController;
-import frc.robot.subsystems.arm.ArmSubsystem.ArmState;
+import frc.robot.subsystems.superstructure.wrist.WristSubsystem.WristState;
 import java.util.function.BooleanSupplier;
 
-public class ArmIOHardware implements ArmIO {
+public class WristIOHardware implements WristIO {
 
-  CCMotorController armMotor;
+  CCMotorController wristMotor;
+
   AbsoluteEncoder throughBore;
 
-  ProfiledPIDController armPidController;
-  ArmFeedforward feedForward;
+  ProfiledPIDController wristPidController;
+  ArmFeedforward wristFeedForward;
 
   double pidOutput;
   double ffOutput;
 
   State goalState;
 
-  public ArmIOHardware(CCMotorController armMotor) {
+  public WristIOHardware(CCMotorController wristMotor) {
+    this.wristMotor = wristMotor;
 
-    System.err.println("ARM IN REAL");
+    throughBore = (AbsoluteEncoder) wristMotor.getDataportAbsoluteEncoder();
 
-    this.armMotor = armMotor;
-    throughBore = (AbsoluteEncoder) armMotor.getDataportAbsoluteEncoder();
-
-    armPidController =
+    wristPidController =
         new ProfiledPIDController(
-            3, .5, 0.1, new TrapezoidProfile.Constraints(300, 50)); // do something for this
+            3, .3, 0, new TrapezoidProfile.Constraints(300, 50)); // do something for this
 
-    // kI .5
-    double min = ((-2 * Math.PI) - Constants.ArmConstants.ARM_THROUGHBORE_OFFSET);
-    double max = -Constants.ArmConstants.ARM_THROUGHBORE_OFFSET;
-    armPidController.enableContinuousInput(min, max);
+    // kI .3
+    double min = ((-2 * Math.PI) - Constants.WristConstants.WRIST_THROUGHBORE_OFFSET) * .75;
+    double max = -Constants.WristConstants.WRIST_THROUGHBORE_OFFSET * .75;
+    wristPidController.enableContinuousInput(min, max);
 
-    armPidController.setIntegratorRange(-3, 3);
+    wristPidController.setIntegratorRange(-3, 3);
 
-    armPidController.reset(throughBore.getPosition());
+    wristPidController.reset(throughBore.getPosition());
     // TODO Sysid
-    /** Have to find Ks */
-    // feedForward = new ArmFeedforward(.15, 1.34, 1.2, 0.09);
-    feedForward = new ArmFeedforward(.15, 1.06, 1.2);
+    wristFeedForward = new ArmFeedforward(.25, 0.54, 0.31);
 
     goalState = new State(0, 0);
 
-    SmartDashboard.putData("Arm PID Controller", armPidController);
+    SmartDashboard.putData("Wrist PID Controller", wristPidController);
   }
 
   @Override
-  public void updateInputs(ArmIOInputs inputs) {
-
+  public void updateInputs(WristIOInputs inputs) {
     inputs.currentRotations = -throughBore.getPosition();
 
-    inputs.currentAngleDegrees = Units.radiansToDegrees(getAbsoluteEncoderRadiansOffset());
     inputs.currentAngleRadians = getAbsoluteEncoderRadiansOffset();
-
-    inputs.currentVelocity = -throughBore.getVelocity() * Math.PI * 2 / 60;
+    inputs.currentAngleDegrees = Units.radiansToDegrees(getAbsoluteEncoderRadiansOffset());
+    inputs.currentVelocity = -throughBore.getVelocity() * Math.PI * 0.025;
 
     inputs.pidOutput = this.pidOutput;
     inputs.ffOutput = this.ffOutput;
 
     inputs.appliedVoltage = getVoltage();
 
-    inputs.setpointAngleRadians = armPidController.getSetpoint().position;
-    inputs.setpointAngleDegrees = Units.radiansToDegrees(armPidController.getSetpoint().position);
-    inputs.setpointVelocity = armPidController.getSetpoint().velocity;
+    inputs.pidError = wristPidController.getPositionError();
+
+    inputs.setpointAngleRadians = wristPidController.getSetpoint().position;
+    inputs.setpointAngleDegrees = Units.radiansToDegrees(wristPidController.getSetpoint().position);
+    inputs.setpointVelocity = wristPidController.getSetpoint().velocity;
 
     inputs.goalAngleRadians = goalState.position;
     inputs.goalAngleDegrees = Units.radiansToDegrees(goalState.position);
@@ -84,17 +81,17 @@ public class ArmIOHardware implements ArmIO {
   }
 
   @Override
-  public void holdAtState(ArmState armState) {
-    setVoltage(Volts.of(getPIDFFOutput(new State(armState.getAngle(), 0))));
+  public void holdAtState(WristState wristState) {
+    setVoltage(Volts.of(getPIDFFOutput(new State(wristState.getAngle(), 0))));
   }
 
-  public Command goToGoalState(State state, ArmSubsystem arm) {
+  public Command goToGoalState(State state, WristSubsystem wrist) {
     return new FunctionalCommand(
         () -> {},
         () -> setVoltage(Volts.of(getPIDFFOutput(state))),
         (end) -> stop(),
         atSetpoint(),
-        arm);
+        wrist);
   }
 
   /** Called continuously */
@@ -103,10 +100,10 @@ public class ArmIOHardware implements ArmIO {
 
     this.goalState = state;
 
-    pidOutput = armPidController.calculate(getAbsoluteEncoderRadiansOffset(), state);
+    pidOutput = wristPidController.calculate(getAbsoluteEncoderRadiansOffset(), state);
     ffOutput =
-        feedForward.calculate(
-            getAbsoluteEncoderRadiansOffset(), armPidController.getSetpoint().velocity);
+        wristFeedForward.calculate(
+            getAbsoluteEncoderRadiansOffset(), wristPidController.getSetpoint().velocity);
 
     return pidOutput + ffOutput;
   }
@@ -126,9 +123,12 @@ public class ArmIOHardware implements ArmIO {
   @Override
   public double getAbsoluteEncoderRadiansOffset() {
     double value =
-        getAbsoluteEncoderRadiansNoOffset() - Constants.ArmConstants.ARM_THROUGHBORE_OFFSET;
+        getAbsoluteEncoderRadiansNoOffset() - Constants.WristConstants.WRIST_THROUGHBORE_OFFSET;
 
     return value;
+    // return (throughBore.getPosition())
+    //     - Constants.WristConstants.WRIST_THROUGHBORE_OFFSET
+    //     + Math.PI;
   }
 
   /**
@@ -138,30 +138,31 @@ public class ArmIOHardware implements ArmIO {
    */
   @Override
   public double getAbsoluteEncoderRadiansNoOffset() {
+
     double rev = -throughBore.getPosition();
     // unwrap(rev);
 
     double radiansNoOffset = (rev * 2 * Math.PI);
-    return radiansNoOffset;
+    return radiansNoOffset * 0.75;
   }
 
   @Override
   public void resetPID() {
-    armPidController.reset(throughBore.getPosition());
+    wristPidController.reset(throughBore.getPosition());
   }
 
   @Override
   public void setVoltage(Voltage voltage) {
-    armMotor.setVoltage(voltage.magnitude());
+    wristMotor.setVoltage(voltage.magnitude());
   }
 
   @Override
   public double getVoltage() {
-    return armMotor.getVoltage();
+    return wristMotor.getVoltage();
   }
 
   @Override
   public void stop() {
-    armMotor.setVoltage(0);
+    wristMotor.setVoltage(0);
   }
 }

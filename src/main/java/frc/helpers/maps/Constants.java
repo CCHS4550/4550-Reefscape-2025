@@ -242,13 +242,14 @@ public class Constants {
 
   public static class ElevatorConstants {
 
-    public static final double ELEVATOR_MOTOR_ROTATIONS_TO_AXLE_ROTATIONS = 1.0;
+    /** 1 axle rotation to 6 motor rotations */
+    public static final double AXLE_ROTATIONS_TO_ELEVATOR_MOTOR_ROTATIONS = 1 / 6;
 
-    // How many rotations of the main axle to 1 meter of elevation
-    public static final double AXLE_ROTATION_TO_HEIGHT_METERS = 1.0;
+    // 1.92 * Math.PI * 2 meters (circumfrence) per 1 axle rotation
+    public static final double HEIGHT_METERS_TO_AXLE_ROTATIONS = 1.92 * Math.PI * 2;
 
     public static final double HEIGHT_METERS_PER_ELEVATOR_MOTOR_ROTATIONS =
-        ELEVATOR_MOTOR_ROTATIONS_TO_AXLE_ROTATIONS * AXLE_ROTATION_TO_HEIGHT_METERS;
+        AXLE_ROTATIONS_TO_ELEVATOR_MOTOR_ROTATIONS * HEIGHT_METERS_TO_AXLE_ROTATIONS;
 
     public static final double ELEVATOR_MOTOR_METERS_PER_SECOND_CONVERSION_FACTOR =
         HEIGHT_METERS_PER_ELEVATOR_MOTOR_ROTATIONS / 60;

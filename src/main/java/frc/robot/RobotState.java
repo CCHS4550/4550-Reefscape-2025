@@ -35,19 +35,19 @@ import frc.robot.autonomous.CustomAutoChooser;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.algae.AlgaeIOInputsAutoLogged;
 import frc.robot.subsystems.algae.AlgaeSubsystem;
-import frc.robot.subsystems.arm.ArmIOInputsAutoLogged;
-import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.climber.ClimberIOInputsAutoLogged;
 import frc.robot.subsystems.climber.ClimberSubsystem;
-import frc.robot.subsystems.elevator.ElevatorIOInputsAutoLogged;
-import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.intake.IntakeIOInputsAutoLogged;
 import frc.robot.subsystems.intake.IntakeSubsystem;
+import frc.robot.subsystems.superstructure.arm.ArmIOInputsAutoLogged;
+import frc.robot.subsystems.superstructure.arm.ArmSubsystem;
+import frc.robot.subsystems.superstructure.elevator.ElevatorIOInputsAutoLogged;
+import frc.robot.subsystems.superstructure.elevator.ElevatorSubsystem;
+import frc.robot.subsystems.superstructure.wrist.WristIOInputsAutoLogged;
+import frc.robot.subsystems.superstructure.wrist.WristSubsystem;
 import frc.robot.subsystems.swervedrive.RealOdometryThread;
 import frc.robot.subsystems.swervedrive.SwerveDriveSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveModuleInputsAutoLogged;
-import frc.robot.subsystems.wrist.WristIOInputsAutoLogged;
-import frc.robot.subsystems.wrist.WristSubsystem;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -314,7 +314,7 @@ public class RobotState {
           .getLayout("Turn Encoders Position(Rad)", BuiltInLayouts.kGrid)
           .withSize(2, 2);
 
-  public synchronized void moduleEncodersInit() {
+  public synchronized void swerveModuleEncodersInit() {
 
     abs_Enc_FR_Offset_Entry =
         Shuffleboard.getTab("Encoders")
@@ -380,7 +380,7 @@ public class RobotState {
             .getEntry();
   }
 
-  public synchronized void updateSwerveModuleEncoders() {
+  public synchronized void swerveModuleEncodersPeriodic() {
     abs_Enc_FR_Offset_Entry.setDouble(swerve.frontRight.getAbsoluteEncoderRadiansOffset());
     abs_Enc_FL_Offset_Entry.setDouble(swerve.frontLeft.getAbsoluteEncoderRadiansOffset());
     abs_Enc_BR_Offset_Entry.setDouble(swerve.backRight.getAbsoluteEncoderRadiansOffset());

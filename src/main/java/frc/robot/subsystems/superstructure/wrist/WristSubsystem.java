@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems.wrist;
+package frc.robot.subsystems.superstructure.wrist;
 
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Seconds;
@@ -213,7 +213,7 @@ public class WristSubsystem extends SubsystemBase {
         });
   }
 
-  public Command setVoltage(double volts) {
+  public Command testVoltageCommand(double volts) {
     return Commands.startEnd(
         () -> wristIO.setVoltage(Volts.of(volts)), () -> wristIO.setVoltage(Volts.of(0)));
   }

@@ -1,11 +1,11 @@
-package frc.robot.subsystems.elevator;
+package frc.robot.subsystems.superstructure.elevator;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.helpers.motorcontroller.CCMotorController;
-import frc.robot.subsystems.elevator.ElevatorSubsystem.ElevatorState;
+import frc.robot.subsystems.superstructure.elevator.ElevatorSubsystem.ElevatorState;
 import java.util.function.BooleanSupplier;
 import org.littletonrobotics.junction.AutoLog;
 
@@ -13,11 +13,16 @@ public interface ElevatorIO {
 
   @AutoLog
   class ElevatorIOInputs {
-    public double currentPositionRotations = 0.0;
+    public double currentPositionMeters = 0.0;
+    public double currentVelocityMetersPerSecond = 0.0;
+
+    public boolean hallEffectTripped = false;
 
     public double pidOutput = 0.0;
     public double ffOutput = 0.0;
     public double appliedVoltage = 0.0;
+
+    public double pidError;
 
     public double setpointAngleDegrees = 0.0;
     public double setpointAngleRadians = 0.0;
@@ -54,22 +59,19 @@ public interface ElevatorIO {
   }
 
   /**
-   * Gets the reading of the absolute encoder with offset.
+   * Gets the reading of the relative encoder with offset.
    *
-   * @return The value of the absolute encoder in meters with the offset applied.
+   * @return The value of the relative encoder in meters with the offset applied.
    */
-  default double getAbsoluteHeightMetersOffset() {
+  default double getHeightMeters() {
     return 0.0;
   }
 
-  /**
-   * Gets the reading of the absolute encoder with offset.
-   *
-   * @return The value of the absolute encoder in meters with the offset applied.
-   */
-  default double getAbsoluteHeightMetersNoOffset() {
+  default double getVelocityMetersPerSecond() {
     return 0.0;
   }
+
+  default void resetEncoder() {}
 
   default void resetPID() {}
 
