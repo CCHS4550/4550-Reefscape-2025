@@ -98,7 +98,7 @@ public class Robot extends LoggedRobot {
     }
 
     PortForwarder.add(5800, "limelight3.local", 5800);
-    PortForwarder.add(5801, "limelight3.local", 5801);
+    PortForwarder.add(5801, "photonvision.local", 5801);
 
     // Unofficial REV-Compatible Logger
     // Used by SysID to log REV devices

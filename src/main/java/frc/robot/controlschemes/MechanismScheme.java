@@ -41,6 +41,7 @@ public class MechanismScheme {
       Superstructure superstructure,
       int port) {
 
+    // TODO ask Ian about these controls
     Trigger yellowTop = buttonBoard.button(1);
     Trigger yellowBottom = buttonBoard.button(2);
 

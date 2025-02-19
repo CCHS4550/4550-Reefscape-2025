@@ -12,7 +12,9 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.helpers.maps.Constants;
+import frc.helpers.vision.VisionIO;
 import frc.robot.RobotState;
+import frc.robot.autonomous.AlignCommands;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.algae.AlgaeSubsystem;
 import frc.robot.subsystems.climber.ClimberSubsystem;
@@ -73,6 +75,7 @@ public class SwerveDriveScheme {
       SwerveDriveSubsystem swerve,
       WristSubsystem wrist,
       Superstructure superstructure,
+      VisionIO vision,
       CommandXboxController controller) {
 
     Shuffleboard.getTab("Diagnostics")
@@ -184,11 +187,13 @@ public class SwerveDriveScheme {
       SwerveDriveSubsystem swerve,
       WristSubsystem wrist,
       Superstructure superstructure,
+      VisionIO vision,
       CommandXboxController controller) {
 
     Trigger reefLeftTrigger = controller.leftTrigger().and(controller.x());
     Trigger reefRightTrigger = controller.leftTrigger().and(controller.b());
 
+    // TODO ask Eric about these controls.
     Trigger reefBackLeftTrigger = controller.leftTrigger().and(controller.x()).and(controller.y());
     Trigger reefBackRightTrigger = controller.leftTrigger().and(controller.b()).and(controller.y());
 
@@ -199,7 +204,18 @@ public class SwerveDriveScheme {
 
     controller.y().onTrue(runOnce(() -> toggleFieldCentric()));
 
-    // controller.a().onTrue(runOnce(() -> setFastMode())).onFalse(runOnce(() -> setSlowMode()));
+    reefLeftTrigger.whileTrue(AlignCommands.frontAlignToReefLeft(swerve, vision));
+    reefRightTrigger.whileTrue(AlignCommands.frontAlignToReefRight(swerve, vision));
+
+    reefBackLeftTrigger.whileTrue(AlignCommands.backAlignToReefLeft(swerve, vision));
+    reefBackRightTrigger.whileTrue(AlignCommands.backAlignToReefRight(swerve, vision));
+
+    processorTrigger.whileTrue(AlignCommands.AlignToProcessor(swerve, vision));
+
+    coralStationLeftTrigger.whileTrue(AlignCommands.frontAlignToCoralStationLeft(swerve, vision));
+    coralStationRightTrigger.whileTrue(AlignCommands.frontAlignToCoralStationRight(swerve, vision));
+
+    controller.a().onTrue(runOnce(() -> setSlowMode())).onFalse(runOnce(() -> setNormalMode()));
   }
   /** Toggle field centric and robot centric driving. */
   private static void toggleFieldCentric() {
@@ -219,10 +235,10 @@ public class SwerveDriveScheme {
   }
 
   private static void setNormalMode() {
-    driveSpeedModifier = () -> 0.75;
+    driveSpeedModifier = () -> 0.5;
   }
 
   private static void setSlowMode() {
-    driveSpeedModifier = () -> 0.3;
+    driveSpeedModifier = () -> 0.15;
   }
 }

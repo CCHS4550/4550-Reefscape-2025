@@ -134,7 +134,6 @@ public class OrthogonalToTag extends Command {
 
     /** Update Target Pose */
     if (getTransform3dList().size() > 0) {
-      // if (false) {
 
       // vision
       //     .getPipelineResults()

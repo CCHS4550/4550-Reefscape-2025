@@ -94,30 +94,32 @@ public class RobotState {
 
   public final VisionIOInputsAutoLogged visionInputs = new VisionIOInputsAutoLogged();
 
-  /** Module positions used for odometry */
-  public SwerveModulePosition[] previousSwerveModulePositions = new SwerveModulePosition[4];
-
-  public SwerveModulePosition[] currentSwerveModulePositions = new SwerveModulePosition[4];
+  /** Module positions used for odometry (not HF) */
   public SwerveModulePosition[] swerveModulePositions = new SwerveModulePosition[4];
 
-  // High frequency odometry objects (HF)
+  public boolean useHF = true;
+
+  /** High frequency odometry objects (HF) */
   public int sampleCountHF;
+
   public double[] sampleTimestampsHF;
   public SwerveModulePosition[][] swerveModulePositionsHF;
 
   private final StatusSignal<Angle> yaw = pigeonGyro.getYaw();
-  // private final StatusSignal<AngularVelocity> yawVelocity =
-  // pigeonGyro.getAngularVelocityZWorld();
-  // private final Queue<Double> gyroTimestampContainer =
-  // RealOdometryThread.getInstance().makeTimestampContainer();
   private final Queue<Double> gyroContainer =
       RealOdometryThread.getInstance().registerInput(yaw::getValueAsDouble);
-
   public Rotation2d[] gyroAnglesHF = new Rotation2d[] {};
 
+  /** Pose estimation objects */
+  public final Field2d gameField = new Field2d();
+
+  public SwerveDrivePoseEstimator poseEstimator;
+
+  /** Methods for simulation */
   public double gyroAngleSim = 0;
 
-  public boolean useHF = true;
+  public SwerveModulePosition[] previousSwerveModulePositions = new SwerveModulePosition[4];
+  public SwerveModulePosition[] currentSwerveModulePositions = new SwerveModulePosition[4];
 
   public void robotStateInit(
       AlgaeSubsystem algae,
@@ -174,10 +176,6 @@ public class RobotState {
     currentSwerveModulePositions[2] = new SwerveModulePosition();
     currentSwerveModulePositions[3] = new SwerveModulePosition();
   }
-
-  public final Field2d gameField = new Field2d();
-
-  public SwerveDrivePoseEstimator poseEstimator;
 
   public synchronized CustomAutoChooser autoChooserInit() {
     return new CustomAutoChooser(swerve, superstructure, vision);
@@ -414,8 +412,6 @@ public class RobotState {
     swerveModulePositions[3] =
         new SwerveModulePosition(
             swerve.backLeft.getDrivePosition(), new Rotation2d(swerve.backLeft.getTurnPosition()));
-
-    // Logger.recordOutput("currentModulePositions", swerveModulePositions);
 
     return swerveModulePositions;
   }

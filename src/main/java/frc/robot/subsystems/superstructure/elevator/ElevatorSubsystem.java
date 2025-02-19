@@ -186,7 +186,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     elevatorIO.updateInputs(elevatorInputs);
     Logger.processInputs("Subsystem/Elevator", elevatorInputs);
     // if (wantedState != currentState) {
-    //   elevatorIO.resetPID();
     //   currentState = handleStateTransitions();
     // }
     // applyStates();

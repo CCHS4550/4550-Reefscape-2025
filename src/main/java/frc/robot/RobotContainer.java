@@ -126,6 +126,7 @@ public class RobotContainer {
 
         superstructure = new Superstructure(algae, arm, climber, elevator, intake, swerve, wrist);
     }
+
     RobotState.getInstance()
         .robotStateInit(
             algae, arm, climber, elevator, intake, swerve, wrist, vision, superstructure);
@@ -142,6 +143,7 @@ public class RobotContainer {
             swerve,
             wrist,
             superstructure,
+            vision,
             primaryController);
         MechanismScheme.configure(
             algae, arm, climber, elevator, intake, swerve, wrist, superstructure, 1);
@@ -166,6 +168,7 @@ public class RobotContainer {
         //     swerve,
         //     wrist,
         //     superstructure,
+        //     vision,
         //     primaryController);
 
         break;
@@ -180,6 +183,7 @@ public class RobotContainer {
             swerve,
             wrist,
             superstructure,
+            vision,
             primaryController);
         TestingScheme.configure(
             algae,
