@@ -59,12 +59,16 @@ public class MechanismScheme {
     Trigger blackTop = buttonBoard.button(11);
     Trigger blackBottom = buttonBoard.button(12);
 
-    yellowTop.onTrue(superstructure.intakeCoralStation());
-    yellowBottom.onTrue(superstructure.outtakeGlobal());
+    yellowTop.onTrue(
+        superstructure
+            .setWantedSuperstateCommand(SuperState.CORAL_STATION_FRONT)
+            .andThen(superstructure.intakeCoralStation()));
+    yellowBottom.onTrue(
+        superstructure.setWantedSuperstateCommand(SuperState.WITHIN_FRAME_PERIMETER_DEFAULT));
 
     /** Unmapped controls. Will probably be algae processor. */
-    whiteTop.onTrue(superstructure.setWantedSuperstateCommand(SuperState.ZERO));
-    // whiteBottom.onTrue(superstructure.setWantedSuperstateCommand(SuperState.ZERO));
+    whiteTop.whileTrue(climber.climberDown());
+    whiteBottom.whileTrue(climber.climberUp());
 
     blueTop.onTrue(superstructure.setWantedSuperstateCommand(SuperState.L1_FRONT));
     // blueTop.onTrue(new InstantCommand(() -> System.out.println("asdfsjfkdglfh")));
@@ -77,7 +81,7 @@ public class MechanismScheme {
         superstructure.setWantedSuperstateCommand(SuperState.WITHIN_FRAME_PERIMETER_DEFAULT));
     redBottom.onTrue(superstructure.setWantedSuperstateCommand(SuperState.CLIMB_PREPARING));
 
-    blackTop.whileTrue(climber.climberUp());
-    blackBottom.whileTrue(climber.climberDown());
+    blackTop.onTrue(superstructure.outtakeGlobal());
+    blackBottom.onTrue(superstructure.setWantedSuperstateCommand(SuperState.ZERO));
   }
 }

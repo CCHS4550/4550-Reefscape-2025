@@ -76,6 +76,8 @@ public interface ArmIO {
     return 0.0;
   }
 
+  default void resetPID() {}
+
   // public default void setP(double p) {}
 
   // public default void setI(double i) {}

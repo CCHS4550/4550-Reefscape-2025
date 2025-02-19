@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import static edu.wpi.first.wpilibj2.command.Commands.runOnce;
+
 import choreo.util.ChoreoAllianceFlipUtil;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
@@ -24,6 +26,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.helpers.maps.Constants;
 import frc.helpers.vision.VisionIO;
@@ -114,7 +117,7 @@ public class RobotState {
 
   public double gyroAngleSim = 0;
 
-  public boolean useHF = false;
+  public boolean useHF = true;
 
   public void robotStateInit(
       AlgaeSubsystem algae,
@@ -505,10 +508,10 @@ public class RobotState {
    * Clamping methods for allowing data reading past array length, since lengths are inconsistent.
    */
   public SwerveModulePosition[] getSwerveModulePositionsArrayClampedHF(int index) {
-    if (index > swerveModulePositionsHF.length - 1) {
+    if (index > swerveModulePositionsHF.length - 1 && swerveModulePositionsHF.length > 0) {
       return swerveModulePositionsHF[swerveModulePositionsHF.length - 1];
-    }
-    return swerveModulePositionsHF[index];
+    } else if (swerveModulePositionsHF.length > 0) return swerveModulePositionsHF[index];
+    return swerveModulePositions;
   }
 
   public double getSampleTimestampArrayClampedHF(int index) {
@@ -524,6 +527,12 @@ public class RobotState {
       return gyroAnglesHF[gyroAnglesHF.length - 1];
     }
     return gyroAnglesHF[index];
+  }
+
+  public void resetPIDControllers() {
+    arm.resetPID();
+    elevator.resetPID();
+    wrist.resetPID();
   }
 
   /**
@@ -560,11 +569,15 @@ public class RobotState {
   }
 
   public synchronized void setOdometry(Pose2d pose) {
-    poseEstimator.resetPosition(pose.getRotation(), swerveModulePositions, pose);
+    poseEstimator.resetPosition(getPoseRotation2d(), swerveModulePositions, pose);
+  }
+
+  public Command setOdometryCommand(Pose2d pose) {
+    return runOnce(() -> setOdometry(pose), swerve);
   }
 
   public synchronized void setOdometryAllianceFlip(Pose2d pos) {
-    if (Constants.isBlue()) return;
+    if (Constants.isBlue) return;
 
     poseEstimator.resetPosition(
         ChoreoAllianceFlipUtil.flip(getRotation2d()),

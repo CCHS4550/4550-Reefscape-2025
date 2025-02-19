@@ -47,8 +47,10 @@ public class Constants {
 
   // public static DriverStation.Alliance currentAlliance = Alliance.Blue;
 
-  public static boolean isBlue() {
-    boolean isBlue = true;
+  public static boolean isBlue = true;
+
+  public static boolean checkAlliance() {
+
     if (DriverStation.getAlliance().isPresent()) {
       isBlue = DriverStation.getAlliance().get() == Alliance.Blue ? true : false;
     }

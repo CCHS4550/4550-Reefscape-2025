@@ -10,7 +10,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.helpers.maps.Constants;
 import frc.robot.RobotState;
@@ -37,6 +36,7 @@ public class PathWrapper {
   PathPlannerTrajectory initialTraj;
   PathPlannerPath initialPath;
   Pose2d initialPose;
+  Rotation2d initialHeading;
 
   /**
    * Wraps all the paths associated with an Autonomous routine inside a container object.
@@ -48,8 +48,10 @@ public class PathWrapper {
   public PathWrapper(
       SwerveDriveSubsystem swerve,
       CustomAutoChooser.AutoRoutine autoRoutine,
-      Rotation2d initialHeading,
+      Rotation2d heading,
       AutoFile... files) {
+
+    this.initialHeading = rotateIfNecessary(heading);
 
     this.swerve = swerve;
 
@@ -94,7 +96,8 @@ public class PathWrapper {
   }
 
   public Command setInitialPose() {
-    return new InstantCommand(() -> RobotState.getInstance().setOdometry(initialPose));
+    return RobotState.getInstance()
+        .setOdometryCommand(new Pose2d(initialPose.getTranslation(), initialHeading));
   }
 
   public Command getStartingCommand() {
@@ -176,7 +179,11 @@ public class PathWrapper {
   }
 
   public static PathPlannerPath flipIfNecessary(PathPlannerPath path) {
-    return Constants.isBlue() ? path : path.flipPath();
+    return Constants.isBlue ? path : path.flipPath();
+  }
+
+  public static Rotation2d rotateIfNecessary(Rotation2d rotation2d) {
+    return Constants.isBlue ? rotation2d : rotation2d.plus(Rotation2d.fromRadians(Math.PI));
   }
 
   public static Map.Entry<String, Integer> handleChoreoIndex(String filename) {

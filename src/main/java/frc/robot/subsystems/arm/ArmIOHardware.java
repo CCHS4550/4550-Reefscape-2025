@@ -39,8 +39,9 @@ public class ArmIOHardware implements ArmIO {
 
     armPidController =
         new ProfiledPIDController(
-            1.7, .5, 0.1, new TrapezoidProfile.Constraints(15, 15)); // do something for this
+            3, .5, 0.1, new TrapezoidProfile.Constraints(30, 5)); // do something for this
 
+    // kI .5
     double min = ((-2 * Math.PI) - Constants.ArmConstants.ARM_THROUGHBORE_OFFSET);
     double max = -Constants.ArmConstants.ARM_THROUGHBORE_OFFSET;
     armPidController.enableContinuousInput(min, max);
@@ -48,7 +49,7 @@ public class ArmIOHardware implements ArmIO {
     // TODO Sysid
     /** Have to find Ks */
     // feedForward = new ArmFeedforward(.15, 1.34, 1.2, 0.09);
-    feedForward = new ArmFeedforward(.15, 1.06, 1.2, 0.09);
+    feedForward = new ArmFeedforward(.15, 1.06, 1.2);
 
     goalState = new State(0, 0);
 
@@ -142,6 +143,11 @@ public class ArmIOHardware implements ArmIO {
   }
 
   @Override
+  public void resetPID() {
+    armPidController.reset(throughBore.getPosition());
+  }
+
+  @Override
   public void setVoltage(Voltage voltage) {
     armMotor.setVoltage(voltage.magnitude());
   }
@@ -154,18 +160,5 @@ public class ArmIOHardware implements ArmIO {
   @Override
   public void stop() {
     armMotor.setVoltage(0);
-  }
-
-  private double prev = Double.NaN;
-  private int offset = 0;
-
-  public double unwrap(double value) {
-    if (!Double.isNaN(prev)) {
-      // Compute number of wraps using precise modular arithmetic
-      double delta = value - prev;
-      offset += Math.rint(delta); // More precise rounding method
-    }
-
-    return value + offset;
   }
 }

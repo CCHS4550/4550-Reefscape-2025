@@ -176,10 +176,17 @@ public class ElevatorSubsystem extends SubsystemBase {
   public void periodic() {
     elevatorIO.updateInputs(elevatorInputs);
     Logger.processInputs("Subsystem/Elevator", elevatorInputs);
-    // if (wantedState != currentState) currentState = handleStateTransitions();
+    // if (wantedState != currentState) {
+    //   elevatorIO.resetPID();
+    //   currentState = handleStateTransitions();
+    // }
     // applyStates();
 
     // This method will be called once per scheduler run
+  }
+
+  public void resetPID() {
+    elevatorIO.resetPID();
   }
 
   public Command elevatorUp() {

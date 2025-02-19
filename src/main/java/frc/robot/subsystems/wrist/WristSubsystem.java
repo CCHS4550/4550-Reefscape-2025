@@ -26,11 +26,11 @@ public class WristSubsystem extends SubsystemBase {
   public enum WristState {
     // Placeholder Values
     ZERO(0),
-    DEFAULT_WITHINFRAME(Units.degreesToRadians(0)),
+    DEFAULT_WITHINFRAME(Units.degreesToRadians(-160)),
     L1_FRONT(Units.degreesToRadians(15)),
     L2L3_FRONT(Units.degreesToRadians(45)),
     L4_BACK(Units.degreesToRadians(110)),
-    CORAL_STATION_FRONT(Units.degreesToRadians(15)),
+    CORAL_STATION_FRONT(Units.degreesToRadians(-158.3)),
     CORAL_STATION_BACK(Units.degreesToRadians(120)),
     CLIMB_PREPARING(Units.degreesToRadians(10));
 
@@ -45,9 +45,9 @@ public class WristSubsystem extends SubsystemBase {
     }
   }
 
-  public WristState previousState = WristState.ZERO;
-  public WristState currentState = WristState.ZERO;
-  public WristState wantedState = WristState.ZERO;
+  public WristState previousState = WristState.DEFAULT_WITHINFRAME;
+  public WristState currentState = WristState.DEFAULT_WITHINFRAME;
+  public WristState wantedState = WristState.DEFAULT_WITHINFRAME;
 
   public final WristIO wristIO;
 
@@ -94,7 +94,6 @@ public class WristSubsystem extends SubsystemBase {
 
       case L1_FRONT:
         wristIO.holdAtState(WristState.L1_FRONT);
-        System.out.println("L1");
         break;
 
       case L2L3_FRONT:
@@ -181,10 +180,17 @@ public class WristSubsystem extends SubsystemBase {
 
     wristIO.updateInputs(wristInputs);
     Logger.processInputs("Subsystem/Wrist", wristInputs);
-    if (wantedState != currentState) currentState = handleStateTransitions();
+    if (wantedState != currentState) {
+      // wristIO.resetPID();
+      currentState = handleStateTransitions();
+    }
     applyStates();
 
     // This method will be called once per scheduler run
+  }
+
+  public void resetPID() {
+    wristIO.resetPID();
   }
 
   public Command wristUp() {

@@ -60,6 +60,8 @@ public class CustomAutoChooser {
     MANHATTAN,
     /** Left Wall Taxi */
     AURORA,
+    /** Test */
+    TEST,
     /** Do nothing */
     EMPTY
   }
@@ -465,6 +467,24 @@ public class CustomAutoChooser {
     return c;
   }
 
+  public Command runTest() {
+    PathWrapper pathWrapper =
+        new PathWrapper(
+            swerve,
+            AutoRoutine.TEST,
+            Rotation2d.fromRadians(0),
+            new PathWrapper.AutoFile("TEST.0", true),
+            new PathWrapper.AutoFile("TEST.1", true));
+
+    SequentialCommandGroup c = new SequentialCommandGroup();
+    // Do not add file extensions!
+
+    c.addCommands(pathWrapper.setInitialPose());
+    c.addCommands(pathWrapper.getFollowCommand(0));
+
+    return c;
+  }
+
   public Command getSelectedCustomCommand() {
 
     switch (autoChooser.get()) {
@@ -502,6 +522,8 @@ public class CustomAutoChooser {
         return runManhattan();
       case AURORA:
         return runAurora();
+      case TEST:
+        return runTest();
       case EMPTY:
         return new InstantCommand();
       default:

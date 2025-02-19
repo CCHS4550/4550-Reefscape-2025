@@ -138,4 +138,9 @@ public class ElevatorIOHardware implements ElevatorIO {
     return ((elevatorEncoderBottom.getPosition() + elevatorEncoderTop.getPosition()) / 2)
         * Constants.ElevatorConstants.AXLE_ROTATION_TO_HEIGHT_METERS;
   }
+
+  @Override
+  public void resetPID() {
+    elevatorPidController.reset(getAbsoluteHeightMetersOffset());
+  }
 }

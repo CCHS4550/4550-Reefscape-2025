@@ -77,9 +77,9 @@ public class Superstructure extends SubsystemBase {
     // CLIMB_ASSIST
   }
 
-  SuperState wantedSuperState = SuperState.WITHIN_FRAME_PERIMETER_DEFAULT;
-  SuperState currentSuperState = SuperState.WITHIN_FRAME_PERIMETER_DEFAULT;
-  SuperState previousSuperState = SuperState.WITHIN_FRAME_PERIMETER_DEFAULT;
+  SuperState wantedSuperState = SuperState.ZERO;
+  SuperState currentSuperState = SuperState.ZERO;
+  SuperState previousSuperState = SuperState.ZERO;
 
   public void applyStates() {
     switch (currentSuperState) {
@@ -90,9 +90,9 @@ public class Superstructure extends SubsystemBase {
         break;
 
       case WITHIN_FRAME_PERIMETER_DEFAULT:
-        // arm.setWantedState(ArmState.DEFAULT_WITHINFRAME);
+        arm.setWantedState(ArmState.DEFAULT_WITHINFRAME);
         // elevator.setWantedState(ElevatorState.DEFAULT_WITHINFRAME);
-        // wrist.setWantedState(WristState.DEFAULT_WITHINFRAME);
+        wrist.setWantedState(WristState.DEFAULT_WITHINFRAME);
         break;
 
       case CORAL_STATION_BACK:

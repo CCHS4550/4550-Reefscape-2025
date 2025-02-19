@@ -25,11 +25,11 @@ public class ArmSubsystem extends SubsystemBase {
   public enum ArmState {
     // Placeholder Values
     ZERO(0),
-    DEFAULT_WITHINFRAME(Units.degreesToRadians(0)),
+    DEFAULT_WITHINFRAME(Units.degreesToRadians(-34.5)),
     L1_FRONT(Units.degreesToRadians(30)),
     L2L3_FRONT(Units.degreesToRadians(45)),
     L4_BACK(Units.degreesToRadians(110)),
-    CORAL_STATION_FRONT(Units.degreesToRadians(15)),
+    CORAL_STATION_FRONT(Units.degreesToRadians(11.5)),
     CORAL_STATION_BACK(Units.degreesToRadians(120)),
     CLIMB_PREPARING(Units.degreesToRadians(150));
 
@@ -94,7 +94,7 @@ public class ArmSubsystem extends SubsystemBase {
 
       case L1_FRONT:
         armIO.holdAtState(ArmState.L1_FRONT);
-        
+
         break;
 
       case L2L3_FRONT:
@@ -183,10 +183,17 @@ public class ArmSubsystem extends SubsystemBase {
     armIO.updateInputs(armInputs);
     Logger.processInputs("Subsystem/Arm", armInputs);
 
-    if (wantedState != currentState) currentState = handleStateTransitions();
+    if (wantedState != currentState) {
+      // armIO.resetPID();
+      currentState = handleStateTransitions();
+    }
     applyStates();
 
     // // This method will be called once per scheduler run
+  }
+
+  public void resetPID() {
+    armIO.resetPID();
   }
 
   /** SYSID METHODS */

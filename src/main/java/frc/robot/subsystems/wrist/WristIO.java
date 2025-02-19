@@ -92,6 +92,8 @@ public interface WristIO {
     return new InstantCommand();
   }
 
+  default void resetPID() {}
+
   @FunctionalInterface
   interface IOFactory {
     WristIO create(CCMotorController motor);

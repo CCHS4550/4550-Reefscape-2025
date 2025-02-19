@@ -71,6 +71,8 @@ public interface ElevatorIO {
     return 0.0;
   }
 
+  default void resetPID() {}
+
   @FunctionalInterface
   interface IOFactory {
     ElevatorIO create(CCMotorController elevatorLeft, CCMotorController elevatorRight);

@@ -9,7 +9,6 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
@@ -32,9 +31,6 @@ public class WristIOHardware implements WristIO {
 
   State goalState;
 
-  double previousValue = 0.0;
-  double currentValue = 0.0;
-
   public WristIOHardware(CCMotorController wristMotor) {
     this.wristMotor = wristMotor;
 
@@ -42,28 +38,28 @@ public class WristIOHardware implements WristIO {
 
     wristPidController =
         new ProfiledPIDController(
-            3.5, .5, 0.1, new TrapezoidProfile.Constraints(40, 15)); // do something for this
+            3, .3, 0, new TrapezoidProfile.Constraints(30, 5)); // do something for this
 
+    // kI .3
     double min = ((-2 * Math.PI) - Constants.WristConstants.WRIST_THROUGHBORE_OFFSET) * .75;
     double max = -Constants.WristConstants.WRIST_THROUGHBORE_OFFSET * .75;
     wristPidController.enableContinuousInput(min, max);
 
     wristPidController.reset(throughBore.getPosition());
     // TODO Sysid
-    wristFeedForward = new ArmFeedforward(.25, 0.54, 0.31, 0.03);
+    wristFeedForward = new ArmFeedforward(.25, 0.54, 0.31);
 
     goalState = new State(0, 0);
 
     SmartDashboard.putData("Wrist PID Controller", wristPidController);
-
-    wrapTimer.reset();
-    wrapTimer.start();
   }
 
   @Override
   public void updateInputs(WristIOInputs inputs) {
     inputs.currentRotations = -throughBore.getPosition();
-    inputs.currentAngleDegrees = Units.radiansToDegrees(getAbsoluteEncoderGlobalRadians());
+
+    inputs.currentAngleRadians = getAbsoluteEncoderRadiansOffset();
+    inputs.currentAngleDegrees = Units.radiansToDegrees(getAbsoluteEncoderRadiansOffset());
     inputs.currentVelocity = -throughBore.getVelocity() * Math.PI * 2 / 60;
 
     inputs.pidOutput = this.pidOutput;
@@ -147,6 +143,11 @@ public class WristIOHardware implements WristIO {
   }
 
   @Override
+  public void resetPID() {
+    wristPidController.reset(throughBore.getPosition());
+  }
+
+  @Override
   public void setVoltage(Voltage voltage) {
     wristMotor.setVoltage(voltage.magnitude());
   }
@@ -160,47 +161,4 @@ public class WristIOHardware implements WristIO {
   public void stop() {
     wristMotor.setVoltage(0);
   }
-
-  public static boolean sameSign(double a, double b) {
-    return (a >= -.5 && b >= -0.5) || (a < -.5 && b < -.5);
-  }
-
-  private double prev = Double.NaN;
-  private int offset = 0;
-
-  Timer wrapTimer = new Timer();
-  double currentTime = 0;
-  double prevTime = 0;
-
-  /** true means Top */
-  /** false means Bottom */
-  private boolean aboutToWrap = false;
-
-  public double unwrap(double value) {
-
-    currentTime = wrapTimer.get();
-    if (currentTime - prevTime > 0.1) {
-      prevTime = currentTime;
-      prev = value;
-    }
-
-    if (Math.abs(value - prev) > .2 && value < -.9) offset += 1;
-    if (Math.abs(value - prev) > .2 && value > -.1) offset += -1;
-
-    // if (value > -0.1) aboutToWrap = true;
-    // if (value < -0.9) aboutToWrap = false;
-
-    // if (!sameSign(currentValue, previousValue))
-
-    // if (!Double.isNaN(prev)) {
-    //   // Compute number of wraps using precise modular arithmetic
-    //   double delta = value - prev;
-    //   offset += Math.rint(delta);
-    // }
-
-    // prev = value;
-    return value + offset;
-  }
-
-  /** SYSID METHODS */
 }
