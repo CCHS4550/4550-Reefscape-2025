@@ -74,9 +74,9 @@ public class SwerveModuleIOHardware implements SwerveModuleIO {
     // possibly kA values too, if sysid provides those
     driveFeedforward =
         new SimpleMotorFeedforward(
-            Constants.FeedForwardConstants.DRIVE_KS,
-            Constants.FeedForwardConstants.DRIVE_KV,
-            Constants.FeedForwardConstants.DRIVE_KA);
+            Constants.SwerveConstants.DRIVE_KS,
+            Constants.SwerveConstants.DRIVE_KV,
+            Constants.SwerveConstants.DRIVE_KA);
 
     this.name = name;
     resetEncoders();

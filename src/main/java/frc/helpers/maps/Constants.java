@@ -220,8 +220,15 @@ public class Constants {
     public static final Pose2d INITIAL_POSE =
         new Pose2d(0, 0, new Rotation2d(0)); // must be in meters!
 
+    public static final double DRIVE_KS = 0.16681;
+    public static final double DRIVE_KV = 2.609;
+    public static final double DRIVE_KA = 0.51582;
+
+    public static final double TURNKS = 0;
+    public static final double TURNKV = 0;
+
     /** This is important! This is the frequency at which odometry data is updated. */
-    public static final double ODOMETRY_FREQUENCY = 100;
+    public static final double ODOMETRY_FREQUENCY = 250;
   }
 
   public static class ArmConstants {
@@ -303,35 +310,6 @@ public class Constants {
   }
 
   public static class AlgaeConstants {}
-
-  public class FeedForwardConstants {
-
-    // TODO Do sysid to get values
-    public static final double DRIVE_KS = 0.16681;
-    public static final double DRIVE_KV = 2.609;
-    public static final double DRIVE_KA = 0.51582;
-
-    public static final double TURNKS = 0;
-    public static final double TURNKV = 0;
-
-    // /* TODO SysId these values */
-
-    // KS should be >= 0, so we'll override it to 0.
-    public static final double ELEVATOR_KS = 0;
-    public static final double ELEVATOR_KV = 2.0129;
-    public static final double ELEVATOR_KA = 4.5878;
-
-    // conversion by 0.25 (Not Ideal)
-    public static final double ARM_KS = 0.16328;
-    public static final double ARM_KV = 0.0029191;
-    public static final double ARM_KA = 0.0016397;
-    public static final double ARM_KG = 0.15212;
-
-    public static final double WRIST_KS = 0.16328;
-    public static final double WRIST_KV = 0.0029191;
-    public static final double WRIST_KA = 0.0016397;
-    public static final double WRIST_KG = 0.15212;
-  }
 
   public class FieldPositionConstants {
 
@@ -445,15 +423,11 @@ public class Constants {
   }
 
   // safely divide
-  public double safeDivision(double numerator, double denominator) {
+  public static double safeDivision(double numerator, double denominator) {
     if (Math.abs(denominator) < 0.00001) {
       return 0.0;
     }
     double dividend = numerator / denominator;
     return dividend;
-  }
-
-  public static int beamBrakePort() {
-    return 7; // fill with actual port the beam brake is in
   }
 }
