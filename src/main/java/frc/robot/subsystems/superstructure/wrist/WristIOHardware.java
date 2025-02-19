@@ -38,7 +38,7 @@ public class WristIOHardware implements WristIO {
 
     wristPidController =
         new ProfiledPIDController(
-            3, .3, 0, new TrapezoidProfile.Constraints(300, 50)); // do something for this
+            4.5, 0, 0, new TrapezoidProfile.Constraints(10, 20)); // do something for this
 
     // kI .3
     double min = ((-2 * Math.PI) - Constants.WristConstants.WRIST_THROUGHBORE_OFFSET) * .75;
@@ -49,7 +49,7 @@ public class WristIOHardware implements WristIO {
 
     wristPidController.reset(throughBore.getPosition());
     // TODO Sysid
-    wristFeedForward = new ArmFeedforward(.25, 0.54, 0.31);
+    wristFeedForward = new ArmFeedforward(.25, 0.35, 0);
 
     goalState = new State(0, 0);
 

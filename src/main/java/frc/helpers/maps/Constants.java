@@ -306,7 +306,7 @@ public class Constants {
   }
 
   public static class IntakeConstants {
-    public static final int BEAM_BREAK_PORT = 0;
+    public static final int BEAM_BREAK_PORT = 3;
   }
 
   public static class AlgaeConstants {}

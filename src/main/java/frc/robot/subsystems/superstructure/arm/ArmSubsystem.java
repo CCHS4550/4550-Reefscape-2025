@@ -25,7 +25,7 @@ public class ArmSubsystem extends SubsystemBase {
   public enum ArmState {
     // Placeholder Values
     ZERO(0),
-    DEFAULT_WITHINFRAME(Units.degreesToRadians(-34.5)),
+    DEFAULT_WITHINFRAME(Units.degreesToRadians(-40)),
     L1_FRONT(Units.degreesToRadians(30)),
     L2L3_FRONT(Units.degreesToRadians(45)),
     L4_BACK(Units.degreesToRadians(110)),

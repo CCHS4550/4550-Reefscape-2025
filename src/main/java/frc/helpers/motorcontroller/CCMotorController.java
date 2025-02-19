@@ -97,7 +97,6 @@ public interface CCMotorController {
     public double speed = 0;
   }
 
-
   @FunctionalInterface
   public interface MotorFactory {
     CCMotorController create(
@@ -110,6 +109,4 @@ public interface CCMotorController {
         double positionConversionFactor,
         double velocityConversionFactor);
   }
-
-
 }

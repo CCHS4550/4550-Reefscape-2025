@@ -168,7 +168,7 @@ public class Robot extends LoggedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    RobotState.getInstance().resetPIDControllers();
+    // RobotState.getInstance().resetPIDControllers();
     autoChooser.getSelectedCustomCommand().schedule();
 
     System.out.println("Autonomous Routine Scheduled!");
@@ -181,7 +181,7 @@ public class Robot extends LoggedRobot {
   /** This function is called once when teleop is enabled. */
   @Override
   public void teleopInit() {
-    RobotState.getInstance().resetPIDControllers();
+    // RobotState.getInstance().resetPIDControllers();
   }
 
   /** This function is called periodically during operator control. */
@@ -191,7 +191,7 @@ public class Robot extends LoggedRobot {
   /** This function is called once when test mode is enabled. */
   @Override
   public void testInit() {
-    RobotState.getInstance().resetPIDControllers();
+    // RobotState.getInstance().resetPIDControllers();
   }
 
   /** This function is called periodically during test mode. */
@@ -201,7 +201,7 @@ public class Robot extends LoggedRobot {
   /** This function is called once when the robot is first started up. */
   @Override
   public void simulationInit() {
-    RobotState.getInstance().resetPIDControllers();
+    // RobotState.getInstance().resetPIDControllers();
   }
 
   /** This function is called periodically whilst in simulation. */

@@ -39,7 +39,7 @@ public class ArmIOHardware implements ArmIO {
 
     armPidController =
         new ProfiledPIDController(
-            3, .5, 0.1, new TrapezoidProfile.Constraints(300, 50)); // do something for this
+            7, 0, 0, new TrapezoidProfile.Constraints(50, 15)); // do something for this
 
     // kI .5
     double min = ((-2 * Math.PI) - Constants.ArmConstants.ARM_THROUGHBORE_OFFSET);
@@ -52,7 +52,8 @@ public class ArmIOHardware implements ArmIO {
     // TODO Sysid
     /** Have to find Ks */
     // feedForward = new ArmFeedforward(.15, 1.34, 1.2, 0.09);
-    feedForward = new ArmFeedforward(.15, 1.06, 1.2);
+    // feedForward = new ArmFeedforward(.15, 1.0, 1.2);
+    feedForward = new ArmFeedforward(.15, .9, 0);
 
     goalState = new State(0, 0);
 
