@@ -28,11 +28,7 @@ import org.littletonrobotics.junction.Logger;
 
 public class OrthogonalToTag extends Command {
 
-  private boolean poseIsNull = true;
   private boolean exitCommand = false;
-
-  private double distanceMetersErr;
-  private double angleDegreesErr;
 
   private SwerveDriveSubsystem swerve;
   private VisionIO vision;
@@ -51,10 +47,8 @@ public class OrthogonalToTag extends Command {
 
   private SwerveDrivePoseEstimator poseRelativeToTargetEstimator;
 
-  @SuppressWarnings("unused")
   private PIDController translationPID;
 
-  @SuppressWarnings("unused")
   private PIDController rotationPID;
 
   Timer timer = new Timer();
@@ -121,8 +115,6 @@ public class OrthogonalToTag extends Command {
 
     targetState.pose = null;
     targetState.heading = null;
-
-    poseIsNull = true;
   }
 
   // Called every time the scheduler runs while the command is scheduled.

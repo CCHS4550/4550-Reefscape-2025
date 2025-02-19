@@ -367,12 +367,14 @@ public class Constants {
   }
 
   public static class cameraTwo {
-    public static final String CAMERA_TWO_NAME = "Front Camera";
+    public static final String CAMERA_TWO_NAME = "Front Right Camera";
 
+    /** If camera is on front right module facing inwards. */
     public static final Translation3d ROBOT_TO_CAMERA_TRANS =
-        new Translation3d(0.344237, 0, 0.177780);
+        new Translation3d(0.271584, -0.274560, 0.242597);
 
-    public static final Rotation3d ROBOT_TO_CAMERA_ROT = new Rotation3d(0, Math.toRadians(0), 0);
+    public static final Rotation3d ROBOT_TO_CAMERA_ROT =
+        new Rotation3d(0, Math.toRadians(-15), Math.toRadians(15));
 
     public static final Transform3d ROBOT_TO_CAM =
         new Transform3d(ROBOT_TO_CAMERA_TRANS, ROBOT_TO_CAMERA_ROT);

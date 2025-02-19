@@ -29,7 +29,6 @@ public class ElevatorIOHardware implements ElevatorIO {
   DigitalInput hallEffect = new DigitalInput(Constants.ElevatorConstants.HALL_EFFECT_PORT);
 
   ProfiledPIDController elevatorPidController;
-
   ElevatorFeedforward elevatorFeedForward;
 
   double pidOutput;
@@ -46,8 +45,6 @@ public class ElevatorIOHardware implements ElevatorIO {
 
     elevatorEncoderBottom.setPosition(0);
     elevatorEncoderTop.setPosition(0);
-
-    // throughBore = (RelativeEncoder) elevatorBottom.getAlternateEncoder();
 
     elevatorPidController =
         new ProfiledPIDController(
