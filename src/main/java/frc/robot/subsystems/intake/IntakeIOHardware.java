@@ -19,7 +19,7 @@ public class IntakeIOHardware implements IntakeIO {
   public void updateInputs(IntakeIOInputs inputs) {
     inputs.appliedVoltage = intakeMotor.getVoltage();
 
-    inputs.beamBroke = beamBreak.get();
+    inputs.beamBroke = !beamBreak.get();
     inputs.hasCoral = inputs.beamBroke;
   }
 
@@ -30,6 +30,6 @@ public class IntakeIOHardware implements IntakeIO {
 
   @Override
   public boolean hasCoral() {
-    return beamBreak.get();
+    return !beamBreak.get();
   }
 }

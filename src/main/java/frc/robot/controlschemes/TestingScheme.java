@@ -50,7 +50,7 @@ public class TestingScheme {
 
     /** x */
     controller.b().onTrue(new InstantCommand(() -> System.out.println("b")));
-    controller.b().whileTrue(arm.setVoltage(1.2));
+    controller.b().whileTrue(intake.intakeCoralStation());
 
     /** c */
     controller.x().onTrue(new InstantCommand(() -> System.out.println("x")));

@@ -39,7 +39,7 @@ public class ArmIOHardware implements ArmIO {
 
     armPidController =
         new ProfiledPIDController(
-            3, .5, 0.1, new TrapezoidProfile.Constraints(30, 5)); // do something for this
+            3, .5, 0.1, new TrapezoidProfile.Constraints(300, 50)); // do something for this
 
     // kI .5
     double min = ((-2 * Math.PI) - Constants.ArmConstants.ARM_THROUGHBORE_OFFSET);
