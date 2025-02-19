@@ -97,15 +97,6 @@ public interface CCMotorController {
     public double speed = 0;
   }
 
-  // public static <T> void createObject(ObjectFactory<T> factory) {
-  //   T obj = factory.create(); // Use the factory to create an object
-  //   System.out.println("Object created: " + obj);
-  // }
-
-  // @FunctionalInterface
-  // interface ObjectFactory<T> {
-  //   T create(); // Abstract method to match no-arg constructor
-  // }
 
   @FunctionalInterface
   public interface MotorFactory {
@@ -120,9 +111,5 @@ public interface CCMotorController {
         double velocityConversionFactor);
   }
 
-  // @FunctionalInterface
-  // interface MotorFactory {
-  // CCMotorController create(Object... args);
-  // }
 
 }
