@@ -45,6 +45,9 @@ public class ArmIOHardware implements ArmIO {
     double min = ((-2 * Math.PI) - Constants.ArmConstants.ARM_THROUGHBORE_OFFSET);
     double max = -Constants.ArmConstants.ARM_THROUGHBORE_OFFSET;
     armPidController.enableContinuousInput(min, max);
+
+    armPidController.setIntegratorRange(-3, 3);
+
     armPidController.reset(throughBore.getPosition());
     // TODO Sysid
     /** Have to find Ks */

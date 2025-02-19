@@ -177,11 +177,6 @@ public class RobotState {
 
   public final Field2d gameField = new Field2d();
 
-  /** Technically pose ESTIMATES */
-  public Pose2d lastPose = new Pose2d();
-
-  public Pose2d currentPose = new Pose2d();
-
   public SwerveDrivePoseEstimator poseEstimator;
 
   public synchronized CustomAutoChooser autoChooserInit() {
@@ -202,54 +197,48 @@ public class RobotState {
   public synchronized void updateOdometryPose() {
 
     gameField.setRobotPose(getPose());
-    lastPose = currentPose;
 
-    /** Send the high frequency gyro to an array */
-    gyroAnglesHF =
-        gyroContainer.stream()
-            .map((Double value) -> Rotation2d.fromDegrees(value))
-            .toArray(Rotation2d[]::new);
-    gyroContainer.clear();
+    if (useHF) {
+      /** Send the high frequency gyro to an array */
+      gyroAnglesHF =
+          gyroContainer.stream()
+              .map((Double value) -> Rotation2d.fromDegrees(value))
+              .toArray(Rotation2d[]::new);
+      gyroContainer.clear();
 
-    if (!pigeonGyro.isConnected()) {
-      /**
-       * If the gyro isn't connected, take the current values and estimate how much it has changed
-       * since then.
-       */
-      gyroAnglesHF = gyroAnglesPlusSwerveModuleDeltasHF();
-    }
+      /** If gyro disconnected, estimate its value. */
+      if (!pigeonGyro.isConnected()) {
+        gyroAnglesHF = gyroAnglesPlusSwerveModuleDeltasHF();
+      }
 
-    /** If high frequency odometry data is available, use it! */
-    sampleCountHF = swerve.swerveModuleInputs[0].odometryTimestamps.length;
-    sampleTimestampsHF = swerve.swerveModuleInputs[0].odometryTimestamps;
-
-    if (sampleCountHF > 0 && pigeonGyro.isConnected() && useHF) {
-
+      /** Use any one of the module timestamps as reference for everything! */
+      sampleTimestampsHF = getSampleTimestampArrayHF();
       swerveModulePositionsHF = getSwerveModulePositionArrayHF();
 
-      /** Update the SwerveDrivePoseEstimator with the Drivetrain encoders and such */
-      for (int i = 0; i < sampleCountHF; i++) {
+      /**
+       * If, and only if, their size is greater than zero, do you continue, since it'll crash the
+       * code otherwise. Sometimes the HF doesn't keep up and there isn't data.
+       */
+      if (swerveModulePositionsHF.length > 0 && pigeonGyro.isConnected()) {
 
-        // System.out.println("sampleTimeStamps size" + sampleTimestamps.length);
-        // System.out.println("gyroAngle size" + gyroAngle.length);
-        // System.out.println("swerveModulePositionsArray size" +
-        // swerveModulePositionsArray.length);
+        /** Update the SwerveDrivePoseEstimator with the Drivetrain encoders and such */
+        for (int i = 0; i < getMinLengthHF(); i++) {
 
-        poseEstimator.updateWithTime(
-            getSampleTimestampArrayClampedHF(i),
-            getGyroAngleArrayClampedHF(i),
-            getSwerveModulePositionsArrayClampedHF(i));
-        Logger.recordOutput("HF/High Frequency Gyro Angle", getGyroAngleArrayClampedHF(i));
-        Logger.recordOutput(
-            "HF/High Frequency Odometry Positions", getSwerveModulePositionsArrayClampedHF(i));
+          poseEstimator.updateWithTime(
+              clampSampleTimestampsHF(sampleTimestampsHF, i),
+              clampGyroAnglesHF(gyroAnglesHF, i),
+              clampSwerveModulePositionsHF(swerveModulePositionsHF, i));
+          Logger.recordOutput("HF/High Frequency Gyro Angle", clampGyroAnglesHF(gyroAnglesHF, i));
+          Logger.recordOutput(
+              "HF/High Frequency Odometry Positions",
+              clampSwerveModulePositionsHF(swerveModulePositionsHF, i));
+        }
       }
 
     } else {
 
       poseEstimator.updateWithTime(Timer.getTimestamp(), getRotation2d(), swerveModulePositions);
     }
-
-    currentPose = getPose();
 
     Logger.recordOutput("SwerveDrivePoseEstimator/Estimated Pose", getPose());
     Logger.recordOutput(
@@ -435,10 +424,10 @@ public class RobotState {
     return swerve.getRobotRelativeSpeeds();
   }
 
-  /** Read HF odometry data */
-  public synchronized SwerveModulePosition[][] getSwerveModulePositionArrayHF() {
+  /** This is very important to make sure all the data is the same in quantity. */
+  public synchronized int getMinLengthHF() {
 
-    int[] numbers = {
+    int[] lengths = {
       swerve.swerveModuleInputs[0].odometryDrivePositionsMeters.length,
       swerve.swerveModuleInputs[1].odometryDrivePositionsMeters.length,
       swerve.swerveModuleInputs[2].odometryDrivePositionsMeters.length,
@@ -449,7 +438,13 @@ public class RobotState {
       swerve.swerveModuleInputs[3].odometryTurnPositions.length,
     };
 
-    int min = Arrays.stream(numbers).min().getAsInt();
+    return Arrays.stream(lengths).min().getAsInt();
+  }
+
+  /** Read HF odometry data */
+  public synchronized SwerveModulePosition[][] getSwerveModulePositionArrayHF() {
+
+    int min = getMinLengthHF();
 
     SwerveModulePosition[][] positions = new SwerveModulePosition[min][4];
 
@@ -472,14 +467,31 @@ public class RobotState {
               swerve.swerveModuleInputs[3].odometryTurnPositions[i]);
     }
 
-    if (min != 0) swerveModulePositions = positions[min - 1];
+    if (min > 0) swerveModulePositions = positions[min - 1];
 
     return positions;
   }
 
+  public synchronized double[] getSampleTimestampArrayHF() {
+    int min = getMinLengthHF();
+    // List<Integer> allTimestamps = new ArrayList<>();
+    double[][] allTimestamps = {
+      swerve.swerveModuleInputs[0].odometryTimestamps,
+      swerve.swerveModuleInputs[1].odometryTimestamps,
+      swerve.swerveModuleInputs[2].odometryTimestamps,
+      swerve.swerveModuleInputs[3].odometryTimestamps,
+    };
+
+    for (double[] timestamps : allTimestamps) {
+      if (timestamps.length >= min) return timestamps;
+    }
+
+    return new double[0];
+  }
+
   /**
    * Estimate gyro angle based on last known gyro inputs and change in module positions. Will get
-   * less accurate over time.
+   * less accurate over time. // MOSTLY UNUSED //
    */
   public synchronized Rotation2d[] gyroAnglesPlusSwerveModuleDeltasHF() {
 
@@ -507,26 +519,26 @@ public class RobotState {
   /**
    * Clamping methods for allowing data reading past array length, since lengths are inconsistent.
    */
-  public SwerveModulePosition[] getSwerveModulePositionsArrayClampedHF(int index) {
-    if (index > swerveModulePositionsHF.length - 1 && swerveModulePositionsHF.length > 0) {
-      return swerveModulePositionsHF[swerveModulePositionsHF.length - 1];
-    } else if (swerveModulePositionsHF.length > 0) return swerveModulePositionsHF[index];
-    return swerveModulePositions;
+  public static SwerveModulePosition[] clampSwerveModulePositionsHF(
+      SwerveModulePosition[][] positions, int index) {
+    if (index > positions.length - 1 && positions.length > 0) {
+      return positions[positions.length - 1];
+    } else return positions[index];
   }
 
-  public double getSampleTimestampArrayClampedHF(int index) {
-    if (index > sampleTimestampsHF.length - 1) {
+  public static double clampSampleTimestampsHF(double[] timestamps, int index) {
+    if (index > timestamps.length - 1) {
 
-      return sampleTimestampsHF[sampleTimestampsHF.length - 1];
+      return timestamps[timestamps.length - 1];
     }
-    return sampleTimestampsHF[index];
+    return timestamps[index];
   }
 
-  public Rotation2d getGyroAngleArrayClampedHF(int index) {
-    if (index > gyroAnglesHF.length - 1) {
-      return gyroAnglesHF[gyroAnglesHF.length - 1];
+  public static Rotation2d clampGyroAnglesHF(Rotation2d[] angles, int index) {
+    if (index > angles.length - 1) {
+      return angles[angles.length - 1];
     }
-    return gyroAnglesHF[index];
+    return angles[index];
   }
 
   public void resetPIDControllers() {

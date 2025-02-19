@@ -55,6 +55,8 @@ public class ElevatorIOHardware implements ElevatorIO {
                 Constants.ElevatorConstants.elevatorMaxVelocity,
                 Constants.ElevatorConstants.elevatorMaxAcceleration));
 
+    elevatorPidController.setIntegratorRange(-3, 3);
+
     elevatorPidController.reset(getAbsoluteHeightMetersOffset());
     // TODO Sysid
     elevatorFeedForward = new ElevatorFeedforward(0, 0, 0, 0);

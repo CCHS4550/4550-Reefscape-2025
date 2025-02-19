@@ -45,6 +45,8 @@ public class WristIOHardware implements WristIO {
     double max = -Constants.WristConstants.WRIST_THROUGHBORE_OFFSET * .75;
     wristPidController.enableContinuousInput(min, max);
 
+    wristPidController.setIntegratorRange(-3, 3);
+
     wristPidController.reset(throughBore.getPosition());
     // TODO Sysid
     wristFeedForward = new ArmFeedforward(.25, 0.54, 0.31);
