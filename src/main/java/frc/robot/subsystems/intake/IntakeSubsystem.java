@@ -8,10 +8,12 @@ import static edu.wpi.first.units.Units.Volts;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.helpers.maps.Constants;
 import frc.helpers.motorcontroller.CCMotorController;
+import java.util.function.BooleanSupplier;
 import org.littletonrobotics.junction.Logger;
 
 public class IntakeSubsystem extends SubsystemBase {
@@ -53,6 +55,15 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public boolean hasCoral() {
     return intakeInputs.hasCoral;
+  }
+
+  public BooleanSupplier hasCoralDelayed(double delay) {
+    Timer timer = new Timer();
+    if (intakeInputs.beamBroke) {
+      timer.reset();
+      timer.start();
+    }
+    return () -> timer.hasElapsed(delay);
   }
 
   @Override

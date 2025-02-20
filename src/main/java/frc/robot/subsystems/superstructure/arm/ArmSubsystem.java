@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.helpers.maps.Constants;
 import frc.helpers.motorcontroller.CCMotorController;
+import frc.robot.RobotState;
 import org.littletonrobotics.junction.Logger;
 
 public class ArmSubsystem extends SubsystemBase {
@@ -183,11 +184,15 @@ public class ArmSubsystem extends SubsystemBase {
     armIO.updateInputs(armInputs);
     Logger.processInputs("Subsystem/Arm", armInputs);
 
-    if (wantedState != currentState) {
-      // armIO.resetPID();
-      currentState = handleStateTransitions();
+    if (RobotState.getInstance().allowSubsystemMovement.getAsBoolean()
+        && RobotState.getInstance().moveArm.getAsBoolean()) {
+
+      if (wantedState != currentState) {
+        // armIO.resetPID();
+        currentState = handleStateTransitions();
+      }
+      applyStates();
     }
-    applyStates();
 
     // // This method will be called once per scheduler run
   }

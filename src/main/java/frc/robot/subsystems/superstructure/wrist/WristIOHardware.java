@@ -45,10 +45,12 @@ public class WristIOHardware implements WristIO {
     double max = -Constants.WristConstants.WRIST_THROUGHBORE_OFFSET * .75;
     wristPidController.enableContinuousInput(min, max);
 
-    wristPidController.setIntegratorRange(-3, 3);
+    // wristPidController.setIntegratorRange(-3, 3);
 
     wristPidController.reset(throughBore.getPosition());
-    // TODO Sysid
+    pidOutput = 0;
+    ffOutput = 0;
+
     wristFeedForward = new ArmFeedforward(.25, 0.35, 0);
 
     goalState = new State(0, 0);
@@ -149,6 +151,8 @@ public class WristIOHardware implements WristIO {
   @Override
   public void resetPID() {
     wristPidController.reset(throughBore.getPosition());
+    pidOutput = 0;
+    ffOutput = 0;
   }
 
   @Override

@@ -52,6 +52,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Queue;
+import java.util.function.BooleanSupplier;
 import org.littletonrobotics.junction.Logger;
 
 /** RobotState is used to retrieve information about the robot's state in other classes. */
@@ -96,6 +97,11 @@ public class RobotState {
 
   /** Module positions used for odometry (not HF) */
   public SwerveModulePosition[] swerveModulePositions = new SwerveModulePosition[4];
+
+  public BooleanSupplier allowSubsystemMovement = () -> true;
+  public BooleanSupplier moveElevator = () -> false;
+  public BooleanSupplier moveArm = () -> true;
+  public BooleanSupplier moveWrist = () -> true;
 
   public boolean useHF = true;
 

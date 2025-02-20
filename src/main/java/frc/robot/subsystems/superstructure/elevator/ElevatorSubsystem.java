@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.helpers.maps.Constants;
 import frc.helpers.motorcontroller.CCMotorController;
+import frc.robot.RobotState;
 import org.littletonrobotics.junction.Logger;
 
 public class ElevatorSubsystem extends SubsystemBase {
@@ -183,12 +184,22 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+
+    Logger.recordOutput("Subsystem/Elevator/CurrentState", currentState.name());
+    Logger.recordOutput("Subsystem/Elevator/WantedState", wantedState.name());
+
+
+
     elevatorIO.updateInputs(elevatorInputs);
     Logger.processInputs("Subsystem/Elevator", elevatorInputs);
-    // if (wantedState != currentState) {
-    //   currentState = handleStateTransitions();
-    // }
-    // applyStates();
+
+    if (RobotState.getInstance().allowSubsystemMovement.getAsBoolean()
+        && RobotState.getInstance().moveElevator.getAsBoolean()) {
+      if (wantedState != currentState) {
+        currentState = handleStateTransitions();
+      }
+      applyStates();
+    }
 
     // This method will be called once per scheduler run
   }

@@ -55,10 +55,12 @@ public class ElevatorIOHardware implements ElevatorIO {
                 Constants.ElevatorConstants.elevatorMaxVelocity,
                 Constants.ElevatorConstants.elevatorMaxAcceleration));
 
-    elevatorPidController.setIntegratorRange(-3, 3);
+    // elevatorPidController.setIntegratorRange(-3, 3);
 
     elevatorPidController.reset(getHeightMeters());
-    // TODO Sysid
+    pidOutput = 0;
+    ffOutput = 0;
+
     elevatorFeedForward = new ElevatorFeedforward(0, 0, 0, 0);
 
     goalState = new State(0, 0);
@@ -155,5 +157,7 @@ public class ElevatorIOHardware implements ElevatorIO {
   @Override
   public void resetPID() {
     elevatorPidController.reset(getHeightMeters());
+    pidOutput = 0;
+    ffOutput = 0;
   }
 }

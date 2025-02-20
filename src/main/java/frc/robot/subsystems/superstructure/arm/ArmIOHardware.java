@@ -46,11 +46,12 @@ public class ArmIOHardware implements ArmIO {
     double max = -Constants.ArmConstants.ARM_THROUGHBORE_OFFSET;
     armPidController.enableContinuousInput(min, max);
 
-    armPidController.setIntegratorRange(-3, 3);
+    // armPidController.setIntegratorRange(-3, 3);
 
     armPidController.reset(throughBore.getPosition());
-    // TODO Sysid
-    /** Have to find Ks */
+    pidOutput = 0;
+    ffOutput = 0;
+
     // feedForward = new ArmFeedforward(.15, 1.34, 1.2, 0.09);
     // feedForward = new ArmFeedforward(.15, 1.0, 1.2);
     feedForward = new ArmFeedforward(.15, .9, 0);
@@ -151,6 +152,8 @@ public class ArmIOHardware implements ArmIO {
   @Override
   public void resetPID() {
     armPidController.reset(throughBore.getPosition());
+    pidOutput = 0;
+    ffOutput = 0;
   }
 
   @Override
