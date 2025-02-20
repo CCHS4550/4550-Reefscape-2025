@@ -332,7 +332,7 @@ public class Constants {
   /** Back Camera */
   public static class cameraOne {
 
-    public static final String CAMERA_ONE_NAME = "Back Camera";
+    public static final String CAMERA_ONE_NAME = "limelight3";
 
     // (Robot pose is considered the center of rotation at the floor level, or Z = 0)
     public static final Translation3d ROBOT_TO_CAMERA_TRANS =
@@ -345,7 +345,7 @@ public class Constants {
   }
 
   public static class cameraTwo {
-    public static final String CAMERA_TWO_NAME = "Front Right Camera";
+    public static final String CAMERA_TWO_NAME = "limelight2p";
 
     /** If camera is on front right module facing inwards. */
     public static final Translation3d ROBOT_TO_CAMERA_TRANS =

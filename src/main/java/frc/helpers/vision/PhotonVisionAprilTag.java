@@ -5,17 +5,14 @@
 package frc.helpers.vision;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.helpers.maps.Constants;
-import frc.robot.RobotState;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.littletonrobotics.junction.Logger;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
@@ -45,8 +42,6 @@ public class PhotonVisionAprilTag extends SubsystemBase implements VisionIO {
 
     // This will take a bit of tweaking to get right. I'm fairly certain that remotehost is defined
     // in the photonvision ui.
-    PortForwarder.add(5800, "limelight2.local", 5800);
-    PortForwarder.add(5801, "limelight3.local", 5801);
 
     leftCamera = new PhotonCamera(Constants.cameraOne.CAMERA_ONE_NAME);
     rightCamera = new PhotonCamera(Constants.cameraTwo.CAMERA_TWO_NAME);
@@ -154,7 +149,7 @@ public class PhotonVisionAprilTag extends SubsystemBase implements VisionIO {
     List<Map.Entry<PhotonPoseEstimator, PhotonPipelineResult>> trustedResults = new ArrayList<>();
     for (int i = 0; i < results.size(); i++) {
       if (results.get(i).getValue().getBestTarget().getPoseAmbiguity() > 0
-          && results.get(i).getValue().getBestTarget().getPoseAmbiguity() <= 0.2)
+          && results.get(i).getValue().getBestTarget().getPoseAmbiguity() <= 1)
         trustedResults.add(results.get(i));
       {
       }
@@ -197,8 +192,12 @@ public class PhotonVisionAprilTag extends SubsystemBase implements VisionIO {
 
     List<Integer> fudicialIDList = new ArrayList<>();
     for (Map.Entry<PhotonPoseEstimator, PhotonPipelineResult> condensedResult : condensedResults) {
-      fudicialIDList.add(condensedResult.getValue().getBestTarget().fiducialId);
+      if (condensedResult.getValue().hasTargets())
+        fudicialIDList.add(condensedResult.getValue().getBestTarget().fiducialId);
     }
+
+    condensedResults.removeIf(result -> result.getValue().hasTargets() == false);
+
     condensedResults.removeIf(
         result ->
             result.getValue().getBestTarget().getFiducialId() != getPlurality(fudicialIDList));
@@ -229,8 +228,6 @@ public class PhotonVisionAprilTag extends SubsystemBase implements VisionIO {
 
   @Override
   public void periodic() {
-
-    Logger.recordOutput("VisionData/HasTarget?", RobotState.getInstance().visionInputs.hasEstimate);
 
     // This method will be called once per scheduler run
   }

@@ -198,7 +198,7 @@ public class RobotState {
   }
 
   /** Update the pose estimator with Odometry and Gyro Data (HF Functional) */
-  public synchronized void updateOdometryPose() {
+  public void updateOdometryPose() {
 
     gameField.setRobotPose(getPose());
 
@@ -252,7 +252,7 @@ public class RobotState {
   }
 
   /** Update the pose estimator with PhotonVision Data */
-  public synchronized void updateVisionPose() {
+  public void updateVisionPose() {
     /** Update the visionData to what the camera sees. */
     vision.updateInputs(visionInputs);
 
@@ -272,13 +272,13 @@ public class RobotState {
 
     /* Put all the subsystems on ShuffleBoard in their own "Subsystems" tab. */
 
-    Shuffleboard.getTab("Subsystems").add("Algae", algae);
-    Shuffleboard.getTab("Subsystems").add("Arm", arm);
-    Shuffleboard.getTab("Subsystems").add("Climber", climber);
-    Shuffleboard.getTab("Subsystems").add("Elevator", elevator);
-    Shuffleboard.getTab("Subsystems").add("Intake", intake);
-    Shuffleboard.getTab("Subsystems").add("Swerve Drive", swerve);
-    Shuffleboard.getTab("Subsystems").add("Wrist", wrist);
+    Shuffleboard.getTab("Subsystem").add("Algae", algae);
+    Shuffleboard.getTab("Subsystem").add("Arm", arm);
+    Shuffleboard.getTab("Subsystem").add("Climber", climber);
+    Shuffleboard.getTab("Subsystem").add("Elevator", elevator);
+    Shuffleboard.getTab("Subsystem").add("Intake", intake);
+    Shuffleboard.getTab("Subsystem").add("Swerve Drive", swerve);
+    Shuffleboard.getTab("Subsystem").add("Wrist", wrist);
 
     SmartDashboard.putNumber("Robot X Position", poseEstimator.getEstimatedPosition().getX());
     SmartDashboard.putNumber("Robot Y Position", poseEstimator.getEstimatedPosition().getY());
@@ -318,7 +318,7 @@ public class RobotState {
           .getLayout("Turn Encoders Position(Rad)", BuiltInLayouts.kGrid)
           .withSize(2, 2);
 
-  public synchronized void swerveModuleEncodersInit() {
+  public void swerveModuleEncodersInit() {
 
     abs_Enc_FR_Offset_Entry =
         Shuffleboard.getTab("Encoders")
@@ -384,7 +384,7 @@ public class RobotState {
             .getEntry();
   }
 
-  public synchronized void swerveModuleEncodersPeriodic() {
+  public void swerveModuleEncodersPeriodic() {
     abs_Enc_FR_Offset_Entry.setDouble(swerve.frontRight.getAbsoluteEncoderRadiansOffset());
     abs_Enc_FL_Offset_Entry.setDouble(swerve.frontLeft.getAbsoluteEncoderRadiansOffset());
     abs_Enc_BR_Offset_Entry.setDouble(swerve.backRight.getAbsoluteEncoderRadiansOffset());

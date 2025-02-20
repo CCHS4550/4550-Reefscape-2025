@@ -156,7 +156,7 @@ public class ElevatorIOHardware implements ElevatorIO {
 
   @Override
   public void resetPID() {
-    elevatorPidController.reset(getHeightMeters());
+    // elevatorPidController.reset(getHeightMeters());
     pidOutput = 0;
     ffOutput = 0;
   }

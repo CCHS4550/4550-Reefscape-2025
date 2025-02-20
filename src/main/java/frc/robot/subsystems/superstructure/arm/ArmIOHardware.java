@@ -151,7 +151,7 @@ public class ArmIOHardware implements ArmIO {
 
   @Override
   public void resetPID() {
-    armPidController.reset(throughBore.getPosition());
+    // armPidController.reset(throughBore.getPosition());
     pidOutput = 0;
     ffOutput = 0;
   }

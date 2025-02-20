@@ -188,8 +188,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     Logger.recordOutput("Subsystem/Elevator/CurrentState", currentState.name());
     Logger.recordOutput("Subsystem/Elevator/WantedState", wantedState.name());
 
-
-
     elevatorIO.updateInputs(elevatorInputs);
     Logger.processInputs("Subsystem/Elevator", elevatorInputs);
 
