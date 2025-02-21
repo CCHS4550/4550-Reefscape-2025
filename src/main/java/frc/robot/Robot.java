@@ -115,7 +115,7 @@ public class Robot extends LoggedRobot {
     RobotState.getInstance().swerveModuleEncodersInit();
     RobotState.getInstance().dashboardInit();
 
-    // RobotState.getInstance().resetPIDControllers();
+    RobotState.getInstance().resetPIDControllers();
   }
 
   /** This function is called periodically during all modes. */

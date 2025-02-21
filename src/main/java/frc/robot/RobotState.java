@@ -100,8 +100,8 @@ public class RobotState {
 
   public BooleanSupplier allowSubsystemMovement = () -> true;
   public BooleanSupplier moveElevator = () -> false;
-  public BooleanSupplier moveArm = () -> true;
-  public BooleanSupplier moveWrist = () -> true;
+  public BooleanSupplier moveArm = () -> false;
+  public BooleanSupplier moveWrist = () -> false;
 
   public boolean useHF = true;
 

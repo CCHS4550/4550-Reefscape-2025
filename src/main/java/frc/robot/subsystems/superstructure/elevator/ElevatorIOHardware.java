@@ -61,7 +61,7 @@ public class ElevatorIOHardware implements ElevatorIO {
     pidOutput = 0;
     ffOutput = 0;
 
-    elevatorFeedForward = new ElevatorFeedforward(0, 0, 0, 0);
+    elevatorFeedForward = new ElevatorFeedforward(.25, .7, 0, 0);
 
     goalState = new State(0, 0);
 
@@ -74,12 +74,15 @@ public class ElevatorIOHardware implements ElevatorIO {
     inputs.currentPositionMeters = getHeightMeters();
     inputs.currentVelocityMetersPerSecond = getVelocityMetersPerSecond();
 
+    inputs.currentRotationsTop = 
+    inputs.currentRotationsBottom = elevatorEncoderBottom.getPosition();
+    System.out.println("asddsfdgf");
     inputs.hallEffectTripped = !hallEffect.get();
 
     inputs.pidOutput = this.pidOutput;
     inputs.ffOutput = this.ffOutput;
 
-    inputs.appliedVoltage = getVoltage();
+    inputs.appliedVoltage = elevatorBottom.getVoltage();
 
     inputs.pidError = elevatorPidController.getPositionError();
 
@@ -128,7 +131,7 @@ public class ElevatorIOHardware implements ElevatorIO {
   @Override
   public void setVoltage(Voltage voltage) {
     elevatorBottom.setVoltage(voltage.magnitude());
-    // elevatorTop.setVoltage(voltage.magnitude());
+    elevatorTop.setVoltage(voltage.magnitude());
   }
 
   /**

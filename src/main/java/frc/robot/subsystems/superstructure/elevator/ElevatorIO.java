@@ -44,9 +44,9 @@ public interface ElevatorIO {
 
   public default void setVoltage(Voltage voltage) {}
 
-  public default double getVoltage() {
-    return 0.0;
-  }
+  // public default double getVoltage() {
+  //   return 0.0;
+  // }
 
   public default double getPIDFFOutput(State goalState) {
     return 0.0;

@@ -61,8 +61,6 @@ public class ElevatorIOSim implements ElevatorIO {
     inputs.pidOutput = this.pidOutput;
     inputs.ffOutput = this.ffOutput;
 
-    inputs.appliedVoltage = getVoltage();
-
     inputs.setpointAngleRadians = elevatorPidController.getSetpoint().position;
     inputs.setpointAngleDegrees =
         Units.radiansToDegrees(elevatorPidController.getSetpoint().position);

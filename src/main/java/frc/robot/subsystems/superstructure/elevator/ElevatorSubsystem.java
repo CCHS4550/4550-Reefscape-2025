@@ -66,8 +66,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     this.elevatorIO =
         ioFactory.create(
             motorFactory.create(
-                "elevatorMotor1",
-                "elevator1",
+                "elevatorBottom",
+                "bottom",
                 Constants.MotorConstants.ELEVATOR[0],
                 MotorType.kBrushless,
                 IdleMode.kBrake,
@@ -75,8 +75,8 @@ public class ElevatorSubsystem extends SubsystemBase {
                 Constants.ElevatorConstants.HEIGHT_METERS_PER_ELEVATOR_MOTOR_ROTATIONS,
                 Constants.ElevatorConstants.ELEVATOR_MOTOR_METERS_PER_SECOND_CONVERSION_FACTOR),
             motorFactory.create(
-                "elevatorMotor2",
-                "elevator2",
+                "elevatorTop",
+                "top",
                 Constants.MotorConstants.ELEVATOR[1],
                 MotorType.kBrushless,
                 IdleMode.kBrake,

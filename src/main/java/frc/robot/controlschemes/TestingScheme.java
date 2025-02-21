@@ -57,7 +57,7 @@ public class TestingScheme {
 
     /** v */
     controller.y().onTrue(new InstantCommand(() -> System.out.println("y")));
-    controller.y().whileTrue(elevator.testVoltageCommand(3));
+    controller.y().whileTrue(elevator.testVoltageCommand(.25));
 
     // controller.a().onTrue(alignToTagCommand);
 
