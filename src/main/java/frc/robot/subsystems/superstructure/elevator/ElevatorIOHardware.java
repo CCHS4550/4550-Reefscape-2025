@@ -74,7 +74,7 @@ public class ElevatorIOHardware implements ElevatorIO {
     inputs.currentPositionMeters = getHeightMeters();
     inputs.currentVelocityMetersPerSecond = getVelocityMetersPerSecond();
 
-    inputs.currentRotationsTop = 
+    inputs.currentRotationsTop = elevatorEncoderTop.getPosition();
     inputs.currentRotationsBottom = elevatorEncoderBottom.getPosition();
     System.out.println("asddsfdgf");
     inputs.hallEffectTripped = !hallEffect.get();
