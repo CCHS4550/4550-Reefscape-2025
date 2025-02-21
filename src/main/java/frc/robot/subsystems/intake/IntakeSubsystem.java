@@ -42,7 +42,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public Command intakeCoralStation() {
-    return runOnce(() -> intakeIO.intake(Volts.of(5)));
+    return startEnd(() -> intakeIO.intake(Volts.of(12)), () -> intakeIO.intake(Volts.of(0)));
   }
 
   public Command outtakeFront() {

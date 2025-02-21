@@ -202,7 +202,7 @@ public class SwerveDriveScheme {
     Trigger coralStationLeftTrigger = controller.rightTrigger().and(controller.x());
     Trigger coralStationRightTrigger = controller.rightTrigger().and(controller.b());
 
-    controller.y().onTrue(runOnce(() -> toggleFieldCentric()));
+    // controller.y().onTrue(runOnce(() -> toggleFieldCentric()));
 
     reefLeftTrigger.whileTrue(AlignCommands.frontAlignToReefLeft(swerve, vision));
     reefRightTrigger.whileTrue(AlignCommands.frontAlignToReefRight(swerve, vision));
