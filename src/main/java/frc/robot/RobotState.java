@@ -111,10 +111,11 @@ public class RobotState {
   public double[] sampleTimestampsHF;
   public SwerveModulePosition[][] swerveModulePositionsHF;
 
-  private final StatusSignal<Angle> yaw = pigeonGyro.getYaw();
-  private final Queue<Double> gyroContainer =
-      RealOdometryThread.getInstance().registerInput(yaw::getValueAsDouble);
+  private StatusSignal<Angle> yaw;
+  private Queue<Double> gyroContainer;
+  private Queue<Double> gyroTimestampContainer;
   public Rotation2d[] gyroAnglesHF = new Rotation2d[] {};
+  public double[] gyroTimestampsHF = new double[] {};
 
   /** Pose estimation objects */
   public final Field2d gameField = new Field2d();
@@ -158,10 +159,14 @@ public class RobotState {
     moduleInputs = swerve.swerveModuleInputs;
     wristInputs = wrist.wristInputs;
 
+    yaw = pigeonGyro.getYaw();
     pigeonGyro.getConfigurator().apply(new Pigeon2Configuration());
     pigeonGyro.getConfigurator().setYaw(0.0);
     yaw.setUpdateFrequency(Constants.SwerveConstants.ODOMETRY_FREQUENCY);
     pigeonGyro.optimizeBusUtilization();
+    gyroTimestampContainer = RealOdometryThread.getInstance().makeTimestampContainer();
+    gyroContainer =
+        RealOdometryThread.getInstance().registerInput(() -> getRotation2d().getDegrees());
 
     swerveModulePositions[0] =
         new SwerveModulePosition(0, new Rotation2d(swerve.frontRight.getTurnPosition()));
@@ -208,7 +213,12 @@ public class RobotState {
           gyroContainer.stream()
               .map((Double value) -> Rotation2d.fromDegrees(value))
               .toArray(Rotation2d[]::new);
+
+      gyroTimestampsHF =
+          gyroTimestampContainer.stream().mapToDouble((Double value) -> value).toArray();
+
       gyroContainer.clear();
+      gyroTimestampContainer.clear();
 
       /** If gyro disconnected, estimate its value. */
       if (!pigeonGyro.isConnected()) {
@@ -239,6 +249,9 @@ public class RobotState {
           Logger.recordOutput(
               "HF/High Frequency Odometry Positions",
               clampSwerveModulePositionsHF(swerveModulePositionsHF, i));
+
+          // System.out.println(pigeonGyro.getRotation2d().getDegrees());
+          System.out.println(yaw.getValueAsDouble());
         }
       }
 
