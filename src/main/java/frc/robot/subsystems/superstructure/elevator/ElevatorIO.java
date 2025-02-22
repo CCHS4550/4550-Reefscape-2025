@@ -16,6 +16,9 @@ public interface ElevatorIO {
     public double currentPositionMeters = 0.0;
     public double currentVelocityMetersPerSecond = 0.0;
 
+    public double currentRotationsTop = 0.0;
+    public double currentRotationsBottom = 0.0;
+
     public boolean hallEffectTripped = false;
 
     public double pidOutput = 0.0;
@@ -56,6 +59,10 @@ public interface ElevatorIO {
 
   public default BooleanSupplier atSetpoint() {
     return () -> false;
+  }
+
+  default double getHeightAxleRotations() {
+    return 0.0;
   }
 
   /**

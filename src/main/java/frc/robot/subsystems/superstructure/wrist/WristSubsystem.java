@@ -29,8 +29,9 @@ public class WristSubsystem extends SubsystemBase {
     ZERO(0),
     DEFAULT_WITHINFRAME(Units.degreesToRadians(-160)),
     L1_FRONT(Units.degreesToRadians(15)),
-    L2L3_FRONT(Units.degreesToRadians(45)),
-    L4_BACK(Units.degreesToRadians(110)),
+    L2_FRONT(Units.degreesToRadians(5.743000)),
+    L3_FRONT(Units.degreesToRadians(64.451047)),
+    L4_BACK(Units.degreesToRadians(136.722568)),
     CORAL_STATION_FRONT(Units.degreesToRadians(-158.3)),
     CORAL_STATION_BACK(Units.degreesToRadians(120)),
     CLIMB_PREPARING(Units.degreesToRadians(10));
@@ -97,8 +98,12 @@ public class WristSubsystem extends SubsystemBase {
         wristIO.holdAtState(WristState.L1_FRONT);
         break;
 
-      case L2L3_FRONT:
-        wristIO.holdAtState(WristState.L2L3_FRONT);
+      case L2_FRONT:
+        wristIO.holdAtState(WristState.L2_FRONT);
+        break;
+
+      case L3_FRONT:
+        wristIO.holdAtState(WristState.L3_FRONT);
         break;
 
       case L4_BACK:
@@ -130,8 +135,11 @@ public class WristSubsystem extends SubsystemBase {
       case L1_FRONT:
         return WristState.L1_FRONT;
 
-      case L2L3_FRONT:
-        return WristState.L2L3_FRONT;
+      case L2_FRONT:
+        return WristState.L2_FRONT;
+
+      case L3_FRONT:
+        return WristState.L3_FRONT;
 
       case L4_BACK:
         return WristState.L4_BACK;

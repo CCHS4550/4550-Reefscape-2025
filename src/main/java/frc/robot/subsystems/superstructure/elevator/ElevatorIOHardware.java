@@ -47,13 +47,7 @@ public class ElevatorIOHardware implements ElevatorIO {
     elevatorEncoderTop.setPosition(0);
 
     elevatorPidController =
-        new ProfiledPIDController(
-            Constants.ElevatorConstants.elevatorKP,
-            0,
-            0,
-            new TrapezoidProfile.Constraints(
-                Constants.ElevatorConstants.elevatorMaxVelocity,
-                Constants.ElevatorConstants.elevatorMaxAcceleration));
+        new ProfiledPIDController(10, 0, 0, new TrapezoidProfile.Constraints(15, 30));
 
     // elevatorPidController.setIntegratorRange(-3, 3);
 
@@ -61,7 +55,7 @@ public class ElevatorIOHardware implements ElevatorIO {
     pidOutput = 0;
     ffOutput = 0;
 
-    elevatorFeedForward = new ElevatorFeedforward(.25, .7, 0, 0);
+    elevatorFeedForward = new ElevatorFeedforward(.25, .60, 0, 0);
 
     goalState = new State(0, 0);
 
@@ -76,7 +70,7 @@ public class ElevatorIOHardware implements ElevatorIO {
 
     inputs.currentRotationsTop = elevatorEncoderTop.getPosition();
     inputs.currentRotationsBottom = elevatorEncoderBottom.getPosition();
-    System.out.println("asddsfdgf");
+
     inputs.hallEffectTripped = !hallEffect.get();
 
     inputs.pidOutput = this.pidOutput;
@@ -99,7 +93,12 @@ public class ElevatorIOHardware implements ElevatorIO {
   @Override
   public void holdAtState(ElevatorState goalState) {
     setVoltage(
-        Volts.of(getPIDFFOutput(new State(Units.degreesToRadians(goalState.getHeight()), 0))));
+        Volts.of(
+            getPIDFFOutput(
+                new State(
+                    goalState.getHeight()
+                        / Constants.ElevatorConstants.HEIGHT_METERS_TO_AXLE_ROTATIONS,
+                    0))));
   }
 
   public Command goToGoalState(State goalState, ElevatorSubsystem elevator) {
@@ -117,7 +116,7 @@ public class ElevatorIOHardware implements ElevatorIO {
 
     this.goalState = goalState;
 
-    pidOutput = elevatorPidController.calculate(getHeightMeters(), goalState);
+    pidOutput = elevatorPidController.calculate(getHeightAxleRotations(), goalState);
     ffOutput = elevatorFeedForward.calculate(elevatorPidController.getSetpoint().velocity);
 
     return pidOutput + ffOutput;
@@ -134,6 +133,12 @@ public class ElevatorIOHardware implements ElevatorIO {
     elevatorTop.setVoltage(voltage.magnitude());
   }
 
+  @Override
+  public double getHeightAxleRotations() {
+    return ((elevatorEncoderBottom.getPosition() + elevatorEncoderTop.getPosition()) / 2)
+        * Constants.ElevatorConstants.AXLE_ROTATIONS_TO_ELEVATOR_MOTOR_ROTATIONS;
+  }
+
   /**
    * Gets the reading of the absolute encoder with offset. Used for getting the offset.
    *
@@ -141,6 +146,9 @@ public class ElevatorIOHardware implements ElevatorIO {
    */
   @Override
   public double getHeightMeters() {
+    // System.out.println(Constants.ElevatorConstants.HEIGHT_METERS_PER_ELEVATOR_MOTOR_ROTATIONS);
+    // System.out.println(Constants.ElevatorConstants.AXLE_ROTATIONS_TO_ELEVATOR_MOTOR_ROTATIONS);
+    // System.out.println(Constants.ElevatorConstants.HEIGHT_METERS_TO_AXLE_ROTATIONS);
     return ((elevatorEncoderBottom.getPosition() + elevatorEncoderTop.getPosition()) / 2)
         * Constants.ElevatorConstants.HEIGHT_METERS_PER_ELEVATOR_MOTOR_ROTATIONS;
   }

@@ -60,10 +60,8 @@ public class MechanismScheme {
     Trigger blackTop = buttonBoard.button(11);
     Trigger blackBottom = buttonBoard.button(12);
 
-    yellowTop.onTrue(
-        superstructure
-            .setWantedSuperstateCommand(SuperState.CORAL_STATION_FRONT)
-            .andThen(superstructure.intakeCoralStation()));
+    yellowTop.onTrue(superstructure.setWantedSuperstateCommand(SuperState.CORAL_STATION_FRONT));
+    yellowTop.whileTrue(superstructure.intakeCoralStation());
     yellowBottom.onTrue(
         superstructure.setWantedSuperstateCommand(SuperState.WITHIN_FRAME_PERIMETER_DEFAULT));
 
@@ -82,7 +80,7 @@ public class MechanismScheme {
         superstructure.setWantedSuperstateCommand(SuperState.WITHIN_FRAME_PERIMETER_DEFAULT));
     redBottom.onTrue(superstructure.setWantedSuperstateCommand(SuperState.CLIMB_PREPARING));
 
-    blackTop.onTrue(superstructure.outtakeGlobal());
+    blackTop.whileTrue(superstructure.outtakeGlobal());
     blackBottom.onTrue(superstructure.setWantedSuperstateCommand(SuperState.ZERO));
   }
 }

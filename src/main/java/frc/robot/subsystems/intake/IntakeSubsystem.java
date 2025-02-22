@@ -46,11 +46,11 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public Command outtakeFront() {
-    return runOnce(() -> intakeIO.intake(Volts.of(-12)));
+    return startEnd(() -> intakeIO.intake(Volts.of(-12)), () -> intakeIO.intake(Volts.of(0)));
   }
 
   public Command outtakeBack() {
-    return runOnce(() -> intakeIO.intake(Volts.of(12)));
+    return startEnd(() -> intakeIO.intake(Volts.of(12)), () -> intakeIO.intake(Volts.of(0)));
   }
 
   public boolean hasCoral() {

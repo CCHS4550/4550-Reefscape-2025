@@ -27,9 +27,10 @@ public class ArmSubsystem extends SubsystemBase {
     // Placeholder Values
     ZERO(0),
     DEFAULT_WITHINFRAME(Units.degreesToRadians(-40)),
-    L1_FRONT(Units.degreesToRadians(30)),
-    L2L3_FRONT(Units.degreesToRadians(45)),
-    L4_BACK(Units.degreesToRadians(110)),
+    L1_FRONT(Units.degreesToRadians(0)),
+    L2_FRONT(Units.degreesToRadians(24.126958)),
+    L3_FRONT(Units.degreesToRadians(29.352134)),
+    L4_BACK(Units.degreesToRadians(94.234611)),
     CORAL_STATION_FRONT(Units.degreesToRadians(11.5)),
     CORAL_STATION_BACK(Units.degreesToRadians(120)),
     CLIMB_PREPARING(Units.degreesToRadians(150));
@@ -98,8 +99,11 @@ public class ArmSubsystem extends SubsystemBase {
 
         break;
 
-      case L2L3_FRONT:
-        armIO.holdAtState(ArmState.L2L3_FRONT);
+      case L2_FRONT:
+        armIO.holdAtState(ArmState.L2_FRONT);
+        break;
+      case L3_FRONT:
+        armIO.holdAtState(ArmState.L3_FRONT);
         break;
 
       case L4_BACK:
@@ -132,8 +136,11 @@ public class ArmSubsystem extends SubsystemBase {
       case L1_FRONT:
         return ArmState.L1_FRONT;
 
-      case L2L3_FRONT:
-        return ArmState.L2L3_FRONT;
+      case L2_FRONT:
+        return ArmState.L2_FRONT;
+
+      case L3_FRONT:
+        return ArmState.L3_FRONT;
 
       case L4_BACK:
         return ArmState.L4_BACK;

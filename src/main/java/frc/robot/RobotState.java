@@ -99,9 +99,9 @@ public class RobotState {
   public SwerveModulePosition[] swerveModulePositions = new SwerveModulePosition[4];
 
   public BooleanSupplier allowSubsystemMovement = () -> true;
-  public BooleanSupplier moveElevator = () -> false;
-  public BooleanSupplier moveArm = () -> false;
-  public BooleanSupplier moveWrist = () -> false;
+  public BooleanSupplier moveElevator = () -> true;
+  public BooleanSupplier moveArm = () -> true;
+  public BooleanSupplier moveWrist = () -> true;
 
   public boolean useHF = true;
 
@@ -223,7 +223,10 @@ public class RobotState {
        * If, and only if, their size is greater than zero, do you continue, since it'll crash the
        * code otherwise. Sometimes the HF doesn't keep up and there isn't data.
        */
-      if (swerveModulePositionsHF.length > 0 && pigeonGyro.isConnected()) {
+      if (swerveModulePositionsHF.length > 0
+          && sampleTimestampsHF.length > 0
+          && gyroAnglesHF.length > 0
+          && pigeonGyro.isConnected()) {
 
         /** Update the SwerveDrivePoseEstimator with the Drivetrain encoders and such */
         for (int i = 0; i < getMinLengthHF(); i++) {

@@ -25,15 +25,17 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   public enum ElevatorState {
     // Placeholder Values
-    DEFAULT_WITHINFRAME(0),
-    L1_FRONT(0),
+    ZERO(0),
+    // DEFAULT_WITHINFRAME(0),
+    // L1_FRONT(0),
     L2_FRONT(0),
-    L3_FRONT(0),
-    L4_BACK(0),
-    A1(0),
-    A2(0),
-    CORAL_STATION_FRONT(0),
-    CORAL_STATION_BACK(0),
+    L3_FRONT(0.13912),
+    L4_INTERMEDIATE(0.25),
+    L4_BACK(.5),
+    // A1(0),
+    // A2(0),
+    // CORAL_STATION_FRONT(0),
+    // CORAL_STATION_BACK(0),
     CLIMB_PREPARING(0);
 
     private final double heightMeters;
@@ -47,9 +49,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
   }
 
-  public ElevatorState previousState = ElevatorState.DEFAULT_WITHINFRAME;
-  public ElevatorState currentState = ElevatorState.DEFAULT_WITHINFRAME;
-  public ElevatorState wantedState = ElevatorState.DEFAULT_WITHINFRAME;
+  public ElevatorState previousState = ElevatorState.ZERO;
+  public ElevatorState currentState = ElevatorState.ZERO;
+  public ElevatorState wantedState = ElevatorState.ZERO;
 
   private final ElevatorIO elevatorIO;
 
@@ -72,8 +74,8 @@ public class ElevatorSubsystem extends SubsystemBase {
                 MotorType.kBrushless,
                 IdleMode.kBrake,
                 Constants.MotorConstants.ELEVATOR_REVERSE[0],
-                Constants.ElevatorConstants.HEIGHT_METERS_PER_ELEVATOR_MOTOR_ROTATIONS,
-                Constants.ElevatorConstants.ELEVATOR_MOTOR_METERS_PER_SECOND_CONVERSION_FACTOR),
+                1,
+                1),
             motorFactory.create(
                 "elevatorTop",
                 "top",
@@ -81,8 +83,8 @@ public class ElevatorSubsystem extends SubsystemBase {
                 MotorType.kBrushless,
                 IdleMode.kBrake,
                 Constants.MotorConstants.ELEVATOR_REVERSE[1],
-                Constants.ElevatorConstants.HEIGHT_METERS_PER_ELEVATOR_MOTOR_ROTATIONS,
-                Constants.ElevatorConstants.ELEVATOR_MOTOR_METERS_PER_SECOND_CONVERSION_FACTOR));
+                1,
+                1));
 
     sysIdRoutine =
         new SysIdRoutine(
@@ -105,13 +107,15 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   private void applyStates() {
     switch (currentState) {
-      case DEFAULT_WITHINFRAME:
-        elevatorIO.holdAtState(ElevatorState.DEFAULT_WITHINFRAME);
-        break;
+        // case DEFAULT_WITHINFRAME:
+        //   elevatorIO.holdAtState(ElevatorState.DEFAULT_WITHINFRAME);
+        //   break;
 
-      case L1_FRONT:
-        elevatorIO.holdAtState(ElevatorState.L1_FRONT);
-        break;
+        // case L1_FRONT:
+        //   elevatorIO.holdAtState(ElevatorState.L1_FRONT);
+        //   break;
+      case L4_INTERMEDIATE:
+        elevatorIO.holdAtState(ElevatorState.L4_INTERMEDIATE);
 
       case L2_FRONT:
         elevatorIO.holdAtState(ElevatorState.L2_FRONT);
@@ -124,20 +128,20 @@ public class ElevatorSubsystem extends SubsystemBase {
         elevatorIO.holdAtState(ElevatorState.L4_BACK);
         break;
 
-      case CORAL_STATION_FRONT:
-        elevatorIO.holdAtState(ElevatorState.CORAL_STATION_FRONT);
-        break;
+        // case CORAL_STATION_FRONT:
+        //   elevatorIO.holdAtState(ElevatorState.CORAL_STATION_FRONT);
+        //   break;
 
-      case CORAL_STATION_BACK:
-        elevatorIO.holdAtState(ElevatorState.CORAL_STATION_BACK);
-        break;
+        // case CORAL_STATION_BACK:
+        //   elevatorIO.holdAtState(ElevatorState.CORAL_STATION_BACK);
+        //   break;
 
       case CLIMB_PREPARING:
         elevatorIO.holdAtState(ElevatorState.CLIMB_PREPARING);
         break;
 
       default:
-        elevatorIO.holdAtState(ElevatorState.DEFAULT_WITHINFRAME);
+        elevatorIO.holdAtState(ElevatorState.ZERO);
         break;
     }
   }
@@ -145,11 +149,13 @@ public class ElevatorSubsystem extends SubsystemBase {
   private ElevatorState handleStateTransitions() {
     previousState = currentState;
     switch (wantedState) {
-      case DEFAULT_WITHINFRAME:
-        return ElevatorState.DEFAULT_WITHINFRAME;
+        // case DEFAULT_WITHINFRAME:
+        //   return ElevatorState.DEFAULT_WITHINFRAME;
 
-      case L1_FRONT:
-        return ElevatorState.L1_FRONT;
+        // case L1_FRONT:
+        //   return ElevatorState.L1_FRONT;
+      case L4_INTERMEDIATE:
+        return ElevatorState.L4_INTERMEDIATE;
 
       case L2_FRONT:
         return ElevatorState.L2_FRONT;
@@ -159,14 +165,14 @@ public class ElevatorSubsystem extends SubsystemBase {
       case L4_BACK:
         return ElevatorState.L4_BACK;
 
-      case CORAL_STATION_FRONT:
-        return ElevatorState.CORAL_STATION_FRONT;
+        // case CORAL_STATION_FRONT:
+        //   return ElevatorState.CORAL_STATION_FRONT;
 
-      case CORAL_STATION_BACK:
-        return ElevatorState.CORAL_STATION_BACK;
+        // case CORAL_STATION_BACK:
+        //   return ElevatorState.CORAL_STATION_BACK;
 
       default:
-        return ElevatorState.DEFAULT_WITHINFRAME;
+        return ElevatorState.ZERO;
     }
   }
 
