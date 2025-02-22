@@ -130,9 +130,6 @@ public class RobotContainer {
     RobotState.getInstance()
         .robotStateInit(
             algae, arm, climber, elevator, intake, swerve, wrist, vision, superstructure);
-    RobotState.getInstance().poseInit();
-    RobotState.getInstance().swerveModuleEncodersInit();
-    RobotState.getInstance().dashboardInit();
 
     /** Configure controls. */
     switch (Constants.currentMode) {
