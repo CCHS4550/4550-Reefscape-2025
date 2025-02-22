@@ -10,6 +10,7 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.helpers.maps.Constants;
 import frc.helpers.motorcontroller.CCMotorController;
@@ -51,6 +52,18 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public Command outtakeBack() {
     return startEnd(() -> intakeIO.intake(Volts.of(12)), () -> intakeIO.intake(Volts.of(0)));
+  }
+
+  public Command outtake(boolean outtakeReverse) {
+    return new StartEndCommand(
+        () -> {
+          if (outtakeReverse) intakeIO.intake(Volts.of(12));
+          else intakeIO.intake(Volts.of(-12));
+        },
+        () -> {
+          intakeIO.intake(Volts.of(0));
+        },
+        this);
   }
 
   public boolean hasCoral() {

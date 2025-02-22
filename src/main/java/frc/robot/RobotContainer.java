@@ -147,17 +147,17 @@ public class RobotContainer {
             primaryController);
         MechanismScheme.configure(
             algae, arm, climber, elevator, intake, swerve, wrist, superstructure, 1);
-        TestingScheme.configure(
-            algae,
-            arm,
-            climber,
-            elevator,
-            intake,
-            swerve,
-            wrist,
-            superstructure,
-            vision,
-            primaryController);
+        // TestingScheme.configure(
+        //     algae,
+        //     arm,
+        //     climber,
+        //     elevator,
+        //     intake,
+        //     swerve,
+        //     wrist,
+        //     superstructure,
+        //     vision,
+        //     primaryController);
 
         // CharacterizationScheme.configure(
         //     algae,

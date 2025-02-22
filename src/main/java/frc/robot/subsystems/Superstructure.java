@@ -81,8 +81,10 @@ public class Superstructure extends SubsystemBase {
   }
 
   SuperState wantedSuperState = SuperState.WITHIN_FRAME_PERIMETER_DEFAULT;
-  SuperState currentSuperState = SuperState.WITHIN_FRAME_PERIMETER_DEFAULT;
+  public SuperState currentSuperState = SuperState.WITHIN_FRAME_PERIMETER_DEFAULT;
   SuperState previousSuperState = SuperState.WITHIN_FRAME_PERIMETER_DEFAULT;
+
+  boolean outtakeReverse = false;
 
   public void applyStates() {
     switch (currentSuperState) {
@@ -116,6 +118,7 @@ public class Superstructure extends SubsystemBase {
         wrist.setWantedStateCommand(WristState.CORAL_STATION_FRONT).schedule();
 
         elevator.setWantedStateCommand(ElevatorState.ZERO).schedule();
+        outtakeReverse = false;
         break;
 
       case L1_FRONT:
@@ -124,6 +127,7 @@ public class Superstructure extends SubsystemBase {
         wrist.setWantedStateCommand(WristState.L1_FRONT).schedule();
 
         elevator.setWantedStateCommand(ElevatorState.ZERO).schedule();
+        outtakeReverse = false;
         break;
 
       case L2_FRONT:
@@ -132,6 +136,7 @@ public class Superstructure extends SubsystemBase {
         wrist.setWantedStateCommand(WristState.L2_FRONT).schedule();
 
         elevator.setWantedStateCommand(ElevatorState.L2_FRONT).schedule();
+        outtakeReverse = false;
         break;
 
       case L3_FRONT:
@@ -140,6 +145,7 @@ public class Superstructure extends SubsystemBase {
         wrist.setWantedStateCommand(WristState.L3_FRONT).schedule();
 
         elevator.setWantedStateCommand(ElevatorState.L3_FRONT).schedule();
+        outtakeReverse = false;
         break;
 
       case L4_BACK:
@@ -150,6 +156,7 @@ public class Superstructure extends SubsystemBase {
         new WaitCommand(1)
             .andThen(elevator.setWantedStateCommand(ElevatorState.L4_BACK))
             .schedule();
+        outtakeReverse = true;
         break;
       case L4_INTERMEDIATE:
         arm.setWantedStateCommand(ArmState.L3_FRONT).schedule();
@@ -170,6 +177,7 @@ public class Superstructure extends SubsystemBase {
         wrist.setWantedStateCommand(WristState.CLIMB_PREPARING).schedule();
 
         elevator.setWantedStateCommand(ElevatorState.CLIMB_PREPARING).schedule();
+        outtakeReverse = false;
         break;
       default:
         break;
@@ -252,8 +260,8 @@ public class Superstructure extends SubsystemBase {
   }
 
   public Command outtakeGlobal() {
-    if (currentSuperState == SuperState.L4_BACK) return intake.outtakeBack();
-    else return intake.outtakeFront();
+    // if (currentSuperState == SuperState.L4_BACK) return intake.outtakeBack();
+    return intake.outtakeFront();
   }
 
   @Override
@@ -263,6 +271,8 @@ public class Superstructure extends SubsystemBase {
     Logger.recordOutput("Subsystem/Superstructure/WantedSuperState", wantedSuperState);
     Logger.recordOutput("Subsystem/Superstructure/CurrentSuperState", currentSuperState);
     Logger.recordOutput("Subsystem/Superstructure/PreviousSuperState", previousSuperState);
+
+    Logger.recordOutput("reverse Outtake", outtakeReverse);
     if (wantedSuperState != currentSuperState) {
       currentSuperState = handleStateTransitions();
       applyStates();

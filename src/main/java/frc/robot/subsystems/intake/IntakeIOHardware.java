@@ -1,9 +1,14 @@
 package frc.robot.subsystems.intake;
 
+import static edu.wpi.first.wpilibj2.command.Commands.startEnd;
+
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.helpers.maps.Constants;
 import frc.helpers.motorcontroller.CCMotorController;
+import frc.robot.RobotState;
+import frc.robot.subsystems.Superstructure.SuperState;
 
 public class IntakeIOHardware implements IntakeIO {
 
@@ -25,7 +30,19 @@ public class IntakeIOHardware implements IntakeIO {
 
   @Override
   public void intake(Voltage volts) {
+    if (RobotState.getInstance().currentSuperState == SuperState.L4_BACK) {
+      intakeMotor.setVoltage(-volts.magnitude());
+      return;
+    }
     intakeMotor.setVoltage(volts.magnitude());
+    return;
+  }
+
+  public Command intakeCommand(Voltage volts, IntakeSubsystem intake) {
+    return startEnd(
+        () -> intakeMotor.setVoltage(volts.magnitude()),
+        () -> intakeMotor.setVoltage(volts.magnitude()),
+        intake);
   }
 
   @Override

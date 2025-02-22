@@ -42,7 +42,7 @@ public class SwerveDriveScheme {
         return fieldCentric;
       };
 
-  private static DoubleSupplier driveSpeedModifier = () -> .2;
+  private static DoubleSupplier driveSpeedModifier = () -> .6;
 
   private static double turnSpeedModifier = 0.5;
 
@@ -212,10 +212,18 @@ public class SwerveDriveScheme {
 
     processorTrigger.whileTrue(AlignCommands.AlignToProcessor(swerve, vision));
 
+    controller.a().onTrue(runOnce(() -> RobotState.getInstance().setOdometry()));
     coralStationLeftTrigger.whileTrue(AlignCommands.frontAlignToCoralStationLeft(swerve, vision));
     coralStationRightTrigger.whileTrue(AlignCommands.frontAlignToCoralStationRight(swerve, vision));
 
-    controller.a().onTrue(runOnce(() -> setSlowMode())).onFalse(runOnce(() -> setNormalMode()));
+    controller
+        .leftBumper()
+        .onTrue(runOnce(() -> setFastMode()))
+        .onFalse(runOnce(() -> setNormalMode()));
+    controller
+        .rightBumper()
+        .onTrue(runOnce(() -> setSlowMode()))
+        .onFalse(runOnce(() -> setNormalMode()));
   }
   /** Toggle field centric and robot centric driving. */
   private static void toggleFieldCentric() {
@@ -235,7 +243,7 @@ public class SwerveDriveScheme {
   }
 
   private static void setNormalMode() {
-    driveSpeedModifier = () -> 0.5;
+    driveSpeedModifier = () -> 0.6;
   }
 
   private static void setSlowMode() {

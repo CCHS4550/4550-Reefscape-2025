@@ -316,6 +316,7 @@ public class Constants {
 
   public class FieldPositionConstants {
 
+    // 5 inches from reef to bumper
     public static final Transform2d FRONT_REEF_LEFT_OFFSET =
         new Transform2d(Inches.of(-18.7500), Inches.of(6.481791), new Rotation2d());
     public static final Transform2d FRONT_REEF_RIGHT_OFFSET =

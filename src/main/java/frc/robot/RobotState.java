@@ -33,6 +33,7 @@ import frc.helpers.vision.VisionIO;
 import frc.helpers.vision.VisionIOInputsAutoLogged;
 import frc.robot.autonomous.CustomAutoChooser;
 import frc.robot.subsystems.Superstructure;
+import frc.robot.subsystems.Superstructure.SuperState;
 import frc.robot.subsystems.algae.AlgaeIOInputsAutoLogged;
 import frc.robot.subsystems.algae.AlgaeSubsystem;
 import frc.robot.subsystems.climber.ClimberIOInputsAutoLogged;
@@ -78,6 +79,8 @@ public class RobotState {
   private VisionIO vision;
 
   private Superstructure superstructure;
+
+  public SuperState currentSuperState;
 
   /** NavX Gyroscope */
   // private final AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
@@ -150,6 +153,8 @@ public class RobotState {
     this.vision = vision;
 
     this.superstructure = superstructure;
+
+    this.currentSuperState = currentSuperState;
 
     algaeInputs = algae.algaeInputs;
     armInputs = arm.armInputs;

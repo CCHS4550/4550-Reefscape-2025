@@ -80,7 +80,8 @@ public class MechanismScheme {
         superstructure.setWantedSuperstateCommand(SuperState.WITHIN_FRAME_PERIMETER_DEFAULT));
     redBottom.onTrue(superstructure.setWantedSuperstateCommand(SuperState.CLIMB_PREPARING));
 
-    blackTop.whileTrue(superstructure.outtakeGlobal());
-    blackBottom.onTrue(superstructure.setWantedSuperstateCommand(SuperState.ZERO));
+    blackTop.whileTrue(intake.outtakeFront());
+    blackBottom.whileTrue(intake.outtakeBack());
+    // blackBottom.onTrue(superstructure.setWantedSuperstateCommand(SuperState.ZERO));
   }
 }
