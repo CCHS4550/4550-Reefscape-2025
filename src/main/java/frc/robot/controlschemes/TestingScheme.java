@@ -3,6 +3,7 @@ package frc.robot.controlschemes;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.helpers.vision.VisionIO;
+import frc.robot.autonomous.AlignCommands;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.algae.AlgaeSubsystem;
 import frc.robot.subsystems.climber.ClimberSubsystem;
@@ -44,8 +45,8 @@ public class TestingScheme {
 
     /** z */
     controller.a().onTrue(new InstantCommand(() -> System.out.println("a")));
-    // controller.a().whileTrue(AlignCommands.frontAlignToReefLeft(swerve, vision));
-    controller.a().whileTrue(arm.testVoltageCommand(0.6));
+    controller.a().whileTrue(AlignCommands.frontAlignToReefLeft(swerve, vision));
+    // controller.a().whileTrue(arm.testVoltageCommand(0.6));
 
     /** x */
     controller.b().onTrue(new InstantCommand(() -> System.out.println("b")));

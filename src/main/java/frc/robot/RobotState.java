@@ -251,7 +251,7 @@ public class RobotState {
               clampSwerveModulePositionsHF(swerveModulePositionsHF, i));
 
           // System.out.println(pigeonGyro.getRotation2d().getDegrees());
-          System.out.println(yaw.getValueAsDouble());
+          // System.out.println(yaw.getValueAsDouble());
         }
       }
 
@@ -599,7 +599,7 @@ public class RobotState {
   }
 
   public synchronized void setOdometry(Pose2d pose) {
-    poseEstimator.resetPosition(getPoseRotation2d(), swerveModulePositions, pose);
+    poseEstimator.resetPosition(getRotation2d(), swerveModulePositions, pose);
   }
 
   public Command setOdometryCommand(Pose2d pose) {

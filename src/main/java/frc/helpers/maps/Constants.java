@@ -54,6 +54,7 @@ public class Constants {
     if (DriverStation.getAlliance().isPresent()) {
       isBlue = DriverStation.getAlliance().get() == Alliance.Blue ? true : false;
     }
+
     return isBlue;
   }
 

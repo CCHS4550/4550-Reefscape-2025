@@ -11,6 +11,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.helpers.maps.Constants;
 import frc.robot.RobotState;
 import frc.robot.subsystems.swervedrive.SwerveDriveSubsystem;
 import org.littletonrobotics.junction.Logger;
@@ -29,7 +30,7 @@ public class FollowPathCommand extends Command {
   PIDController translationPID;
   PIDController rotationPID;
 
-  double driveSpeedModifier = 0.2;
+  double driveSpeedModifier = .1;
 
   /**
    * Follows a PathPlannerTrajectory
@@ -38,8 +39,8 @@ public class FollowPathCommand extends Command {
    */
   public FollowPathCommand(PathPlannerTrajectory trajectory, SwerveDriveSubsystem swerve) {
     this.swerve = swerve;
-    translationPID = new PIDController(0, 0, 0);
-    rotationPID = new PIDController(0, 0, 0);
+    translationPID = new PIDController(3, 0, 0);
+    rotationPID = new PIDController(3, 0, 0);
     rotationPID.enableContinuousInput(-Math.PI, Math.PI);
 
     this.trajectory = trajectory;
@@ -77,24 +78,55 @@ public class FollowPathCommand extends Command {
     // if (!Constants.isBlue) wantedState.pose = wantedState.flip().pose;
     wantedState.heading = wantedState.pose.getRotation();
 
-    double xSpeed = wantedState.linearVelocity * Math.cos(wantedState.heading.getRadians());
-    double ySpeed = wantedState.linearVelocity * Math.sin(wantedState.heading.getRadians());
+    double xSpeed =
+        wantedState.linearVelocity
+            * Math.cos(wantedState.heading.getRadians())
+            * driveSpeedModifier;
+    double ySpeed =
+        wantedState.linearVelocity
+            * Math.sin(wantedState.heading.getRadians())
+            * driveSpeedModifier;
+
+    Logger.recordOutput("FollowPathCommand/wantedChoreoVelocityX", xSpeed);
+    Logger.recordOutput("FollowPathCommand/wantedChoreoVelocityY", ySpeed);
 
     double xPID = translationPID.calculate(currentPose.getX(), wantedState.pose.getX());
     double yPID = translationPID.calculate(currentPose.getY(), wantedState.pose.getY());
+
+    Logger.recordOutput("FollowPathCommand/xPID Output", xPID);
+    Logger.recordOutput("FollowPathCommand/yPID Output", yPID);
 
     double wantedRotationSpeeds =
         rotationPID.calculate(
             currentPose.getRotation().getRadians(), wantedState.heading.getRadians());
 
+    xSpeed = xSpeed + xPID;
+    ySpeed = ySpeed + yPID;
+
+    xSpeed =
+        clamp(
+            xSpeed,
+            -Constants.SwerveConstants.MAX_DRIVE_SPEED_METERS_PER_SECOND_THEORETICAL,
+            Constants.SwerveConstants.MAX_DRIVE_SPEED_METERS_PER_SECOND_THEORETICAL);
+    ySpeed =
+        clamp(
+            ySpeed,
+            -Constants.SwerveConstants.MAX_DRIVE_SPEED_METERS_PER_SECOND_THEORETICAL,
+            Constants.SwerveConstants.MAX_DRIVE_SPEED_METERS_PER_SECOND_THEORETICAL);
+
+    wantedRotationSpeeds =
+        clamp(
+            wantedRotationSpeeds,
+            -Constants.SwerveConstants.MAX_ANGULAR_SPEED_RADIANS_PER_SECOND,
+            Constants.SwerveConstants.MAX_ANGULAR_SPEED_RADIANS_PER_SECOND);
     // double setXSpeed = xSpeed + xPID;
     // double setYSpeed = ySpeed + yPID;
 
     // setXSpeed = xRateLimiter.calculate(setXSpeed);
     //               ySpeed = yRateLimiter.calculate(ySpeed);
 
-    Logger.recordOutput("xSpeed + xPID", xSpeed + xPID);
-    Logger.recordOutput("ySpeed + yPID", ySpeed + yPID);
+    Logger.recordOutput("xSpeed + xPID", xSpeed);
+    Logger.recordOutput("ySpeed + yPID", ySpeed);
     Logger.recordOutput("wantedRotationSpeeds", wantedRotationSpeeds);
 
     /** Add alliance transform! */
@@ -102,15 +134,15 @@ public class FollowPathCommand extends Command {
     /** Create a ChassisSpeeds object to represent how the robot should be moving at this time. */
     ChassisSpeeds chassisSpeeds =
         ChassisSpeeds.fromFieldRelativeSpeeds(
-            (xSpeed + xPID) * driveSpeedModifier,
-            (ySpeed + yPID) * driveSpeedModifier,
+            (xSpeed + xPID),
+            (ySpeed + yPID),
             wantedRotationSpeeds,
             RobotState.getInstance().getPoseRotation2d());
     // SwerveDrive.getInstance()
     //     .swerveFollower
     //     .calculateRobotRelativeSpeeds(RobotState.getInstance().currentPose, wantedState);
 
-    Logger.recordOutput("wantedAutoPose", wantedState.pose);
+    Logger.recordOutput("FollowPathCommand/wantedAutoPose", wantedState.pose);
 
     swerve.driveRobotRelative(chassisSpeeds);
     // SwerveDrive.getInstance().setModuleStates(moduleStates);
@@ -141,10 +173,15 @@ public class FollowPathCommand extends Command {
                 - trajectory.getEndState().heading.getDegrees());
 
     Logger.recordOutput("FollowPathCommand/translationError", translationError);
-    Logger.recordOutput("FollowPathCommand/rotationErrro", rotationError);
+    Logger.recordOutput("FollowPathCommand/rotationError", rotationError);
 
-    return timer.hasElapsed(trajectory.getTotalTimeSeconds())
-        || (translationError < 1 && rotationError < 1)
-        || timer.hasElapsed(7);
+    // return timer.hasElapsed(trajectory.getTotalTimeSeconds())
+    return (translationError < .15 && rotationError < .15) || timer.hasElapsed(7);
+  }
+
+  public static double clamp(double measurement, double min, double max) {
+    if (measurement < min) return min;
+    if (measurement > max) return max;
+    return measurement;
   }
 }

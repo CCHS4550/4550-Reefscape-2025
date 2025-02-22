@@ -179,11 +179,14 @@ public class PathWrapper {
   }
 
   public static PathPlannerPath flipIfNecessary(PathPlannerPath path) {
-    return Constants.isBlue ? path : path.flipPath();
+
+    if (Constants.isBlue) return path;
+    else return path.flipPath();
   }
 
   public static Rotation2d rotateIfNecessary(Rotation2d rotation2d) {
-    return Constants.isBlue ? rotation2d : rotation2d.plus(Rotation2d.fromRadians(Math.PI));
+    if (Constants.isBlue) return rotation2d;
+    else return rotation2d.plus(Rotation2d.fromRadians(Math.PI));
   }
 
   public static Map.Entry<String, Integer> handleChoreoIndex(String filename) {

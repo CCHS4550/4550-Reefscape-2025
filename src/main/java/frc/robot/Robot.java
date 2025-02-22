@@ -118,6 +118,8 @@ public class Robot extends LoggedRobot {
   @Override
   public void robotPeriodic() {
 
+    Logger.recordOutput("isBlue", Constants.isBlue);
+
     switch (Constants.currentMode) {
       case REAL:
         if (RobotController.getBatteryVoltage() < 10) {

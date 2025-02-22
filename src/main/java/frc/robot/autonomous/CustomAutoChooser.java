@@ -419,7 +419,7 @@ public class CustomAutoChooser {
         new PathWrapper(
             swerve,
             AutoRoutine.CENTENNIAL,
-            Rotation2d.fromRadians(Math.PI),
+            Rotation2d.fromRadians(0),
             new PathWrapper.AutoFile("LCg1 - I2K4L4 - Manhattan.0", true),
             new PathWrapper.AutoFile("LCg1 - I2K4L4 - Manhattan.1", true),
             new PathWrapper.AutoFile("LCg1 - I2K4L4 - Manhattan.2", true),
