@@ -1,11 +1,11 @@
-package frc.robot.subsystems.arm;
+package frc.robot.subsystems.superstructure.arm;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.helpers.motorcontroller.CCMotorController;
-import frc.robot.subsystems.arm.ArmSubsystem.ArmState;
+import frc.robot.subsystems.superstructure.arm.ArmSubsystem.ArmState;
 import java.util.function.BooleanSupplier;
 import org.littletonrobotics.junction.AutoLog;
 
@@ -13,12 +13,18 @@ public interface ArmIO {
 
   @AutoLog
   class ArmIOInputs {
+
+    public double currentRotations;
+
     public double currentAngleDegrees;
     public double currentAngleRadians;
+    public double currentVelocity;
 
     public double pidOutput;
     public double ffOutput;
     public double appliedVoltage;
+
+    public double pidError;
 
     public double setpointAngleDegrees;
     public double setpointAngleRadians;
@@ -71,6 +77,8 @@ public interface ArmIO {
   default double getAbsoluteEncoderRadiansNoOffset() {
     return 0.0;
   }
+
+  default void resetPID() {}
 
   // public default void setP(double p) {}
 

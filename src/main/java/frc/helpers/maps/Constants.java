@@ -47,11 +47,14 @@ public class Constants {
 
   // public static DriverStation.Alliance currentAlliance = Alliance.Blue;
 
-  public static boolean isBlue() {
-    boolean isBlue = true;
+  public static boolean isBlue = true;
+
+  public static boolean checkAlliance() {
+
     if (DriverStation.getAlliance().isPresent()) {
       isBlue = DriverStation.getAlliance().get() == Alliance.Blue ? true : false;
     }
+
     return isBlue;
   }
 
@@ -123,8 +126,10 @@ public class Constants {
     public static final int CLIMBER = 9;
     public static final boolean CLIMBER_REVERSE = false;
 
+    // Bottom Top
     public static final int[] ELEVATOR = {12, 13};
-    public static final boolean[] ELEVATOR_REVERSE = {false, true};
+    // Bottom Top
+    public static final boolean[] ELEVATOR_REVERSE = {true, true};
 
     public static final int ARM = 14;
     public static final boolean ARM_REVERSE = false;
@@ -159,15 +164,18 @@ public class Constants {
 
     // Robot Constants (change with SysId)
     // max speed in free sprint: used in getting velocities of swerve modules
-    public static final double MAX_DRIVE_SPEED_METERS_PER_SECOND_THEORETICAL = 3.71;
+    public static final double MAX_DRIVE_SPEED_METERS_PER_SECOND_THEORETICAL = 5.633;
 
     // Velocity Limits
     public static final double MAX_DRIVE_SPEED_METERS_PER_SECOND = 5;
-    public static final double MAX_ANGULAR_SPEED_RADIANS_PER_SECOND = 4 * Math.PI;
+    public static final double MAX_ANGULAR_SPEED_RADIANS_PER_SECOND = 13.195;
+    // public static final double MAX_ANGULAR_SPEED_RADIANS_PER_SECOND = 4 * Math.PI;
 
     // Rate Limiters (acceleration)
-    public static final double DRIVE_RATE_LIMIT = MAX_DRIVE_SPEED_METERS_PER_SECOND * 1.5;
-    public static final double TURN_RATE_LIMIT = MAX_ANGULAR_SPEED_RADIANS_PER_SECOND;
+    // public static final double DRIVE_RATE_LIMIT = MAX_DRIVE_SPEED_METERS_PER_SECOND * 1.5;
+    public static final double DRIVE_RATE_LIMIT = 8.731;
+    // public static final double TURN_RATE_LIMIT = MAX_ANGULAR_SPEED_RADIANS_PER_SECOND;
+    public static final double TURN_RATE_LIMIT = 36.038;
 
     public static final PathConstraints AUTO_PATH_CONSTRAINTS =
         new PathConstraints(
@@ -215,8 +223,15 @@ public class Constants {
     public static final Pose2d INITIAL_POSE =
         new Pose2d(0, 0, new Rotation2d(0)); // must be in meters!
 
+    public static final double DRIVE_KS = 0.16681;
+    public static final double DRIVE_KV = 2.609;
+    public static final double DRIVE_KA = 0.51582;
+
+    public static final double TURNKS = 0;
+    public static final double TURNKV = 0;
+
     /** This is important! This is the frequency at which odometry data is updated. */
-    public static final double ODOMETRY_FREQUENCY = 100;
+    public static final double ODOMETRY_FREQUENCY = 250;
   }
 
   public static class ArmConstants {
@@ -232,18 +247,19 @@ public class Constants {
     public static final double ARM_MOTOR_RADIANS_PER_SECOND_CONVERSION_FACTOR =
         ARM_MOTOR_ROTATIONS_TO_ARM_ROTATIONS_RADIANS / 60;
 
-    public static final double ARM_THROUGHBORE_OFFSET = 0;
+    public static final double ARM_THROUGHBORE_OFFSET = -0.512;
   }
 
   public static class ElevatorConstants {
 
-    public static final double ELEVATOR_MOTOR_ROTATIONS_TO_AXLE_ROTATIONS = 1.0;
+    /** 1 axle rotation to 6 motor rotations */
+    public static final double AXLE_ROTATIONS_TO_ELEVATOR_MOTOR_ROTATIONS = (safeDivision(1, 6));
 
-    // How many rotations of the main axle to 1 meter of elevation
-    public static final double AXLE_ROTATION_TO_HEIGHT_METERS = 1.0;
+    // 1.92 * Math.PI * 2 meters (circumfrence) per 1 axle rotation
+    public static final double HEIGHT_METERS_TO_AXLE_ROTATIONS = 0.0486 * Math.PI;
 
     public static final double HEIGHT_METERS_PER_ELEVATOR_MOTOR_ROTATIONS =
-        ELEVATOR_MOTOR_ROTATIONS_TO_AXLE_ROTATIONS * AXLE_ROTATION_TO_HEIGHT_METERS;
+        AXLE_ROTATIONS_TO_ELEVATOR_MOTOR_ROTATIONS * HEIGHT_METERS_TO_AXLE_ROTATIONS;
 
     public static final double ELEVATOR_MOTOR_METERS_PER_SECOND_CONVERSION_FACTOR =
         HEIGHT_METERS_PER_ELEVATOR_MOTOR_ROTATIONS / 60;
@@ -270,9 +286,9 @@ public class Constants {
     public static final double WRIST_MOTOR_RADIANS_PER_SECOND_CONVERSION_FACTOR =
         WRIST_MOTOR_ROTATIONS_TO_WRIST_ROTATIONS_RADIANS / 60;
 
-    public static final double WRIST_THROUGHBORE_OFFSET = 0;
+    public static final double WRIST_THROUGHBORE_OFFSET = -0.663;
 
-    public static boolean WRIST_REVERSE = true;
+    public static final boolean WRIST_REVERSE = false;
 
     // private static final double WRIST_GEAR_RATIO = 1.0;
     // private static final double WRIST_POSITION_COEFFICIENT =
@@ -293,66 +309,33 @@ public class Constants {
   }
 
   public static class IntakeConstants {
-    public static final int BEAM_BREAK_PORT = 0;
+    public static final int BEAM_BREAK_PORT = 3;
   }
 
   public static class AlgaeConstants {}
 
-  public class FeedForwardConstants {
-
-    // TODO Do sysid to get values
-    public static final double DRIVE_KS = 0.16681;
-    public static final double DRIVE_KV = 2.609;
-    public static final double DRIVE_KA = 0.51582;
-
-    public static final double TURNKS = 0;
-    public static final double TURNKV = 0;
-
-    // /* TODO SysId these values */
-
-    // KS should be >= 0, so we'll override it to 0.
-    public static final double ELEVATOR_KS = 0;
-    public static final double ELEVATOR_KV = 2.0129;
-    public static final double ELEVATOR_KA = 4.5878;
-
-    // conversion by 0.25 (Not Ideal)
-    public static final double ARM_KS = 0.16328;
-    public static final double ARM_KV = 0.0029191;
-    public static final double ARM_KA = 0.0016397;
-    public static final double ARM_KG = 0.15212;
-
-    public static final double WRIST_KS = 0.16328;
-    public static final double WRIST_KV = 0.0029191;
-    public static final double WRIST_KA = 0.0016397;
-    public static final double WRIST_KG = 0.15212;
-  }
-
   public class FieldPositionConstants {
 
     public static final Transform2d FRONT_REEF_LEFT_OFFSET =
-        new Transform2d(Inches.of(-37.250000), Inches.of(0), new Rotation2d());
-
+        new Transform2d(Inches.of(-18.7500), Inches.of(6.481791), new Rotation2d());
     public static final Transform2d FRONT_REEF_RIGHT_OFFSET =
-        new Transform2d(Inches.of(-37.250000), Inches.of(0), new Rotation2d());
-
+        new Transform2d(Inches.of(-18.7500), Inches.of(-6.481791), new Rotation2d());
     public static final Transform2d BACK_REEF_LEFT_OFFSET =
-        new Transform2d(Inches.of(-37.250000), Inches.of(0), new Rotation2d(Math.PI));
+        new Transform2d(Inches.of(-18.7500), Inches.of(6.481791), new Rotation2d(Math.PI));
     public static final Transform2d BACK_REEF_RIGHT_OFFSET =
-        new Transform2d(Inches.of(-37.250000), Inches.of(0), new Rotation2d(Math.PI));
-
+        new Transform2d(Inches.of(-18.7500), Inches.of(-6.481791), new Rotation2d(Math.PI));
     public static final Transform2d CORAL_STATION_LEFT_OFFSET =
-        new Transform2d(Inches.of(-37.250000), Inches.of(0), new Rotation2d());
+        new Transform2d(Inches.of(-18.7500), Inches.of(6.481791), new Rotation2d());
     public static final Transform2d CORAL_STATION_RIGHT_OFFSET =
-        new Transform2d(Inches.of(-37.250000), Inches.of(0), new Rotation2d());
-
+        new Transform2d(Inches.of(-18.7500), Inches.of(-6.481791), new Rotation2d());
     public static final Transform2d PROCESSOR_OFFSET =
-        new Transform2d(Inches.of(-37.250000), Inches.of(0), new Rotation2d());
+        new Transform2d(Inches.of(-18.7500), Inches.of(6.481791), new Rotation2d());
   }
 
   /** Back Camera */
   public static class cameraOne {
 
-    public static final String CAMERA_ONE_NAME = "Back Camera";
+    public static final String CAMERA_ONE_NAME = "limelight3";
 
     // (Robot pose is considered the center of rotation at the floor level, or Z = 0)
     public static final Translation3d ROBOT_TO_CAMERA_TRANS =
@@ -365,12 +348,14 @@ public class Constants {
   }
 
   public static class cameraTwo {
-    public static final String CAMERA_TWO_NAME = "Front Camera";
+    public static final String CAMERA_TWO_NAME = "limelight2p";
 
+    /** If camera is on front right module facing inwards. */
     public static final Translation3d ROBOT_TO_CAMERA_TRANS =
-        new Translation3d(0.344237, 0, 0.177780);
+        new Translation3d(0.271584, -0.274560, 0.242597);
 
-    public static final Rotation3d ROBOT_TO_CAMERA_ROT = new Rotation3d(0, Math.toRadians(0), 0);
+    public static final Rotation3d ROBOT_TO_CAMERA_ROT =
+        new Rotation3d(0, Math.toRadians(-15), Math.toRadians(15));
 
     public static final Transform3d ROBOT_TO_CAM =
         new Transform3d(ROBOT_TO_CAMERA_TRANS, ROBOT_TO_CAMERA_ROT);
@@ -441,15 +426,11 @@ public class Constants {
   }
 
   // safely divide
-  public double safeDivision(double numerator, double denominator) {
+  public static double safeDivision(double numerator, double denominator) {
     if (Math.abs(denominator) < 0.00001) {
       return 0.0;
     }
     double dividend = numerator / denominator;
     return dividend;
-  }
-
-  public static int beamBrakePort() {
-    return 7; // fill with actual port the beam brake is in
   }
 }

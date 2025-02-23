@@ -1,14 +1,13 @@
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
-
-package frc.robot.subsystems.wrist;
+package frc.robot.subsystems.superstructure.arm;
 
 import frc.helpers.motorcontroller.CCMotorController;
 
 /** Add your docs here. */
-public class WristIOReplay implements WristIO {
-  public WristIOReplay(CCMotorController motor) {
-    System.err.println("WRIST IN REPLAY");
+public class ArmIOReplay implements ArmIO {
+  public ArmIOReplay(CCMotorController motor) {
+    System.err.println("ARM IN REPLAY");
   }
 }

@@ -1,26 +1,27 @@
-package frc.robot.subsystems.wrist;
+package frc.robot.subsystems.superstructure.wrist;
 
 import static edu.wpi.first.units.Units.Volts;
 
-import com.revrobotics.sim.SparkMaxAlternateEncoderSim;
+import com.revrobotics.AbsoluteEncoder;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import frc.helpers.maps.Constants;
 import frc.helpers.motorcontroller.CCMotorController;
-import frc.robot.subsystems.wrist.WristSubsystem.WristState;
+import frc.robot.subsystems.superstructure.wrist.WristSubsystem.WristState;
 import java.util.function.BooleanSupplier;
 
-public class WristIOSim implements WristIO {
+public class WristIOHardware implements WristIO {
 
   CCMotorController wristMotor;
 
-  SparkMaxAlternateEncoderSim throughBore;
+  AbsoluteEncoder throughBore;
 
   ProfiledPIDController wristPidController;
   ArmFeedforward wristFeedForward;
@@ -30,31 +31,47 @@ public class WristIOSim implements WristIO {
 
   State goalState;
 
-  public WristIOSim(CCMotorController wristMotor) {
+  public WristIOHardware(CCMotorController wristMotor) {
     this.wristMotor = wristMotor;
 
-    throughBore = (SparkMaxAlternateEncoderSim) wristMotor.getAlternateEncoder();
+    throughBore = (AbsoluteEncoder) wristMotor.getDataportAbsoluteEncoder();
 
     wristPidController =
         new ProfiledPIDController(
-            0, 0, 0, new TrapezoidProfile.Constraints(0, 0)); // do something for this
+            4.5, 0, 0, new TrapezoidProfile.Constraints(5, 20)); // do something for this
+
+    // kI .3
+    double min = ((-2 * Math.PI) - Constants.WristConstants.WRIST_THROUGHBORE_OFFSET) * .75;
+    double max = -Constants.WristConstants.WRIST_THROUGHBORE_OFFSET * .75;
+    wristPidController.enableContinuousInput(min, max);
+
+    // wristPidController.setIntegratorRange(-3, 3);
 
     wristPidController.reset(throughBore.getPosition());
-    // TODO Sysid
-    wristFeedForward = new ArmFeedforward(0, 0, 0, 0);
+    pidOutput = 0;
+    ffOutput = 0;
+
+    wristFeedForward = new ArmFeedforward(.25, 0.35, 0);
 
     goalState = new State(0, 0);
+
+    SmartDashboard.putData("Wrist PID Controller", wristPidController);
   }
 
   @Override
   public void updateInputs(WristIOInputs inputs) {
-    inputs.currentAngleDegrees = Units.radiansToDegrees(getAbsoluteEncoderRadiansOffset());
+    inputs.currentRotations = -throughBore.getPosition();
+
     inputs.currentAngleRadians = getAbsoluteEncoderRadiansOffset();
+    inputs.currentAngleDegrees = Units.radiansToDegrees(getAbsoluteEncoderRadiansOffset());
+    inputs.currentVelocity = -throughBore.getVelocity() * Math.PI * 0.025;
 
     inputs.pidOutput = this.pidOutput;
     inputs.ffOutput = this.ffOutput;
 
     inputs.appliedVoltage = getVoltage();
+
+    inputs.pidError = wristPidController.getPositionError();
 
     inputs.setpointAngleRadians = wristPidController.getSetpoint().position;
     inputs.setpointAngleDegrees = Units.radiansToDegrees(wristPidController.getSetpoint().position);
@@ -66,15 +83,14 @@ public class WristIOSim implements WristIO {
   }
 
   @Override
-  public void holdAtState(WristState goalState) {
-    setVoltage(
-        Volts.of(getPIDFFOutput(new State(Units.degreesToRadians(goalState.getAngle()), 0))));
+  public void holdAtState(WristState wristState) {
+    setVoltage(Volts.of(getPIDFFOutput(new State(wristState.getAngle(), 0))));
   }
 
-  public Command goToGoalState(State goalState, WristSubsystem wrist) {
+  public Command goToGoalState(State state, WristSubsystem wrist) {
     return new FunctionalCommand(
         () -> {},
-        () -> setVoltage(Volts.of(getPIDFFOutput(goalState))),
+        () -> setVoltage(Volts.of(getPIDFFOutput(state))),
         (end) -> stop(),
         atSetpoint(),
         wrist);
@@ -82,14 +98,14 @@ public class WristIOSim implements WristIO {
 
   /** Called continuously */
   @Override
-  public double getPIDFFOutput(State goalState) {
+  public double getPIDFFOutput(State state) {
 
-    this.goalState = goalState;
+    this.goalState = state;
 
-    pidOutput = wristPidController.calculate(getAbsoluteEncoderRadiansOffset(), goalState);
+    pidOutput = wristPidController.calculate(getAbsoluteEncoderRadiansOffset(), state);
     ffOutput =
         wristFeedForward.calculate(
-            wristPidController.getSetpoint().position, wristPidController.getSetpoint().velocity);
+            getAbsoluteEncoderRadiansOffset(), wristPidController.getSetpoint().velocity);
 
     return pidOutput + ffOutput;
   }
@@ -108,9 +124,13 @@ public class WristIOSim implements WristIO {
   //  MAKE 0 PARALLEL OFF THE GROUND; STANDARD UNIT CIRCLE NOTATION.
   @Override
   public double getAbsoluteEncoderRadiansOffset() {
-    return (throughBore.getPosition())
-        - Constants.WristConstants.WRIST_THROUGHBORE_OFFSET
-        + Math.PI;
+    double value =
+        getAbsoluteEncoderRadiansNoOffset() - Constants.WristConstants.WRIST_THROUGHBORE_OFFSET;
+
+    return value;
+    // return (throughBore.getPosition())
+    //     - Constants.WristConstants.WRIST_THROUGHBORE_OFFSET
+    //     + Math.PI;
   }
 
   /**
@@ -120,7 +140,19 @@ public class WristIOSim implements WristIO {
    */
   @Override
   public double getAbsoluteEncoderRadiansNoOffset() {
-    return (throughBore.getPosition());
+
+    double rev = -throughBore.getPosition();
+    // unwrap(rev);
+
+    double radiansNoOffset = (rev * 2 * Math.PI);
+    return radiansNoOffset * 0.75;
+  }
+
+  @Override
+  public void resetPID() {
+    // wristPidController.reset(throughBore.getPosition());
+    pidOutput = 0;
+    ffOutput = 0;
   }
 
   @Override

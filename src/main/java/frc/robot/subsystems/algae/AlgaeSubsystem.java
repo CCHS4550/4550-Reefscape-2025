@@ -84,12 +84,16 @@ public class AlgaeSubsystem extends SubsystemBase {
     switch (currentState) {
       case STOW:
         algaeIO.holdAtState(AlgaeStates.STOW);
+        break;
       case INTAKE:
         algaeIO.holdAtState(AlgaeStates.INTAKE);
+        break;
       case PROCESSOR:
         algaeIO.holdAtState(AlgaeStates.PROCESSOR);
+        break;
       default:
         algaeIO.holdAtState(AlgaeStates.STOW);
+        break;
     }
   }
 
@@ -125,7 +129,7 @@ public class AlgaeSubsystem extends SubsystemBase {
     Logger.processInputs("Subsystem/Algae", algaeInputs);
 
     if (wantedState != currentState) currentState = handleStateTransitions();
-    applyStates();
+    // applyStates();
   }
   // This method will be called once per scheduler run
   public Command wristUp() {

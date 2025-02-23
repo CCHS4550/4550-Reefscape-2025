@@ -9,6 +9,7 @@ import frc.helpers.vision.PhotonVisionAprilTag;
 import frc.helpers.vision.PhotonVisionReplay;
 import frc.helpers.vision.PhotonVisionSim;
 import frc.helpers.vision.VisionIO;
+import frc.robot.controlschemes.MechanismScheme;
 import frc.robot.controlschemes.SwerveDriveScheme;
 import frc.robot.controlschemes.TestingScheme;
 import frc.robot.subsystems.Superstructure;
@@ -16,30 +17,30 @@ import frc.robot.subsystems.algae.AlgaeIOHardware;
 import frc.robot.subsystems.algae.AlgaeIOReplay;
 import frc.robot.subsystems.algae.AlgaeIOSim;
 import frc.robot.subsystems.algae.AlgaeSubsystem;
-import frc.robot.subsystems.arm.ArmIOHardware;
-import frc.robot.subsystems.arm.ArmIOReplay;
-import frc.robot.subsystems.arm.ArmIOSim;
-import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.climber.ClimberIOHardware;
 import frc.robot.subsystems.climber.ClimberIOReplay;
 import frc.robot.subsystems.climber.ClimberIOSim;
 import frc.robot.subsystems.climber.ClimberSubsystem;
-import frc.robot.subsystems.elevator.ElevatorIOHardware;
-import frc.robot.subsystems.elevator.ElevatorIOReplay;
-import frc.robot.subsystems.elevator.ElevatorIOSim;
-import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.intake.IntakeIOHardware;
 import frc.robot.subsystems.intake.IntakeIOReplay;
 import frc.robot.subsystems.intake.IntakeIOSim;
 import frc.robot.subsystems.intake.IntakeSubsystem;
+import frc.robot.subsystems.superstructure.arm.ArmIOHardware;
+import frc.robot.subsystems.superstructure.arm.ArmIOReplay;
+import frc.robot.subsystems.superstructure.arm.ArmIOSim;
+import frc.robot.subsystems.superstructure.arm.ArmSubsystem;
+import frc.robot.subsystems.superstructure.elevator.ElevatorIOHardware;
+import frc.robot.subsystems.superstructure.elevator.ElevatorIOReplay;
+import frc.robot.subsystems.superstructure.elevator.ElevatorIOSim;
+import frc.robot.subsystems.superstructure.elevator.ElevatorSubsystem;
+import frc.robot.subsystems.superstructure.wrist.WristIOHardware;
+import frc.robot.subsystems.superstructure.wrist.WristIOReplay;
+import frc.robot.subsystems.superstructure.wrist.WristIOSim;
+import frc.robot.subsystems.superstructure.wrist.WristSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveDriveSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveModuleIOHardware;
 import frc.robot.subsystems.swervedrive.SwerveModuleIOReplay;
 import frc.robot.subsystems.swervedrive.SwerveModuleIOSim;
-import frc.robot.subsystems.wrist.WristIOHardware;
-import frc.robot.subsystems.wrist.WristIOReplay;
-import frc.robot.subsystems.wrist.WristIOSim;
-import frc.robot.subsystems.wrist.WristSubsystem;
 
 public class RobotContainer {
 
@@ -125,12 +126,10 @@ public class RobotContainer {
 
         superstructure = new Superstructure(algae, arm, climber, elevator, intake, swerve, wrist);
     }
+
     RobotState.getInstance()
         .robotStateInit(
             algae, arm, climber, elevator, intake, swerve, wrist, vision, superstructure);
-    RobotState.getInstance().poseInit();
-    RobotState.getInstance().moduleEncodersInit();
-    RobotState.getInstance().dashboardInit();
 
     /** Configure controls. */
     switch (Constants.currentMode) {
@@ -144,7 +143,22 @@ public class RobotContainer {
             swerve,
             wrist,
             superstructure,
+            vision,
             primaryController);
+        MechanismScheme.configure(
+            algae, arm, climber, elevator, intake, swerve, wrist, superstructure, 1);
+        TestingScheme.configure(
+            algae,
+            arm,
+            climber,
+            elevator,
+            intake,
+            swerve,
+            wrist,
+            superstructure,
+            vision,
+            primaryController);
+
         // CharacterizationScheme.configure(
         //     algae,
         //     arm,
@@ -154,6 +168,7 @@ public class RobotContainer {
         //     swerve,
         //     wrist,
         //     superstructure,
+        //     vision,
         //     primaryController);
 
         break;
@@ -168,6 +183,7 @@ public class RobotContainer {
             swerve,
             wrist,
             superstructure,
+            vision,
             primaryController);
         TestingScheme.configure(
             algae,
@@ -177,8 +193,8 @@ public class RobotContainer {
             intake,
             swerve,
             wrist,
-            vision,
             superstructure,
+            vision,
             primaryController);
         break;
 

@@ -1,4 +1,4 @@
-package frc.robot.subsystems.wrist;
+package frc.robot.subsystems.superstructure.wrist;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.units.measure.Voltage;
@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.helpers.motorcontroller.CCMotorController;
 import frc.robot.RobotState;
-import frc.robot.subsystems.wrist.WristSubsystem.WristState;
+import frc.robot.subsystems.superstructure.wrist.WristSubsystem.WristState;
 import java.util.function.BooleanSupplier;
 import org.littletonrobotics.junction.AutoLog;
 
@@ -15,12 +15,18 @@ public interface WristIO {
 
   @AutoLog
   class WristIOInputs {
+    public double currentRotations = 0.0;
+
     public double currentAngleDegrees = 0.0;
     public double currentAngleRadians = 0.0;
+
+    public double currentVelocity = 0.0;
 
     public double pidOutput = 0.0;
     public double ffOutput = 0.0;
     public double appliedVoltage = 0.0;
+
+    public double pidError;
 
     public double setpointAngleDegrees = 0.0;
     public double setpointAngleRadians = 0.0;
@@ -87,6 +93,8 @@ public interface WristIO {
   default Command sysIdDynamic(SysIdRoutine.Direction direction) {
     return new InstantCommand();
   }
+
+  default void resetPID() {}
 
   @FunctionalInterface
   interface IOFactory {

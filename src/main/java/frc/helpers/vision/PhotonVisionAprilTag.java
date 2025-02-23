@@ -5,17 +5,14 @@
 package frc.helpers.vision;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.helpers.maps.Constants;
-import frc.robot.RobotState;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.littletonrobotics.junction.Logger;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
@@ -30,43 +27,41 @@ public class PhotonVisionAprilTag extends SubsystemBase implements VisionIO {
       new ArrayList<>();
 
   /* Create Camera */
-  public PhotonCamera leftCamera;
-  public PhotonCamera rightCamera;
+  public PhotonCamera limelight3;
+  public PhotonCamera limelight2p;
 
   /* Camera 1 PhotonPoseEstimator. */
-  public PhotonPoseEstimator leftCamera_photonEstimator;
+  public PhotonPoseEstimator limelight3_photonEstimator;
   /* Camera 2 PhotonPoseEstimator. */
-  public PhotonPoseEstimator rightCamera_photonEstimator;
+  public PhotonPoseEstimator limelight2p_photonEstimator;
 
   public PhotonPoseEstimator[] photonEstimators;
 
   /** Creates a new Photonvision. */
   public PhotonVisionAprilTag() {
 
-    // This will take a bit of tweaking to get right. I'm fairly certain that remotehost is defined
-    // in the photonvision ui.
-    PortForwarder.add(5800, "limelight2.local", 5800);
-    PortForwarder.add(5801, "limelight3.local", 5801);
+    /** 10.45.50.11:5800 */
+    limelight3 = new PhotonCamera(Constants.cameraOne.CAMERA_ONE_NAME);
 
-    leftCamera = new PhotonCamera(Constants.cameraOne.CAMERA_ONE_NAME);
-    rightCamera = new PhotonCamera(Constants.cameraTwo.CAMERA_TWO_NAME);
+    /** 10.45.50.12:5800 */
+    limelight2p = new PhotonCamera(Constants.cameraTwo.CAMERA_TWO_NAME);
 
-    leftCamera_photonEstimator =
+    limelight3_photonEstimator =
         new PhotonPoseEstimator(
             Constants.AprilTags.APRIL_TAG_FIELD_LAYOUT,
             PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
             Constants.cameraOne.ROBOT_TO_CAM);
-    rightCamera_photonEstimator =
+    limelight2p_photonEstimator =
         new PhotonPoseEstimator(
             Constants.AprilTags.APRIL_TAG_FIELD_LAYOUT,
             PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
             Constants.cameraTwo.ROBOT_TO_CAM);
 
-    leftCamera_photonEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
-    rightCamera_photonEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
+    limelight3_photonEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
+    limelight2p_photonEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
 
     photonEstimators =
-        new PhotonPoseEstimator[] {leftCamera_photonEstimator, rightCamera_photonEstimator};
+        new PhotonPoseEstimator[] {limelight3_photonEstimator, limelight2p_photonEstimator};
   }
 
   /**
@@ -84,13 +79,13 @@ public class PhotonVisionAprilTag extends SubsystemBase implements VisionIO {
     results.clear();
 
     results.addAll(
-        leftCamera.getAllUnreadResults().stream()
-            .map(result -> Map.entry(leftCamera_photonEstimator, result))
+        limelight3.getAllUnreadResults().stream()
+            .map(result -> Map.entry(limelight3_photonEstimator, result))
             .collect(Collectors.toList()));
 
     results.addAll(
-        rightCamera.getAllUnreadResults().stream()
-            .map(result -> Map.entry(rightCamera_photonEstimator, result))
+        limelight2p.getAllUnreadResults().stream()
+            .map(result -> Map.entry(limelight2p_photonEstimator, result))
             .collect(Collectors.toList()));
 
     condensedResults = results;
@@ -100,7 +95,7 @@ public class PhotonVisionAprilTag extends SubsystemBase implements VisionIO {
 
     Set<PhotonTrackedTarget> visibleCamera1Targets =
         results.stream()
-            .filter(x -> x.getKey().equals(leftCamera_photonEstimator))
+            .filter(x -> x.getKey().equals(limelight3_photonEstimator))
             .flatMap(y -> y.getValue().getTargets().stream())
             .collect(Collectors.toSet());
     inputs.visibleCamera1Targets =
@@ -108,7 +103,7 @@ public class PhotonVisionAprilTag extends SubsystemBase implements VisionIO {
 
     Set<PhotonTrackedTarget> visibleCamera2Targets =
         results.stream()
-            .filter(x -> x.getKey().equals(leftCamera_photonEstimator))
+            .filter(x -> x.getKey().equals(limelight3_photonEstimator))
             .flatMap(y -> y.getValue().getTargets().stream())
             .collect(Collectors.toSet());
     inputs.visibleCamera2Targets =
@@ -154,7 +149,7 @@ public class PhotonVisionAprilTag extends SubsystemBase implements VisionIO {
     List<Map.Entry<PhotonPoseEstimator, PhotonPipelineResult>> trustedResults = new ArrayList<>();
     for (int i = 0; i < results.size(); i++) {
       if (results.get(i).getValue().getBestTarget().getPoseAmbiguity() > 0
-          && results.get(i).getValue().getBestTarget().getPoseAmbiguity() <= 0.2)
+          && results.get(i).getValue().getBestTarget().getPoseAmbiguity() <= 1)
         trustedResults.add(results.get(i));
       {
       }
@@ -197,8 +192,12 @@ public class PhotonVisionAprilTag extends SubsystemBase implements VisionIO {
 
     List<Integer> fudicialIDList = new ArrayList<>();
     for (Map.Entry<PhotonPoseEstimator, PhotonPipelineResult> condensedResult : condensedResults) {
-      fudicialIDList.add(condensedResult.getValue().getBestTarget().fiducialId);
+      if (condensedResult.getValue().hasTargets())
+        fudicialIDList.add(condensedResult.getValue().getBestTarget().fiducialId);
     }
+
+    condensedResults.removeIf(result -> result.getValue().hasTargets() == false);
+
     condensedResults.removeIf(
         result ->
             result.getValue().getBestTarget().getFiducialId() != getPlurality(fudicialIDList));
@@ -229,8 +228,6 @@ public class PhotonVisionAprilTag extends SubsystemBase implements VisionIO {
 
   @Override
   public void periodic() {
-
-    Logger.recordOutput("VisionData/HasTarget?", RobotState.getInstance().visionInputs.hasEstimate);
 
     // This method will be called once per scheduler run
   }

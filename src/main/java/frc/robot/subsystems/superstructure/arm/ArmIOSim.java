@@ -1,4 +1,4 @@
-package frc.robot.subsystems.arm;
+package frc.robot.subsystems.superstructure.arm;
 
 import static edu.wpi.first.units.Units.Volts;
 
@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import frc.helpers.maps.Constants;
 import frc.helpers.motorcontroller.CCMotorController;
-import frc.robot.subsystems.arm.ArmSubsystem.ArmState;
+import frc.robot.subsystems.superstructure.arm.ArmSubsystem.ArmState;
 import java.util.function.BooleanSupplier;
 
 public class ArmIOSim implements ArmIO {

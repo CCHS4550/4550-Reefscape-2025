@@ -52,6 +52,7 @@ public class Robot extends LoggedRobot {
 
     Constants.setCurrentMode();
     System.out.println(Constants.currentMode);
+    Constants.checkAlliance();
 
     SmartDashboard.putBoolean("Browning Out?", browningOut);
 
@@ -96,7 +97,8 @@ public class Robot extends LoggedRobot {
         break;
     }
 
-    PortForwarder.add(5800, "photonvision.local", 5800);
+    PortForwarder.add(5800, "limelight3.local", 5800);
+    PortForwarder.add(5801, "limelight2p.local", 5801);
 
     // Unofficial REV-Compatible Logger
     // Used by SysID to log REV devices
@@ -108,11 +110,19 @@ public class Robot extends LoggedRobot {
     robotState = RobotState.getInstance();
     robotContainer = new RobotContainer();
     autoChooser = robotState.autoChooserInit();
+
+    RobotState.getInstance().poseInit();
+    RobotState.getInstance().swerveModuleEncodersInit();
+    RobotState.getInstance().dashboardInit();
+
+    RobotState.getInstance().resetPIDControllers();
   }
 
   /** This function is called periodically during all modes. */
   @Override
   public void robotPeriodic() {
+
+    Logger.recordOutput("isBlue", Constants.isBlue);
 
     switch (Constants.currentMode) {
       case REAL:
@@ -133,10 +143,11 @@ public class Robot extends LoggedRobot {
         break;
     }
 
-    RobotState.getInstance().updateSwerveModuleEncoders();
-    RobotState.getInstance().updateOdometryPose();
+    RobotState.getInstance().swerveModuleEncodersPeriodic();
     RobotState.getInstance().updateSwerveModulePositionsPeriodic();
-    // RobotState.getInstance().updateVisionPose();
+
+    RobotState.getInstance().updateOdometryPose();
+    RobotState.getInstance().updateVisionPose();
 
     // Runs the Scheduler. This is responsible for polling buttons, adding
     // newly-scheduled
@@ -159,8 +170,7 @@ public class Robot extends LoggedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    // AutoBuilderScheme.getPathPlannerAutoCommand().schedule();
-    // AutoBuilderScheme.getCustomAuto().schedule();
+    // RobotState.getInstance().resetPIDControllers();
     autoChooser.getSelectedCustomCommand().schedule();
 
     System.out.println("Autonomous Routine Scheduled!");
@@ -172,7 +182,9 @@ public class Robot extends LoggedRobot {
 
   /** This function is called once when teleop is enabled. */
   @Override
-  public void teleopInit() {}
+  public void teleopInit() {
+    // RobotState.getInstance().resetPIDControllers();
+  }
 
   /** This function is called periodically during operator control. */
   @Override
@@ -180,7 +192,9 @@ public class Robot extends LoggedRobot {
 
   /** This function is called once when test mode is enabled. */
   @Override
-  public void testInit() {}
+  public void testInit() {
+    // RobotState.getInstance().resetPIDControllers();
+  }
 
   /** This function is called periodically during test mode. */
   @Override
@@ -188,7 +202,9 @@ public class Robot extends LoggedRobot {
 
   /** This function is called once when the robot is first started up. */
   @Override
-  public void simulationInit() {}
+  public void simulationInit() {
+    // RobotState.getInstance().resetPIDControllers();
+  }
 
   /** This function is called periodically whilst in simulation. */
   @Override

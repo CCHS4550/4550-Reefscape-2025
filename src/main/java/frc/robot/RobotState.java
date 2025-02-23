@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import static edu.wpi.first.wpilibj2.command.Commands.runOnce;
+
 import choreo.util.ChoreoAllianceFlipUtil;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
@@ -17,7 +19,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
@@ -25,6 +26,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.helpers.maps.Constants;
 import frc.helpers.vision.VisionIO;
@@ -33,23 +35,24 @@ import frc.robot.autonomous.CustomAutoChooser;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.algae.AlgaeIOInputsAutoLogged;
 import frc.robot.subsystems.algae.AlgaeSubsystem;
-import frc.robot.subsystems.arm.ArmIOInputsAutoLogged;
-import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.climber.ClimberIOInputsAutoLogged;
 import frc.robot.subsystems.climber.ClimberSubsystem;
-import frc.robot.subsystems.elevator.ElevatorIOInputsAutoLogged;
-import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.intake.IntakeIOInputsAutoLogged;
 import frc.robot.subsystems.intake.IntakeSubsystem;
+import frc.robot.subsystems.superstructure.arm.ArmIOInputsAutoLogged;
+import frc.robot.subsystems.superstructure.arm.ArmSubsystem;
+import frc.robot.subsystems.superstructure.elevator.ElevatorIOInputsAutoLogged;
+import frc.robot.subsystems.superstructure.elevator.ElevatorSubsystem;
+import frc.robot.subsystems.superstructure.wrist.WristIOInputsAutoLogged;
+import frc.robot.subsystems.superstructure.wrist.WristSubsystem;
 import frc.robot.subsystems.swervedrive.RealOdometryThread;
 import frc.robot.subsystems.swervedrive.SwerveDriveSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveModuleInputsAutoLogged;
-import frc.robot.subsystems.wrist.WristIOInputsAutoLogged;
-import frc.robot.subsystems.wrist.WristSubsystem;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Queue;
+import java.util.function.BooleanSupplier;
 import org.littletonrobotics.junction.Logger;
 
 /** RobotState is used to retrieve information about the robot's state in other classes. */
@@ -92,29 +95,38 @@ public class RobotState {
 
   public final VisionIOInputsAutoLogged visionInputs = new VisionIOInputsAutoLogged();
 
-  /** Module positions used for odometry */
-  public SwerveModulePosition[] previousSwerveModulePositions = new SwerveModulePosition[4];
-
-  public SwerveModulePosition[] currentSwerveModulePositions = new SwerveModulePosition[4];
+  /** Module positions used for odometry (not HF) */
   public SwerveModulePosition[] swerveModulePositions = new SwerveModulePosition[4];
 
-  // High frequency odometry objects (HF)
+  public BooleanSupplier allowSubsystemMovement = () -> true;
+  public BooleanSupplier moveElevator = () -> true;
+  public BooleanSupplier moveArm = () -> true;
+  public BooleanSupplier moveWrist = () -> true;
+
+  public boolean useHF = true;
+
+  /** High frequency odometry objects (HF) */
   public int sampleCountHF;
+
   public double[] sampleTimestampsHF;
   public SwerveModulePosition[][] swerveModulePositionsHF;
 
-  private final StatusSignal<Angle> yaw = pigeonGyro.getYaw();
-  private final StatusSignal<AngularVelocity> yawVelocity = pigeonGyro.getAngularVelocityZWorld();
-  // private final Queue<Double> gyroTimestampContainer =
-  // RealOdometryThread.getInstance().makeTimestampContainer();
-  private final Queue<Double> gyroContainer =
-      RealOdometryThread.getInstance().registerInput(yaw::getValueAsDouble);
-
+  private StatusSignal<Angle> yaw;
+  private Queue<Double> gyroContainer;
+  private Queue<Double> gyroTimestampContainer;
   public Rotation2d[] gyroAnglesHF = new Rotation2d[] {};
+  public double[] gyroTimestampsHF = new double[] {};
 
+  /** Pose estimation objects */
+  public final Field2d gameField = new Field2d();
+
+  public SwerveDrivePoseEstimator poseEstimator;
+
+  /** Methods for simulation */
   public double gyroAngleSim = 0;
 
-  public boolean useHF = false;
+  public SwerveModulePosition[] previousSwerveModulePositions = new SwerveModulePosition[4];
+  public SwerveModulePosition[] currentSwerveModulePositions = new SwerveModulePosition[4];
 
   public void robotStateInit(
       AlgaeSubsystem algae,
@@ -147,10 +159,14 @@ public class RobotState {
     moduleInputs = swerve.swerveModuleInputs;
     wristInputs = wrist.wristInputs;
 
+    yaw = pigeonGyro.getYaw();
     pigeonGyro.getConfigurator().apply(new Pigeon2Configuration());
     pigeonGyro.getConfigurator().setYaw(0.0);
     yaw.setUpdateFrequency(Constants.SwerveConstants.ODOMETRY_FREQUENCY);
     pigeonGyro.optimizeBusUtilization();
+    gyroTimestampContainer = RealOdometryThread.getInstance().makeTimestampContainer();
+    gyroContainer =
+        RealOdometryThread.getInstance().registerInput(() -> getRotation2d().getDegrees());
 
     swerveModulePositions[0] =
         new SwerveModulePosition(0, new Rotation2d(swerve.frontRight.getTurnPosition()));
@@ -172,15 +188,6 @@ public class RobotState {
     currentSwerveModulePositions[3] = new SwerveModulePosition();
   }
 
-  public final Field2d gameField = new Field2d();
-
-  /** Technically pose ESTIMATES */
-  public Pose2d lastPose = new Pose2d();
-
-  public Pose2d currentPose = new Pose2d();
-
-  public SwerveDrivePoseEstimator poseEstimator;
-
   public synchronized CustomAutoChooser autoChooserInit() {
     return new CustomAutoChooser(swerve, superstructure, vision);
   }
@@ -196,57 +203,62 @@ public class RobotState {
   }
 
   /** Update the pose estimator with Odometry and Gyro Data (HF Functional) */
-  public synchronized void updateOdometryPose() {
+  public void updateOdometryPose() {
 
     gameField.setRobotPose(getPose());
-    lastPose = currentPose;
 
-    /** Send the high frequency gyro to an array */
-    gyroAnglesHF =
-        gyroContainer.stream()
-            .map((Double value) -> Rotation2d.fromDegrees(value))
-            .toArray(Rotation2d[]::new);
-    gyroContainer.clear();
+    if (useHF) {
+      /** Send the high frequency gyro to an array */
+      gyroAnglesHF =
+          gyroContainer.stream()
+              .map((Double value) -> Rotation2d.fromDegrees(value))
+              .toArray(Rotation2d[]::new);
 
-    if (!pigeonGyro.isConnected()) {
-      /**
-       * If the gyro isn't connected, take the current values and estimate how much it has changed
-       * since then.
-       */
-      gyroAnglesHF = gyroAnglesPlusSwerveModuleDeltasHF();
-    }
+      gyroTimestampsHF =
+          gyroTimestampContainer.stream().mapToDouble((Double value) -> value).toArray();
 
-    /** If high frequency odometry data is available, use it! */
-    sampleCountHF = swerve.swerveModuleInputs[0].odometryTimestamps.length;
-    sampleTimestampsHF = swerve.swerveModuleInputs[0].odometryTimestamps;
+      gyroContainer.clear();
+      gyroTimestampContainer.clear();
 
-    if (sampleCountHF > 0 && pigeonGyro.isConnected() && useHF) {
+      /** If gyro disconnected, estimate its value. */
+      if (!pigeonGyro.isConnected()) {
+        gyroAnglesHF = gyroAnglesPlusSwerveModuleDeltasHF();
+      }
 
+      /** Use any one of the module timestamps as reference for everything! */
+      sampleTimestampsHF = getSampleTimestampArrayHF();
       swerveModulePositionsHF = getSwerveModulePositionArrayHF();
 
-      /** Update the SwerveDrivePoseEstimator with the Drivetrain encoders and such */
-      for (int i = 0; i < sampleCountHF; i++) {
+      /**
+       * If, and only if, their size is greater than zero, do you continue, since it'll crash the
+       * code otherwise. Sometimes the HF doesn't keep up and there isn't data.
+       */
+      if (swerveModulePositionsHF.length > 0
+          && sampleTimestampsHF.length > 0
+          && gyroAnglesHF.length > 0
+          && pigeonGyro.isConnected()) {
 
-        // System.out.println("sampleTimeStamps size" + sampleTimestamps.length);
-        // System.out.println("gyroAngle size" + gyroAngle.length);
-        // System.out.println("swerveModulePositionsArray size" +
-        // swerveModulePositionsArray.length);
+        /** Update the SwerveDrivePoseEstimator with the Drivetrain encoders and such */
+        for (int i = 0; i < getMinLengthHF(); i++) {
 
-        poseEstimator.updateWithTime(
-            getSampleTimestampArrayClampedHF(i),
-            getGyroAngleArrayClampedHF(i),
-            getSwerveModulePositionsArrayClampedHF(i));
-        Logger.recordOutput("HF/High Frequency Gyro Angle", getGyroAngleArrayClampedHF(i));
-        Logger.recordOutput(
-            "HF/High Frequency Odometry Positions", getSwerveModulePositionsArrayClampedHF(i));
+          poseEstimator.updateWithTime(
+              clampSampleTimestampsHF(sampleTimestampsHF, i),
+              clampGyroAnglesHF(gyroAnglesHF, i),
+              clampSwerveModulePositionsHF(swerveModulePositionsHF, i));
+          Logger.recordOutput("HF/High Frequency Gyro Angle", clampGyroAnglesHF(gyroAnglesHF, i));
+          Logger.recordOutput(
+              "HF/High Frequency Odometry Positions",
+              clampSwerveModulePositionsHF(swerveModulePositionsHF, i));
+
+          // System.out.println(pigeonGyro.getRotation2d().getDegrees());
+          // System.out.println(yaw.getValueAsDouble());
+        }
       }
 
     } else {
 
       poseEstimator.updateWithTime(Timer.getTimestamp(), getRotation2d(), swerveModulePositions);
     }
-
-    currentPose = getPose();
 
     Logger.recordOutput("SwerveDrivePoseEstimator/Estimated Pose", getPose());
     Logger.recordOutput(
@@ -256,7 +268,7 @@ public class RobotState {
   }
 
   /** Update the pose estimator with PhotonVision Data */
-  public synchronized void updateVisionPose() {
+  public void updateVisionPose() {
     /** Update the visionData to what the camera sees. */
     vision.updateInputs(visionInputs);
 
@@ -276,13 +288,13 @@ public class RobotState {
 
     /* Put all the subsystems on ShuffleBoard in their own "Subsystems" tab. */
 
-    Shuffleboard.getTab("Subsystems").add("Algae", algae);
-    Shuffleboard.getTab("Subsystems").add("Arm", arm);
-    Shuffleboard.getTab("Subsystems").add("Climber", climber);
-    Shuffleboard.getTab("Subsystems").add("Elevator", elevator);
-    Shuffleboard.getTab("Subsystems").add("Intake", intake);
-    Shuffleboard.getTab("Subsystems").add("Swerve Drive", swerve);
-    Shuffleboard.getTab("Subsystems").add("Wrist", wrist);
+    Shuffleboard.getTab("Subsystem").add("Algae", algae);
+    Shuffleboard.getTab("Subsystem").add("Arm", arm);
+    Shuffleboard.getTab("Subsystem").add("Climber", climber);
+    Shuffleboard.getTab("Subsystem").add("Elevator", elevator);
+    Shuffleboard.getTab("Subsystem").add("Intake", intake);
+    Shuffleboard.getTab("Subsystem").add("Swerve Drive", swerve);
+    Shuffleboard.getTab("Subsystem").add("Wrist", wrist);
 
     SmartDashboard.putNumber("Robot X Position", poseEstimator.getEstimatedPosition().getX());
     SmartDashboard.putNumber("Robot Y Position", poseEstimator.getEstimatedPosition().getY());
@@ -322,7 +334,7 @@ public class RobotState {
           .getLayout("Turn Encoders Position(Rad)", BuiltInLayouts.kGrid)
           .withSize(2, 2);
 
-  public synchronized void moduleEncodersInit() {
+  public void swerveModuleEncodersInit() {
 
     abs_Enc_FR_Offset_Entry =
         Shuffleboard.getTab("Encoders")
@@ -388,7 +400,7 @@ public class RobotState {
             .getEntry();
   }
 
-  public synchronized void updateSwerveModuleEncoders() {
+  public void swerveModuleEncodersPeriodic() {
     abs_Enc_FR_Offset_Entry.setDouble(swerve.frontRight.getAbsoluteEncoderRadiansOffset());
     abs_Enc_FL_Offset_Entry.setDouble(swerve.frontLeft.getAbsoluteEncoderRadiansOffset());
     abs_Enc_BR_Offset_Entry.setDouble(swerve.backRight.getAbsoluteEncoderRadiansOffset());
@@ -423,8 +435,6 @@ public class RobotState {
         new SwerveModulePosition(
             swerve.backLeft.getDrivePosition(), new Rotation2d(swerve.backLeft.getTurnPosition()));
 
-    // Logger.recordOutput("currentModulePositions", swerveModulePositions);
-
     return swerveModulePositions;
   }
 
@@ -432,10 +442,10 @@ public class RobotState {
     return swerve.getRobotRelativeSpeeds();
   }
 
-  /** Read HF odometry data */
-  public synchronized SwerveModulePosition[][] getSwerveModulePositionArrayHF() {
+  /** This is very important to make sure all the data is the same in quantity. */
+  public synchronized int getMinLengthHF() {
 
-    int[] numbers = {
+    int[] lengths = {
       swerve.swerveModuleInputs[0].odometryDrivePositionsMeters.length,
       swerve.swerveModuleInputs[1].odometryDrivePositionsMeters.length,
       swerve.swerveModuleInputs[2].odometryDrivePositionsMeters.length,
@@ -446,7 +456,13 @@ public class RobotState {
       swerve.swerveModuleInputs[3].odometryTurnPositions.length,
     };
 
-    int min = Arrays.stream(numbers).min().getAsInt();
+    return Arrays.stream(lengths).min().getAsInt();
+  }
+
+  /** Read HF odometry data */
+  public synchronized SwerveModulePosition[][] getSwerveModulePositionArrayHF() {
+
+    int min = getMinLengthHF();
 
     SwerveModulePosition[][] positions = new SwerveModulePosition[min][4];
 
@@ -469,14 +485,31 @@ public class RobotState {
               swerve.swerveModuleInputs[3].odometryTurnPositions[i]);
     }
 
-    if (min != 0) swerveModulePositions = positions[min - 1];
+    if (min > 0) swerveModulePositions = positions[min - 1];
 
     return positions;
   }
 
+  public synchronized double[] getSampleTimestampArrayHF() {
+    int min = getMinLengthHF();
+    // List<Integer> allTimestamps = new ArrayList<>();
+    double[][] allTimestamps = {
+      swerve.swerveModuleInputs[0].odometryTimestamps,
+      swerve.swerveModuleInputs[1].odometryTimestamps,
+      swerve.swerveModuleInputs[2].odometryTimestamps,
+      swerve.swerveModuleInputs[3].odometryTimestamps,
+    };
+
+    for (double[] timestamps : allTimestamps) {
+      if (timestamps.length >= min) return timestamps;
+    }
+
+    return new double[0];
+  }
+
   /**
    * Estimate gyro angle based on last known gyro inputs and change in module positions. Will get
-   * less accurate over time.
+   * less accurate over time. // MOSTLY UNUSED //
    */
   public synchronized Rotation2d[] gyroAnglesPlusSwerveModuleDeltasHF() {
 
@@ -504,26 +537,32 @@ public class RobotState {
   /**
    * Clamping methods for allowing data reading past array length, since lengths are inconsistent.
    */
-  public SwerveModulePosition[] getSwerveModulePositionsArrayClampedHF(int index) {
-    if (index > swerveModulePositionsHF.length - 1) {
-      return swerveModulePositionsHF[swerveModulePositionsHF.length - 1];
-    }
-    return swerveModulePositionsHF[index];
+  public static SwerveModulePosition[] clampSwerveModulePositionsHF(
+      SwerveModulePosition[][] positions, int index) {
+    if (index > positions.length - 1 && positions.length > 0) {
+      return positions[positions.length - 1];
+    } else return positions[index];
   }
 
-  public double getSampleTimestampArrayClampedHF(int index) {
-    if (index > sampleTimestampsHF.length - 1) {
+  public static double clampSampleTimestampsHF(double[] timestamps, int index) {
+    if (index > timestamps.length - 1) {
 
-      return sampleTimestampsHF[sampleTimestampsHF.length - 1];
+      return timestamps[timestamps.length - 1];
     }
-    return sampleTimestampsHF[index];
+    return timestamps[index];
   }
 
-  public Rotation2d getGyroAngleArrayClampedHF(int index) {
-    if (index > gyroAnglesHF.length - 1) {
-      return gyroAnglesHF[gyroAnglesHF.length - 1];
+  public static Rotation2d clampGyroAnglesHF(Rotation2d[] angles, int index) {
+    if (index > angles.length - 1) {
+      return angles[angles.length - 1];
     }
-    return gyroAnglesHF[index];
+    return angles[index];
+  }
+
+  public void resetPIDControllers() {
+    arm.resetPID();
+    elevator.resetPID();
+    wrist.resetPID();
   }
 
   /**
@@ -560,11 +599,15 @@ public class RobotState {
   }
 
   public synchronized void setOdometry(Pose2d pose) {
-    poseEstimator.resetPosition(pose.getRotation(), swerveModulePositions, pose);
+    poseEstimator.resetPosition(getRotation2d(), swerveModulePositions, pose);
+  }
+
+  public Command setOdometryCommand(Pose2d pose) {
+    return runOnce(() -> setOdometry(pose), swerve);
   }
 
   public synchronized void setOdometryAllianceFlip(Pose2d pos) {
-    if (Constants.isBlue()) return;
+    if (Constants.isBlue) return;
 
     poseEstimator.resetPosition(
         ChoreoAllianceFlipUtil.flip(getRotation2d()),

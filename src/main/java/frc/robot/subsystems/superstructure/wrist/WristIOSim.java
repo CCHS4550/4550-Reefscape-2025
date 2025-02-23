@@ -1,27 +1,26 @@
-package frc.robot.subsystems.wrist;
+package frc.robot.subsystems.superstructure.wrist;
 
 import static edu.wpi.first.units.Units.Volts;
 
-import com.revrobotics.AbsoluteEncoder;
+import com.revrobotics.sim.SparkMaxAlternateEncoderSim;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import frc.helpers.maps.Constants;
 import frc.helpers.motorcontroller.CCMotorController;
-import frc.robot.subsystems.wrist.WristSubsystem.WristState;
+import frc.robot.subsystems.superstructure.wrist.WristSubsystem.WristState;
 import java.util.function.BooleanSupplier;
 
-public class WristIOHardware implements WristIO {
+public class WristIOSim implements WristIO {
 
   CCMotorController wristMotor;
 
-  AbsoluteEncoder throughBore;
+  SparkMaxAlternateEncoderSim throughBore;
 
   ProfiledPIDController wristPidController;
   ArmFeedforward wristFeedForward;
@@ -31,29 +30,26 @@ public class WristIOHardware implements WristIO {
 
   State goalState;
 
-  public WristIOHardware(CCMotorController wristMotor) {
+  public WristIOSim(CCMotorController wristMotor) {
     this.wristMotor = wristMotor;
 
-    throughBore = (AbsoluteEncoder) wristMotor.getDataportAbsoluteEncoder();
+    throughBore = (SparkMaxAlternateEncoderSim) wristMotor.getAlternateEncoder();
 
     wristPidController =
         new ProfiledPIDController(
-            .0, 0, 0, new TrapezoidProfile.Constraints(1, 1)); // do something for this
+            0, 0, 0, new TrapezoidProfile.Constraints(0, 0)); // do something for this
 
     wristPidController.reset(throughBore.getPosition());
     // TODO Sysid
     wristFeedForward = new ArmFeedforward(0, 0, 0, 0);
 
     goalState = new State(0, 0);
-
-    SmartDashboard.putData("Wrist PID Controller", wristPidController);
   }
 
   @Override
   public void updateInputs(WristIOInputs inputs) {
-
-    inputs.currentAngleDegrees = Units.radiansToDegrees(getAbsoluteEncoderGlobalRadians());
-    inputs.currentAngleRadians = getAbsoluteEncoderGlobalRadians();
+    inputs.currentAngleDegrees = Units.radiansToDegrees(getAbsoluteEncoderRadiansOffset());
+    inputs.currentAngleRadians = getAbsoluteEncoderRadiansOffset();
 
     inputs.pidOutput = this.pidOutput;
     inputs.ffOutput = this.ffOutput;
@@ -91,12 +87,11 @@ public class WristIOHardware implements WristIO {
     this.goalState = goalState;
 
     pidOutput = wristPidController.calculate(getAbsoluteEncoderRadiansOffset(), goalState);
-    // ffOutput =
-    //     wristFeedForward.calculate(
-    //         getAbsoluteEncoderRadiansOffset(),
-    // wristPidController.getSetpoint().velocity);
+    ffOutput =
+        wristFeedForward.calculate(
+            wristPidController.getSetpoint().position, wristPidController.getSetpoint().velocity);
 
-    return pidOutput;
+    return pidOutput + ffOutput;
   }
 
   @Override
@@ -113,10 +108,9 @@ public class WristIOHardware implements WristIO {
   //  MAKE 0 PARALLEL OFF THE GROUND; STANDARD UNIT CIRCLE NOTATION.
   @Override
   public double getAbsoluteEncoderRadiansOffset() {
-    return getAbsoluteEncoderRadiansNoOffset() - Constants.WristConstants.WRIST_THROUGHBORE_OFFSET;
-    // return (throughBore.getPosition())
-    //     - Constants.WristConstants.WRIST_THROUGHBORE_OFFSET
-    //     + Math.PI;
+    return (throughBore.getPosition())
+        - Constants.WristConstants.WRIST_THROUGHBORE_OFFSET
+        + Math.PI;
   }
 
   /**
@@ -126,7 +120,7 @@ public class WristIOHardware implements WristIO {
    */
   @Override
   public double getAbsoluteEncoderRadiansNoOffset() {
-    return (throughBore.getPosition() * .75 * 2 * Math.PI);
+    return (throughBore.getPosition());
   }
 
   @Override
@@ -143,6 +137,4 @@ public class WristIOHardware implements WristIO {
   public void stop() {
     wristMotor.setVoltage(0);
   }
-
-  /** SYSID METHODS */
 }

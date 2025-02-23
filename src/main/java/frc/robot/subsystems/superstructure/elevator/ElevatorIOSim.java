@@ -1,4 +1,4 @@
-package frc.robot.subsystems.elevator;
+package frc.robot.subsystems.superstructure.elevator;
 
 import static edu.wpi.first.units.Units.Volts;
 
@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import frc.helpers.maps.Constants;
 import frc.helpers.motorcontroller.CCMotorController;
-import frc.robot.subsystems.elevator.ElevatorSubsystem.ElevatorState;
+import frc.robot.subsystems.superstructure.elevator.ElevatorSubsystem.ElevatorState;
 import java.util.function.BooleanSupplier;
 
 public class ElevatorIOSim implements ElevatorIO {
@@ -56,12 +56,10 @@ public class ElevatorIOSim implements ElevatorIO {
 
   @Override
   public void updateInputs(ElevatorIOInputs inputs) {
-    inputs.currentPositionRotations = Units.radiansToDegrees(getAbsoluteHeightMetersOffset());
+    inputs.currentPositionMeters = getHeightMeters();
 
     inputs.pidOutput = this.pidOutput;
     inputs.ffOutput = this.ffOutput;
-
-    inputs.appliedVoltage = getVoltage();
 
     inputs.setpointAngleRadians = elevatorPidController.getSetpoint().position;
     inputs.setpointAngleDegrees =
@@ -94,7 +92,7 @@ public class ElevatorIOSim implements ElevatorIO {
 
     this.goalState = goalState;
 
-    pidOutput = elevatorPidController.calculate(getAbsoluteHeightMetersOffset(), goalState);
+    pidOutput = elevatorPidController.calculate(getHeightMeters(), goalState);
     ffOutput = elevatorFeedForward.calculate(elevatorPidController.getSetpoint().velocity);
 
     return pidOutput + ffOutput;
@@ -102,7 +100,7 @@ public class ElevatorIOSim implements ElevatorIO {
 
   @Override
   public BooleanSupplier atSetpoint() {
-    return () -> Math.abs(getAbsoluteHeightMetersOffset()) <= 5.0;
+    return () -> Math.abs(getHeightMeters()) <= 5.0;
   }
 
   @Override
@@ -111,19 +109,14 @@ public class ElevatorIOSim implements ElevatorIO {
     elevatorRight.setVoltage(voltage.magnitude());
   }
 
-  @Override
-  public double getAbsoluteHeightMetersOffset() {
-    return (throughBore.getPosition() * Constants.ElevatorConstants.AXLE_ROTATION_TO_HEIGHT_METERS)
-        - Constants.ElevatorConstants.ELEVATOR_THROUGHBORE_OFFSET;
-  }
-
   /**
    * Gets the reading of the absolute encoder with offset. Used for getting the offset.
    *
    * @return The value of the absolute encoder in radians without the offset applied.
    */
   @Override
-  public double getAbsoluteHeightMetersNoOffset() {
-    return throughBore.getPosition() * Constants.ElevatorConstants.AXLE_ROTATION_TO_HEIGHT_METERS;
+  public double getHeightMeters() {
+    return throughBore.getPosition()
+        * Constants.ElevatorConstants.HEIGHT_METERS_PER_ELEVATOR_MOTOR_ROTATIONS;
   }
 }

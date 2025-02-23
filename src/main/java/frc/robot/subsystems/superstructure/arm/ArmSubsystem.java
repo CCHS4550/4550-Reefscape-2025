@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems.arm;
+package frc.robot.subsystems.superstructure.arm;
 
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Seconds;
@@ -12,11 +12,13 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.helpers.maps.Constants;
 import frc.helpers.motorcontroller.CCMotorController;
+import frc.robot.RobotState;
 import org.littletonrobotics.junction.Logger;
 
 public class ArmSubsystem extends SubsystemBase {
@@ -24,11 +26,12 @@ public class ArmSubsystem extends SubsystemBase {
   public enum ArmState {
     // Placeholder Values
     ZERO(0),
-    DEFAULT_WITHINFRAME(Units.degreesToRadians(0)),
-    L1_FRONT(Units.degreesToRadians(30)),
-    L2L3_FRONT(Units.degreesToRadians(45)),
-    L4_BACK(Units.degreesToRadians(110)),
-    CORAL_STATION_FRONT(Units.degreesToRadians(15)),
+    DEFAULT_WITHINFRAME(Units.degreesToRadians(-40)),
+    L1_FRONT(Units.degreesToRadians(0)),
+    L2_FRONT(Units.degreesToRadians(24.126958)),
+    L3_FRONT(Units.degreesToRadians(29.352134)),
+    L4_BACK(Units.degreesToRadians(94.234611)),
+    CORAL_STATION_FRONT(Units.degreesToRadians(11.5)),
     CORAL_STATION_BACK(Units.degreesToRadians(120)),
     CLIMB_PREPARING(Units.degreesToRadians(150));
 
@@ -85,27 +88,39 @@ public class ArmSubsystem extends SubsystemBase {
     switch (currentState) {
       case ZERO:
         armIO.holdAtState(ArmState.ZERO);
+        break;
 
       case DEFAULT_WITHINFRAME:
         armIO.holdAtState(ArmState.DEFAULT_WITHINFRAME);
+        break;
 
       case L1_FRONT:
         armIO.holdAtState(ArmState.L1_FRONT);
 
-      case L2L3_FRONT:
-        armIO.holdAtState(ArmState.L2L3_FRONT);
+        break;
+
+      case L2_FRONT:
+        armIO.holdAtState(ArmState.L2_FRONT);
+        break;
+      case L3_FRONT:
+        armIO.holdAtState(ArmState.L3_FRONT);
+        break;
 
       case L4_BACK:
         armIO.holdAtState(ArmState.L4_BACK);
+        break;
 
       case CORAL_STATION_FRONT:
         armIO.holdAtState(ArmState.CORAL_STATION_FRONT);
+        break;
 
       case CORAL_STATION_BACK:
         armIO.holdAtState(ArmState.CORAL_STATION_BACK);
+        break;
 
       default:
         armIO.holdAtState(ArmState.DEFAULT_WITHINFRAME);
+        break;
     }
   }
 
@@ -121,8 +136,11 @@ public class ArmSubsystem extends SubsystemBase {
       case L1_FRONT:
         return ArmState.L1_FRONT;
 
-      case L2L3_FRONT:
-        return ArmState.L2L3_FRONT;
+      case L2_FRONT:
+        return ArmState.L2_FRONT;
+
+      case L3_FRONT:
+        return ArmState.L3_FRONT;
 
       case L4_BACK:
         return ArmState.L4_BACK;
@@ -155,6 +173,11 @@ public class ArmSubsystem extends SubsystemBase {
     return armIO.getAbsoluteEncoderRadiansOffset();
   }
 
+  public Command testVoltageCommand(double volts) {
+    return Commands.startEnd(
+        () -> armIO.setVoltage(Volts.of(volts)), () -> armIO.setVoltage(Volts.of(0)));
+  }
+
   @Override
   public void periodic() {
     // System.out.println("currentState " + currentState);
@@ -168,11 +191,21 @@ public class ArmSubsystem extends SubsystemBase {
     armIO.updateInputs(armInputs);
     Logger.processInputs("Subsystem/Arm", armInputs);
 
-    if (wantedState != currentState) currentState = handleStateTransitions();
-    // currentState = ArmState.ZERO;
-    applyStates();
+    if (RobotState.getInstance().allowSubsystemMovement.getAsBoolean()
+        && RobotState.getInstance().moveArm.getAsBoolean()) {
 
-    // This method will be called once per scheduler run
+      if (wantedState != currentState) {
+        // armIO.resetPID();
+        currentState = handleStateTransitions();
+      }
+      applyStates();
+    }
+
+    // // This method will be called once per scheduler run
+  }
+
+  public void resetPID() {
+    armIO.resetPID();
   }
 
   /** SYSID METHODS */

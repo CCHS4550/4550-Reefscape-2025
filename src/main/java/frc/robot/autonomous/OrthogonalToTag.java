@@ -28,11 +28,7 @@ import org.littletonrobotics.junction.Logger;
 
 public class OrthogonalToTag extends Command {
 
-  private boolean poseIsNull = true;
   private boolean exitCommand = false;
-
-  private double distanceMetersErr;
-  private double angleDegreesErr;
 
   private SwerveDriveSubsystem swerve;
   private VisionIO vision;
@@ -51,10 +47,8 @@ public class OrthogonalToTag extends Command {
 
   private SwerveDrivePoseEstimator poseRelativeToTargetEstimator;
 
-  @SuppressWarnings("unused")
   private PIDController translationPID;
 
-  @SuppressWarnings("unused")
   private PIDController rotationPID;
 
   Timer timer = new Timer();
@@ -78,8 +72,8 @@ public class OrthogonalToTag extends Command {
     this.swerve = swerve;
     this.vision = vision;
 
-    translationPID = new PIDController(3, 0, 0);
-    rotationPID = new PIDController(5, 0, 0);
+    translationPID = new PIDController(.7, .5, 0);
+    rotationPID = new PIDController(.5, .5, 0);
     rotationPID.enableContinuousInput(-Math.PI, Math.PI);
 
     if (useBestTag) this.focusedTag = RobotState.getInstance().visionInputs.focusedId;
@@ -121,8 +115,6 @@ public class OrthogonalToTag extends Command {
 
     targetState.pose = null;
     targetState.heading = null;
-
-    poseIsNull = true;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -175,7 +167,12 @@ public class OrthogonalToTag extends Command {
       targetState.pose =
           new Pose2d(targetX, targetY, targetAngle)
               .plus(new Transform2d(new Pose2d(), currentRelativePose));
-      targetState.pose = targetState.pose.plus(transformation);
+
+      targetState.pose =
+          targetState
+              .pose
+              .plus(new Transform2d(0, 0, Rotation2d.fromRadians(0)))
+              .plus(transformation);
       targetState.heading = targetState.pose.getRotation();
     }
 
