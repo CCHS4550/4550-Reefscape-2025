@@ -318,19 +318,21 @@ public class Constants {
 
     // 5 inches from reef to bumper
     public static final Transform2d FRONT_REEF_LEFT_OFFSET =
-        new Transform2d(Inches.of(-18.7500), Inches.of(6.481791), new Rotation2d());
+        new Transform2d(Inches.of((-18.7500 - 5)), Inches.of(6.481791), new Rotation2d());
     public static final Transform2d FRONT_REEF_RIGHT_OFFSET =
-        new Transform2d(Inches.of(-18.7500), Inches.of(-6.481791), new Rotation2d());
+        new Transform2d(Inches.of((-18.7500 - 5)), Inches.of(-6.481791), new Rotation2d());
+
     public static final Transform2d BACK_REEF_LEFT_OFFSET =
-        new Transform2d(Inches.of(-18.7500), Inches.of(6.481791), new Rotation2d(Math.PI));
+        new Transform2d(Inches.of((-18.7500 - 5)), Inches.of(6.481791), new Rotation2d(Math.PI));
     public static final Transform2d BACK_REEF_RIGHT_OFFSET =
-        new Transform2d(Inches.of(-18.7500), Inches.of(-6.481791), new Rotation2d(Math.PI));
+        new Transform2d(Inches.of((-18.7500 - 5)), Inches.of(-6.481791), new Rotation2d(Math.PI));
+        
     public static final Transform2d CORAL_STATION_LEFT_OFFSET =
-        new Transform2d(Inches.of(-18.7500), Inches.of(6.481791), new Rotation2d());
+        new Transform2d(Inches.of((-18.7500 - 5)), Inches.of(6.481791), new Rotation2d());
     public static final Transform2d CORAL_STATION_RIGHT_OFFSET =
-        new Transform2d(Inches.of(-18.7500), Inches.of(-6.481791), new Rotation2d());
+        new Transform2d(Inches.of((-18.7500 - 5)), Inches.of(-6.481791), new Rotation2d());
     public static final Transform2d PROCESSOR_OFFSET =
-        new Transform2d(Inches.of(-18.7500), Inches.of(6.481791), new Rotation2d());
+        new Transform2d(Inches.of((-18.7500 - 5)), Inches.of(6.481791), new Rotation2d());
   }
 
   /** Back Camera */
