@@ -160,7 +160,7 @@ public class RobotState {
 
     this.superstructure = superstructure;
 
-    this.currentSuperState = currentSuperState;
+    this.currentSuperState = superstructure.currentSuperState;
 
     algaeInputs = algae.algaeInputs;
     armInputs = arm.armInputs;

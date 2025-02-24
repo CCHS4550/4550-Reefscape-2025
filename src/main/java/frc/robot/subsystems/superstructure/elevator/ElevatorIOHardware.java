@@ -101,6 +101,16 @@ public class ElevatorIOHardware implements ElevatorIO {
                     0))));
   }
 
+  public void holdAtStateWithVelocity(ElevatorState goalState, double velocity) {
+    setVoltage(
+        Volts.of(
+            getPIDFFOutput(
+                new State(
+                    goalState.getHeight()
+                        / Constants.ElevatorConstants.HEIGHT_METERS_TO_AXLE_ROTATIONS,
+                    velocity))));
+  }
+
   public Command goToGoalState(State goalState, ElevatorSubsystem elevator) {
     return new FunctionalCommand(
         () -> {},

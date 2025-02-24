@@ -11,14 +11,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.PhotonPipelineResult;
-import org.photonvision.targeting.PhotonTrackedTarget;
 
 public class PhotonVisionAprilTag extends SubsystemBase implements VisionIO {
 
@@ -99,7 +97,8 @@ public class PhotonVisionAprilTag extends SubsystemBase implements VisionIO {
     //         .flatMap(y -> y.getValue().getTargets().stream())
     //         .collect(Collectors.toSet());
     // inputs.visibleCamera1Targets =
-    //     visibleCamera1Targets.stream().mapToInt(target -> target.fiducialId).distinct().toArray();
+    //     visibleCamera1Targets.stream().mapToInt(target ->
+    // target.fiducialId).distinct().toArray();
 
     // Set<PhotonTrackedTarget> visibleCamera2Targets =
     //     results.stream()
@@ -107,7 +106,8 @@ public class PhotonVisionAprilTag extends SubsystemBase implements VisionIO {
     //         .flatMap(y -> y.getValue().getTargets().stream())
     //         .collect(Collectors.toSet());
     // inputs.visibleCamera2Targets =
-    //     visibleCamera2Targets.stream().mapToInt(target -> target.fiducialId).distinct().toArray();
+    //     visibleCamera2Targets.stream().mapToInt(target ->
+    // target.fiducialId).distinct().toArray();
 
     inputs.focusedId =
         getPlurality(
@@ -126,8 +126,6 @@ public class PhotonVisionAprilTag extends SubsystemBase implements VisionIO {
     inputs.poseEstimates = new Pose2d[0];
 
     inputs.averageTimestamp = estimateAverageTimestamp(results);
-
-    
 
     /** If you have a target, then update the poseEstimate ArrayList to equal that. */
     if (hasAnyTarget(results)) {
@@ -181,7 +179,6 @@ public class PhotonVisionAprilTag extends SubsystemBase implements VisionIO {
       Optional<EstimatedRobotPose> estimatedPose = result.getKey().update(result.getValue());
       if (estimatedPose.isPresent()) {
         estimates.add(estimatedPose.get().estimatedPose.toPose2d());
-        
       }
     }
 

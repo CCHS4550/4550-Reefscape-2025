@@ -41,6 +41,8 @@ public interface ElevatorIO {
 
   public default void holdAtState(ElevatorState goalState) {}
 
+  public default void holdAtStateWithVelocity(ElevatorState goalState, double velocity) {}
+
   public default Command goToGoalState(State goalState, ElevatorSubsystem elevator) {
     return new InstantCommand();
   }

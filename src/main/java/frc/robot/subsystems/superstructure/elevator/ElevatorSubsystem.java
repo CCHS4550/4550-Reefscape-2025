@@ -115,7 +115,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         //   elevatorIO.holdAtState(ElevatorState.L1_FRONT);
         //   break;
       case L4_INTERMEDIATE:
-        elevatorIO.holdAtState(ElevatorState.L4_INTERMEDIATE);
+        elevatorIO.holdAtStateWithVelocity(ElevatorState.L4_INTERMEDIATE, 10);
 
       case L2_FRONT:
         elevatorIO.holdAtState(ElevatorState.L2_FRONT);
