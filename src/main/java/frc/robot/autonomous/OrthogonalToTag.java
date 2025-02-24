@@ -45,6 +45,7 @@ public class OrthogonalToTag extends Command {
   private Pose2d globalTargetPose;
   private Pose2d globalCurrentPose;
 
+  private Pose2d idealTargetPose; 
   private SwerveDrivePoseEstimator poseRelativeToTargetEstimator;
 
   private PIDController translationPID;
@@ -115,6 +116,16 @@ public class OrthogonalToTag extends Command {
 
     targetState.pose = null;
     targetState.heading = null;
+
+    idealTargetPose = new Pose2d(
+      Constants.AprilTags.TAG_MAP
+          .get(focusedTag)
+          .getTranslation()
+          .minus(RobotState.getInstance().getPose().getTranslation()),
+      Constants.AprilTags.TAG_MAP.get(focusedTag).getRotation())
+  .rotateBy(RobotState.getInstance().getPoseRotation2d().unaryMinus())
+  .plus(new Transform2d(0, 0, Rotation2d.fromRadians(Math.PI)))
+  .plus(transformation);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -176,17 +187,9 @@ public class OrthogonalToTag extends Command {
       targetState.heading = targetState.pose.getRotation();
     }
 
+    
     if (targetState.pose == null) {
-      targetState.pose =
-          new Pose2d(
-                  Constants.AprilTags.TAG_MAP
-                      .get(focusedTag)
-                      .getTranslation()
-                      .minus(RobotState.getInstance().getPose().getTranslation()),
-                  Constants.AprilTags.TAG_MAP.get(focusedTag).getRotation())
-              .rotateBy(RobotState.getInstance().getPoseRotation2d().unaryMinus())
-              .plus(new Transform2d(0, 0, Rotation2d.fromRadians(Math.PI)))
-              .plus(transformation);
+      targetState.pose = idealTargetPose;
       targetState.heading = targetState.pose.getRotation();
     }
 
@@ -248,6 +251,8 @@ public class OrthogonalToTag extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+
+    if (idealTargetPose.getTranslation().getDistance(globalTargetPose.getTranslation()) > .5) return true;
 
     double distanceMetersErr =
         RobotState.getInstance()
