@@ -390,7 +390,7 @@ public class CustomAutoChooser {
     // Do not add file extensions!
 
     c.addCommands(pathWrapper.setInitialPose());
-    c.addCommands(pathWrapper.getFollowCommand(0));
+    // c.addCommands(pathWrapper.getFollowCommand(0));
 
     return c;
   }

@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.helpers.maps.Constants;
 import frc.robot.autonomous.CustomAutoChooser;
+import frc.robot.subsystems.swervedrive.RealOdometryThread;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -143,12 +144,6 @@ public class Robot extends LoggedRobot {
         break;
     }
 
-    RobotState.getInstance().swerveModuleEncodersPeriodic();
-    RobotState.getInstance().updateSwerveModulePositionsPeriodic();
-
-    RobotState.getInstance().updateOdometryPose();
-    RobotState.getInstance().updateVisionPose();
-
     // Runs the Scheduler. This is responsible for polling buttons, adding
     // newly-scheduled
     // commands, running already-scheduled commands, removing finished or
@@ -170,7 +165,10 @@ public class Robot extends LoggedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
+    RealOdometryThread.getInstance().start();
+
     // RobotState.getInstance().resetPIDControllers();
+    if (!RobotState.getInstance().poseInitialized) RobotState.getInstance().poseInit();
     autoChooser.getSelectedCustomCommand().schedule();
 
     System.out.println("Autonomous Routine Scheduled!");
@@ -178,17 +176,31 @@ public class Robot extends LoggedRobot {
 
   /** This function is called periodically during autonomous. */
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousPeriodic() {
+    RobotState.getInstance().swerveModuleEncodersPeriodic();
+    RobotState.getInstance().updateSwerveModulePositionsPeriodic();
+
+    RobotState.getInstance().updateOdometryPose();
+    // RobotState.getInstance().updateVisionPose();
+  }
 
   /** This function is called once when teleop is enabled. */
   @Override
   public void teleopInit() {
+    if (!RobotState.getInstance().poseInitialized) RobotState.getInstance().poseInit();
+    RealOdometryThread.getInstance().start();
     // RobotState.getInstance().resetPIDControllers();
   }
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    RobotState.getInstance().swerveModuleEncodersPeriodic();
+    RobotState.getInstance().updateSwerveModulePositionsPeriodic();
+
+    RobotState.getInstance().updateOdometryPose();
+    // RobotState.getInstance().updateVisionPose();
+  }
 
   /** This function is called once when test mode is enabled. */
   @Override

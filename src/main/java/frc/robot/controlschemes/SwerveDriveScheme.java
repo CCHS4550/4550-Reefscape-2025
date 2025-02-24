@@ -5,6 +5,7 @@ import static edu.wpi.first.wpilibj2.command.Commands.runOnce;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -42,9 +43,9 @@ public class SwerveDriveScheme {
         return fieldCentric;
       };
 
-  private static DoubleSupplier driveSpeedModifier = () -> .6;
+  private static DoubleSupplier driveSpeedModifier = () -> .4;
 
-  private static double turnSpeedModifier = 0.5;
+  private static double turnSpeedModifier = 0.6;
 
   private static PIDController orientationLockPID;
 
@@ -107,6 +108,7 @@ public class SwerveDriveScheme {
     swerve.setDefaultCommand(
         new RunCommand(
                 () -> {
+                  Logger.recordOutput("driveSpeedModifier", driveSpeedModifier);
 
                   // Set x, y, and turn speed based on joystick inputs
                   double xSpeed =
@@ -148,7 +150,11 @@ public class SwerveDriveScheme {
                             xSpeed,
                             ySpeed,
                             -turnSpeed,
-                            RobotState.getInstance().getPoseRotation2d());
+                            Constants.isBlue
+                                ? RobotState.getInstance().getPoseRotation2d()
+                                : RobotState.getInstance()
+                                    .getPoseRotation2d()
+                                    .plus(Rotation2d.fromRadians(Math.PI)));
                     Logger.recordOutput("xSpeed", xSpeed);
                     Logger.recordOutput("ySpeed", ySpeed);
 
@@ -161,8 +167,8 @@ public class SwerveDriveScheme {
                 swerve)
             .withName("Swerve Controller Command"));
 
-    // configureButtons(
-    // algae, arm, climber, elevator, intake, swerve, wrist, superstructure, controller);
+    configureButtons(
+        algae, arm, climber, elevator, intake, swerve, wrist, superstructure, vision, controller);
   }
 
   /**
@@ -212,7 +218,8 @@ public class SwerveDriveScheme {
 
     processorTrigger.whileTrue(AlignCommands.AlignToProcessor(swerve, vision));
 
-    controller.a().onTrue(runOnce(() -> RobotState.getInstance().setOdometry()));
+    controller.a().onTrue(runOnce(() -> RobotState.getInstance().resetRotation()));
+
     coralStationLeftTrigger.whileTrue(AlignCommands.frontAlignToCoralStationLeft(swerve, vision));
     coralStationRightTrigger.whileTrue(AlignCommands.frontAlignToCoralStationRight(swerve, vision));
 
@@ -239,14 +246,14 @@ public class SwerveDriveScheme {
   }
 
   private static void setFastMode() {
-    driveSpeedModifier = () -> 1;
+    driveSpeedModifier = () -> .7;
   }
 
   private static void setNormalMode() {
-    driveSpeedModifier = () -> 0.6;
+    driveSpeedModifier = () -> 0.4;
   }
 
   private static void setSlowMode() {
-    driveSpeedModifier = () -> 0.15;
+    driveSpeedModifier = () -> 0.05;
   }
 }

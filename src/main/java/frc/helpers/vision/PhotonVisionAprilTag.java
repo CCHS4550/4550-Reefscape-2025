@@ -91,23 +91,23 @@ public class PhotonVisionAprilTag extends SubsystemBase implements VisionIO {
     condensedResults = results;
     condensedResults = condensePipelineResults();
 
-    inputs.hasTarget = hasAnyTarget(condensedResults) ? true : false;
+    inputs.hasTarget = hasAnyTarget(results);
 
-    Set<PhotonTrackedTarget> visibleCamera1Targets =
-        results.stream()
-            .filter(x -> x.getKey().equals(limelight3_photonEstimator))
-            .flatMap(y -> y.getValue().getTargets().stream())
-            .collect(Collectors.toSet());
-    inputs.visibleCamera1Targets =
-        visibleCamera1Targets.stream().mapToInt(target -> target.fiducialId).distinct().toArray();
+    // Set<PhotonTrackedTarget> visibleCamera1Targets =
+    //     results.stream()
+    //         .filter(x -> x.getKey().equals(limelight3_photonEstimator))
+    //         .flatMap(y -> y.getValue().getTargets().stream())
+    //         .collect(Collectors.toSet());
+    // inputs.visibleCamera1Targets =
+    //     visibleCamera1Targets.stream().mapToInt(target -> target.fiducialId).distinct().toArray();
 
-    Set<PhotonTrackedTarget> visibleCamera2Targets =
-        results.stream()
-            .filter(x -> x.getKey().equals(limelight3_photonEstimator))
-            .flatMap(y -> y.getValue().getTargets().stream())
-            .collect(Collectors.toSet());
-    inputs.visibleCamera2Targets =
-        visibleCamera2Targets.stream().mapToInt(target -> target.fiducialId).distinct().toArray();
+    // Set<PhotonTrackedTarget> visibleCamera2Targets =
+    //     results.stream()
+    //         .filter(x -> x.getKey().equals(limelight3_photonEstimator))
+    //         .flatMap(y -> y.getValue().getTargets().stream())
+    //         .collect(Collectors.toSet());
+    // inputs.visibleCamera2Targets =
+    //     visibleCamera2Targets.stream().mapToInt(target -> target.fiducialId).distinct().toArray();
 
     inputs.focusedId =
         getPlurality(
@@ -126,6 +126,8 @@ public class PhotonVisionAprilTag extends SubsystemBase implements VisionIO {
     inputs.poseEstimates = new Pose2d[0];
 
     inputs.averageTimestamp = estimateAverageTimestamp(results);
+
+    
 
     /** If you have a target, then update the poseEstimate ArrayList to equal that. */
     if (hasAnyTarget(results)) {
@@ -149,7 +151,7 @@ public class PhotonVisionAprilTag extends SubsystemBase implements VisionIO {
     List<Map.Entry<PhotonPoseEstimator, PhotonPipelineResult>> trustedResults = new ArrayList<>();
     for (int i = 0; i < results.size(); i++) {
       if (results.get(i).getValue().getBestTarget().getPoseAmbiguity() > 0
-          && results.get(i).getValue().getBestTarget().getPoseAmbiguity() <= 1)
+          && results.get(i).getValue().getBestTarget().getPoseAmbiguity() <= .3)
         trustedResults.add(results.get(i));
       {
       }
@@ -179,6 +181,7 @@ public class PhotonVisionAprilTag extends SubsystemBase implements VisionIO {
       Optional<EstimatedRobotPose> estimatedPose = result.getKey().update(result.getValue());
       if (estimatedPose.isPresent()) {
         estimates.add(estimatedPose.get().estimatedPose.toPose2d());
+        
       }
     }
 

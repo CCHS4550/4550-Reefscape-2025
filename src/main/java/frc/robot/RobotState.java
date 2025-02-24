@@ -68,6 +68,10 @@ public class RobotState {
     return instance;
   }
 
+  private RobotState() {
+    poseInitialized = false;
+  }
+
   private AlgaeSubsystem algae;
   private ArmSubsystem arm;
   private ClimberSubsystem climber;
@@ -107,6 +111,8 @@ public class RobotState {
   public BooleanSupplier moveWrist = () -> true;
 
   public boolean useHF = true;
+
+  public boolean poseInitialized;
 
   /** High frequency odometry objects (HF) */
   public int sampleCountHF;
@@ -193,11 +199,11 @@ public class RobotState {
     currentSwerveModulePositions[3] = new SwerveModulePosition();
   }
 
-  public synchronized CustomAutoChooser autoChooserInit() {
+  public CustomAutoChooser autoChooserInit() {
     return new CustomAutoChooser(swerve, superstructure, vision);
   }
 
-  public synchronized void poseInit() {
+  public void poseInit() {
 
     poseEstimator =
         new SwerveDrivePoseEstimator(
@@ -205,6 +211,8 @@ public class RobotState {
             getRotation2d(),
             swerveModulePositions,
             new Pose2d(0, 0, new Rotation2d()));
+
+    poseInitialized = true;
   }
 
   /** Update the pose estimator with Odometry and Gyro Data (HF Functional) */
@@ -286,7 +294,7 @@ public class RobotState {
     Logger.processInputs("Subsystem/Vision", visionInputs);
   }
 
-  public synchronized void dashboardInit() {
+  public void dashboardInit() {
 
     /* Put the Command Scheduler on SmartDashboard */
     SmartDashboard.putData(CommandScheduler.getInstance());
@@ -443,12 +451,12 @@ public class RobotState {
     return swerveModulePositions;
   }
 
-  public synchronized ChassisSpeeds getRobotRelativeSpeeds() {
+  public ChassisSpeeds getRobotRelativeSpeeds() {
     return swerve.getRobotRelativeSpeeds();
   }
 
   /** This is very important to make sure all the data is the same in quantity. */
-  public synchronized int getMinLengthHF() {
+  public int getMinLengthHF() {
 
     int[] lengths = {
       swerve.swerveModuleInputs[0].odometryDrivePositionsMeters.length,
@@ -465,7 +473,7 @@ public class RobotState {
   }
 
   /** Read HF odometry data */
-  public synchronized SwerveModulePosition[][] getSwerveModulePositionArrayHF() {
+  public SwerveModulePosition[][] getSwerveModulePositionArrayHF() {
 
     int min = getMinLengthHF();
 
@@ -495,7 +503,7 @@ public class RobotState {
     return positions;
   }
 
-  public synchronized double[] getSampleTimestampArrayHF() {
+  public double[] getSampleTimestampArrayHF() {
     int min = getMinLengthHF();
     // List<Integer> allTimestamps = new ArrayList<>();
     double[][] allTimestamps = {
@@ -516,7 +524,7 @@ public class RobotState {
    * Estimate gyro angle based on last known gyro inputs and change in module positions. Will get
    * less accurate over time. // MOSTLY UNUSED //
    */
-  public synchronized Rotation2d[] gyroAnglesPlusSwerveModuleDeltasHF() {
+  public Rotation2d[] gyroAnglesPlusSwerveModuleDeltasHF() {
 
     List<Rotation2d> gyroAnglesPlusDeltasHF = new ArrayList<>();
 
@@ -576,11 +584,11 @@ public class RobotState {
    *
    * @return The Pose2d of the robot.
    */
-  public synchronized Pose2d getPose() {
+  public Pose2d getPose() {
     return poseEstimator.getEstimatedPosition();
   }
 
-  public synchronized void printPos2d() {
+  public void printPos2d() {
     System.out.println(poseEstimator.getEstimatedPosition());
   }
 
@@ -588,8 +596,15 @@ public class RobotState {
    * Resets the odometer readings using the gyro, SwerveModulePositions (defined in constructor),
    * and Pose2d. Also used in AutonomousScheme.java
    */
-  public synchronized void setOdometry() {
+  public void setOdometry() {
     poseEstimator.resetPosition(getRotation2d(), swerveModulePositions, getPose());
+  }
+
+  public void resetRotation() {
+    poseEstimator.resetPosition(
+        getRotation2d(),
+        swerveModulePositions,
+        new Pose2d(poseEstimator.getEstimatedPosition().getTranslation(), new Rotation2d()));
   }
 
   /**
@@ -598,12 +613,12 @@ public class RobotState {
    *
    * @param pos the Pose2d to set the odometry
    */
-  public synchronized void setOdometry(Translation2d translation) {
+  public void setOdometry(Translation2d translation) {
     poseEstimator.resetPosition(
         getRotation2d(), swerveModulePositions, new Pose2d(translation, getRotation2d()));
   }
 
-  public synchronized void setOdometry(Pose2d pose) {
+  public void setOdometry(Pose2d pose) {
     poseEstimator.resetPosition(getRotation2d(), swerveModulePositions, pose);
   }
 
@@ -611,7 +626,7 @@ public class RobotState {
     return runOnce(() -> setOdometry(pose), swerve);
   }
 
-  public synchronized void setOdometryAllianceFlip(Pose2d pos) {
+  public void setOdometryAllianceFlip(Pose2d pos) {
     if (Constants.isBlue) return;
 
     poseEstimator.resetPosition(
@@ -622,7 +637,7 @@ public class RobotState {
   }
 
   /** Gyroscope Methods (Pigeon2) */
-  public synchronized void zeroHeading() {
+  public void zeroHeading() {
     pigeonGyro.reset();
     setOdometry(new Pose2d(getPose().getX(), getPose().getY(), new Rotation2d(0)));
   }
@@ -632,19 +647,19 @@ public class RobotState {
    *
    * @return The facing direction of the gyro, between -360 and 360 degrees.
    */
-  public synchronized double getHeading() {
+  public double getHeading() {
     return Math.IEEEremainder(pigeonGyro.getYaw().getValueAsDouble(), 360);
   }
 
-  public synchronized Rotation2d getPoseRotation2d() {
+  public Rotation2d getPoseRotation2d() {
     return poseEstimator.getEstimatedPosition().getRotation();
   }
 
-  public synchronized double getPoseAngleDegrees() {
+  public double getPoseAngleDegrees() {
     return poseEstimator.getEstimatedPosition().getRotation().getDegrees();
   }
 
-  public synchronized double getPoseAngleRadians() {
+  public double getPoseAngleRadians() {
     return poseEstimator.getEstimatedPosition().getRotation().getRadians();
   }
 
@@ -654,7 +669,7 @@ public class RobotState {
    *
    * @return
    */
-  public synchronized Rotation2d getRotation2d() {
+  public Rotation2d getRotation2d() {
 
     // currentSwerveModulePositions = updateModulePositions();
 
@@ -690,7 +705,7 @@ public class RobotState {
     // .plus(Rotation2d.fromRadians(Math.PI));
   }
 
-  public synchronized void setRotation2d(Rotation2d rotation2d) {
+  public void setRotation2d(Rotation2d rotation2d) {
     setOdometry(new Pose2d(getPose().getTranslation(), rotation2d));
   }
 }

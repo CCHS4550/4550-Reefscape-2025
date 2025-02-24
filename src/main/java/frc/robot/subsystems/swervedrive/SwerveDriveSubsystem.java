@@ -185,8 +185,6 @@ public class SwerveDriveSubsystem extends SubsystemBase {
           frontRightInputs, frontLeftInputs, backRightInputs, backLeftInputs
         };
 
-    RealOdometryThread.getInstance().start();
-
     desiredModuleStates = new SwerveModuleState[4];
 
     desiredModuleStates[0] = new SwerveModuleState(0, new Rotation2d());
