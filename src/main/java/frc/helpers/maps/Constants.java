@@ -326,7 +326,7 @@ public class Constants {
         new Transform2d(Inches.of((-18.7500 - 5)), Inches.of(6.481791), new Rotation2d(Math.PI));
     public static final Transform2d BACK_REEF_RIGHT_OFFSET =
         new Transform2d(Inches.of((-18.7500 - 5)), Inches.of(-6.481791), new Rotation2d(Math.PI));
-        
+
     public static final Transform2d CORAL_STATION_LEFT_OFFSET =
         new Transform2d(Inches.of((-18.7500 - 5)), Inches.of(6.481791), new Rotation2d());
     public static final Transform2d CORAL_STATION_RIGHT_OFFSET =
@@ -427,6 +427,8 @@ public class Constants {
             .boxed()
             .collect(Collectors.toMap(i -> BARGE_IDS[i], BARGE_POSES::get));
   }
+
+  public static final int BLINKIN_LED_CONTROLLER_PORT = 0;
 
   // safely divide
   public static double safeDivision(double numerator, double denominator) {

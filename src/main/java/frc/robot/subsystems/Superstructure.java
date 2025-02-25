@@ -172,11 +172,17 @@ public class Superstructure extends SubsystemBase {
         break;
 
       case CLIMB_PREPARING:
-        arm.setWantedStateCommand(ArmState.CLIMB_PREPARING).schedule();
+        //   arm.setWantedStateCommand(ArmState.CLIMB_PREPARING).schedule();
 
-        wrist.setWantedStateCommand(WristState.CLIMB_PREPARING).schedule();
+        //   wrist.setWantedStateCommand(WristState.CLIMB_PREPARING).schedule();
 
-        elevator.setWantedStateCommand(ElevatorState.CLIMB_PREPARING).schedule();
+        //   elevator.setWantedStateCommand(ElevatorState.CLIMB_PREPARING).schedule();
+
+        arm.setWantedStateCommand(ArmState.L4_BACK).schedule();
+
+        wrist.setWantedStateCommand(WristState.L4_BACK).schedule();
+
+        elevator.setWantedStateCommand(ElevatorState.ZERO).schedule();
         outtakeReverse = false;
         break;
       default:

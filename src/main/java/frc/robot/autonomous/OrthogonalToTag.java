@@ -8,15 +8,19 @@ import static edu.wpi.first.units.Units.Meter;
 
 import com.pathplanner.lib.trajectory.PathPlannerTrajectoryState;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.helpers.BlinkinLEDController;
+import frc.helpers.BlinkinLEDController.BlinkinPattern;
 import frc.helpers.maps.Constants;
 import frc.helpers.vision.*;
 import frc.robot.RobotState;
@@ -45,12 +49,11 @@ public class OrthogonalToTag extends Command {
   private Pose2d globalTargetPose;
   private Pose2d globalCurrentPose;
 
-  private Pose2d idealTargetPose; 
+  private Pose2d idealTargetPose;
   private SwerveDrivePoseEstimator poseRelativeToTargetEstimator;
 
   private PIDController translationPID;
-
-  private PIDController rotationPID;
+  private ProfiledPIDController rotationPID;
 
   Timer timer = new Timer();
 
@@ -74,7 +77,7 @@ public class OrthogonalToTag extends Command {
     this.vision = vision;
 
     translationPID = new PIDController(.7, .5, 0);
-    rotationPID = new PIDController(.5, .5, 0);
+    rotationPID = new ProfiledPIDController(.5, .5, 0, new Constraints(10, 5));
     rotationPID.enableContinuousInput(-Math.PI, Math.PI);
 
     if (useBestTag) this.focusedTag = RobotState.getInstance().visionInputs.focusedId;
@@ -117,20 +120,26 @@ public class OrthogonalToTag extends Command {
     targetState.pose = null;
     targetState.heading = null;
 
-    idealTargetPose = new Pose2d(
-      Constants.AprilTags.TAG_MAP
-          .get(focusedTag)
-          .getTranslation()
-          .minus(RobotState.getInstance().getPose().getTranslation()),
-      Constants.AprilTags.TAG_MAP.get(focusedTag).getRotation())
-  .rotateBy(RobotState.getInstance().getPoseRotation2d().unaryMinus())
-  .plus(new Transform2d(0, 0, Rotation2d.fromRadians(Math.PI)))
-  .plus(transformation);
+    idealTargetPose =
+        new Pose2d(
+                Constants.AprilTags.TAG_MAP
+                    .get(focusedTag)
+                    .getTranslation()
+                    .minus(RobotState.getInstance().getPose().getTranslation()),
+                Constants.AprilTags.TAG_MAP.get(focusedTag).getRotation())
+            .rotateBy(RobotState.getInstance().getPoseRotation2d().unaryMinus())
+            .plus(new Transform2d(0, 0, Rotation2d.fromRadians(Math.PI)))
+            .plus(transformation);
+
+    translationPID.reset();
+    rotationPID.reset(currentRelativePose.getRotation().getRadians());
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+
+    BlinkinLEDController.getInstance().setIfNotAlready(BlinkinPattern.BREATH_BLUE);
     // if pose is null, it should get a pose from a thigsndfkhgnldgfsfdfakd
 
     for (int i = 0; i < getTransform3dList().size(); i++) {
@@ -187,7 +196,6 @@ public class OrthogonalToTag extends Command {
       targetState.heading = targetState.pose.getRotation();
     }
 
-    
     if (targetState.pose == null) {
       targetState.pose = idealTargetPose;
       targetState.heading = targetState.pose.getRotation();
@@ -252,7 +260,8 @@ public class OrthogonalToTag extends Command {
   @Override
   public boolean isFinished() {
 
-    if (idealTargetPose.getTranslation().getDistance(globalTargetPose.getTranslation()) > .5) return true;
+    if (idealTargetPose.getTranslation().getDistance(globalTargetPose.getTranslation()) > .5)
+      return true;
 
     double distanceMetersErr =
         RobotState.getInstance()

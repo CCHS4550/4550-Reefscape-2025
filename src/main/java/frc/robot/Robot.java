@@ -98,8 +98,8 @@ public class Robot extends LoggedRobot {
         break;
     }
 
-    PortForwarder.add(5800, "limelight3.local", 5800);
-    PortForwarder.add(5801, "limelight2p.local", 5801);
+    PortForwarder.add(5800, "10.45.50.11.5800", 5800);
+    PortForwarder.add(5801, "10.45.50.12.5800", 5801);
 
     // Unofficial REV-Compatible Logger
     // Used by SysID to log REV devices

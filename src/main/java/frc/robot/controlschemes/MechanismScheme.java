@@ -1,7 +1,12 @@
 package frc.robot.controlschemes;
 
+import static edu.wpi.first.wpilibj2.command.Commands.runOnce;
+
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.helpers.BlinkinLEDController;
+import frc.helpers.BlinkinLEDController.BlinkinPattern;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.Superstructure.SuperState;
 import frc.robot.subsystems.algae.AlgaeSubsystem;
@@ -28,6 +33,18 @@ public class MechanismScheme {
 
     buttonBoard = new CommandGenericHID(port);
     configureButtons(algae, arm, climber, elevator, intake, swerve, wrist, superstructure, port);
+
+    intake.hasCoralDelayed(0)
+    .onTrue(intake.stop().andThen(runOnce(() -> BlinkinLEDController.getInstance().setIfNotAlready(BlinkinPattern.STROBE_WHITE))))
+    .onFalse(runOnce(() -> BlinkinLEDController.getInstance().setIfNotAlready(BlinkinPattern.RAINBOW_RAINBOW_PALETTE)));
+
+    intake.hasCoralTrigger()
+    .onTrue(Commands.runOnce(() -> intake.intakeSlow(), intake))
+    .onFalse(runOnce(() -> intake.intakeNormal(), intake));
+
+    
+
+    
   }
 
   public static void configureButtons(
@@ -80,8 +97,8 @@ public class MechanismScheme {
         superstructure.setWantedSuperstateCommand(SuperState.WITHIN_FRAME_PERIMETER_DEFAULT));
     redBottom.onTrue(superstructure.setWantedSuperstateCommand(SuperState.CLIMB_PREPARING));
 
-    blackTop.whileTrue(intake.outtakeFront());
-    blackBottom.whileTrue(intake.outtakeBack());
+    blackTop.whileTrue(intake.outtake());
+    // blackBottom.whileTrue(intake.outtakeBack());
     // blackBottom.onTrue(superstructure.setWantedSuperstateCommand(SuperState.ZERO));
   }
 }

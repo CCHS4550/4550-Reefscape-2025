@@ -1,6 +1,8 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.helpers.BlinkinLEDController;
+import frc.helpers.BlinkinLEDController.BlinkinPattern;
 import frc.helpers.maps.Constants;
 import frc.helpers.motorcontroller.CCMotorReplay;
 import frc.helpers.motorcontroller.CCSparkMax;
@@ -78,6 +80,8 @@ public class RobotContainer {
         vision = new PhotonVisionAprilTag();
 
         superstructure = new Superstructure(algae, arm, climber, elevator, intake, swerve, wrist);
+
+        BlinkinLEDController.getInstance().setPattern(BlinkinPattern.RAINBOW_RAINBOW_PALETTE);
 
         break;
 

@@ -619,6 +619,7 @@ public class RobotState {
   }
 
   public void setOdometry(Pose2d pose) {
+    pigeonGyro.setYaw(pose.getRotation().getDegrees());
     poseEstimator.resetPosition(getRotation2d(), swerveModulePositions, pose);
   }
 

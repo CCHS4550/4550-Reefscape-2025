@@ -7,10 +7,14 @@ package frc.robot.autonomous;
 import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
 import com.pathplanner.lib.trajectory.PathPlannerTrajectoryState;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.helpers.BlinkinLEDController;
+import frc.helpers.BlinkinLEDController.BlinkinPattern;
 import frc.helpers.maps.Constants;
 import frc.robot.RobotState;
 import frc.robot.subsystems.swervedrive.SwerveDriveSubsystem;
@@ -28,7 +32,7 @@ public class FollowPathCommand extends Command {
   PathPlannerTrajectoryState lastState, wantedState;
 
   PIDController translationPID;
-  PIDController rotationPID;
+  ProfiledPIDController rotationPID;
 
   double driveSpeedModifier = .1;
 
@@ -40,7 +44,7 @@ public class FollowPathCommand extends Command {
   public FollowPathCommand(PathPlannerTrajectory trajectory, SwerveDriveSubsystem swerve) {
     this.swerve = swerve;
     translationPID = new PIDController(3, 0, 0);
-    rotationPID = new PIDController(3, 0, 0);
+    rotationPID = new ProfiledPIDController(3, 0, 0, new Constraints(10, 5));
     rotationPID.enableContinuousInput(-Math.PI, Math.PI);
 
     this.trajectory = trajectory;
@@ -52,7 +56,7 @@ public class FollowPathCommand extends Command {
   @Override
   public void initialize() {
 
-    rotationPID.reset();
+    rotationPID.reset(RobotState.getInstance().getPoseAngleRadians());
     translationPID.reset();
 
     timer.reset();
@@ -64,6 +68,8 @@ public class FollowPathCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+
+    BlinkinLEDController.getInstance().setIfNotAlready(BlinkinPattern.BREATH_RED);
 
     currentPose = RobotState.getInstance().getPose();
 

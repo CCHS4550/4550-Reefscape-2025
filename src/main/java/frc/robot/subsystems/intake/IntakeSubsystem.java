@@ -10,11 +10,17 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.StartEndCommand;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.helpers.maps.Constants;
 import frc.helpers.motorcontroller.CCMotorController;
+import frc.robot.RobotState;
+import frc.robot.subsystems.Superstructure.SuperState;
+
 import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
+
 import org.littletonrobotics.junction.Logger;
 
 public class IntakeSubsystem extends SubsystemBase {
@@ -24,6 +30,11 @@ public class IntakeSubsystem extends SubsystemBase {
   private final IntakeIO intakeIO;
 
   public final IntakeIOInputsAutoLogged intakeInputs = new IntakeIOInputsAutoLogged();
+
+
+  private DoubleSupplier intakeSpeedModifier = () -> 1; 
+
+
 
   /** Creates a new WristSubsystem. */
   public IntakeSubsystem(
@@ -40,50 +51,81 @@ public class IntakeSubsystem extends SubsystemBase {
                 Constants.MotorConstants.INTAKE_REVERSE,
                 1,
                 1));
+
+        processedCoralInput = false;
   }
 
   public Command intakeCoralStation() {
     return startEnd(() -> intakeIO.intake(Volts.of(12)), () -> intakeIO.intake(Volts.of(0)));
   }
 
+
   public Command outtakeFront() {
-    return startEnd(() -> intakeIO.intake(Volts.of(-12)), () -> intakeIO.intake(Volts.of(0)));
+    return startEnd(() -> intakeIO.intake(Volts.of(-12 * intakeSpeedModifier.getAsDouble())), () -> intakeIO.intake(Volts.of(0)));
   }
 
   public Command outtakeBack() {
-    return startEnd(() -> intakeIO.intake(Volts.of(12)), () -> intakeIO.intake(Volts.of(0)));
+    return startEnd(() -> intakeIO.intake(Volts.of(12 * intakeSpeedModifier.getAsDouble())), () -> intakeIO.intake(Volts.of(0)));
+  }
+  
+
+  public Command outtake() {
+    return new FunctionalCommand(
+      () -> {
+      boolean outtakeReverse = RobotState.getInstance().currentSuperState == SuperState.L4_BACK;
+      intakeIO.intake(Volts.of(outtakeReverse ? 12 : -12));
+      },
+      () -> {},
+      (bool) -> {if (bool) intakeIO.intake(Volts.of(0));}, 
+      () -> {return false;}, 
+      this);
   }
 
-  public Command outtake(boolean outtakeReverse) {
-    return new StartEndCommand(
-        () -> {
-          if (outtakeReverse) intakeIO.intake(Volts.of(12));
-          else intakeIO.intake(Volts.of(-12));
-        },
-        () -> {
-          intakeIO.intake(Volts.of(0));
-        },
-        this);
+  public Command stop() {
+    return runOnce(() -> intakeIO.intake(Volts.of(0)));
   }
 
   public boolean hasCoral() {
     return intakeInputs.hasCoral;
   }
 
-  public BooleanSupplier hasCoralDelayed(double delay) {
-    Timer timer = new Timer();
-    if (intakeInputs.beamBroke) {
+  public Trigger hasCoralTrigger() {
+    return new Trigger(() -> hasCoral());
+  }
+
+  Timer timer = new Timer();
+
+  boolean processedCoralInput = false;
+
+  public Trigger hasCoralDelayed(double delay) {
+    if (hasCoral() && !processedCoralInput) {
+      processedCoralInput = true;
       timer.reset();
       timer.start();
+    } else if (!hasCoral() && processedCoralInput) {
+      processedCoralInput = false;
+      timer.stop();
     }
-    return () -> timer.hasElapsed(delay);
+    return new Trigger(() -> hasCoral() && timer.hasElapsed(delay));
   }
+
+
+  public void intakeNormal() {
+    intakeSpeedModifier = () -> 1;
+  }
+
+  public void intakeSlow() {
+    intakeSpeedModifier = () -> .5;
+  }
+
+
+
 
   @Override
   public void periodic() {
     intakeIO.updateInputs(intakeInputs);
     Logger.processInputs("Subsystem/Intake", intakeInputs);
 
-    if (hasCoral()) intakeIO.intake(Volts.of(0));
+
   }
 }
