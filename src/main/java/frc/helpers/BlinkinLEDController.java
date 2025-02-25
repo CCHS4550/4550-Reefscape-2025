@@ -11,7 +11,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.helpers.maps.Constants;
 import java.util.HashMap;
 
-/** Control REV Robotics Blinkin LED controller */
+/** Control REV Robotics Blinkin LED controller
+ * Got this from Chief Delphi! https://www.chiefdelphi.com/t/rev-blinkin-example-code/452871
+ */
+
 public class BlinkinLEDController extends SubsystemBase {
   public enum BlinkinPattern {
     /*
