@@ -34,17 +34,26 @@ public class MechanismScheme {
     buttonBoard = new CommandGenericHID(port);
     configureButtons(algae, arm, climber, elevator, intake, swerve, wrist, superstructure, port);
 
-    intake.hasCoralDelayed(0)
-    .onTrue(intake.stop().andThen(runOnce(() -> BlinkinLEDController.getInstance().setIfNotAlready(BlinkinPattern.STROBE_WHITE))))
-    .onFalse(runOnce(() -> BlinkinLEDController.getInstance().setIfNotAlready(BlinkinPattern.RAINBOW_RAINBOW_PALETTE)));
+    intake
+        .hasCoralDelayed(0)
+        .onTrue(
+            intake
+                .stop()
+                .andThen(
+                    runOnce(
+                        () ->
+                            BlinkinLEDController.getInstance()
+                                .setIfNotAlready(BlinkinPattern.STROBE_WHITE))))
+        .onFalse(
+            runOnce(
+                () ->
+                    BlinkinLEDController.getInstance()
+                        .setIfNotAlready(BlinkinPattern.RAINBOW_RAINBOW_PALETTE)));
 
-    intake.hasCoralTrigger()
-    .onTrue(Commands.runOnce(() -> intake.intakeSlow(), intake))
-    .onFalse(runOnce(() -> intake.intakeNormal(), intake));
-
-    
-
-    
+    intake
+        .hasCoralTrigger()
+        .onTrue(Commands.runOnce(() -> intake.intakeSlow(), intake))
+        .onFalse(runOnce(() -> intake.intakeNormal(), intake));
   }
 
   public static void configureButtons(

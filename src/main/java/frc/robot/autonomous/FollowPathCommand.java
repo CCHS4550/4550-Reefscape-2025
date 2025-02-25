@@ -18,23 +18,38 @@ import frc.helpers.BlinkinLEDController.BlinkinPattern;
 import frc.helpers.maps.Constants;
 import frc.robot.RobotState;
 import frc.robot.subsystems.swervedrive.SwerveDriveSubsystem;
+import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
 public class FollowPathCommand extends Command {
 
-  Timer timer = new Timer();
+  private Timer timer = new Timer();
 
-  PathPlannerTrajectory trajectory;
-  SwerveDriveSubsystem swerve;
+  private PathPlannerTrajectory trajectory;
+  private SwerveDriveSubsystem swerve;
 
-  Pose2d currentPose;
+  private Pose2d currentPose;
 
-  PathPlannerTrajectoryState lastState, wantedState;
+  private PathPlannerTrajectoryState lastState, wantedState;
 
-  PIDController translationPID;
-  ProfiledPIDController rotationPID;
+  private static PIDController translationPID;
 
-  double driveSpeedModifier = .1;
+  private static ProfiledPIDController xPID;
+  private static ProfiledPIDController yPID;
+
+  private static ProfiledPIDController rotationPID;
+
+  static {
+    translationPID = new PIDController(3, 0, 0);
+
+    xPID = new ProfiledPIDController(3, 0, 0, new Constraints(5, 8));
+    yPID = new ProfiledPIDController(3, 0, 0, new Constraints(5, 8));
+
+    rotationPID = new ProfiledPIDController(3, 0, 0, new Constraints(10, 5));
+    rotationPID.enableContinuousInput(-Math.PI, Math.PI);
+  }
+
+  private DoubleSupplier driveSpeedModifier = () -> 1;
 
   /**
    * Follows a PathPlannerTrajectory
@@ -43,9 +58,6 @@ public class FollowPathCommand extends Command {
    */
   public FollowPathCommand(PathPlannerTrajectory trajectory, SwerveDriveSubsystem swerve) {
     this.swerve = swerve;
-    translationPID = new PIDController(3, 0, 0);
-    rotationPID = new ProfiledPIDController(3, 0, 0, new Constraints(10, 5));
-    rotationPID.enableContinuousInput(-Math.PI, Math.PI);
 
     this.trajectory = trajectory;
     // Use addRequirements() here to declare subsystem dependencies.
@@ -56,13 +68,19 @@ public class FollowPathCommand extends Command {
   @Override
   public void initialize() {
 
-    rotationPID.reset(RobotState.getInstance().getPoseAngleRadians());
-    translationPID.reset();
+    currentPose = RobotState.getInstance().getPose();
 
     timer.reset();
     timer.start();
 
     lastState = trajectory.getInitialState();
+
+    translationPID.reset();
+
+    xPID.reset(currentPose.getX());
+    yPID.reset(currentPose.getY());
+
+    rotationPID.reset(RobotState.getInstance().getPoseAngleRadians());
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -87,27 +105,27 @@ public class FollowPathCommand extends Command {
     double xSpeed =
         wantedState.linearVelocity
             * Math.cos(wantedState.heading.getRadians())
-            * driveSpeedModifier;
+            * driveSpeedModifier.getAsDouble();
     double ySpeed =
         wantedState.linearVelocity
             * Math.sin(wantedState.heading.getRadians())
-            * driveSpeedModifier;
+            * driveSpeedModifier.getAsDouble();
 
     Logger.recordOutput("FollowPathCommand/wantedChoreoVelocityX", xSpeed);
     Logger.recordOutput("FollowPathCommand/wantedChoreoVelocityY", ySpeed);
 
-    double xPID = translationPID.calculate(currentPose.getX(), wantedState.pose.getX());
-    double yPID = translationPID.calculate(currentPose.getY(), wantedState.pose.getY());
+    double xPIDOutput = translationPID.calculate(currentPose.getX(), wantedState.pose.getX());
+    double yPIDOutput = translationPID.calculate(currentPose.getY(), wantedState.pose.getY());
 
-    Logger.recordOutput("FollowPathCommand/xPID Output", xPID);
-    Logger.recordOutput("FollowPathCommand/yPID Output", yPID);
+    Logger.recordOutput("FollowPathCommand/x PID Output", xPIDOutput);
+    Logger.recordOutput("FollowPathCommand/y PID Output", yPIDOutput);
 
     double wantedRotationSpeeds =
         rotationPID.calculate(
             currentPose.getRotation().getRadians(), wantedState.heading.getRadians());
 
-    xSpeed = xSpeed + xPID;
-    ySpeed = ySpeed + yPID;
+    xSpeed = xSpeed + xPIDOutput;
+    ySpeed = ySpeed + yPIDOutput;
 
     xSpeed =
         clamp(
@@ -140,10 +158,7 @@ public class FollowPathCommand extends Command {
     /** Create a ChassisSpeeds object to represent how the robot should be moving at this time. */
     ChassisSpeeds chassisSpeeds =
         ChassisSpeeds.fromFieldRelativeSpeeds(
-            (xSpeed + xPID),
-            (ySpeed + yPID),
-            wantedRotationSpeeds,
-            RobotState.getInstance().getPoseRotation2d());
+            xSpeed, ySpeed, wantedRotationSpeeds, RobotState.getInstance().getPoseRotation2d());
     // SwerveDrive.getInstance()
     //     .swerveFollower
     //     .calculateRobotRelativeSpeeds(RobotState.getInstance().currentPose, wantedState);

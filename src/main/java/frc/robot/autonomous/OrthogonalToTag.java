@@ -52,8 +52,22 @@ public class OrthogonalToTag extends Command {
   private Pose2d idealTargetPose;
   private SwerveDrivePoseEstimator poseRelativeToTargetEstimator;
 
-  private PIDController translationPID;
-  private ProfiledPIDController rotationPID;
+  private static PIDController translationPID;
+
+  private static ProfiledPIDController xPID;
+  private static ProfiledPIDController yPID;
+
+  private static ProfiledPIDController rotationPID;
+
+  static {
+    translationPID = new PIDController(.7, .5, 0);
+
+    xPID = new ProfiledPIDController(.5, .5, 0, new Constraints(5, 8));
+    yPID = new ProfiledPIDController(.5, .5, 0, new Constraints(5, 8));
+
+    rotationPID = new ProfiledPIDController(.5, .5, 0, new Constraints(10, 5));
+    rotationPID.enableContinuousInput(-Math.PI, Math.PI);
+  }
 
   Timer timer = new Timer();
 
@@ -76,10 +90,6 @@ public class OrthogonalToTag extends Command {
     this.swerve = swerve;
     this.vision = vision;
 
-    translationPID = new PIDController(.7, .5, 0);
-    rotationPID = new ProfiledPIDController(.5, .5, 0, new Constraints(10, 5));
-    rotationPID.enableContinuousInput(-Math.PI, Math.PI);
-
     if (useBestTag) this.focusedTag = RobotState.getInstance().visionInputs.focusedId;
 
     // Use addRequirements() here to declare subsystem dependencies.
@@ -89,8 +99,6 @@ public class OrthogonalToTag extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-
-    globalInitialPose = RobotState.getInstance().getPose();
 
     exitCommand = false;
 
@@ -132,7 +140,13 @@ public class OrthogonalToTag extends Command {
             .plus(transformation);
 
     translationPID.reset();
+
+    xPID.reset(currentRelativePose.getX());
+    yPID.reset(currentRelativePose.getY());
+
     rotationPID.reset(currentRelativePose.getRotation().getRadians());
+
+    globalInitialPose = RobotState.getInstance().getPose();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -236,14 +250,14 @@ public class OrthogonalToTag extends Command {
     //     swerve.swerveFollower.calculateRobotRelativeSpeeds(currentRelativePose, targetState);
 
     /** Alternative method of sending robot to pose */
-    double xPID = translationPID.calculate(currentRelativePose.getX(), targetState.pose.getX());
-    double yPID = translationPID.calculate(currentRelativePose.getY(), targetState.pose.getY());
+    double xPIDOutput = xPID.calculate(currentRelativePose.getX(), targetState.pose.getX());
+    double yPIDOutput = yPID.calculate(currentRelativePose.getY(), targetState.pose.getY());
     double wantedRotationSpeeds =
-        rotationPID.calculate(
+        OrthogonalToTag.rotationPID.calculate(
             currentRelativePose.getRotation().getRadians(), targetState.heading.getRadians());
     ChassisSpeeds chassisSpeeds =
         ChassisSpeeds.fromFieldRelativeSpeeds(
-            xPID, yPID, wantedRotationSpeeds, currentRelativePose.getRotation());
+            xPIDOutput, yPIDOutput, wantedRotationSpeeds, currentRelativePose.getRotation());
 
     Logger.recordOutput("OrthogonalToTag/ChassisSpeeds", chassisSpeeds);
 

@@ -11,10 +11,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.helpers.maps.Constants;
 import java.util.HashMap;
 
-/** Control REV Robotics Blinkin LED controller
- * Got this from Chief Delphi! https://www.chiefdelphi.com/t/rev-blinkin-example-code/452871
+/**
+ * Control REV Robotics Blinkin LED controller Got this from Chief Delphi!
+ * https://www.chiefdelphi.com/t/rev-blinkin-example-code/452871
  */
-
 public class BlinkinLEDController extends SubsystemBase {
   public enum BlinkinPattern {
     /*
@@ -213,7 +213,8 @@ public class BlinkinLEDController extends SubsystemBase {
   }
 
   public void setIfNotAlready(BlinkinPattern pattern) {
-    if (getCurrentPattern() != pattern && getCurrentPattern() != BlinkinPattern.STROBE_WHITE) setPattern(pattern);
+    if (getCurrentPattern() != pattern && getCurrentPattern() != BlinkinPattern.STROBE_WHITE)
+      setPattern(pattern);
   }
 
   /** Set LEDs to team color */
