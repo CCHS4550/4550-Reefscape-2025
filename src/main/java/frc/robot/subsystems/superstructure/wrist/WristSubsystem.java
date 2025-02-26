@@ -175,7 +175,14 @@ public class WristSubsystem extends SubsystemBase {
   public WristState getWantedState() {
     return wantedState;
   }
-
+  public Command wristUpCommand(){
+    return Commands.startEnd(
+        () -> wristIO.setVoltage(Volts.of(3)), () -> wristIO.setVoltage(Volts.of(0)));
+  }
+  public Command wristDownCommand(){
+    return Commands.startEnd(
+        () -> wristIO.setVoltage(Volts.of(-3)), () -> wristIO.setVoltage(Volts.of(0)));
+  }
   // public double getGlobalPosition() {
   //   return wristIO.getAbsoluteEncoderRadiansOffset()
   //       - RobotState.getInstance().armInputs.currentAngleRadians;

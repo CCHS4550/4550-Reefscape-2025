@@ -177,7 +177,14 @@ public class ArmSubsystem extends SubsystemBase {
     return Commands.startEnd(
         () -> armIO.setVoltage(Volts.of(volts)), () -> armIO.setVoltage(Volts.of(0)));
   }
-
+  public Command moveArmUpCommand(){
+    return Commands.startEnd(
+        () -> armIO.setVoltage(Volts.of(3)), () -> armIO.setVoltage(Volts.of(0)));
+  }
+  public Command moveArmDownCommand(){
+    return Commands.startEnd(
+        () -> armIO.setVoltage(Volts.of(-3)), () -> armIO.setVoltage(Volts.of(0)));
+  }
   @Override
   public void periodic() {
     // System.out.println("currentState " + currentState);
