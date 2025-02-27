@@ -5,8 +5,8 @@ import static edu.wpi.first.wpilibj2.command.Commands.startEnd;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.helpers.maps.Constants;
-import frc.helpers.motorcontroller.CCMotorController;
+import frc.util.maps.Constants;
+import frc.util.motorcontroller.CCMotorController;
 
 public class IntakeIOHardware implements IntakeIO {
 

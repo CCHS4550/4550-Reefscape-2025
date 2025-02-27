@@ -13,9 +13,9 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
-import frc.helpers.maps.Constants;
-import frc.helpers.motorcontroller.CCMotorController;
 import frc.robot.subsystems.superstructure.elevator.ElevatorSubsystem.ElevatorState;
+import frc.util.maps.Constants;
+import frc.util.motorcontroller.CCMotorController;
 import java.util.function.BooleanSupplier;
 
 public class ElevatorIOHardware implements ElevatorIO {

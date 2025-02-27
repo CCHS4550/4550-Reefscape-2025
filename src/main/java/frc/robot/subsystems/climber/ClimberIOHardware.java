@@ -1,7 +1,7 @@
 package frc.robot.subsystems.climber;
 
 import edu.wpi.first.units.measure.Voltage;
-import frc.helpers.motorcontroller.CCMotorController;
+import frc.util.motorcontroller.CCMotorController;
 
 public class ClimberIOHardware implements ClimberIO {
 

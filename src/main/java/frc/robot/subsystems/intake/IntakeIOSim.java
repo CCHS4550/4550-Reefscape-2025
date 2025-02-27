@@ -1,6 +1,6 @@
 package frc.robot.subsystems.intake;
 
-import frc.helpers.motorcontroller.CCMotorController;
+import frc.util.motorcontroller.CCMotorController;
 
 public class IntakeIOSim implements IntakeIO {
 

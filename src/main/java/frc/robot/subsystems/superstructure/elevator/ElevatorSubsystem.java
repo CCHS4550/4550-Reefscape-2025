@@ -16,9 +16,9 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.helpers.maps.Constants;
-import frc.helpers.motorcontroller.CCMotorController;
 import frc.robot.RobotState;
+import frc.util.maps.Constants;
+import frc.util.motorcontroller.CCMotorController;
 import org.littletonrobotics.junction.Logger;
 
 public class ElevatorSubsystem extends SubsystemBase {
@@ -188,11 +188,12 @@ public class ElevatorSubsystem extends SubsystemBase {
     return currentState;
   }
 
-  public Command elevatorUpCommand(){
+  public Command elevatorUpCommand() {
     return Commands.startEnd(
         () -> elevatorIO.setVoltage(Volts.of(3)), () -> elevatorIO.setVoltage(Volts.of(0)));
   }
-  public Command elevatorDownCommand(){
+
+  public Command elevatorDownCommand() {
     return Commands.startEnd(
         () -> elevatorIO.setVoltage(Volts.of(-3)), () -> elevatorIO.setVoltage(Volts.of(0)));
   }

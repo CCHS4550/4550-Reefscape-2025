@@ -11,14 +11,14 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 
-package frc.helpers;
+package frc.util;
 
 import com.revrobotics.REVLibError;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
-import frc.helpers.maps.Constants;
-import frc.helpers.motorcontroller.CCMotorController;
 import frc.robot.subsystems.swervedrive.SwerveDriveSubsystem;
+import frc.util.maps.Constants;
+import frc.util.motorcontroller.CCMotorController;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;

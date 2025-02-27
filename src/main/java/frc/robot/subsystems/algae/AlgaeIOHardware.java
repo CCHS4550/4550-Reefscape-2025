@@ -9,9 +9,9 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Voltage;
-import frc.helpers.maps.Constants;
-import frc.helpers.motorcontroller.CCMotorController;
 import frc.robot.subsystems.algae.AlgaeSubsystem.AlgaeStates;
+import frc.util.maps.Constants;
+import frc.util.motorcontroller.CCMotorController;
 
 public class AlgaeIOHardware implements AlgaeIO {
 

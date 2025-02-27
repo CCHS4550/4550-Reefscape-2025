@@ -16,9 +16,9 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.helpers.maps.Constants;
-import frc.helpers.motorcontroller.CCMotorController;
 import frc.robot.RobotState;
+import frc.util.maps.Constants;
+import frc.util.motorcontroller.CCMotorController;
 import org.littletonrobotics.junction.Logger;
 
 public class ArmSubsystem extends SubsystemBase {
@@ -177,14 +177,17 @@ public class ArmSubsystem extends SubsystemBase {
     return Commands.startEnd(
         () -> armIO.setVoltage(Volts.of(volts)), () -> armIO.setVoltage(Volts.of(0)));
   }
-  public Command moveArmUpCommand(){
+
+  public Command moveArmUpCommand() {
     return Commands.startEnd(
         () -> armIO.setVoltage(Volts.of(3)), () -> armIO.setVoltage(Volts.of(0)));
   }
-  public Command moveArmDownCommand(){
+
+  public Command moveArmDownCommand() {
     return Commands.startEnd(
         () -> armIO.setVoltage(Volts.of(-3)), () -> armIO.setVoltage(Volts.of(0)));
   }
+
   @Override
   public void periodic() {
     // System.out.println("currentState " + currentState);

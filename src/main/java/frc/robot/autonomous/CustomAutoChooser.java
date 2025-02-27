@@ -8,7 +8,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.helpers.vision.VisionIO;
 import frc.robot.RobotState;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.Superstructure.SuperState;
@@ -19,6 +18,7 @@ import frc.robot.subsystems.superstructure.arm.ArmSubsystem;
 import frc.robot.subsystems.superstructure.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.superstructure.wrist.WristSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveDriveSubsystem;
+import frc.robot.vision.VisionIO;
 import java.util.Arrays;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 

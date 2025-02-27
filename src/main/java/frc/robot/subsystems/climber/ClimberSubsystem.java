@@ -11,8 +11,8 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.helpers.maps.Constants;
-import frc.helpers.motorcontroller.CCMotorController;
+import frc.util.maps.Constants;
+import frc.util.motorcontroller.CCMotorController;
 import org.littletonrobotics.junction.Logger;
 
 public class ClimberSubsystem extends SubsystemBase {

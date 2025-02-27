@@ -1,16 +1,6 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.helpers.BlinkinLEDController;
-import frc.helpers.BlinkinLEDController.BlinkinPattern;
-import frc.helpers.maps.Constants;
-import frc.helpers.motorcontroller.CCMotorReplay;
-import frc.helpers.motorcontroller.CCSparkMax;
-import frc.helpers.motorcontroller.CCSparkSim;
-import frc.helpers.vision.PhotonVisionAprilTag;
-import frc.helpers.vision.PhotonVisionReplay;
-import frc.helpers.vision.PhotonVisionSim;
-import frc.helpers.vision.VisionIO;
 import frc.robot.controlschemes.MechanismScheme;
 import frc.robot.controlschemes.SwerveDriveScheme;
 import frc.robot.controlschemes.TestingScheme;
@@ -43,6 +33,16 @@ import frc.robot.subsystems.swervedrive.SwerveDriveSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveModuleIOHardware;
 import frc.robot.subsystems.swervedrive.SwerveModuleIOReplay;
 import frc.robot.subsystems.swervedrive.SwerveModuleIOSim;
+import frc.robot.vision.PhotonVisionAprilTag;
+import frc.robot.vision.PhotonVisionReplay;
+import frc.robot.vision.PhotonVisionSim;
+import frc.robot.vision.VisionIO;
+import frc.util.BlinkinLEDController;
+import frc.util.BlinkinLEDController.BlinkinPattern;
+import frc.util.maps.Constants;
+import frc.util.motorcontroller.CCMotorReplay;
+import frc.util.motorcontroller.CCSparkMax;
+import frc.util.motorcontroller.CCSparkSim;
 
 public class RobotContainer {
 

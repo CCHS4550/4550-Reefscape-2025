@@ -4,7 +4,7 @@
 
 package frc.robot.subsystems.algae;
 
-import frc.helpers.motorcontroller.CCMotorController;
+import frc.util.motorcontroller.CCMotorController;
 
 /** Add your docs here. */
 public class AlgaeIOReplay implements AlgaeIO {

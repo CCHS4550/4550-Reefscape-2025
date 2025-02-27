@@ -5,8 +5,6 @@ import static edu.wpi.first.wpilibj2.command.Commands.runOnce;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.helpers.BlinkinLEDController;
-import frc.helpers.BlinkinLEDController.BlinkinPattern;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.Superstructure.SuperState;
 import frc.robot.subsystems.algae.AlgaeSubsystem;
@@ -16,6 +14,8 @@ import frc.robot.subsystems.superstructure.arm.ArmSubsystem;
 import frc.robot.subsystems.superstructure.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.superstructure.wrist.WristSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveDriveSubsystem;
+import frc.util.BlinkinLEDController;
+import frc.util.BlinkinLEDController.BlinkinPattern;
 
 public class MechanismScheme {
   private static CommandGenericHID buttonBoard;

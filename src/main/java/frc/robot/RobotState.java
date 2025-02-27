@@ -26,10 +26,6 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.helpers.HighFrequencyThread;
-import frc.helpers.maps.Constants;
-import frc.helpers.vision.VisionIO;
-import frc.helpers.vision.VisionIOInputsAutoLogged;
 import frc.robot.autonomous.CustomAutoChooser;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.Superstructure.SuperState;
@@ -47,6 +43,10 @@ import frc.robot.subsystems.superstructure.wrist.WristIOInputsAutoLogged;
 import frc.robot.subsystems.superstructure.wrist.WristSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveDriveSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveModuleInputsAutoLogged;
+import frc.robot.vision.VisionIO;
+import frc.robot.vision.VisionIOInputsAutoLogged;
+import frc.util.HighFrequencyThread;
+import frc.util.maps.Constants;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -283,6 +283,7 @@ public class RobotState {
 
   /** Update the pose estimator with PhotonVision Data */
   public void updateVisionPose() {
+
     /** Update the visionData to what the camera sees. */
     vision.updateInputs(visionInputs);
 

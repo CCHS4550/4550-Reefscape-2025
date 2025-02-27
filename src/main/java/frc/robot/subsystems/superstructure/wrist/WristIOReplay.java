@@ -4,7 +4,7 @@
 
 package frc.robot.subsystems.superstructure.wrist;
 
-import frc.helpers.motorcontroller.CCMotorController;
+import frc.util.motorcontroller.CCMotorController;
 
 /** Add your docs here. */
 public class WristIOReplay implements WristIO {

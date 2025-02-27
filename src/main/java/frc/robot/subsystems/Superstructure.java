@@ -266,7 +266,6 @@ public class Superstructure extends SubsystemBase {
   }
 
   public Command outtakeGlobal() {
-    // if (currentSuperState == SuperState.L4_BACK) return intake.outtakeBack();
     return intake.outtake();
   }
 

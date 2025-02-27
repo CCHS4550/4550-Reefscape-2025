@@ -5,7 +5,7 @@
 // license that can be found in the LICENSE file at
 // the root directory of this project.
 
-package frc.helpers.maps;
+package frc.util.maps;
 
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.util.Units;

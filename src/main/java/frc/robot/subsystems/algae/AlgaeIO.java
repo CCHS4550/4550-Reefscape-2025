@@ -2,8 +2,8 @@ package frc.robot.subsystems.algae;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.units.measure.Voltage;
-import frc.helpers.motorcontroller.CCMotorController;
 import frc.robot.subsystems.algae.AlgaeSubsystem.AlgaeStates;
+import frc.util.motorcontroller.CCMotorController;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface AlgaeIO {
