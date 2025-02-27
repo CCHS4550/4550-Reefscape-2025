@@ -21,18 +21,18 @@ public interface VisionIO {
   /** This is a container class to contain all the vision data. */
   @AutoLog
   class VisionIOInputs {
-    public Pose2d[] poseEstimates = new Pose2d[0];
-    public double averageTimestamp = 0;
-    public double[] timestampArray = new double[0];
+    public Pose2d[] poseEstimates;
+    public double averageTimestamp;
+    public double[] timestampArray;
 
-    public int focusedId = 0;
+    public int focusedId;
 
-    public int[] visibleCamera1Targets = new int[0];
-    public int[] visibleCamera2Targets = new int[0];
+    public int[] visibleCamera1Targets;
+    public int[] visibleCamera2Targets;
     // public int[] camera3Targets = new int[0];
 
-    public boolean hasEstimate = false;
-    public boolean hasTarget = false;
+    public boolean hasEstimate;
+    public boolean hasTarget;
   }
 
   /** Default method, defined in photonvision */

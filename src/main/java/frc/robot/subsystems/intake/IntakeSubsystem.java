@@ -53,18 +53,6 @@ public class IntakeSubsystem extends SubsystemBase {
     return startEnd(() -> intakeIO.intake(Volts.of(12)), () -> intakeIO.intake(Volts.of(0)));
   }
 
-  public Command outtakeFront() {
-    return startEnd(
-        () -> intakeIO.intake(Volts.of(-12 * intakeSpeedModifier.getAsDouble())),
-        () -> intakeIO.intake(Volts.of(0)));
-  }
-
-  public Command outtakeBack() {
-    return startEnd(
-        () -> intakeIO.intake(Volts.of(12 * intakeSpeedModifier.getAsDouble())),
-        () -> intakeIO.intake(Volts.of(0)));
-  }
-
   public Command outtake() {
     return new FunctionalCommand(
         () -> {
@@ -77,6 +65,35 @@ public class IntakeSubsystem extends SubsystemBase {
         },
         () -> {
           return false;
+        },
+        this);
+  }
+
+  public Command intakeAuto() {
+    return new FunctionalCommand(
+        () -> intakeIO.intake(Volts.of(12)),
+        () -> {},
+        (bool) -> {
+          if (bool) intakeIO.intake(Volts.of(0));
+        },
+        () -> {
+          return hasCoralDelayed(0.2).getAsBoolean();
+        },
+        this);
+  }
+
+  public Command outtakeAuto() {
+    return new FunctionalCommand(
+        () -> {
+          boolean outtakeReverse = RobotState.getInstance().currentSuperState == SuperState.L4_BACK;
+          intakeIO.intake(Volts.of(outtakeReverse ? 12 : -12));
+        },
+        () -> {},
+        (bool) -> {
+          if (bool) intakeIO.intake(Volts.of(0));
+        },
+        () -> {
+          return !hasCoral();
         },
         this);
   }

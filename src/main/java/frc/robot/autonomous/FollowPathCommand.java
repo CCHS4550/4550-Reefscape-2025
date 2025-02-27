@@ -30,7 +30,7 @@ public class FollowPathCommand extends Command {
 
   private Pose2d currentPose;
 
-  private PathPlannerTrajectoryState lastState, wantedState;
+  // private PathPlannerTrajectoryState lastState, wantedState;
 
   private static PIDController translationPID;
 
@@ -73,7 +73,7 @@ public class FollowPathCommand extends Command {
     timer.reset();
     timer.start();
 
-    lastState = trajectory.getInitialState();
+    // lastState = trajectory.getInitialState();
 
     translationPID.reset();
 

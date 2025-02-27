@@ -32,8 +32,6 @@ public class ArmIOHardware implements ArmIO {
 
   public ArmIOHardware(CCMotorController armMotor) {
 
-    System.err.println("ARM IN REAL");
-
     this.armMotor = armMotor;
     throughBore = (AbsoluteEncoder) armMotor.getDataportAbsoluteEncoder();
 

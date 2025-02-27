@@ -12,16 +12,38 @@ import frc.helpers.vision.VisionIO;
 import frc.robot.RobotState;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.Superstructure.SuperState;
+import frc.robot.subsystems.algae.AlgaeSubsystem;
+import frc.robot.subsystems.climber.ClimberSubsystem;
+import frc.robot.subsystems.intake.IntakeSubsystem;
+import frc.robot.subsystems.superstructure.arm.ArmSubsystem;
+import frc.robot.subsystems.superstructure.elevator.ElevatorSubsystem;
+import frc.robot.subsystems.superstructure.wrist.WristSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveDriveSubsystem;
 import java.util.Arrays;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
-/** Add your docs here. */
+/**
+ * This file compiles all the other autonomous files and sends them as one big
+ * SequentialCommandGroup when autonomous is initialized. <br>
+ * </br> Inspired by 2910 in 2023:
+ * https://github.com/FRCTeam2910/2023CompetitionRobot-Public/blob/main/src/main/java/org/frcteam2910/c2023/util/PathChooser.java
+ * <br>
+ * </br> Take a look at this doc to understand the naming convention:
+ * https://docs.google.com/document/d/e/2PACX-1vQw3eDluz8uo6XJKM-GdU-AAQzpGMUkd_6Zf4veUTayhUvbuNG5aprDZKgNVv8HWc22MCN-eD0zrgSl/pub
+ */
 public class CustomAutoChooser {
 
-  SwerveDriveSubsystem swerve;
-  Superstructure superstructure;
-  VisionIO vision;
+  private AlgaeSubsystem algae;
+  private ArmSubsystem arm;
+  private ClimberSubsystem climber;
+  private ElevatorSubsystem elevator;
+  private IntakeSubsystem intake;
+  private SwerveDriveSubsystem swerve;
+  private WristSubsystem wrist;
+
+  private VisionIO vision;
+
+  private Superstructure superstructure;
 
   /** All the Auto Names. */
   public enum AutoRoutine {
@@ -74,10 +96,26 @@ public class CustomAutoChooser {
       new LoggedDashboardChooser<>("Autonomous Routine Chooser");
 
   public CustomAutoChooser(
-      SwerveDriveSubsystem swerve, Superstructure superstructure, VisionIO vision) {
+      AlgaeSubsystem algae,
+      ArmSubsystem arm,
+      ClimberSubsystem climber,
+      ElevatorSubsystem elevator,
+      IntakeSubsystem intake,
+      SwerveDriveSubsystem swerve,
+      WristSubsystem wrist,
+      VisionIO vision,
+      Superstructure superstructure) {
+    this.algae = algae;
+    this.arm = arm;
+    this.climber = climber;
+    this.elevator = elevator;
+    this.intake = intake;
     this.swerve = swerve;
-    this.superstructure = superstructure;
+    this.wrist = wrist;
+
     this.vision = vision;
+
+    this.superstructure = superstructure;
 
     autoChooser.addDefaultOption("EMPTY", AutoRoutine.EMPTY);
     Arrays.stream(AutoRoutine.values())
@@ -102,14 +140,68 @@ public class CustomAutoChooser {
     SequentialCommandGroup c = new SequentialCommandGroup();
 
     c.addCommands(pathWrapper.setInitialPose());
+
+    /* Score */
     c.addCommands(pathWrapper.getFollowCommand(0));
-    c.addCommands(superstructure.setWantedSuperstateCommand(SuperState.CORAL_STATION_BACK));
+    c.addCommands(
+        AlignCommands.frontAlignToReefLeft(swerve, vision)
+            .alongWith(
+                superstructure.setWantedSuperstateCommand(SuperState.L3_FRONT).withTimeout(3)));
+    c.addCommands(intake.outtakeAuto());
+
+    /* Pick up */
     c.addCommands(pathWrapper.getFollowCommand(1));
+    c.addCommands(
+        AlignCommands.frontAlignToCoralStationRight(swerve, vision)
+            .alongWith(
+                superstructure
+                    .setWantedSuperstateCommand(SuperState.CORAL_STATION_FRONT)
+                    .withTimeout(3)));
+    c.addCommands(intake.intakeAuto());
+
+    /* Score */
     c.addCommands(pathWrapper.getFollowCommand(2));
+    c.addCommands(
+        AlignCommands.backAlignToReefLeft(swerve, vision)
+            .alongWith(
+                superstructure.setWantedSuperstateCommand(SuperState.L4_BACK).withTimeout(3)));
+    c.addCommands(intake.outtakeAuto());
+
+    /* Pick up */
     c.addCommands(pathWrapper.getFollowCommand(3));
+    c.addCommands(
+        AlignCommands.frontAlignToCoralStationRight(swerve, vision)
+            .alongWith(
+                superstructure
+                    .setWantedSuperstateCommand(SuperState.CORAL_STATION_FRONT)
+                    .withTimeout(3)));
+    c.addCommands(intake.intakeAuto());
+
+    /* Score */
     c.addCommands(pathWrapper.getFollowCommand(4));
+    c.addCommands(
+        AlignCommands.backAlignToReefRight(swerve, vision)
+            .alongWith(
+                superstructure.setWantedSuperstateCommand(SuperState.L4_BACK).withTimeout(3)));
+    c.addCommands(intake.outtakeAuto());
+
+    /* Pick up */
     c.addCommands(pathWrapper.getFollowCommand(5));
+    c.addCommands(
+        AlignCommands.frontAlignToCoralStationRight(swerve, vision)
+            .alongWith(
+                superstructure
+                    .setWantedSuperstateCommand(SuperState.CORAL_STATION_FRONT)
+                    .withTimeout(3)));
+    c.addCommands(intake.intakeAuto());
+
+    /* Score */
     c.addCommands(pathWrapper.getFollowCommand(6));
+    c.addCommands(
+        AlignCommands.backAlignToReefRight(swerve, vision)
+            .alongWith(
+                superstructure.setWantedSuperstateCommand(SuperState.L4_BACK).withTimeout(3)));
+    c.addCommands(intake.outtakeAuto());
 
     return c;
   }
@@ -127,6 +219,7 @@ public class CustomAutoChooser {
     // Do not add file extensions!
 
     c.addCommands(pathWrapper.setInitialPose());
+    /* Taxi! */
     c.addCommands(pathWrapper.getFollowCommand(0));
 
     return c;
@@ -137,7 +230,7 @@ public class CustomAutoChooser {
     PathWrapper pathWrapper =
         new PathWrapper(
             swerve,
-            AutoRoutine.CENTENNIAL,
+            AutoRoutine.ENGLEWOOD,
             Rotation2d.fromRadians(Math.PI),
             new PathWrapper.AutoFile("LCg3 - Englewood.0", true));
 
@@ -145,6 +238,7 @@ public class CustomAutoChooser {
     // Do not add file extensions!
 
     c.addCommands(pathWrapper.setInitialPose());
+    /* Taxi! */
     c.addCommands(pathWrapper.getFollowCommand(0));
 
     return c;
@@ -155,7 +249,7 @@ public class CustomAutoChooser {
     PathWrapper pathWrapper =
         new PathWrapper(
             swerve,
-            AutoRoutine.CENTENNIAL,
+            AutoRoutine.TOKYO,
             Rotation2d.fromRadians(Math.PI),
             new PathWrapper.AutoFile("LW - A4 - Tokyo.0", true),
             new PathWrapper.AutoFile("LW - A4 - Tokyo.1", true));
@@ -164,8 +258,24 @@ public class CustomAutoChooser {
     // Do not add file extensions!
 
     c.addCommands(pathWrapper.setInitialPose());
+
+    /* Score */
     c.addCommands(pathWrapper.getFollowCommand(0));
+    c.addCommands(
+        AlignCommands.backAlignToReefLeft(swerve, vision)
+            .alongWith(
+                superstructure.setWantedSuperstateCommand(SuperState.L4_BACK).withTimeout(3)));
+    c.addCommands(intake.outtakeAuto());
+
+    /* Pick up */
     c.addCommands(pathWrapper.getFollowCommand(1));
+    c.addCommands(
+        AlignCommands.frontAlignToCoralStationRight(swerve, vision)
+            .alongWith(
+                superstructure
+                    .setWantedSuperstateCommand(SuperState.CORAL_STATION_FRONT)
+                    .withTimeout(3)));
+    c.addCommands(intake.intakeAuto());
 
     return c;
   }
@@ -175,7 +285,7 @@ public class CustomAutoChooser {
     PathWrapper pathWrapper =
         new PathWrapper(
             swerve,
-            AutoRoutine.CENTENNIAL,
+            AutoRoutine.DENVER,
             Rotation2d.fromRadians(Math.PI),
             new PathWrapper.AutoFile("LW - A4B4 - Denver.0", true),
             new PathWrapper.AutoFile("LW - A4B4 - Denver.1", true),
@@ -185,9 +295,32 @@ public class CustomAutoChooser {
     // Do not add file extensions!
 
     c.addCommands(pathWrapper.setInitialPose());
+
+    /* Score */
     c.addCommands(pathWrapper.getFollowCommand(0));
+    c.addCommands(
+        AlignCommands.backAlignToReefLeft(swerve, vision)
+            .alongWith(
+                superstructure.setWantedSuperstateCommand(SuperState.L4_BACK).withTimeout(3)));
+    c.addCommands(intake.outtakeAuto());
+
+    /* Pick up */
     c.addCommands(pathWrapper.getFollowCommand(1));
+    c.addCommands(
+        AlignCommands.frontAlignToCoralStationRight(swerve, vision)
+            .alongWith(
+                superstructure
+                    .setWantedSuperstateCommand(SuperState.CORAL_STATION_FRONT)
+                    .withTimeout(3)));
+    c.addCommands(intake.intakeAuto());
+
+    /* Score */
     c.addCommands(pathWrapper.getFollowCommand(2));
+    c.addCommands(
+        AlignCommands.backAlignToReefLeft(swerve, vision)
+            .alongWith(
+                superstructure.setWantedSuperstateCommand(SuperState.L4_BACK).withTimeout(3)));
+    c.addCommands(intake.outtakeAuto());
 
     return c;
   }
@@ -197,7 +330,7 @@ public class CustomAutoChooser {
     PathWrapper pathWrapper =
         new PathWrapper(
             swerve,
-            AutoRoutine.CENTENNIAL,
+            AutoRoutine.DETROIT,
             Rotation2d.fromRadians(Math.PI),
             new PathWrapper.AutoFile("RCg1 - F2C4D4E4 - Detroit.0", true),
             new PathWrapper.AutoFile("RCg1 - F2C4D4E4 - Detroit.1", true),
@@ -211,13 +344,68 @@ public class CustomAutoChooser {
     // Do not add file extensions!
 
     c.addCommands(pathWrapper.setInitialPose());
+
+    /* Score */
     c.addCommands(pathWrapper.getFollowCommand(0));
+    c.addCommands(
+        AlignCommands.frontAlignToReefRight(swerve, vision)
+            .alongWith(
+                superstructure.setWantedSuperstateCommand(SuperState.L3_FRONT).withTimeout(3)));
+    c.addCommands(intake.outtakeAuto());
+
+    /* Pick up */
     c.addCommands(pathWrapper.getFollowCommand(1));
+    c.addCommands(
+        AlignCommands.frontAlignToCoralStationLeft(swerve, vision)
+            .alongWith(
+                superstructure
+                    .setWantedSuperstateCommand(SuperState.CORAL_STATION_FRONT)
+                    .withTimeout(3)));
+    c.addCommands(intake.intakeAuto());
+
+    /* Score */
     c.addCommands(pathWrapper.getFollowCommand(2));
+    c.addCommands(
+        AlignCommands.backAlignToReefLeft(swerve, vision)
+            .alongWith(
+                superstructure.setWantedSuperstateCommand(SuperState.L4_BACK).withTimeout(3)));
+    c.addCommands(intake.outtakeAuto());
+
+    /* Pick up */
     c.addCommands(pathWrapper.getFollowCommand(3));
+    c.addCommands(
+        AlignCommands.frontAlignToCoralStationLeft(swerve, vision)
+            .alongWith(
+                superstructure
+                    .setWantedSuperstateCommand(SuperState.CORAL_STATION_FRONT)
+                    .withTimeout(3)));
+    c.addCommands(intake.intakeAuto());
+
+    /* Score */
     c.addCommands(pathWrapper.getFollowCommand(4));
+    c.addCommands(
+        AlignCommands.backAlignToReefRight(swerve, vision)
+            .alongWith(
+                superstructure.setWantedSuperstateCommand(SuperState.L4_BACK).withTimeout(3)));
+    c.addCommands(intake.outtakeAuto());
+
+    /* Pick up */
     c.addCommands(pathWrapper.getFollowCommand(5));
+    c.addCommands(
+        AlignCommands.frontAlignToCoralStationLeft(swerve, vision)
+            .alongWith(
+                superstructure
+                    .setWantedSuperstateCommand(SuperState.CORAL_STATION_FRONT)
+                    .withTimeout(3)));
+    c.addCommands(intake.intakeAuto());
+
+    /* Score */
     c.addCommands(pathWrapper.getFollowCommand(6));
+    c.addCommands(
+        AlignCommands.backAlignToReefLeft(swerve, vision)
+            .alongWith(
+                superstructure.setWantedSuperstateCommand(SuperState.L4_BACK).withTimeout(3)));
+    c.addCommands(intake.outtakeAuto());
 
     return c;
   }
@@ -227,7 +415,7 @@ public class CustomAutoChooser {
     PathWrapper pathWrapper =
         new PathWrapper(
             swerve,
-            AutoRoutine.CENTENNIAL,
+            AutoRoutine.SAN_DIEGO,
             Rotation2d.fromRadians(Math.PI),
             new PathWrapper.AutoFile("RCg1 - F2D4C4 - San Diego.0", true),
             new PathWrapper.AutoFile("RCg1 - F2D4C4 - San Diego.1", true),
@@ -239,11 +427,50 @@ public class CustomAutoChooser {
     // Do not add file extensions!
 
     c.addCommands(pathWrapper.setInitialPose());
+
+    /* Score */
     c.addCommands(pathWrapper.getFollowCommand(0));
+    c.addCommands(
+        AlignCommands.frontAlignToReefRight(swerve, vision)
+            .alongWith(
+                superstructure.setWantedSuperstateCommand(SuperState.L3_FRONT).withTimeout(3)));
+    c.addCommands(intake.outtakeAuto());
+
+    /* Pick up */
     c.addCommands(pathWrapper.getFollowCommand(1));
+    c.addCommands(
+        AlignCommands.frontAlignToCoralStationLeft(swerve, vision)
+            .alongWith(
+                superstructure
+                    .setWantedSuperstateCommand(SuperState.CORAL_STATION_FRONT)
+                    .withTimeout(3)));
+    c.addCommands(intake.intakeAuto());
+
+    /* Score */
     c.addCommands(pathWrapper.getFollowCommand(2));
+    c.addCommands(
+        AlignCommands.backAlignToReefRight(swerve, vision)
+            .alongWith(
+                superstructure.setWantedSuperstateCommand(SuperState.L4_BACK).withTimeout(3)));
+    c.addCommands(intake.outtakeAuto());
+
+    /* Pick up */
     c.addCommands(pathWrapper.getFollowCommand(3));
+    c.addCommands(
+        AlignCommands.frontAlignToCoralStationLeft(swerve, vision)
+            .alongWith(
+                superstructure
+                    .setWantedSuperstateCommand(SuperState.CORAL_STATION_FRONT)
+                    .withTimeout(3)));
+    c.addCommands(intake.intakeAuto());
+
+    /* Score */
     c.addCommands(pathWrapper.getFollowCommand(4));
+    c.addCommands(
+        AlignCommands.backAlignToReefLeft(swerve, vision)
+            .alongWith(
+                superstructure.setWantedSuperstateCommand(SuperState.L4_BACK).withTimeout(3)));
+    c.addCommands(intake.outtakeAuto());
 
     return c;
   }
@@ -253,20 +480,42 @@ public class CustomAutoChooser {
     PathWrapper pathWrapper =
         new PathWrapper(
             swerve,
-            AutoRoutine.CENTENNIAL,
+            AutoRoutine.HOUSTON,
             Rotation2d.fromRadians(Math.PI),
-            new PathWrapper.AutoFile("RCg2 - E4D4 - Houston.0", true));
+            new PathWrapper.AutoFile("RCg2 - E4D4 - Houston.0", true),
+            new PathWrapper.AutoFile("RCg2 - E4D4 - Houston.1", true),
+            new PathWrapper.AutoFile("RCg2 - E4D4 - Houston.2", true));
 
     SequentialCommandGroup c = new SequentialCommandGroup();
     // Do not add file extensions!
 
     c.addCommands(pathWrapper.setInitialPose());
+
+    /* Score */
     c.addCommands(pathWrapper.getFollowCommand(0));
+    c.addCommands(
+        AlignCommands.backAlignToReefLeft(swerve, vision)
+            .alongWith(
+                superstructure.setWantedSuperstateCommand(SuperState.L4_BACK).withTimeout(3)));
+    c.addCommands(intake.outtakeAuto());
+
+    /* Pick up */
     c.addCommands(pathWrapper.getFollowCommand(1));
+    c.addCommands(
+        AlignCommands.frontAlignToCoralStationLeft(swerve, vision)
+            .alongWith(
+                superstructure
+                    .setWantedSuperstateCommand(SuperState.CORAL_STATION_FRONT)
+                    .withTimeout(3)));
+    c.addCommands(intake.intakeAuto());
+
+    /* Score */
     c.addCommands(pathWrapper.getFollowCommand(2));
-    c.addCommands(pathWrapper.getFollowCommand(3));
-    c.addCommands(pathWrapper.getFollowCommand(4));
-    c.addCommands(pathWrapper.getFollowCommand(5));
+    c.addCommands(
+        AlignCommands.backAlignToReefRight(swerve, vision)
+            .alongWith(
+                superstructure.setWantedSuperstateCommand(SuperState.L4_BACK).withTimeout(3)));
+    c.addCommands(intake.outtakeAuto());
 
     return c;
   }
@@ -276,7 +525,7 @@ public class CustomAutoChooser {
     PathWrapper pathWrapper =
         new PathWrapper(
             swerve,
-            AutoRoutine.CENTENNIAL,
+            AutoRoutine.BEIJING,
             Rotation2d.fromRadians(Math.PI),
             new PathWrapper.AutoFile("RCg3 - D4 - Beijing.0", true));
 
@@ -284,7 +533,13 @@ public class CustomAutoChooser {
     // Do not add file extensions!
 
     c.addCommands(pathWrapper.setInitialPose());
+    /* Score */
     c.addCommands(pathWrapper.getFollowCommand(0));
+    c.addCommands(
+        AlignCommands.backAlignToReefRight(swerve, vision)
+            .alongWith(
+                superstructure.setWantedSuperstateCommand(SuperState.L4_BACK).withTimeout(3)));
+    c.addCommands(intake.outtakeAuto());
 
     return c;
   }
@@ -294,7 +549,7 @@ public class CustomAutoChooser {
     PathWrapper pathWrapper =
         new PathWrapper(
             swerve,
-            AutoRoutine.CENTENNIAL,
+            AutoRoutine.SACRAMENTO,
             Rotation2d.fromRadians(Math.PI),
             new PathWrapper.AutoFile("RCg3 - R - D4C4B4 - Sacramento.0", true),
             new PathWrapper.AutoFile("RCg3 - R - D4C4B4 - Sacramento.1", true),
@@ -306,11 +561,50 @@ public class CustomAutoChooser {
     // Do not add file extensions!
 
     c.addCommands(pathWrapper.setInitialPose());
+
+    /* Score */
     c.addCommands(pathWrapper.getFollowCommand(0));
+    c.addCommands(
+        AlignCommands.backAlignToReefRight(swerve, vision)
+            .alongWith(
+                superstructure.setWantedSuperstateCommand(SuperState.L4_BACK).withTimeout(3)));
+    c.addCommands(intake.outtakeAuto());
+
+    /* Pick up */
     c.addCommands(pathWrapper.getFollowCommand(1));
+    c.addCommands(
+        AlignCommands.frontAlignToCoralStationLeft(swerve, vision)
+            .alongWith(
+                superstructure
+                    .setWantedSuperstateCommand(SuperState.CORAL_STATION_FRONT)
+                    .withTimeout(3)));
+    c.addCommands(intake.intakeAuto());
+
+    /* Score */
     c.addCommands(pathWrapper.getFollowCommand(2));
+    c.addCommands(
+        AlignCommands.backAlignToReefLeft(swerve, vision)
+            .alongWith(
+                superstructure.setWantedSuperstateCommand(SuperState.L4_BACK).withTimeout(3)));
+    c.addCommands(intake.outtakeAuto());
+
+    /* Pick up */
     c.addCommands(pathWrapper.getFollowCommand(3));
+    c.addCommands(
+        AlignCommands.frontAlignToCoralStationLeft(swerve, vision)
+            .alongWith(
+                superstructure
+                    .setWantedSuperstateCommand(SuperState.CORAL_STATION_FRONT)
+                    .withTimeout(3)));
+    c.addCommands(intake.intakeAuto());
+
+    /* Score */
     c.addCommands(pathWrapper.getFollowCommand(4));
+    c.addCommands(
+        AlignCommands.backAlignToReefRight(swerve, vision)
+            .alongWith(
+                superstructure.setWantedSuperstateCommand(SuperState.L4_BACK).withTimeout(3)));
+    c.addCommands(intake.outtakeAuto());
 
     return c;
   }
@@ -320,7 +614,7 @@ public class CustomAutoChooser {
     PathWrapper pathWrapper =
         new PathWrapper(
             swerve,
-            AutoRoutine.CENTENNIAL,
+            AutoRoutine.ATLANTA,
             Rotation2d.fromRadians(Math.PI),
             new PathWrapper.AutoFile("RCg3 - R- D4C4 - Atlanta.0", true),
             new PathWrapper.AutoFile("RCg3 - R- D4C4 - Atlanta.1", true),
@@ -330,9 +624,31 @@ public class CustomAutoChooser {
     // Do not add file extensions!
 
     c.addCommands(pathWrapper.setInitialPose());
+    /* Score */
     c.addCommands(pathWrapper.getFollowCommand(0));
+    c.addCommands(
+        AlignCommands.backAlignToReefRight(swerve, vision)
+            .alongWith(
+                superstructure.setWantedSuperstateCommand(SuperState.L4_BACK).withTimeout(3)));
+    c.addCommands(intake.outtakeAuto());
+
+    /* Pick up */
     c.addCommands(pathWrapper.getFollowCommand(1));
+    c.addCommands(
+        AlignCommands.frontAlignToCoralStationLeft(swerve, vision)
+            .alongWith(
+                superstructure
+                    .setWantedSuperstateCommand(SuperState.CORAL_STATION_FRONT)
+                    .withTimeout(3)));
+    c.addCommands(intake.intakeAuto());
+
+    /* Score */
     c.addCommands(pathWrapper.getFollowCommand(2));
+    c.addCommands(
+        AlignCommands.backAlignToReefLeft(swerve, vision)
+            .alongWith(
+                superstructure.setWantedSuperstateCommand(SuperState.L4_BACK).withTimeout(3)));
+    c.addCommands(intake.outtakeAuto());
 
     return c;
   }
@@ -342,7 +658,7 @@ public class CustomAutoChooser {
     PathWrapper pathWrapper =
         new PathWrapper(
             swerve,
-            AutoRoutine.CENTENNIAL,
+            AutoRoutine.BARCELONA,
             Rotation2d.fromRadians(Math.PI),
             new PathWrapper.AutoFile("RW - B4 - Barcelona.0", true));
 
@@ -351,6 +667,11 @@ public class CustomAutoChooser {
 
     c.addCommands(pathWrapper.setInitialPose());
     c.addCommands(pathWrapper.getFollowCommand(0));
+    c.addCommands(
+        AlignCommands.backAlignToReefLeft(swerve, vision)
+            .alongWith(
+                superstructure.setWantedSuperstateCommand(SuperState.L4_BACK).withTimeout(3)));
+    c.addCommands(intake.outtakeAuto());
 
     return c;
   }
@@ -360,7 +681,7 @@ public class CustomAutoChooser {
     PathWrapper pathWrapper =
         new PathWrapper(
             swerve,
-            AutoRoutine.CENTENNIAL,
+            AutoRoutine.PARIS,
             Rotation2d.fromRadians(Math.PI),
             new PathWrapper.AutoFile("RW - B4A4 - Paris.0", true),
             new PathWrapper.AutoFile("RW - B4A4 - Paris.1", true),
@@ -370,9 +691,31 @@ public class CustomAutoChooser {
     // Do not add file extensions!
 
     c.addCommands(pathWrapper.setInitialPose());
+    /* Score */
     c.addCommands(pathWrapper.getFollowCommand(0));
+    c.addCommands(
+        AlignCommands.backAlignToReefLeft(swerve, vision)
+            .alongWith(
+                superstructure.setWantedSuperstateCommand(SuperState.L4_BACK).withTimeout(3)));
+    c.addCommands(intake.outtakeAuto());
+
+    /* Pick up */
     c.addCommands(pathWrapper.getFollowCommand(1));
+    c.addCommands(
+        AlignCommands.frontAlignToCoralStationRight(swerve, vision)
+            .alongWith(
+                superstructure
+                    .setWantedSuperstateCommand(SuperState.CORAL_STATION_FRONT)
+                    .withTimeout(3)));
+    c.addCommands(intake.intakeAuto());
+
+    /* Score */
     c.addCommands(pathWrapper.getFollowCommand(2));
+    c.addCommands(
+        AlignCommands.backAlignToReefRight(swerve, vision)
+            .alongWith(
+                superstructure.setWantedSuperstateCommand(SuperState.L4_BACK).withTimeout(3)));
+    c.addCommands(intake.outtakeAuto());
 
     return c;
   }
@@ -382,7 +725,7 @@ public class CustomAutoChooser {
     PathWrapper pathWrapper =
         new PathWrapper(
             swerve,
-            AutoRoutine.CENTENNIAL,
+            AutoRoutine.SEATTLE,
             Rotation2d.fromRadians(Math.PI),
             new PathWrapper.AutoFile("Z - G4 - Seattle.0", true));
 
@@ -390,7 +733,12 @@ public class CustomAutoChooser {
     // Do not add file extensions!
 
     c.addCommands(pathWrapper.setInitialPose());
-    // c.addCommands(pathWrapper.getFollowCommand(0));
+    c.addCommands(pathWrapper.getFollowCommand(0));
+    c.addCommands(
+        AlignCommands.backAlignToReefLeft(swerve, vision)
+            .alongWith(
+                superstructure.setWantedSuperstateCommand(SuperState.L4_BACK).withTimeout(3)));
+    c.addCommands(intake.outtakeAuto());
 
     return c;
   }
@@ -400,7 +748,7 @@ public class CustomAutoChooser {
     PathWrapper pathWrapper =
         new PathWrapper(
             swerve,
-            AutoRoutine.CENTENNIAL,
+            AutoRoutine.MUMBAI,
             Rotation2d.fromRadians(Math.PI),
             new PathWrapper.AutoFile("Z - H4 - Mumbai.0", true));
 
@@ -409,6 +757,11 @@ public class CustomAutoChooser {
 
     c.addCommands(pathWrapper.setInitialPose());
     c.addCommands(pathWrapper.getFollowCommand(0));
+    c.addCommands(
+        AlignCommands.backAlignToReefRight(swerve, vision)
+            .alongWith(
+                superstructure.setWantedSuperstateCommand(SuperState.L4_BACK).withTimeout(3)));
+    c.addCommands(intake.outtakeAuto());
 
     return c;
   }
@@ -418,7 +771,7 @@ public class CustomAutoChooser {
     PathWrapper pathWrapper =
         new PathWrapper(
             swerve,
-            AutoRoutine.CENTENNIAL,
+            AutoRoutine.MANHATTAN,
             Rotation2d.fromRadians(0),
             new PathWrapper.AutoFile("LCg1 - I2K4L4 - Manhattan.0", true),
             new PathWrapper.AutoFile("LCg1 - I2K4L4 - Manhattan.1", true),
@@ -432,19 +785,43 @@ public class CustomAutoChooser {
     c.addCommands(pathWrapper.setInitialPose());
     /* Score */
     c.addCommands(pathWrapper.getFollowCommand(0));
-    c.addCommands(AlignCommands.frontAlignToReefLeft(swerve, vision));
+    c.addCommands(
+        AlignCommands.frontAlignToReefLeft(swerve, vision)
+            .alongWith(
+                superstructure.setWantedSuperstateCommand(SuperState.L3_FRONT).withTimeout(3)));
+    c.addCommands(intake.outtakeAuto());
     /* Pick up */
     c.addCommands(pathWrapper.getFollowCommand(1));
-    c.addCommands(AlignCommands.frontAlignToCoralStationRight(swerve, vision));
+    c.addCommands(
+        AlignCommands.frontAlignToCoralStationRight(swerve, vision)
+            .alongWith(
+                superstructure
+                    .setWantedSuperstateCommand(SuperState.CORAL_STATION_FRONT)
+                    .withTimeout(3)));
+    c.addCommands(intake.intakeAuto());
     /* Score */
     c.addCommands(pathWrapper.getFollowCommand(2));
-    c.addCommands(AlignCommands.backAlignToReefLeft(swerve, vision));
+    c.addCommands(
+        AlignCommands.backAlignToReefLeft(swerve, vision)
+            .alongWith(
+                superstructure.setWantedSuperstateCommand(SuperState.L4_BACK).withTimeout(3)));
+    c.addCommands(intake.outtakeAuto());
     /* Pick up */
     c.addCommands(pathWrapper.getFollowCommand(3));
-    c.addCommands(AlignCommands.frontAlignToCoralStationRight(swerve, vision));
+    c.addCommands(
+        AlignCommands.frontAlignToCoralStationRight(swerve, vision)
+            .alongWith(
+                superstructure
+                    .setWantedSuperstateCommand(SuperState.CORAL_STATION_FRONT)
+                    .withTimeout(3)));
+    c.addCommands(intake.intakeAuto());
     /* Score */
     c.addCommands(pathWrapper.getFollowCommand(4));
-    c.addCommands(AlignCommands.backAlignToReefRight(swerve, vision));
+    c.addCommands(
+        AlignCommands.backAlignToReefRight(swerve, vision)
+            .alongWith(
+                superstructure.setWantedSuperstateCommand(SuperState.L4_BACK).withTimeout(3)));
+    c.addCommands(intake.outtakeAuto());
 
     return c;
   }
@@ -454,7 +831,7 @@ public class CustomAutoChooser {
     PathWrapper pathWrapper =
         new PathWrapper(
             swerve,
-            AutoRoutine.CENTENNIAL,
+            AutoRoutine.AURORA,
             Rotation2d.fromRadians(Math.PI),
             new PathWrapper.AutoFile("LW - Aurora.0", true));
 

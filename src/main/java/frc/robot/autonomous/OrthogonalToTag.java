@@ -191,7 +191,7 @@ public class OrthogonalToTag extends Command {
       //         });
 
       Rotation2d targetAngle = getAverageAngle(getTransform3dList());
-      double targetX = getAverageX(getTransform3dList());
+      double targetX = Math.abs(getAverageX(getTransform3dList()));
       double targetY = getAverageY(getTransform3dList());
 
       Logger.recordOutput("OrthogonalToTag/targetAngle", targetAngle);

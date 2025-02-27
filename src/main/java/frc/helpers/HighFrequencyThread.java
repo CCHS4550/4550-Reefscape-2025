@@ -11,13 +11,14 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 
-package frc.robot.subsystems.swervedrive;
+package frc.helpers;
 
 import com.revrobotics.REVLibError;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import frc.helpers.maps.Constants;
 import frc.helpers.motorcontroller.CCMotorController;
+import frc.robot.subsystems.swervedrive.SwerveDriveSubsystem;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
@@ -30,7 +31,7 @@ import java.util.function.DoubleSupplier;
  * <p>This class provides an implementation of high-frequency odometry; essentially, recieving data
  * from our modules at a higher frequency than normal.
  */
-public class RealOdometryThread {
+public class HighFrequencyThread {
 
   private final List<CCMotorController> sparkMaxes = new ArrayList<>();
   /**
@@ -47,22 +48,22 @@ public class RealOdometryThread {
   private final List<Queue<Double>> genericContainer = new ArrayList<>();
   private final List<Queue<Double>> timestampContainer = new ArrayList<>();
 
-  private static RealOdometryThread instance = null;
+  private static HighFrequencyThread instance = null;
   /**
    * This is what actually creates the thread, and runs the run() method at a predefined period
    * (defined in start())
    */
   private Notifier notifier = new Notifier(this::run);
 
-  public static RealOdometryThread getInstance() {
+  public static HighFrequencyThread getInstance() {
     if (instance == null) {
-      instance = new RealOdometryThread();
+      instance = new HighFrequencyThread();
     }
     return instance;
   }
 
-  private RealOdometryThread() {
-    notifier.setName("OdometryThread");
+  private HighFrequencyThread() {
+    notifier.setName("High Frequency Odometer");
   }
 
   public void start() {

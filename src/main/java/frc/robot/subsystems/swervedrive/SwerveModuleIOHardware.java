@@ -9,6 +9,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.AnalogEncoder;
+import frc.helpers.HighFrequencyThread;
 import frc.helpers.maps.Constants;
 import frc.helpers.motorcontroller.CCMotorController;
 import java.util.Queue;
@@ -82,11 +83,11 @@ public class SwerveModuleIOHardware implements SwerveModuleIO {
     resetEncoders();
 
     // Create odometry queues
-    timestampContainer = RealOdometryThread.getInstance().makeTimestampContainer();
+    timestampContainer = HighFrequencyThread.getInstance().makeTimestampContainer();
     drivePositionContainer =
-        RealOdometryThread.getInstance().registerInput(driveMotor, () -> getDrivePosition());
+        HighFrequencyThread.getInstance().registerInput(driveMotor, () -> getDrivePosition());
     turnPositionContainer =
-        RealOdometryThread.getInstance().registerInput(turnMotor, () -> getTurnPosition());
+        HighFrequencyThread.getInstance().registerInput(turnMotor, () -> getTurnPosition());
   }
 
   @Override

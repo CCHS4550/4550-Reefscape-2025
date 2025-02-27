@@ -130,7 +130,7 @@ public class PhotonVisionAprilTag extends SubsystemBase implements VisionIO {
     /** If you have a target, then update the poseEstimate ArrayList to equal that. */
     if (hasAnyTarget(results)) {
 
-      inputs.poseEstimates = getPoseEstimatesArray(getTrustedResults(results));
+      inputs.poseEstimates = getPoseEstimatesArray(getTrustedResults(results, 0.3));
       inputs.hasEstimate = true;
 
     } else {
@@ -145,11 +145,11 @@ public class PhotonVisionAprilTag extends SubsystemBase implements VisionIO {
   }
 
   public List<Map.Entry<PhotonPoseEstimator, PhotonPipelineResult>> getTrustedResults(
-      List<Map.Entry<PhotonPoseEstimator, PhotonPipelineResult>> results) {
+      List<Map.Entry<PhotonPoseEstimator, PhotonPipelineResult>> results, double ambiguity) {
     List<Map.Entry<PhotonPoseEstimator, PhotonPipelineResult>> trustedResults = new ArrayList<>();
     for (int i = 0; i < results.size(); i++) {
       if (results.get(i).getValue().getBestTarget().getPoseAmbiguity() > 0
-          && results.get(i).getValue().getBestTarget().getPoseAmbiguity() <= .3)
+          && results.get(i).getValue().getBestTarget().getPoseAmbiguity() <= ambiguity)
         trustedResults.add(results.get(i));
       {
       }

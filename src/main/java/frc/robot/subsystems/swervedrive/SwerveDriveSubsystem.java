@@ -34,7 +34,7 @@ import org.littletonrobotics.junction.Logger;
 /** Class for controlling a swerve drive chassis. Consists of 4 SwerveModules and a gyro. */
 public class SwerveDriveSubsystem extends SubsystemBase {
 
-  static final Lock odometryLock = new ReentrantLock();
+  public static final Lock odometryLock = new ReentrantLock();
 
   public final SwerveModuleIO frontRight;
   public final SwerveModuleIO frontLeft;

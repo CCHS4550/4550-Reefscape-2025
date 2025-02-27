@@ -13,14 +13,15 @@
 
 package frc.robot;
 
-import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.helpers.BlinkinLEDController;
+import frc.helpers.BlinkinLEDController.BlinkinPattern;
+import frc.helpers.HighFrequencyThread;
 import frc.helpers.maps.Constants;
 import frc.robot.autonomous.CustomAutoChooser;
-import frc.robot.subsystems.swervedrive.RealOdometryThread;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -42,7 +43,7 @@ public class Robot extends LoggedRobot {
   @SuppressWarnings("unused")
   private RobotContainer robotContainer;
 
-  CustomAutoChooser autoChooser;
+  private CustomAutoChooser autoChooser;
 
   private boolean browningOut = false;
 
@@ -98,8 +99,8 @@ public class Robot extends LoggedRobot {
         break;
     }
 
-    PortForwarder.add(5800, "10.45.50.11.5800", 5800);
-    PortForwarder.add(5801, "10.45.50.12.5800", 5801);
+    // PortForwarder.add(5800, "10.45.50.11.5800", 5800);
+    // PortForwarder.add(5801, "10.45.50.12.5800", 5801);
 
     // Unofficial REV-Compatible Logger
     // Used by SysID to log REV devices
@@ -117,6 +118,8 @@ public class Robot extends LoggedRobot {
     RobotState.getInstance().dashboardInit();
 
     RobotState.getInstance().resetPIDControllers();
+
+    BlinkinLEDController.getInstance().setIfNotAlready(BlinkinPattern.RAINBOW_RAINBOW_PALETTE);
   }
 
   /** This function is called periodically during all modes. */
@@ -165,7 +168,9 @@ public class Robot extends LoggedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    RealOdometryThread.getInstance().start();
+    HighFrequencyThread.getInstance().start();
+
+    BlinkinLEDController.getInstance().setIfNotAlready(BlinkinPattern.RAINBOW_RAINBOW_PALETTE);
 
     // RobotState.getInstance().resetPIDControllers();
     if (!RobotState.getInstance().poseInitialized) RobotState.getInstance().poseInit();
@@ -177,29 +182,35 @@ public class Robot extends LoggedRobot {
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
-    RobotState.getInstance().swerveModuleEncodersPeriodic();
+    // RobotState.getInstance().swerveModuleEncodersPeriodic();
     RobotState.getInstance().updateSwerveModulePositionsPeriodic();
 
     RobotState.getInstance().updateOdometryPose();
-    // RobotState.getInstance().updateVisionPose();
+    RobotState.getInstance().updateVisionPose();
   }
 
   /** This function is called once when teleop is enabled. */
   @Override
   public void teleopInit() {
+
+    HighFrequencyThread.getInstance().start();
+
+    BlinkinLEDController.getInstance().setPattern(BlinkinPattern.RAINBOW_RAINBOW_PALETTE);
+
     if (!RobotState.getInstance().poseInitialized) RobotState.getInstance().poseInit();
-    RealOdometryThread.getInstance().start();
+
     // RobotState.getInstance().resetPIDControllers();
+
   }
 
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    RobotState.getInstance().swerveModuleEncodersPeriodic();
+    // RobotState.getInstance().swerveModuleEncodersPeriodic();
     RobotState.getInstance().updateSwerveModulePositionsPeriodic();
 
     RobotState.getInstance().updateOdometryPose();
-    // RobotState.getInstance().updateVisionPose();
+    RobotState.getInstance().updateVisionPose();
   }
 
   /** This function is called once when test mode is enabled. */

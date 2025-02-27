@@ -13,27 +13,27 @@ public interface ElevatorIO {
 
   @AutoLog
   class ElevatorIOInputs {
-    public double currentPositionMeters = 0.0;
-    public double currentVelocityMetersPerSecond = 0.0;
+    public double currentPositionMeters;
+    public double currentVelocityMetersPerSecond;
 
-    public double currentRotationsTop = 0.0;
-    public double currentRotationsBottom = 0.0;
+    public double currentRotationsTop;
+    public double currentRotationsBottom;
 
-    public boolean hallEffectTripped = false;
+    public boolean hallEffectTripped;
 
-    public double pidOutput = 0.0;
-    public double ffOutput = 0.0;
-    public double appliedVoltage = 0.0;
+    public double pidOutput;
+    public double ffOutput;
+    public double appliedVoltage;
 
     public double pidError;
 
-    public double setpointAngleDegrees = 0.0;
-    public double setpointAngleRadians = 0.0;
-    public double setpointVelocity = 0.0;
+    public double setpointAngleDegrees;
+    public double setpointAngleRadians;
+    public double setpointVelocity;
 
-    public double goalAngleRadians = 0.0;
-    public double goalAngleDegrees = 0.0;
-    public double goalVelocity = 0.0;
+    public double goalAngleRadians;
+    public double goalAngleDegrees;
+    public double goalVelocity;
   }
 
   /** Update the data coming into the robot. */

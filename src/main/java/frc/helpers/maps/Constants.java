@@ -247,7 +247,7 @@ public class Constants {
     public static final double ARM_MOTOR_RADIANS_PER_SECOND_CONVERSION_FACTOR =
         ARM_MOTOR_ROTATIONS_TO_ARM_ROTATIONS_RADIANS / 60;
 
-    public static final double ARM_THROUGHBORE_OFFSET = -0.512;
+    public static final double ARM_THROUGHBORE_OFFSET = -0.527;
   }
 
   public static class ElevatorConstants {
@@ -286,7 +286,7 @@ public class Constants {
     public static final double WRIST_MOTOR_RADIANS_PER_SECOND_CONVERSION_FACTOR =
         WRIST_MOTOR_ROTATIONS_TO_WRIST_ROTATIONS_RADIANS / 60;
 
-    public static final double WRIST_THROUGHBORE_OFFSET = -0.663;
+    public static final double WRIST_THROUGHBORE_OFFSET = -1.360;
 
     public static final boolean WRIST_REVERSE = false;
 
@@ -428,7 +428,7 @@ public class Constants {
             .collect(Collectors.toMap(i -> BARGE_IDS[i], BARGE_POSES::get));
   }
 
-  public static final int BLINKIN_LED_CONTROLLER_PORT = 0;
+  public static final int BLINKIN_LED_CONTROLLER_PORT = 9;
 
   // safely divide
   public static double safeDivision(double numerator, double denominator) {

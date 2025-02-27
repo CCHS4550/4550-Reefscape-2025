@@ -11,10 +11,10 @@ public interface IntakeIO {
   @AutoLog
   class IntakeIOInputs {
 
-    public double appliedVoltage = 0.0;
+    public double appliedVoltage;
 
-    public boolean hasCoral = false;
-    public boolean beamBroke = false;
+    public boolean hasCoral;
+    public boolean beamBroke;
   }
 
   default void updateInputs(IntakeIOInputs inputs) {}

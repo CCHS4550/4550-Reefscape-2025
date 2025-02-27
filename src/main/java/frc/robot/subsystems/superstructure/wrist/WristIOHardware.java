@@ -38,7 +38,7 @@ public class WristIOHardware implements WristIO {
 
     wristPidController =
         new ProfiledPIDController(
-            4.5, 0, 0, new TrapezoidProfile.Constraints(5, 20)); // do something for this
+            1, 0, 0, new TrapezoidProfile.Constraints(2, 2)); // do something for this
 
     // kI .3
     double min = ((-2 * Math.PI) - Constants.WristConstants.WRIST_THROUGHBORE_OFFSET) * .75;

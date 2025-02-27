@@ -7,7 +7,6 @@ package frc.robot;
 import static edu.wpi.first.wpilibj2.command.Commands.runOnce;
 
 import choreo.util.ChoreoAllianceFlipUtil;
-import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -18,7 +17,6 @@ import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
@@ -28,6 +26,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.helpers.HighFrequencyThread;
 import frc.helpers.maps.Constants;
 import frc.helpers.vision.VisionIO;
 import frc.helpers.vision.VisionIOInputsAutoLogged;
@@ -46,7 +45,6 @@ import frc.robot.subsystems.superstructure.elevator.ElevatorIOInputsAutoLogged;
 import frc.robot.subsystems.superstructure.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.superstructure.wrist.WristIOInputsAutoLogged;
 import frc.robot.subsystems.superstructure.wrist.WristSubsystem;
-import frc.robot.subsystems.swervedrive.RealOdometryThread;
 import frc.robot.subsystems.swervedrive.SwerveDriveSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveModuleInputsAutoLogged;
 import java.util.ArrayList;
@@ -107,8 +105,10 @@ public class RobotState {
 
   public BooleanSupplier allowSubsystemMovement = () -> true;
   public BooleanSupplier moveElevator = () -> true;
-  public BooleanSupplier moveArm = () -> true;
-  public BooleanSupplier moveWrist = () -> true;
+
+  public BooleanSupplier moveArm = () -> false;
+  // REDO Wrist offsets
+  public BooleanSupplier moveWrist = () -> false;
 
   public boolean useHF = true;
 
@@ -120,7 +120,7 @@ public class RobotState {
   public double[] sampleTimestampsHF;
   public SwerveModulePosition[][] swerveModulePositionsHF;
 
-  private StatusSignal<Angle> yaw;
+  // private StatusSignal<Angle> yaw;
   private Queue<Double> gyroContainer;
   private Queue<Double> gyroTimestampContainer;
   public Rotation2d[] gyroAnglesHF = new Rotation2d[] {};
@@ -170,14 +170,14 @@ public class RobotState {
     moduleInputs = swerve.swerveModuleInputs;
     wristInputs = wrist.wristInputs;
 
-    yaw = pigeonGyro.getYaw();
+    // yaw = pigeonGyro.getYaw();
     pigeonGyro.getConfigurator().apply(new Pigeon2Configuration());
     pigeonGyro.getConfigurator().setYaw(0.0);
-    yaw.setUpdateFrequency(Constants.SwerveConstants.ODOMETRY_FREQUENCY);
+    // yaw.setUpdateFrequency(Constants.SwerveConstants.ODOMETRY_FREQUENCY);
     pigeonGyro.optimizeBusUtilization();
-    gyroTimestampContainer = RealOdometryThread.getInstance().makeTimestampContainer();
+    gyroTimestampContainer = HighFrequencyThread.getInstance().makeTimestampContainer();
     gyroContainer =
-        RealOdometryThread.getInstance().registerInput(() -> getRotation2d().getDegrees());
+        HighFrequencyThread.getInstance().registerInput(() -> getRotation2d().getDegrees());
 
     swerveModulePositions[0] =
         new SwerveModulePosition(0, new Rotation2d(swerve.frontRight.getTurnPosition()));
@@ -200,7 +200,8 @@ public class RobotState {
   }
 
   public CustomAutoChooser autoChooserInit() {
-    return new CustomAutoChooser(swerve, superstructure, vision);
+    return new CustomAutoChooser(
+        algae, arm, climber, elevator, intake, swerve, wrist, vision, superstructure);
   }
 
   public void poseInit() {
