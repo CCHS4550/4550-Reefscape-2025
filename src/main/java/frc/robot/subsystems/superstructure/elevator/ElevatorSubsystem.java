@@ -188,6 +188,15 @@ public class ElevatorSubsystem extends SubsystemBase {
     return currentState;
   }
 
+  public Command elevatorUpCommand(){
+    return Commands.startEnd(
+        () -> elevatorIO.setVoltage(Volts.of(3)), () -> elevatorIO.setVoltage(Volts.of(0)));
+  }
+  public Command elevatorDownCommand(){
+    return Commands.startEnd(
+        () -> elevatorIO.setVoltage(Volts.of(-3)), () -> elevatorIO.setVoltage(Volts.of(0)));
+  }
+
   @Override
   public void periodic() {
 
