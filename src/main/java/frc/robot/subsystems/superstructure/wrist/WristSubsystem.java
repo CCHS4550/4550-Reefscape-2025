@@ -32,8 +32,8 @@ public class WristSubsystem extends SubsystemBase {
     L2_FRONT(Units.degreesToRadians(75)),
     L3_FRONT(Units.degreesToRadians(75)),
     L4_BACK(Units.degreesToRadians(130)),
-    CORAL_STATION_FRONT(Units.degreesToRadians(-158.3)),
-    CORAL_STATION_BACK(Units.degreesToRadians(-158.3)),
+    CORAL_STATION_FRONT(Units.degreesToRadians(-135)),
+    CORAL_STATION_BACK(Units.degreesToRadians(0)),
     CLIMB_PREPARING(Units.degreesToRadians(130));
 
     private final double angleRadians;

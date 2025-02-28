@@ -265,7 +265,7 @@ public class Constants {
         HEIGHT_METERS_PER_ELEVATOR_MOTOR_ROTATIONS / 60;
 
     public static final double ELEVATOR_THROUGHBORE_OFFSET = 0;
-    public static final int HALL_EFFECT_PORT = 0;
+    public static final int HALL_EFFECT_PORT = 5;
 
     public static double[] elevatorPositions = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     public static double elevatorMaxVelocity = 0;
@@ -309,7 +309,8 @@ public class Constants {
   }
 
   public static class IntakeConstants {
-    public static final int BEAM_BREAK_PORT = 3;
+    public static final int BEAM_BREAK_PORT = 0;
+    public static final int BEAM_BREAK_PORT_POWER = 1;
   }
 
   public static class AlgaeConstants {}

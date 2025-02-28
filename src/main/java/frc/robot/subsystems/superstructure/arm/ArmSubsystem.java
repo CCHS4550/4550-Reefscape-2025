@@ -31,7 +31,7 @@ public class ArmSubsystem extends SubsystemBase {
     L2_FRONT(Units.degreesToRadians(12.5)),
     L3_FRONT(Units.degreesToRadians(12.5)),
     L4_BACK(Units.degreesToRadians(94.234611)),
-    CORAL_STATION_FRONT(Units.degreesToRadians(11.5)),
+    CORAL_STATION_FRONT(Units.degreesToRadians(10)),
     CORAL_STATION_BACK(Units.degreesToRadians(0)),
     CLIMB_PREPARING(Units.degreesToRadians(94.234611));
 

@@ -199,6 +199,8 @@ public class Robot extends LoggedRobot {
 
     if (!RobotState.getInstance().poseInitialized) RobotState.getInstance().poseInit();
 
+    // CameraServer.startAutomaticCapture();
+
     // RobotState.getInstance().resetPIDControllers();
 
   }

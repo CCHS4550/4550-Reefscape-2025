@@ -18,6 +18,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotState;
 import frc.robot.subsystems.swervedrive.SwerveDriveSubsystem;
@@ -62,11 +63,16 @@ public class OrthogonalToTag extends Command {
   static {
     translationPID = new PIDController(.7, .5, 0);
 
-    xPID = new ProfiledPIDController(.5, .5, 0, new Constraints(5, 8));
-    yPID = new ProfiledPIDController(.5, .5, 0, new Constraints(5, 8));
+    xPID = new ProfiledPIDController(2, 0, 0, new Constraints(5, 8));
+    yPID = new ProfiledPIDController(2, 0, 0, new Constraints(5, 8));
 
-    rotationPID = new ProfiledPIDController(.5, .5, 0, new Constraints(10, 5));
+    rotationPID = new ProfiledPIDController(2, 0, 0, new Constraints(10, 5));
     rotationPID.enableContinuousInput(-Math.PI, Math.PI);
+
+    SmartDashboard.putData("Translation PID", translationPID);
+    SmartDashboard.putData("X Profiled PID", xPID);
+    SmartDashboard.putData("Y Profiled PID", yPID);
+    SmartDashboard.putData("Rotation Profiled PID", rotationPID);
   }
 
   Timer timer = new Timer();
@@ -153,6 +159,8 @@ public class OrthogonalToTag extends Command {
   @Override
   public void execute() {
 
+    Logger.recordOutput("OrthogonalToTag/ExecutingCommand...", true);
+
     BlinkinLEDController.getInstance().setIfNotAlready(BlinkinPattern.BREATH_BLUE);
     // if pose is null, it should get a pose from a thigsndfkhgnldgfsfdfakd
 
@@ -191,7 +199,10 @@ public class OrthogonalToTag extends Command {
       //         });
 
       Rotation2d targetAngle = getAverageAngle(getTransform3dList());
-      double targetX = Math.abs(getAverageX(getTransform3dList()));
+      double targetX =
+          Math.abs(transformation.getRotation().getRadians()) <= Math.PI
+              ? Math.abs(getAverageX(getTransform3dList()))
+              : -Math.abs(getAverageX(getTransform3dList()));
       double targetY = getAverageY(getTransform3dList());
 
       Logger.recordOutput("OrthogonalToTag/targetAngle", targetAngle);
@@ -274,8 +285,8 @@ public class OrthogonalToTag extends Command {
   @Override
   public boolean isFinished() {
 
-    if (idealTargetPose.getTranslation().getDistance(globalTargetPose.getTranslation()) > .5)
-      return true;
+    // if (idealTargetPose.getTranslation().getDistance(globalTargetPose.getTranslation()) > .5)
+    //   return true;
 
     double distanceMetersErr =
         RobotState.getInstance()
@@ -292,9 +303,9 @@ public class OrthogonalToTag extends Command {
     Logger.recordOutput("OrthogonalToTag/distanceMetersErr", distanceMetersErr);
     Logger.recordOutput("OrthogonalToTag/angleDegreesErr", angleDegreesErr);
 
-    if (distanceMetersErr < .05 && angleDegreesErr < 5) exitCommand = true;
+    // if (distanceMetersErr < .05 && angleDegreesErr < 5) exitCommand = true;
 
-    return exitCommand || timer.hasElapsed(7);
+    return false;
   }
 
   /** Helper Methods */

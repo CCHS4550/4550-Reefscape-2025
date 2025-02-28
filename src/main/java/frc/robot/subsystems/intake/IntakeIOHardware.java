@@ -4,6 +4,7 @@ import static edu.wpi.first.wpilibj2.command.Commands.startEnd;
 
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.util.maps.Constants;
 import frc.util.motorcontroller.CCMotorController;
@@ -12,10 +13,13 @@ public class IntakeIOHardware implements IntakeIO {
 
   private CCMotorController intakeMotor;
   private DigitalInput beamBreak;
+  private DigitalOutput beamBreakPower;
 
   public IntakeIOHardware(CCMotorController motor) {
     this.intakeMotor = motor;
     beamBreak = new DigitalInput(Constants.IntakeConstants.BEAM_BREAK_PORT);
+    beamBreakPower = new DigitalOutput(Constants.IntakeConstants.BEAM_BREAK_PORT_POWER);
+    beamBreakPower.set(true);
   }
 
   @Override

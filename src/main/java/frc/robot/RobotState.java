@@ -7,6 +7,7 @@ package frc.robot;
 import static edu.wpi.first.wpilibj2.command.Commands.runOnce;
 
 import choreo.util.ChoreoAllianceFlipUtil;
+import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -17,6 +18,7 @@ import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
@@ -105,10 +107,8 @@ public class RobotState {
 
   public BooleanSupplier allowSubsystemMovement = () -> true;
   public BooleanSupplier moveElevator = () -> true;
-
-  public BooleanSupplier moveArm = () -> false;
-  // REDO Wrist offsets
-  public BooleanSupplier moveWrist = () -> false;
+  public BooleanSupplier moveArm = () -> true;
+  public BooleanSupplier moveWrist = () -> true;
 
   public boolean useHF = true;
 
@@ -120,7 +120,7 @@ public class RobotState {
   public double[] sampleTimestampsHF;
   public SwerveModulePosition[][] swerveModulePositionsHF;
 
-  // private StatusSignal<Angle> yaw;
+  private StatusSignal<Angle> yaw;
   private Queue<Double> gyroContainer;
   private Queue<Double> gyroTimestampContainer;
   public Rotation2d[] gyroAnglesHF = new Rotation2d[] {};
@@ -170,10 +170,10 @@ public class RobotState {
     moduleInputs = swerve.swerveModuleInputs;
     wristInputs = wrist.wristInputs;
 
-    // yaw = pigeonGyro.getYaw();
+    yaw = pigeonGyro.getYaw();
     pigeonGyro.getConfigurator().apply(new Pigeon2Configuration());
     pigeonGyro.getConfigurator().setYaw(0.0);
-    // yaw.setUpdateFrequency(Constants.SwerveConstants.ODOMETRY_FREQUENCY);
+    yaw.setUpdateFrequency(Constants.SwerveConstants.ODOMETRY_FREQUENCY);
     pigeonGyro.optimizeBusUtilization();
     gyroTimestampContainer = HighFrequencyThread.getInstance().makeTimestampContainer();
     gyroContainer =

@@ -47,7 +47,7 @@ public class ElevatorIOHardware implements ElevatorIO {
     elevatorEncoderTop.setPosition(0);
 
     elevatorPidController =
-        new ProfiledPIDController(10, 0, 0, new TrapezoidProfile.Constraints(15, 30));
+        new ProfiledPIDController(10, 0, 0, new TrapezoidProfile.Constraints(20, 30));
 
     // elevatorPidController.setIntegratorRange(-3, 3);
 

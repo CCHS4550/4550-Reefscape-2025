@@ -203,7 +203,7 @@ public class SwerveDriveScheme {
     Trigger reefBackLeftTrigger = controller.leftTrigger().and(controller.x()).and(controller.y());
     Trigger reefBackRightTrigger = controller.leftTrigger().and(controller.b()).and(controller.y());
 
-    Trigger processorTrigger = controller.leftTrigger().and(controller.y());
+    // Trigger processorTrigger = controller.leftTrigger().and(controller.y());
 
     Trigger coralStationLeftTrigger = controller.rightTrigger().and(controller.x());
     Trigger coralStationRightTrigger = controller.rightTrigger().and(controller.b());
@@ -216,9 +216,9 @@ public class SwerveDriveScheme {
     reefBackLeftTrigger.whileTrue(AlignCommands.backAlignToReefLeft(swerve, vision));
     reefBackRightTrigger.whileTrue(AlignCommands.backAlignToReefRight(swerve, vision));
 
-    processorTrigger.whileTrue(AlignCommands.AlignToProcessor(swerve, vision));
+    // processorTrigger.whileTrue(AlignCommands.AlignToProcessor(swerve, vision));
 
-    controller.a().onTrue(runOnce(() -> RobotState.getInstance().resetRotation()));
+    // controller.a().onTrue(runOnce(() -> RobotState.getInstance().resetRotation()));
 
     coralStationLeftTrigger.whileTrue(AlignCommands.frontAlignToCoralStationLeft(swerve, vision));
     coralStationRightTrigger.whileTrue(AlignCommands.frontAlignToCoralStationRight(swerve, vision));
