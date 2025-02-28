@@ -200,7 +200,7 @@ public class OrthogonalToTag extends Command {
 
       Rotation2d targetAngle = getAverageAngle(getTransform3dList());
       double targetX =
-          Math.abs(transformation.getRotation().getRadians()) <= Math.PI
+          Math.abs(transformation.getRotation().getRadians()) < Math.PI
               ? Math.abs(getAverageX(getTransform3dList()))
               : -Math.abs(getAverageX(getTransform3dList()));
       double targetY = getAverageY(getTransform3dList());
