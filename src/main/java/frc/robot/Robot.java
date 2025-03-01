@@ -13,6 +13,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -199,7 +200,7 @@ public class Robot extends LoggedRobot {
 
     if (!RobotState.getInstance().poseInitialized) RobotState.getInstance().poseInit();
 
-    // CameraServer.startAutomaticCapture();
+    CameraServer.startAutomaticCapture();
 
     // RobotState.getInstance().resetPIDControllers();
 
