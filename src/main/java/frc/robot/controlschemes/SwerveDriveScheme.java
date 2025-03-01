@@ -5,7 +5,6 @@ import static edu.wpi.first.wpilibj2.command.Commands.runOnce;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -112,12 +111,12 @@ public class SwerveDriveScheme {
 
                   // Set x, y, and turn speed based on joystick inputs
                   double xSpeed =
-                      MathUtil.applyDeadband(-controller.getLeftY(), 0.01)
+                      MathUtil.applyDeadband(-controller.getLeftY(), 0.3)
                           * Constants.SwerveConstants.MAX_DRIVE_SPEED_METERS_PER_SECOND
                           * driveSpeedModifier.getAsDouble();
 
                   double ySpeed =
-                      MathUtil.applyDeadband(-controller.getLeftX(), 0.01)
+                      MathUtil.applyDeadband(-controller.getLeftX(), 0.3)
                           // MathUtil.applyDeadband(0, 0.01)
                           * Constants.SwerveConstants.MAX_DRIVE_SPEED_METERS_PER_SECOND
                           * driveSpeedModifier.getAsDouble();
@@ -150,11 +149,7 @@ public class SwerveDriveScheme {
                             xSpeed,
                             ySpeed,
                             -turnSpeed,
-                            Constants.isBlue
-                                ? RobotState.getInstance().getRotation2d()
-                                : RobotState.getInstance()
-                                    .getRotation2d()
-                                    .plus(Rotation2d.fromRadians(Math.PI)));
+                            RobotState.getInstance().getPoseRotation2d());
                     Logger.recordOutput("xSpeed", xSpeed);
                     Logger.recordOutput("ySpeed", ySpeed);
 
@@ -196,12 +191,16 @@ public class SwerveDriveScheme {
       VisionIO vision,
       CommandXboxController controller) {
 
-    Trigger reefLeftTrigger = controller.leftTrigger().and(controller.x());
-    Trigger reefRightTrigger = controller.leftTrigger().and(controller.b());
+    Trigger reefLeftTrigger =
+        controller.leftTrigger().and(controller.x()).and(superstructure.isNotL4());
+    Trigger reefRightTrigger =
+        controller.leftTrigger().and(controller.b()).and(superstructure.isNotL4());
 
     // TODO ask Eric about these controls.
-    Trigger reefBackLeftTrigger = controller.leftTrigger().and(controller.x()).and(controller.y());
-    Trigger reefBackRightTrigger = controller.leftTrigger().and(controller.b()).and(controller.y());
+    Trigger reefBackLeftTrigger =
+        controller.leftTrigger().and(controller.x()).and(superstructure.isL4());
+    Trigger reefBackRightTrigger =
+        controller.leftTrigger().and(controller.b()).and(superstructure.isL4());
 
     // Trigger processorTrigger = controller.leftTrigger().and(controller.y());
 

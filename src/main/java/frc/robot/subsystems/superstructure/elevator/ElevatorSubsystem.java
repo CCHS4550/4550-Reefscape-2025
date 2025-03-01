@@ -27,7 +27,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     // Placeholder Values
     ZERO(0),
     // DEFAULT_WITHINFRAME(0),
-    // L1_FRONT(0),
+    L1_FRONT(0.2),
     L2_FRONT(0),
     L3_FRONT(0.406),
     L4_INTERMEDIATE(0.25),
@@ -111,9 +111,9 @@ public class ElevatorSubsystem extends SubsystemBase {
         //   elevatorIO.holdAtState(ElevatorState.DEFAULT_WITHINFRAME);
         //   break;
 
-        // case L1_FRONT:
-        //   elevatorIO.holdAtState(ElevatorState.L1_FRONT);
-        //   break;
+      case L1_FRONT:
+        elevatorIO.holdAtState(ElevatorState.L1_FRONT);
+        break;
       case L4_INTERMEDIATE:
         elevatorIO.holdAtStateWithVelocity(ElevatorState.L4_INTERMEDIATE, 5);
 
@@ -152,8 +152,8 @@ public class ElevatorSubsystem extends SubsystemBase {
         // case DEFAULT_WITHINFRAME:
         //   return ElevatorState.DEFAULT_WITHINFRAME;
 
-        // case L1_FRONT:
-        //   return ElevatorState.L1_FRONT;
+      case L1_FRONT:
+        return ElevatorState.L1_FRONT;
       case L4_INTERMEDIATE:
         return ElevatorState.L4_INTERMEDIATE;
 

@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.RobotState;
+import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.Superstructure.SuperState;
 import frc.util.maps.Constants;
 import frc.util.motorcontroller.CCMotorController;
@@ -56,7 +57,7 @@ public class IntakeSubsystem extends SubsystemBase {
   public Command outtake() {
     return new FunctionalCommand(
         () -> {
-          boolean outtakeReverse = RobotState.getInstance().currentSuperState == SuperState.L4_BACK;
+          boolean outtakeReverse = Superstructure.shouldReverse();
           intakeIO.intake(Volts.of(outtakeReverse ? 12 : -12));
         },
         () -> {},
@@ -122,7 +123,7 @@ public class IntakeSubsystem extends SubsystemBase {
     } else if (!hasCoral() && processedCoralInput) {
       processedCoralInput = false;
       timer.stop();
-    }
+    } else if (!hasCoral()) timer.stop();
     return new Trigger(() -> hasCoral() && timer.hasElapsed(delay));
   }
 

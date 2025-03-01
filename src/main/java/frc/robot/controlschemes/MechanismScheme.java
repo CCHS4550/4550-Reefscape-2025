@@ -107,7 +107,7 @@ public class MechanismScheme {
     redBottom.onTrue(superstructure.setWantedSuperstateCommand(SuperState.CLIMB_PREPARING));
 
     blackTop.whileTrue(intake.outtake());
-    // blackBottom.whileTrue(intake.outtakeBack());
+    blackBottom.whileTrue(intake.intakeCoralStation());
     // blackBottom.onTrue(superstructure.setWantedSuperstateCommand(SuperState.ZERO));
   }
 }

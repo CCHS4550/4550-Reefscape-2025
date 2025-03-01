@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.algae.AlgaeSubsystem;
 import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.intake.IntakeSubsystem;
@@ -84,7 +85,7 @@ public class Superstructure extends SubsystemBase {
   public SuperState currentSuperState = SuperState.WITHIN_FRAME_PERIMETER_DEFAULT;
   SuperState previousSuperState = SuperState.WITHIN_FRAME_PERIMETER_DEFAULT;
 
-  boolean outtakeReverse = false;
+  public static boolean outtakeReverse = false;
 
   public void applyStates() {
     switch (currentSuperState) {
@@ -126,7 +127,7 @@ public class Superstructure extends SubsystemBase {
 
         wrist.setWantedStateCommand(WristState.L1_FRONT).schedule();
 
-        elevator.setWantedStateCommand(ElevatorState.ZERO).schedule();
+        elevator.setWantedStateCommand(ElevatorState.L1_FRONT).schedule();
         outtakeReverse = false;
         break;
 
@@ -167,6 +168,7 @@ public class Superstructure extends SubsystemBase {
 
         new WaitCommand(0).andThen(setWantedSuperstateCommand(wantedSuperState)).schedule();
         wantedSuperState = SuperState.L4_INTERMEDIATE;
+        outtakeReverse = true;
 
         break;
 
@@ -266,6 +268,18 @@ public class Superstructure extends SubsystemBase {
 
   public Command outtakeGlobal() {
     return intake.outtake();
+  }
+
+  public static boolean shouldReverse() {
+    return outtakeReverse;
+  }
+
+  public Trigger isL4() {
+    return new Trigger(() -> currentSuperState == SuperState.L4_BACK);
+  }
+
+  public Trigger isNotL4() {
+    return new Trigger(() -> currentSuperState != SuperState.L4_BACK);
   }
 
   @Override

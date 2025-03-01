@@ -63,8 +63,8 @@ public class OrthogonalToTag extends Command {
   static {
     translationPID = new PIDController(.7, .5, 0);
 
-    xPID = new ProfiledPIDController(2, 0, 0, new Constraints(5, 8));
-    yPID = new ProfiledPIDController(2, 0, 0, new Constraints(5, 8));
+    xPID = new ProfiledPIDController(1.5, 0, 0, new Constraints(5, 8));
+    yPID = new ProfiledPIDController(1.5, 0, 0, new Constraints(5, 8));
 
     rotationPID = new ProfiledPIDController(2, 0, 0, new Constraints(10, 5));
     rotationPID.enableContinuousInput(-Math.PI, Math.PI);
@@ -76,6 +76,8 @@ public class OrthogonalToTag extends Command {
   }
 
   Timer timer = new Timer();
+  Timer delayTimer = new Timer();
+  boolean startDelay;
 
   // If you want to troubleshoot this, you should log the poses and check it in advantagescope or
   // whatever.
@@ -106,6 +108,7 @@ public class OrthogonalToTag extends Command {
   @Override
   public void initialize() {
 
+    startDelay = false;
     exitCommand = false;
 
     poseRelativeToTargetEstimator =
@@ -126,6 +129,9 @@ public class OrthogonalToTag extends Command {
 
     timer.reset();
     timer.start();
+
+    delayTimer.reset();
+    delayTimer.stop();
 
     currentRelativePose = poseRelativeToTargetEstimator.getEstimatedPosition();
 
@@ -175,7 +181,7 @@ public class OrthogonalToTag extends Command {
     Logger.recordOutput("OrthogonalToTag/currentPose", currentRelativePose);
 
     /** Update Target Pose */
-    if (getTransform3dList().size() > 0) {
+    if (getTransform3dList().size() > 0 && false) {
 
       // vision
       //     .getPipelineResults()
@@ -303,9 +309,19 @@ public class OrthogonalToTag extends Command {
     Logger.recordOutput("OrthogonalToTag/distanceMetersErr", distanceMetersErr);
     Logger.recordOutput("OrthogonalToTag/angleDegreesErr", angleDegreesErr);
 
+    // if (distanceMetersErr < 0.08 && angleDegreesErr < .2 && !startDelay) {
+    //   startDelay = true;
+    //   delayTimer.start();
+    //   if (delayTimer.hasElapsed(0.1)) exitCommand = true;
+    // } else if ((distanceMetersErr > 0.08 || angleDegreesErr > .2) && startDelay) {
+    //   startDelay = false;
+    //   delayTimer.stop();
+    //   delayTimer.reset();
+    // }
+
     // if (distanceMetersErr < .05 && angleDegreesErr < 5) exitCommand = true;
 
-    return false;
+    return exitCommand;
   }
 
   /** Helper Methods */

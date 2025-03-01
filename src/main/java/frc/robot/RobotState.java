@@ -115,7 +115,7 @@ public class RobotState {
   public boolean poseInitialized;
 
   /** High frequency odometry objects (HF) */
-  public static int sampleCountHF;
+  public int sampleCountHF;
 
   public double[] sampleTimestampsHF;
   public SwerveModulePosition[][] swerveModulePositionsHF;
