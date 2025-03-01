@@ -47,12 +47,12 @@ public class PhotonVisionAprilTag extends SubsystemBase implements VisionIO {
     limelight3_photonEstimator =
         new PhotonPoseEstimator(
             Constants.AprilTags.APRIL_TAG_FIELD_LAYOUT,
-            PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+            PoseStrategy.LOWEST_AMBIGUITY,
             Constants.cameraOne.ROBOT_TO_CAM);
     limelight2p_photonEstimator =
         new PhotonPoseEstimator(
             Constants.AprilTags.APRIL_TAG_FIELD_LAYOUT,
-            PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+            PoseStrategy.LOWEST_AMBIGUITY,
             Constants.cameraTwo.ROBOT_TO_CAM);
 
     limelight3_photonEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
@@ -130,7 +130,7 @@ public class PhotonVisionAprilTag extends SubsystemBase implements VisionIO {
     /** If you have a target, then update the poseEstimate ArrayList to equal that. */
     if (hasAnyTarget(results)) {
 
-      inputs.poseEstimates = getPoseEstimatesArray(getTrustedResults(results, 0.2));
+      inputs.poseEstimates = getPoseEstimatesArray(getTrustedResults(results, 0.03));
       inputs.hasEstimate = true;
 
     } else {
@@ -145,13 +145,28 @@ public class PhotonVisionAprilTag extends SubsystemBase implements VisionIO {
   }
 
   public List<Map.Entry<PhotonPoseEstimator, PhotonPipelineResult>> getTrustedResults(
-      List<Map.Entry<PhotonPoseEstimator, PhotonPipelineResult>> results, double ambiguity) {
+      List<Map.Entry<PhotonPoseEstimator, PhotonPipelineResult>> rawResults, double ambiguity) {
+
     List<Map.Entry<PhotonPoseEstimator, PhotonPipelineResult>> trustedResults = new ArrayList<>();
-    for (int i = 0; i < results.size(); i++) {
-      if (results.get(i).getValue().getBestTarget().getPoseAmbiguity() >= 0
-          && results.get(i).getValue().getBestTarget().getPoseAmbiguity() <= ambiguity)
-        trustedResults.add(results.get(i));
-      {
+    for (int i = 0; i < rawResults.size(); i++) {
+      if (rawResults.get(i).getValue().getBestTarget().getPoseAmbiguity() >= 0
+          && rawResults.get(i).getValue().getBestTarget().getPoseAmbiguity() <= ambiguity) {
+
+        // trustedResults =
+        //     rawResults.stream()
+        //         .filter(
+        //             raw ->
+        //                 (raw.getValue().getMultiTagResult().isPresent()
+        //                         &&
+        // raw.getValue().getMultiTagResult().get().estimatedPose.ambiguity > 0
+        //                         &&
+        // raw.getValue().getMultiTagResult().get().estimatedPose.ambiguity
+        //                             <= ambiguity)
+        //                     || raw.getValue().getTargets().stream()
+        //                         .allMatch(p -> p.poseAmbiguity <= ambiguity))
+        //         .collect(Collectors.toList());
+
+        trustedResults.add(rawResults.get(i));
       }
     }
 
@@ -170,14 +185,16 @@ public class PhotonVisionAprilTag extends SubsystemBase implements VisionIO {
    * @return An ArrayList with Pose2d objects.
    */
   public Pose2d[] getPoseEstimatesArray(
-      List<Map.Entry<PhotonPoseEstimator, PhotonPipelineResult>> results) {
+      List<Map.Entry<PhotonPoseEstimator, PhotonPipelineResult>> poseResults) {
 
     List<Pose2d> estimates = new ArrayList<>();
 
-    for (Map.Entry<PhotonPoseEstimator, PhotonPipelineResult> result : results) {
+    for (Map.Entry<PhotonPoseEstimator, PhotonPipelineResult> poseResult : poseResults) {
 
-      Optional<EstimatedRobotPose> estimatedPose = result.getKey().update(result.getValue());
-      if (estimatedPose.isPresent()) {
+      Optional<EstimatedRobotPose> estimatedPose =
+          poseResult.getKey().update(poseResult.getValue());
+      if (estimatedPose.isPresent()
+          && estimatedPose.get().strategy == PoseStrategy.LOWEST_AMBIGUITY) {
         estimates.add(estimatedPose.get().estimatedPose.toPose2d());
       }
     }

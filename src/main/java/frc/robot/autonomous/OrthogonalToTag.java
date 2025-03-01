@@ -11,7 +11,9 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -183,26 +185,7 @@ public class OrthogonalToTag extends Command {
     /** Update Target Pose */
     if (getTransform3dList().size() > 0 && false) {
 
-      // vision
-      //     .getPipelineResults()
-      //     .forEach(
-      //         result -> {
-      //           result
-      //               .getValue()
-      //               .getTargets()
-      //               .forEach(
-      //                   target -> {
-      //                     poseRelativeToTargetEstimator.addVisionMeasurement(
-      //                         new Pose3d(0, 0, 0, new Rotation3d())
-      //                             .plus(
-      //                                 result
-      //                                     .getKey()
-      //                                     .getRobotToCameraTransform()
-      //                                     .plus(target.getBestCameraToTarget()))
-      //                             .toPose2d(),
-      //                         result.getValue().getTimestampSeconds());
-      //                   });
-      //         });
+
 
       Rotation2d targetAngle = getAverageAngle(getTransform3dList());
       double targetX =
@@ -245,6 +228,27 @@ public class OrthogonalToTag extends Command {
             RobotState.getInstance().swerveModulePositionsHF[i]);
 
         Logger.recordOutput("OrthogonalToTag/Using HF", true);
+
+        vision
+        .getPipelineResults()
+        .forEach(
+            result -> {
+              result
+                  .getValue()
+                  .getTargets()
+                  .forEach(
+                      target -> {
+                        poseRelativeToTargetEstimator.addVisionMeasurement(
+                            new Pose3d(0, 0, 0, new Rotation3d())
+                                .plus(
+                                    result
+                                        .getKey()
+                                        .getRobotToCameraTransform()
+                                        .plus(target.getBestCameraToTarget()))
+                                .toPose2d(),
+                            result.getValue().getTimestampSeconds());
+                      });
+            });
       }
     } else {
 

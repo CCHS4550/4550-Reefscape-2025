@@ -5,6 +5,7 @@ import static edu.wpi.first.wpilibj2.command.Commands.runOnce;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -42,9 +43,9 @@ public class SwerveDriveScheme {
         return fieldCentric;
       };
 
-  private static DoubleSupplier driveSpeedModifier = () -> .4;
+  private static DoubleSupplier driveSpeedModifier = () -> .2;
 
-  private static double turnSpeedModifier = 0.6;
+  private static double turnSpeedModifier = 0.4;
 
   private static PIDController orientationLockPID;
 
@@ -149,7 +150,9 @@ public class SwerveDriveScheme {
                             xSpeed,
                             ySpeed,
                             -turnSpeed,
-                            RobotState.getInstance().getPoseRotation2d());
+                            RobotState.getInstance()
+                                .getPoseRotation2d()
+                                .plus(Rotation2d.fromRadians(Math.PI)));
                     Logger.recordOutput("xSpeed", xSpeed);
                     Logger.recordOutput("ySpeed", ySpeed);
 
@@ -191,16 +194,21 @@ public class SwerveDriveScheme {
       VisionIO vision,
       CommandXboxController controller) {
 
-    Trigger reefLeftTrigger =
-        controller.leftTrigger().and(controller.x()).and(superstructure.isNotL4());
-    Trigger reefRightTrigger =
-        controller.leftTrigger().and(controller.b()).and(superstructure.isNotL4());
+    Trigger reefLeftTrigger = controller.leftTrigger().and(controller.x());
+    Trigger reefRightTrigger = controller.leftTrigger().and(controller.b());
 
-    // TODO ask Eric about these controls.
-    Trigger reefBackLeftTrigger =
-        controller.leftTrigger().and(controller.x()).and(superstructure.isL4());
-    Trigger reefBackRightTrigger =
-        controller.leftTrigger().and(controller.b()).and(superstructure.isL4());
+    Trigger reefBackLeftTrigger = controller.leftTrigger().and(controller.x()).and(controller.y());
+    Trigger reefBackRightTrigger = controller.leftTrigger().and(controller.b()).and(controller.y());
+
+    // Trigger reefLeftTrigger =
+    //     controller.leftTrigger().and(controller.x()).and(superstructure.isNotL4());
+    // Trigger reefRightTrigger =
+    //     controller.leftTrigger().and(controller.b()).and(superstructure.isNotL4());
+
+    // Trigger reefBackLeftTrigger =
+    //     controller.leftTrigger().and(controller.x()).and(superstructure.isL4());
+    // Trigger reefBackRightTrigger =
+    //     controller.leftTrigger().and(controller.b()).and(superstructure.isL4());
 
     // Trigger processorTrigger = controller.leftTrigger().and(controller.y());
 

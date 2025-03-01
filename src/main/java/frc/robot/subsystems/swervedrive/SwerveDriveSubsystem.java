@@ -79,6 +79,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
                 MotorType.kBrushless,
                 IdleMode.kBrake,
                 Constants.MotorConstants.FRONT_RIGHT_DRIVE_REVERSE,
+                // Constants.ConversionConstants.ONE_METER_PER_MOTOR_ROTATIONS,
                 Constants.ConversionConstants.HORIZONTAL_DISTANCE_TRAVELLED_PER_MOTOR_REVOLUTION,
                 Constants.ConversionConstants.DRIVE_MOTOR_METERS_PER_SECOND_CONVERSION_FACTOR),
             motorFactory.create(
@@ -103,6 +104,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
                 MotorType.kBrushless,
                 IdleMode.kBrake,
                 Constants.MotorConstants.FRONT_LEFT_DRIVE_REVERSE,
+                // Constants.ConversionConstants.ONE_METER_PER_MOTOR_ROTATIONS,
                 Constants.ConversionConstants.HORIZONTAL_DISTANCE_TRAVELLED_PER_MOTOR_REVOLUTION,
                 Constants.ConversionConstants.DRIVE_MOTOR_METERS_PER_SECOND_CONVERSION_FACTOR),
             motorFactory.create(
@@ -127,6 +129,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
                 MotorType.kBrushless,
                 IdleMode.kBrake,
                 Constants.MotorConstants.BACK_RIGHT_DRIVE_REVERSE,
+                // Constants.ConversionConstants.ONE_METER_PER_MOTOR_ROTATIONS,
                 Constants.ConversionConstants.HORIZONTAL_DISTANCE_TRAVELLED_PER_MOTOR_REVOLUTION,
                 Constants.ConversionConstants.DRIVE_MOTOR_METERS_PER_SECOND_CONVERSION_FACTOR),
             motorFactory.create(
@@ -151,6 +154,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
                 MotorType.kBrushless,
                 IdleMode.kBrake,
                 Constants.MotorConstants.BACK_LEFT_DRIVE_REVERSE,
+                // Constants.ConversionConstants.ONE_METER_PER_MOTOR_ROTATIONS,
                 Constants.ConversionConstants.HORIZONTAL_DISTANCE_TRAVELLED_PER_MOTOR_REVOLUTION,
                 Constants.ConversionConstants.DRIVE_MOTOR_METERS_PER_SECOND_CONVERSION_FACTOR),
             motorFactory.create(

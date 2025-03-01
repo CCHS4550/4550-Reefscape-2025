@@ -34,7 +34,7 @@ public class ArmSubsystem extends SubsystemBase {
     CORAL_STATION_FRONT(Units.degreesToRadians(10)),
     CORAL_STATION_BACK(Units.degreesToRadians(0)),
     CLIMB_PREPARING(Units.degreesToRadians(94.234611)),
-    MANUAL(0); //this will never get applied
+    MANUAL(0); // this will never get applied
     public final double angleRadians;
 
     ArmState(double angleRadians) {
