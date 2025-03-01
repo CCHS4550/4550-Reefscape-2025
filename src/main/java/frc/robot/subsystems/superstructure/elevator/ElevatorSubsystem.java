@@ -36,6 +36,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     // A2(0),
     // CORAL_STATION_FRONT(0),
     // CORAL_STATION_BACK(0),
+    MANUAL(0),
     CLIMB_PREPARING(0);
 
     private final double heightMeters;
@@ -135,7 +136,8 @@ public class ElevatorSubsystem extends SubsystemBase {
         // case CORAL_STATION_BACK:
         //   elevatorIO.holdAtState(ElevatorState.CORAL_STATION_BACK);
         //   break;
-
+      case MANUAL:
+        break;
       case CLIMB_PREPARING:
         elevatorIO.holdAtState(ElevatorState.CLIMB_PREPARING);
         break;
@@ -170,7 +172,8 @@ public class ElevatorSubsystem extends SubsystemBase {
 
         // case CORAL_STATION_BACK:
         //   return ElevatorState.CORAL_STATION_BACK;
-
+      case MANUAL:
+        return ElevatorState.MANUAL;
       default:
         return ElevatorState.ZERO;
     }

@@ -33,8 +33,8 @@ public class ArmSubsystem extends SubsystemBase {
     L4_BACK(Units.degreesToRadians(94.234611)),
     CORAL_STATION_FRONT(Units.degreesToRadians(10)),
     CORAL_STATION_BACK(Units.degreesToRadians(0)),
-    CLIMB_PREPARING(Units.degreesToRadians(94.234611));
-
+    CLIMB_PREPARING(Units.degreesToRadians(94.234611)),
+    MANUAL(0); //this will never get applied
     public final double angleRadians;
 
     ArmState(double angleRadians) {
@@ -118,6 +118,9 @@ public class ArmSubsystem extends SubsystemBase {
         armIO.holdAtState(ArmState.CORAL_STATION_BACK);
         break;
 
+      case MANUAL:
+        break;
+
       default:
         armIO.holdAtState(ArmState.DEFAULT_WITHINFRAME);
         break;
@@ -150,7 +153,8 @@ public class ArmSubsystem extends SubsystemBase {
 
       case CORAL_STATION_BACK:
         return ArmState.CORAL_STATION_BACK;
-
+      case MANUAL:
+        return ArmState.MANUAL;
       default:
         return ArmState.DEFAULT_WITHINFRAME;
     }
