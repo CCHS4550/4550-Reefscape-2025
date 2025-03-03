@@ -185,8 +185,6 @@ public class OrthogonalToTag extends Command {
     /** Update Target Pose */
     if (getTransform3dList().size() > 0 && false) {
 
-
-
       Rotation2d targetAngle = getAverageAngle(getTransform3dList());
       double targetX =
           Math.abs(transformation.getRotation().getRadians()) < Math.PI
@@ -230,25 +228,25 @@ public class OrthogonalToTag extends Command {
         Logger.recordOutput("OrthogonalToTag/Using HF", true);
 
         vision
-        .getPipelineResults()
-        .forEach(
-            result -> {
-              result
-                  .getValue()
-                  .getTargets()
-                  .forEach(
-                      target -> {
-                        poseRelativeToTargetEstimator.addVisionMeasurement(
-                            new Pose3d(0, 0, 0, new Rotation3d())
-                                .plus(
-                                    result
-                                        .getKey()
-                                        .getRobotToCameraTransform()
-                                        .plus(target.getBestCameraToTarget()))
-                                .toPose2d(),
-                            result.getValue().getTimestampSeconds());
-                      });
-            });
+            .getPipelineResults()
+            .forEach(
+                result -> {
+                  result
+                      .getValue()
+                      .getTargets()
+                      .forEach(
+                          target -> {
+                            poseRelativeToTargetEstimator.addVisionMeasurement(
+                                new Pose3d(0, 0, 0, new Rotation3d())
+                                    .plus(
+                                        result
+                                            .getKey()
+                                            .getRobotToCameraTransform()
+                                            .plus(target.getBestCameraToTarget()))
+                                    .toPose2d(),
+                                result.getValue().getTimestampSeconds());
+                          });
+                });
       }
     } else {
 

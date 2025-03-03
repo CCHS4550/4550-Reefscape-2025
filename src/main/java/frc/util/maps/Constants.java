@@ -357,9 +357,23 @@ public class Constants {
   public static class cameraTwo {
     public static final String CAMERA_TWO_NAME = "limelight2p";
 
-    /** If camera is on front right module facing inwards. */
+    /** If camera is on front right module facing OUTWARDS. */
     public static final Translation3d ROBOT_TO_CAMERA_TRANS =
-        new Translation3d(0.271584, -0.274560, 0.242597);
+        new Translation3d(0.271584, -0.293262, 0.242597);
+
+    public static final Rotation3d ROBOT_TO_CAMERA_ROT =
+        new Rotation3d(0, Math.toRadians(-15), Math.toRadians(-15));
+
+    public static final Transform3d ROBOT_TO_CAM =
+        new Transform3d(ROBOT_TO_CAMERA_TRANS, ROBOT_TO_CAMERA_ROT);
+  }
+
+  /* Left side of the robot */
+  public static class cameraThree {
+    public static final String CAMERA_THREE_NAME = "limelight3_2";
+
+    public static final Translation3d ROBOT_TO_CAMERA_TRANS =
+        new Translation3d(0.275180, 0.294236, 0.242951);
 
     public static final Rotation3d ROBOT_TO_CAMERA_ROT =
         new Rotation3d(0, Math.toRadians(-15), Math.toRadians(15));

@@ -102,10 +102,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     hallEffectTripped.onTrue(resetEncoderCommand());
   }
 
-  private Command resetEncoderCommand() {
-    return new InstantCommand(() -> elevatorIO.resetEncoder(), this);
-  }
-
   private void applyStates() {
     switch (currentState) {
         // case DEFAULT_WITHINFRAME:
@@ -219,6 +215,10 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     // This method will be called once per scheduler run
+  }
+
+  public Command resetEncoderCommand() {
+    return new InstantCommand(() -> elevatorIO.resetEncoders(), this);
   }
 
   public void resetPID() {

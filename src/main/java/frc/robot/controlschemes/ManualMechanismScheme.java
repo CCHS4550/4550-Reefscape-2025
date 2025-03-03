@@ -36,12 +36,15 @@ public class ManualMechanismScheme {
         SwerveDriveSubsystem swerve,
         WristSubsystem wrist,
         int port) {
+
       buttonBoard.button(1).whileTrue(elevator.elevatorUpCommand());
       buttonBoard.button(2).whileTrue(elevator.elevatorDownCommand());
       buttonBoard.button(3).whileTrue(arm.moveArmUpCommand());
       buttonBoard.button(4).whileTrue(arm.moveArmDownCommand());
       buttonBoard.button(5).whileTrue(wrist.wristUpCommand());
       buttonBoard.button(6).whileTrue(wrist.wristDownCommand());
+
+      buttonBoard.button(7).onTrue(elevator.resetEncoderCommand());
     }
   }
 }

@@ -10,6 +10,7 @@ import choreo.util.ChoreoAllianceFlipUtil;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.Pigeon2;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -211,7 +212,10 @@ public class RobotState {
             Constants.SwerveConstants.DRIVE_KINEMATICS,
             getRotation2d(),
             swerveModulePositions,
-            new Pose2d(0, 0, new Rotation2d()));
+            new Pose2d(0, 0, new Rotation2d()),
+            VecBuilder.fill(0.1, 0.1, 0.1),
+            VecBuilder.fill(0.5, 0.5, 0.5));
+    ;
 
     poseInitialized = true;
   }

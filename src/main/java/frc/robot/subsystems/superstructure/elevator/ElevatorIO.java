@@ -39,6 +39,8 @@ public interface ElevatorIO {
   /** Update the data coming into the robot. */
   public default void updateInputs(ElevatorIOInputs inputs) {}
 
+  public default void resetEncoders() {}
+
   public default void holdAtState(ElevatorState goalState) {}
 
   public default void holdAtStateWithVelocity(ElevatorState goalState, double velocity) {}
@@ -79,8 +81,6 @@ public interface ElevatorIO {
   default double getVelocityMetersPerSecond() {
     return 0.0;
   }
-
-  default void resetEncoder() {}
 
   default void resetPID() {}
 

@@ -150,9 +150,11 @@ public class SwerveDriveScheme {
                             xSpeed,
                             ySpeed,
                             -turnSpeed,
-                            RobotState.getInstance()
-                                .getPoseRotation2d()
-                                .plus(Rotation2d.fromRadians(Math.PI)));
+                            Constants.isBlue
+                                ? RobotState.getInstance().getPoseRotation2d()
+                                : RobotState.getInstance()
+                                    .getPoseRotation2d()
+                                    .plus(Rotation2d.fromRadians(Math.PI)));
                     Logger.recordOutput("xSpeed", xSpeed);
                     Logger.recordOutput("ySpeed", ySpeed);
 

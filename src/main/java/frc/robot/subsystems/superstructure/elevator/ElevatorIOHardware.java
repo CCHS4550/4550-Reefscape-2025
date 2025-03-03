@@ -120,6 +120,13 @@ public class ElevatorIOHardware implements ElevatorIO {
         elevator);
   }
 
+  @Override
+  public void resetEncoders() {
+    elevatorEncoderBottom.setPosition(0);
+    elevatorEncoderTop.setPosition(0);
+    resetPID();
+  }
+
   /** Called continuously */
   @Override
   public double getPIDFFOutput(State goalState) {
@@ -170,14 +177,8 @@ public class ElevatorIOHardware implements ElevatorIO {
   }
 
   @Override
-  public void resetEncoder() {
-    elevatorEncoderBottom.setPosition(0);
-    elevatorEncoderTop.setPosition(0);
-  }
-
-  @Override
   public void resetPID() {
-    // elevatorPidController.reset(getHeightMeters());
+    elevatorPidController.reset(getHeightMeters());
     pidOutput = 0;
     ffOutput = 0;
   }
