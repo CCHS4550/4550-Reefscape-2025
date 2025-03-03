@@ -19,6 +19,10 @@ import frc.robot.subsystems.superstructure.elevator.ElevatorSubsystem.ElevatorSt
 import frc.robot.subsystems.superstructure.wrist.WristSubsystem;
 import frc.robot.subsystems.superstructure.wrist.WristSubsystem.WristState;
 import frc.robot.subsystems.swervedrive.SwerveDriveSubsystem;
+
+import static edu.wpi.first.wpilibj2.command.Commands.deadline;
+import static edu.wpi.first.wpilibj2.command.Commands.waitSeconds;
+
 import org.littletonrobotics.junction.Logger;
 
 public class Superstructure extends SubsystemBase {
@@ -67,7 +71,7 @@ public class Superstructure extends SubsystemBase {
     L3_FRONT,
     /** Position to Score L4 */
     L4_BACK,
-
+    L4_RECOVERY,
     L4_INTERMEDIATE,
     /** In position to climb */
     CLIMB_PREPARING,
@@ -112,7 +116,7 @@ public class Superstructure extends SubsystemBase {
         arm.setWantedStateCommand(ArmState.CORAL_STATION_BACK).schedule();
 
         wrist.setWantedStateCommand(WristState.CORAL_STATION_BACK).schedule();
-
+        
         new WaitCommand(1).andThen(elevator.setWantedStateCommand(ElevatorState.ZERO)).schedule();
         break;
 
@@ -157,6 +161,19 @@ public class Superstructure extends SubsystemBase {
 
         wrist.setWantedStateCommand(WristState.L4_BACK).schedule();
 
+        new WaitCommand(0)
+            .andThen(elevator.setWantedStateCommand(ElevatorState.L4_BACK))
+            .schedule();
+        outtakeReverse = true;
+        break;
+      case L4_RECOVERY:
+        arm.setWantedStateCommand(ArmState.L4_BACK).schedule();
+        
+
+        if(currentSuperState == SuperState.L4_BACK || currentSuperState == SuperState.L4_RECOVERY){
+          wrist.setWantedStateCommand(WristState.MANUAL).schedule();
+          deadline(waitSeconds(0.5), wrist.wristUpCommand()).schedule();
+        }
         new WaitCommand(0)
             .andThen(elevator.setWantedStateCommand(ElevatorState.L4_BACK))
             .schedule();
@@ -267,7 +284,13 @@ public class Superstructure extends SubsystemBase {
           return currentSuperState = SuperState.L4_INTERMEDIATE;
         }
         return currentSuperState = SuperState.L4_BACK;
-
+      case L4_RECOVERY:
+      if (currentSuperState == SuperState.WITHIN_FRAME_PERIMETER_DEFAULT
+        || currentSuperState == SuperState.L1_FRONT
+        || currentSuperState == SuperState.ZERO) {
+         return currentSuperState = SuperState.L4_INTERMEDIATE;
+         }
+        return currentSuperState = SuperState.L4_RECOVERY;
       case CLIMB_PREPARING:
         if (currentSuperState == SuperState.L4_BACK)
           return currentSuperState = SuperState.L4_INTERMEDIATE;
@@ -317,11 +340,11 @@ public class Superstructure extends SubsystemBase {
   }
 
   public Trigger isL4() {
-    return new Trigger(() -> currentSuperState == SuperState.L4_BACK);
+    return new Trigger(() -> currentSuperState == SuperState.L4_BACK || currentSuperState == SuperState.L4_RECOVERY);
   }
 
   public Trigger isNotL4() {
-    return new Trigger(() -> currentSuperState != SuperState.L4_BACK);
+    return new Trigger(() -> currentSuperState != SuperState.L4_BACK || currentSuperState != SuperState.L4_RECOVERY);
   }
 
   @Override

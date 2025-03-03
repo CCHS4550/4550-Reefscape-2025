@@ -1,8 +1,11 @@
 package frc.robot.controlschemes;
 
 import static edu.wpi.first.wpilibj2.command.Commands.runOnce;
+import static edu.wpi.first.wpilibj2.command.Commands.sequence;
 
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.Superstructure;
@@ -66,6 +69,12 @@ public class MechanismScheme {
       WristSubsystem wrist,
       Superstructure superstructure,
       int port) {
+    
+
+    Command wristFix = sequence(
+        superstructure.setWantedSuperstateCommand(SuperState.L4_RECOVERY),
+        superstructure.setWantedSuperstateCommand(SuperState.CORAL_STATION_FRONT)
+    );        
 
     // TODO ask Ian about these controls
     final Trigger yellowTop = buttonBoard.button(1);
@@ -86,7 +95,8 @@ public class MechanismScheme {
     final Trigger blackTop = buttonBoard.button(11);
     final Trigger blackBottom = buttonBoard.button(12);
 
-    yellowTop.onTrue(superstructure.setWantedSuperstateCommand(SuperState.CORAL_STATION_FRONT));
+    yellowTop.onTrue(wristFix
+    );
     yellowTop.whileTrue(superstructure.intakeCoralStation());
     yellowBottom.onTrue(
         superstructure.setWantedSuperstateCommand(SuperState.WITHIN_FRAME_PERIMETER_DEFAULT));

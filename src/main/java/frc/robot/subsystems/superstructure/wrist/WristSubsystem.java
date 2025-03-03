@@ -35,7 +35,7 @@ public class WristSubsystem extends SubsystemBase {
     CORAL_STATION_FRONT(Units.degreesToRadians(-135)),
     CORAL_STATION_BACK(Units.degreesToRadians(0)),
     CLIMB_PREPARING(Units.degreesToRadians(130)),
-    MANUAL(0);
+    MANUAL(0); // this is a placeholder angle, manual will never be applied
     private final double angleRadians;
 
     WristState(double angleRadians) {
