@@ -337,6 +337,9 @@ public class Constants {
         new Transform2d(Inches.of((-18.7500 + 3)), Inches.of(-6.481791), new Rotation2d());
     public static final Transform2d PROCESSOR_OFFSET =
         new Transform2d(Inches.of((-18.7500 - 5)), Inches.of(6.481791), new Rotation2d());
+
+    public static final Transform2d ALGAE_KNOCK_OFFSET =
+        new Transform2d(Inches.of((-18.7500 - 3)), Inches.of(0), new Rotation2d());
   }
 
   /** Back Camera */
@@ -372,11 +375,17 @@ public class Constants {
   public static class cameraThree {
     public static final String CAMERA_THREE_NAME = "limelight3_2";
 
-    public static final Translation3d ROBOT_TO_CAMERA_TRANS =
-        new Translation3d(0.275180, 0.294236, 0.242951);
+    /* If the camera is on the front left module, facing front outwards. */
+    // public static final Translation3d ROBOT_TO_CAMERA_TRANS =
+    //     new Translation3d(0.275180, 0.294236, 0.242951);
+    // public static final Rotation3d ROBOT_TO_CAMERA_ROT =
+    //     new Rotation3d(0, Math.toRadians(-15), Math.toRadians(15));
 
+    /* If the camera is on the front left module, facing back outwards. */
+    public static final Translation3d ROBOT_TO_CAMERA_TRANS =
+        new Translation3d(0.198172, 0.294237, 0.242951);
     public static final Rotation3d ROBOT_TO_CAMERA_ROT =
-        new Rotation3d(0, Math.toRadians(-15), Math.toRadians(15));
+        new Rotation3d(0, Math.toRadians(-15), Math.toRadians((180 - 15)));
 
     public static final Transform3d ROBOT_TO_CAM =
         new Transform3d(ROBOT_TO_CAMERA_TRANS, ROBOT_TO_CAMERA_ROT);

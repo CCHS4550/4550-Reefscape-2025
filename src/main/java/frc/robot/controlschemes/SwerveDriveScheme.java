@@ -196,26 +196,26 @@ public class SwerveDriveScheme {
       VisionIO vision,
       CommandXboxController controller) {
 
-    Trigger reefLeftTrigger = controller.leftTrigger().and(controller.x());
-    Trigger reefRightTrigger = controller.leftTrigger().and(controller.b());
+        final Trigger reefLeftTrigger = controller.leftTrigger().and(controller.x());
+        final Trigger reefRightTrigger = controller.leftTrigger().and(controller.b());
 
-    Trigger reefBackLeftTrigger = controller.leftTrigger().and(controller.x()).and(controller.y());
-    Trigger reefBackRightTrigger = controller.leftTrigger().and(controller.b()).and(controller.y());
+        final Trigger reefBackLeftTrigger = controller.leftTrigger().and(controller.x()).and(controller.y());
+        final Trigger reefBackRightTrigger = controller.leftTrigger().and(controller.b()).and(controller.y());
 
-    // Trigger reefLeftTrigger =
-    //     controller.leftTrigger().and(controller.x()).and(superstructure.isNotL4());
-    // Trigger reefRightTrigger =
-    //     controller.leftTrigger().and(controller.b()).and(superstructure.isNotL4());
+        // final Trigger reefLeftTrigger =
+        // controller.leftTrigger().and(controller.x()).and(superstructure.isNotL4());
+        // final Trigger reefRightTrigger =
+        //  controller.leftTrigger().and(controller.b()).and(superstructure.isNotL4());
 
-    // Trigger reefBackLeftTrigger =
-    //     controller.leftTrigger().and(controller.x()).and(superstructure.isL4());
-    // Trigger reefBackRightTrigger =
-    //     controller.leftTrigger().and(controller.b()).and(superstructure.isL4());
+        // final Trigger reefBackLeftTrigger =
+        // controller.leftTrigger().and(controller.x()).and(superstructure.isL4());
+        // final Trigger reefBackRightTrigger =
+        // controller.leftTrigger().and(controller.b()).and(superstructure.isL4());
 
-    // Trigger processorTrigger = controller.leftTrigger().and(controller.y());
+        // final Trigger processorTrigger = controller.leftTrigger().and(controller.y());
 
-    Trigger coralStationLeftTrigger = controller.rightTrigger().and(controller.x());
-    Trigger coralStationRightTrigger = controller.rightTrigger().and(controller.b());
+    final Trigger coralStationLeftTrigger = controller.rightTrigger().and(controller.x());
+    final Trigger coralStationRightTrigger = controller.rightTrigger().and(controller.b());
 
     // controller.y().onTrue(runOnce(() -> toggleFieldCentric()));
 
@@ -231,6 +231,8 @@ public class SwerveDriveScheme {
 
     coralStationLeftTrigger.whileTrue(AlignCommands.frontAlignToCoralStationLeft(swerve, vision));
     coralStationRightTrigger.whileTrue(AlignCommands.frontAlignToCoralStationRight(swerve, vision));
+
+    controller.leftTrigger().and(controller.y()).whileTrue(AlignCommands.alignToKnockAlgae(swerve, vision));
 
     controller
         .leftBumper()

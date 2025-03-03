@@ -81,7 +81,7 @@ public class AlignCommands {
     return alignCommand;
   }
 
-  public static Command AlignToProcessor(SwerveDriveSubsystem swerve, VisionIO vision) {
+  public static Command alignToProcessor(SwerveDriveSubsystem swerve, VisionIO vision) {
     Command alignCommand =
         new OrthogonalToTag(
             Constants.FieldPositionConstants.PROCESSOR_OFFSET,
@@ -90,6 +90,16 @@ public class AlignCommands {
             swerve,
             vision);
     return alignCommand;
+  }
+
+  public static Command alignToKnockAlgae(SwerveDriveSubsystem swerve, VisionIO vision) {
+
+    return new OrthogonalToTag(
+        Constants.FieldPositionConstants.ALGAE_KNOCK_OFFSET,
+        Constants.AprilTags.REEF_POSES,
+        false,
+        swerve,
+        vision);
   }
 
   public static Command aboutFace(SwerveDriveSubsystem swerve) {
@@ -113,6 +123,8 @@ public class AlignCommands {
                 < 0.05,
         swerve);
   }
+
+  
 
   public static Trigger hasTarget() {
     return new Trigger(() -> RobotState.getInstance().visionInputs.hasTarget)

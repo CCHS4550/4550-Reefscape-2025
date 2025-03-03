@@ -68,23 +68,23 @@ public class MechanismScheme {
       int port) {
 
     // TODO ask Ian about these controls
-    Trigger yellowTop = buttonBoard.button(1);
-    Trigger yellowBottom = buttonBoard.button(2);
+    final Trigger yellowTop = buttonBoard.button(1);
+    final Trigger yellowBottom = buttonBoard.button(2);
 
-    Trigger whiteTop = buttonBoard.button(3);
-    Trigger whiteBottom = buttonBoard.button(4);
+    final Trigger whiteTop = buttonBoard.button(3);
+    final Trigger whiteBottom = buttonBoard.button(4);
 
-    Trigger blueTop = buttonBoard.button(5);
-    Trigger blueBottom = buttonBoard.button(6);
+    final Trigger blueTop = buttonBoard.button(5);
+    final Trigger blueBottom = buttonBoard.button(6);
 
-    Trigger greenTop = buttonBoard.button(7);
-    Trigger greenBottom = buttonBoard.button(8);
+    final Trigger greenTop = buttonBoard.button(7);
+    final Trigger greenBottom = buttonBoard.button(8);
 
-    Trigger redTop = buttonBoard.button(9);
-    Trigger redBottom = buttonBoard.button(10);
+    final Trigger redTop = buttonBoard.button(9);
+    final Trigger redBottom = buttonBoard.button(10);
 
-    Trigger blackTop = buttonBoard.button(11);
-    Trigger blackBottom = buttonBoard.button(12);
+    final Trigger blackTop = buttonBoard.button(11);
+    final Trigger blackBottom = buttonBoard.button(12);
 
     yellowTop.onTrue(superstructure.setWantedSuperstateCommand(SuperState.CORAL_STATION_FRONT));
     yellowTop.whileTrue(superstructure.intakeCoralStation());
