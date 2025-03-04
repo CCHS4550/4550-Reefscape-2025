@@ -11,7 +11,7 @@ import frc.util.maps.Constants;
 import java.util.HashMap;
 
 /**
- * Control REV Robotics Blinkin LED controller Got this from Chief Delphi!
+ * Control REV Robotics Blinkin LED controller; Got this from Chief Delphi!
  * https://www.chiefdelphi.com/t/rev-blinkin-example-code/452871
  */
 public class BlinkinLEDController extends SubsystemBase {
