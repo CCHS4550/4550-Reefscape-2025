@@ -124,8 +124,6 @@ public class AlignCommands {
         swerve);
   }
 
-  
-
   public static Trigger hasTarget() {
     return new Trigger(() -> RobotState.getInstance().visionInputs.hasTarget)
         .and(() -> RobotState.getInstance().visionInputs.hasEstimate);
