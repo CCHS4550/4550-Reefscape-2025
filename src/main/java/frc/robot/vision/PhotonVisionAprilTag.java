@@ -107,7 +107,7 @@ public class PhotonVisionAprilTag extends SubsystemBase implements VisionIO {
             .collect(Collectors.toList()));
 
     condensedResults = condensePipelineResults(results);
-    trustedResults = getTrustedResults(results, 0.03);
+    trustedResults = getTrustedResults(results, 0.03, 1);
 
     inputs.hasTarget = hasAnyTarget(results);
 
@@ -142,8 +142,14 @@ public class PhotonVisionAprilTag extends SubsystemBase implements VisionIO {
     return results;
   }
 
+  @Override
+  public List<Map.Entry<PhotonPoseEstimator, PhotonPipelineResult>> getCondensedPipelineResults() {
+    return condensedResults;
+  }
+
+  @Override
   public List<Map.Entry<PhotonPoseEstimator, PhotonPipelineResult>> getTrustedResults(
-      List<Map.Entry<PhotonPoseEstimator, PhotonPipelineResult>> rawResults, double ambiguity) {
+      List<Map.Entry<PhotonPoseEstimator, PhotonPipelineResult>> rawResults, double allowedMaxAmbiguity, double allowedMaxDistance) {
 
     List<Map.Entry<PhotonPoseEstimator, PhotonPipelineResult>> trustedResults = new ArrayList<>();
     for (int i = 0; i < rawResults.size(); i++) {
@@ -151,7 +157,7 @@ public class PhotonVisionAprilTag extends SubsystemBase implements VisionIO {
       if (rawResults.get(i).getValue().getMultiTagResult().isPresent()
           && rawResults.get(i).getValue().getMultiTagResult().get().estimatedPose.ambiguity >= 0
           && rawResults.get(i).getValue().getMultiTagResult().get().estimatedPose.ambiguity
-              <= ambiguity) {
+              <= allowedMaxAmbiguity) {
 
         double maxDistance = 0.0;
         List<Short> fiducialIDsUsed =
@@ -159,13 +165,13 @@ public class PhotonVisionAprilTag extends SubsystemBase implements VisionIO {
         for (Short id : fiducialIDsUsed) {
           double distanceFromTag =
               Constants.AprilTags.TAG_MAP
-                  .get(id)
+                  .get(id.intValue())
                   .getTranslation()
                   .getDistance(RobotState.getInstance().getPose().getTranslation());
           if (distanceFromTag > maxDistance) maxDistance = distanceFromTag;
         }
 
-        if (maxDistance < 1) trustedResults.add(rawResults.get(i));
+        if (maxDistance > allowedMaxDistance) trustedResults.add(rawResults.get(i));
       }
     }
 

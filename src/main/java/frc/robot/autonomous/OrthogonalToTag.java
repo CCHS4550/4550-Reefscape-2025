@@ -183,30 +183,30 @@ public class OrthogonalToTag extends Command {
     Logger.recordOutput("OrthogonalToTag/currentPose", currentRelativePose);
 
     /** Update Target Pose */
-    if (getTransform3dList().size() > 0 && false) {
+    // if (getTransform3dList().size() > 0) {
 
-      Rotation2d targetAngle = getAverageAngle(getTransform3dList());
-      double targetX =
-          Math.abs(transformation.getRotation().getRadians()) < Math.PI
-              ? Math.abs(getAverageX(getTransform3dList()))
-              : -Math.abs(getAverageX(getTransform3dList()));
-      double targetY = getAverageY(getTransform3dList());
+    //   Rotation2d targetAngle = getAverageAngle(getTransform3dList());
+    //   double targetX =
+    //       Math.abs(transformation.getRotation().getRadians()) < Math.PI
+    //           ? Math.abs(getAverageX(getTransform3dList()))
+    //           : -Math.abs(getAverageX(getTransform3dList()));
+    //   double targetY = getAverageY(getTransform3dList());
 
-      Logger.recordOutput("OrthogonalToTag/targetAngle", targetAngle);
-      Logger.recordOutput("OrthogonalToTag/targetX", targetX);
-      Logger.recordOutput("OrthogonalToTag/targetY", targetY);
+    //   Logger.recordOutput("OrthogonalToTag/targetAngle", targetAngle);
+    //   Logger.recordOutput("OrthogonalToTag/targetX", targetX);
+    //   Logger.recordOutput("OrthogonalToTag/targetY", targetY);
 
-      targetState.pose =
-          new Pose2d(targetX, targetY, targetAngle)
-              .plus(new Transform2d(new Pose2d(), currentRelativePose));
+    //   targetState.pose =
+    //       new Pose2d(targetX, targetY, targetAngle)
+    //           .plus(new Transform2d(new Pose2d(), currentRelativePose));
 
-      targetState.pose =
-          targetState
-              .pose
-              .plus(new Transform2d(0, 0, Rotation2d.fromRadians(0)))
-              .plus(transformation);
-      targetState.heading = targetState.pose.getRotation();
-    }
+    //   targetState.pose =
+    //       targetState
+    //           .pose
+    //           .plus(new Transform2d(0, 0, Rotation2d.fromRadians(0)))
+    //           .plus(transformation);
+    //   targetState.heading = targetState.pose.getRotation();
+    // }
 
     if (targetState.pose == null) {
       targetState.pose = idealTargetPose;
@@ -228,7 +228,7 @@ public class OrthogonalToTag extends Command {
         Logger.recordOutput("OrthogonalToTag/Using HF", true);
 
         vision
-            .getPipelineResults()
+            .getTrustedResults(vision.getCondensedPipelineResults(), 0.3, 1)
             .forEach(
                 result -> {
                   result
