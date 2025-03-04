@@ -48,7 +48,9 @@ public interface VisionIO {
   }
 
   public default List<Map.Entry<PhotonPoseEstimator, PhotonPipelineResult>> getTrustedResults(
-      List<Map.Entry<PhotonPoseEstimator, PhotonPipelineResult>> rawResults, double allowedMaxAmbiguity, double allowedMaxDistance) {
+      List<Map.Entry<PhotonPoseEstimator, PhotonPipelineResult>> rawResults,
+      double allowedMaxAmbiguity,
+      double allowedMaxDistance) {
     return new ArrayList<Map.Entry<PhotonPoseEstimator, PhotonPipelineResult>>();
   }
 

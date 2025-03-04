@@ -226,27 +226,6 @@ public class OrthogonalToTag extends Command {
             RobotState.getInstance().swerveModulePositionsHF[i]);
 
         Logger.recordOutput("OrthogonalToTag/Using HF", true);
-
-        vision
-            .getTrustedResults(vision.getCondensedPipelineResults(), 0.3, 1)
-            .forEach(
-                result -> {
-                  result
-                      .getValue()
-                      .getTargets()
-                      .forEach(
-                          target -> {
-                            poseRelativeToTargetEstimator.addVisionMeasurement(
-                                new Pose3d(0, 0, 0, new Rotation3d())
-                                    .plus(
-                                        result
-                                            .getKey()
-                                            .getRobotToCameraTransform()
-                                            .plus(target.getBestCameraToTarget()))
-                                    .toPose2d(),
-                                result.getValue().getTimestampSeconds());
-                          });
-                });
       }
     } else {
 
@@ -257,6 +236,27 @@ public class OrthogonalToTag extends Command {
 
       Logger.recordOutput("OrthogonalToTag/Using HF", false);
     }
+
+    vision
+        .getTrustedResults(vision.getCondensedPipelineResults(), 0.3, 1)
+        .forEach(
+            result -> {
+              result
+                  .getValue()
+                  .getTargets()
+                  .forEach(
+                      target -> {
+                        poseRelativeToTargetEstimator.addVisionMeasurement(
+                            new Pose3d(0, 0, 0, new Rotation3d())
+                                .plus(
+                                    result
+                                        .getKey()
+                                        .getRobotToCameraTransform()
+                                        .plus(target.getBestCameraToTarget()))
+                                .toPose2d(),
+                            result.getValue().getTimestampSeconds());
+                      });
+            });
 
     globalCurrentPose = globalInitialPose.plus(new Transform2d(new Pose2d(), currentRelativePose));
     Logger.recordOutput("OrthogonalToTag/globalCurrentPose", globalCurrentPose);
