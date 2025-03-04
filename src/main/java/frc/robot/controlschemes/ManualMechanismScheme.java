@@ -50,14 +50,14 @@ public class ManualMechanismScheme {
       final Trigger blueTop = buttonBoard.button(5);
       final Trigger blueBottom = buttonBoard.button(6);
 
-      final Trigger greenTop = buttonBoard.button(7);
-      final Trigger greenBottom = buttonBoard.button(8);
+      // final Trigger greenTop = buttonBoard.button(7);
+      // final Trigger greenBottom = buttonBoard.button(8);
 
-      final Trigger redTop = buttonBoard.button(9);
-      final Trigger redBottom = buttonBoard.button(10);
+      // final Trigger redTop = buttonBoard.button(9);
+      // final Trigger redBottom = buttonBoard.button(10);
 
       final Trigger blackTop = buttonBoard.button(11);
-      final Trigger blackBottom = buttonBoard.button(12);
+      // final Trigger blackBottom = buttonBoard.button(12);
 
       yellowTop.whileTrue(elevator.elevatorUpCommand());
       yellowBottom.whileTrue(elevator.elevatorDownCommand());
@@ -65,9 +65,6 @@ public class ManualMechanismScheme {
       whiteBottom.whileTrue(arm.moveArmDownCommand());
       blueTop.whileTrue(wrist.wristUpCommand());
       blueBottom.whileTrue(wrist.wristDownCommand());
-
-      // greenTop.onTrue(superstructure.setWantedSuperstateCommand(SuperState.KNOCK_ALGAE_BOTTOM));
-      // greenBottom.onTrue(superstructure.setWantedSuperstateCommand(SuperState.KNOCK_ALGAE_TOP));
 
       blackTop.onTrue(elevator.resetEncoderCommand());
     }

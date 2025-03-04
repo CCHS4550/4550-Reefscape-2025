@@ -249,17 +249,17 @@ public class SwerveDriveScheme {
         .onFalse(runOnce(() -> setNormalMode()));
   }
   /** Toggle field centric and robot centric driving. */
-  private static void toggleFieldCentric() {
-    fieldCentric = !fieldCentric;
-  }
+  // private static void toggleFieldCentric() {
+  //   fieldCentric = !fieldCentric;
+  // }
 
-  private static void toggleOrientationLock(SwerveDriveSubsystem swerveDrive) {
+  // private static void toggleOrientationLock(SwerveDriveSubsystem swerveDrive) {
 
-    orientationLocked = !orientationLocked;
-    if (orientationLocked) {
-      orientationLockAngle = RobotState.getInstance().getPoseAngleRadians();
-    }
-  }
+  //   orientationLocked = !orientationLocked;
+  //   if (orientationLocked) {
+  //     orientationLockAngle = RobotState.getInstance().getPoseAngleRadians();
+  //   }
+  // }
 
   private static void setFastMode() {
     driveSpeedModifier = () -> .7;

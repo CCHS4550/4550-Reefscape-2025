@@ -4,7 +4,6 @@
 
 package frc.util;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -188,32 +187,32 @@ public class BlinkinLEDController extends SubsystemBase {
   }
 
   /** Set LEDs alliance color solid pattern */
-  public void setAllianceColorSolid() {
-    setPattern(m_allianceColors.get(DriverStation.getAlliance())[0]);
-  }
+  // public void setAllianceColorSolid() {
+  //   setPattern(m_allianceColors.get(DriverStation.getAlliance())[0]);
+  // }
 
-  /** Set LEDs to alliance color breath pattern */
-  public void setAllianceColorBreath() {
-    setPattern(m_allianceColors.get(DriverStation.getAlliance())[1]);
-  }
+  // /** Set LEDs to alliance color breath pattern */
+  // public void setAllianceColorBreath() {
+  //   setPattern(m_allianceColors.get(DriverStation.getAlliance())[1]);
+  // }
 
-  /** Set LEDs to alliance color chase pattern */
-  public void setAllianceColorChase() {
-    setPattern(m_allianceColors.get(DriverStation.getAlliance())[2]);
-  }
+  // /** Set LEDs to alliance color chase pattern */
+  // public void setAllianceColorChase() {
+  //   setPattern(m_allianceColors.get(DriverStation.getAlliance())[2]);
+  // }
 
-  /** Set LEDs to alliance color shot pattern */
-  public void setAllianceColorShot() {
-    setPattern(m_allianceColors.get(DriverStation.getAlliance())[3]);
-  }
+  // /** Set LEDs to alliance color shot pattern */
+  // public void setAllianceColorShot() {
+  //   setPattern(m_allianceColors.get(DriverStation.getAlliance())[3]);
+  // }
 
   /** Set LEDs to alliance color strobe pattern */
-  public void setAllianceColorStrobe() {
-    setPattern(m_allianceColors.get(DriverStation.getAlliance())[4]);
-  }
+  // public void setAllianceColorStrobe() {
+  //   setPattern(m_allianceColors.get(DriverStation.getAlliance())[4]);
+  // }
 
   public void setIfNotAlready(BlinkinPattern pattern) {
-    if (getCurrentPattern() != pattern && getCurrentPattern() != BlinkinPattern.STROBE_WHITE)
+    if (getCurrentPattern() != pattern && getCurrentPattern() != BlinkinPattern.STROBE_GOLD)
       setPattern(pattern);
   }
 

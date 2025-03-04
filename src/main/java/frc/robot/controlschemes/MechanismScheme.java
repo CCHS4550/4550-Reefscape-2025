@@ -2,7 +2,6 @@ package frc.robot.controlschemes;
 
 import static edu.wpi.first.wpilibj2.command.Commands.runOnce;
 
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.Superstructure;
@@ -35,7 +34,7 @@ public class MechanismScheme {
     configureButtons(algae, arm, climber, elevator, intake, swerve, wrist, superstructure, port);
 
     intake
-        .hasCoralDelayed(0)
+        .hasCoralTrigger()
         .onTrue(
             intake
                 .stop()
@@ -43,17 +42,17 @@ public class MechanismScheme {
                     runOnce(
                         () ->
                             BlinkinLEDController.getInstance()
-                                .setIfNotAlready(BlinkinPattern.STROBE_WHITE))))
+                                .setIfNotAlready(BlinkinPattern.STROBE_GOLD))))
         .onFalse(
             runOnce(
                 () ->
                     BlinkinLEDController.getInstance()
                         .setIfNotAlready(BlinkinPattern.RAINBOW_RAINBOW_PALETTE)));
 
-    intake
-        .hasCoralTrigger()
-        .onTrue(Commands.runOnce(() -> intake.intakeSlow(), intake))
-        .onFalse(runOnce(() -> intake.intakeNormal(), intake));
+    // intake
+    //     .hasCoralTrigger()
+    //     .onTrue(Commands.runOnce(() -> intake.intakeSlow(), intake))
+    //     .onFalse(runOnce(() -> intake.intakeNormal(), intake));
   }
 
   public static void configureButtons(

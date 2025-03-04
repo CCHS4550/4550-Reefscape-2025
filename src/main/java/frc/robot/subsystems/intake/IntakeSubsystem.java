@@ -18,7 +18,6 @@ import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.Superstructure.SuperState;
 import frc.util.maps.Constants;
 import frc.util.motorcontroller.CCMotorController;
-import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
 public class IntakeSubsystem extends SubsystemBase {
@@ -29,7 +28,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public final IntakeIOInputsAutoLogged intakeInputs = new IntakeIOInputsAutoLogged();
 
-  private DoubleSupplier intakeSpeedModifier = () -> 1;
+  // private DoubleSupplier intakeSpeedModifier = () -> 1;
 
   /** Creates a new WristSubsystem. */
   public IntakeSubsystem(
@@ -57,6 +56,9 @@ public class IntakeSubsystem extends SubsystemBase {
   public Command outtake() {
     return new FunctionalCommand(
         () -> {
+          Timer timer = new Timer();
+          timer.reset();
+          timer.start();
           boolean outtakeReverse = Superstructure.shouldReverse();
           intakeIO.intake(Volts.of(outtakeReverse ? 12 : -12));
         },
@@ -65,7 +67,7 @@ public class IntakeSubsystem extends SubsystemBase {
           if (bool) intakeIO.intake(Volts.of(0));
         },
         () -> {
-          return false;
+          return timer.hasElapsed(2);
         },
         this);
   }
@@ -78,7 +80,7 @@ public class IntakeSubsystem extends SubsystemBase {
           if (bool) intakeIO.intake(Volts.of(0));
         },
         () -> {
-          return hasCoralDelayed(0.2).getAsBoolean();
+          return hasCoral();
         },
         this);
   }
@@ -127,13 +129,13 @@ public class IntakeSubsystem extends SubsystemBase {
     return new Trigger(() -> hasCoral() && timer.hasElapsed(delay));
   }
 
-  public void intakeNormal() {
-    intakeSpeedModifier = () -> 1;
-  }
+  // public void intakeNormal() {
+  //   intakeSpeedModifier = () -> 1;
+  // }
 
-  public void intakeSlow() {
-    intakeSpeedModifier = () -> .5;
-  }
+  // public void intakeSlow() {
+  //   intakeSpeedModifier = () -> .5;
+  // }
 
   @Override
   public void periodic() {
