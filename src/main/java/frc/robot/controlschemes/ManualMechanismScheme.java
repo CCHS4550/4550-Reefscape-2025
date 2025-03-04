@@ -3,7 +3,6 @@ package frc.robot.controlschemes;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.Superstructure;
-import frc.robot.subsystems.Superstructure.SuperState;
 import frc.robot.subsystems.algae.AlgaeSubsystem;
 import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.intake.IntakeSubsystem;
@@ -67,8 +66,8 @@ public class ManualMechanismScheme {
       blueTop.whileTrue(wrist.wristUpCommand());
       blueBottom.whileTrue(wrist.wristDownCommand());
 
-      greenTop.onTrue(superstructure.setWantedSuperstateCommand(SuperState.KNOCK_ALGAE_BOTTOM));
-      greenBottom.onTrue(superstructure.setWantedSuperstateCommand(SuperState.KNOCK_ALGAE_TOP));
+      // greenTop.onTrue(superstructure.setWantedSuperstateCommand(SuperState.KNOCK_ALGAE_BOTTOM));
+      // greenBottom.onTrue(superstructure.setWantedSuperstateCommand(SuperState.KNOCK_ALGAE_TOP));
 
       blackTop.onTrue(elevator.resetEncoderCommand());
     }

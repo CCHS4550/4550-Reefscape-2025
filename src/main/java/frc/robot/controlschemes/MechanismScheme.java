@@ -91,7 +91,6 @@ public class MechanismScheme {
     yellowBottom.onTrue(
         superstructure.setWantedSuperstateCommand(SuperState.WITHIN_FRAME_PERIMETER_DEFAULT));
 
-    /** Unmapped controls. Will probably be algae processor. */
     whiteTop.whileTrue(climber.climberDown());
     whiteBottom.whileTrue(climber.climberUp());
 
@@ -102,12 +101,10 @@ public class MechanismScheme {
     greenTop.onTrue(superstructure.setWantedSuperstateCommand(SuperState.L4_BACK));
     greenBottom.onTrue(superstructure.setWantedSuperstateCommand(SuperState.L3_FRONT));
 
-    redTop.onTrue(
-        superstructure.setWantedSuperstateCommand(SuperState.WITHIN_FRAME_PERIMETER_DEFAULT));
-    redBottom.onTrue(superstructure.setWantedSuperstateCommand(SuperState.CLIMB_PREPARING));
+    redTop.onTrue(superstructure.setWantedSuperstateCommand(SuperState.KNOCK_ALGAE_TOP));
+    redBottom.onTrue(superstructure.setWantedSuperstateCommand(SuperState.KNOCK_ALGAE_BOTTOM));
 
     blackTop.whileTrue(intake.outtake());
-    blackBottom.whileTrue(intake.intakeCoralStation());
-    // blackBottom.onTrue(superstructure.setWantedSuperstateCommand(SuperState.ZERO));
+    blackBottom.whileTrue(superstructure.setWantedSuperstateCommand(SuperState.CLIMB_PREPARING));
   }
 }

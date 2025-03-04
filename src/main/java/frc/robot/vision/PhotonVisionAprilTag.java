@@ -39,8 +39,6 @@ public class PhotonVisionAprilTag extends SubsystemBase implements VisionIO {
 
   public PhotonPoseEstimator limelight3_2_photonEstimator;
 
-  public PhotonPoseEstimator[] photonEstimators;
-
   /** Creates a new Photonvision. */
   public PhotonVisionAprilTag() {
 
@@ -50,6 +48,7 @@ public class PhotonVisionAprilTag extends SubsystemBase implements VisionIO {
     /** 10.45.50.12:5800 */
     limelight2p = new PhotonCamera(Constants.cameraTwo.CAMERA_TWO_NAME);
 
+    /** 10.45.50.13:5800 */
     // limelight3_2 = new PhotonCamera(Constants.cameraThree.CAMERA_THREE_NAME);
 
     limelight3_photonEstimator =
@@ -72,12 +71,6 @@ public class PhotonVisionAprilTag extends SubsystemBase implements VisionIO {
     limelight2p_photonEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
     // limelight3_2_photonEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
 
-    photonEstimators =
-        new PhotonPoseEstimator[] {
-          limelight3_photonEstimator, 
-          limelight2p_photonEstimator
-          // limelight3_2_photonEstimator
-        };
   }
 
   /**
@@ -119,8 +112,6 @@ public class PhotonVisionAprilTag extends SubsystemBase implements VisionIO {
     // Resetting the poseEstimates every period?
     inputs.poseEstimates = new Pose2d[0];
 
-    inputs.averageTimestamp = estimateAverageTimestamp(results);
-
     /** If you have a target, then update the poseEstimate ArrayList to equal that. */
     if (hasAnyTarget(results)) {
 
@@ -134,7 +125,6 @@ public class PhotonVisionAprilTag extends SubsystemBase implements VisionIO {
     } else {
       inputs.poseEstimates = new Pose2d[0];
       inputs.timestampArray = new double[0];
-      inputs.averageTimestamp = inputs.averageTimestamp;
       inputs.hasEstimate = false;
     }
   }

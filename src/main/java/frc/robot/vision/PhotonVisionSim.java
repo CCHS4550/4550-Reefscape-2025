@@ -199,8 +199,6 @@ public class PhotonVisionSim extends SubsystemBase implements VisionIO {
     // Resetting the poseEstimates every period?
     inputs.poseEstimates = new Pose2d[0];
 
-    inputs.averageTimestamp = Timer.getFPGATimestamp();
-
     /** If you have a target, then update the poseEstimate ArrayList to equal that. */
     if (visionSim.getCameraPose(leftCameraSim).isPresent()
             && getVisionTargetSimList().stream()
@@ -219,7 +217,6 @@ public class PhotonVisionSim extends SubsystemBase implements VisionIO {
       inputs.hasEstimate = true;
 
     } else {
-      inputs.averageTimestamp = inputs.averageTimestamp;
       inputs.hasEstimate = false;
     }
   }

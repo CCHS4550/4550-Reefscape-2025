@@ -22,7 +22,6 @@ public interface VisionIO {
   @AutoLog
   class VisionIOInputs {
     public Pose2d[] poseEstimates;
-    public double averageTimestamp;
     public double[] timestampArray;
 
     public int focusedId;
