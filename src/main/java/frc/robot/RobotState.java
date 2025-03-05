@@ -630,11 +630,15 @@ public class RobotState {
   }
 
   public Command setOdometryCommand(Pose2d pose) {
-    return runOnce(() -> setOdometry(pose), swerve);
+    return runOnce(() -> setOdometryAllianceFlip(pose));
   }
 
   public void setOdometryAllianceFlip(Pose2d pos) {
-    if (Constants.isBlue) return;
+    if (Constants.isBlue) {
+      poseEstimator.resetPosition(getRotation2d(), swerveModulePositions, pos);
+
+      return;
+    }
 
     poseEstimator.resetPosition(
         ChoreoAllianceFlipUtil.flip(getRotation2d()),

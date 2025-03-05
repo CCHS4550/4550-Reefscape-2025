@@ -183,6 +183,7 @@ public class Superstructure extends SubsystemBase {
         new WaitCommand(2).andThen(wrist.setWantedStateCommand(WristState.L4_BACK)).schedule();
 
         elevator.setWantedStateCommand(ElevatorState.L1_FRONT).schedule();
+        break;
 
       case KNOCK_ALGAE_TOP:
         arm.setWantedStateCommand(ArmState.L3_FRONT).schedule();
@@ -193,13 +194,9 @@ public class Superstructure extends SubsystemBase {
 
         elevator.setWantedStateCommand(ElevatorState.L3_FRONT).schedule();
 
+        break;
+
       case CLIMB_PREPARING:
-        //   arm.setWantedStateCommand(ArmState.CLIMB_PREPARING).schedule();
-
-        //   wrist.setWantedStateCommand(WristState.CLIMB_PREPARING).schedule();
-
-        //   elevator.setWantedStateCommand(ElevatorState.CLIMB_PREPARING).schedule();
-
         arm.setWantedStateCommand(ArmState.L4_BACK).schedule();
 
         wrist.setWantedStateCommand(WristState.ZERO).schedule();
@@ -207,6 +204,7 @@ public class Superstructure extends SubsystemBase {
         elevator.setWantedStateCommand(ElevatorState.ZERO).schedule();
         outtakeReverse = false;
         break;
+
       default:
         break;
     }

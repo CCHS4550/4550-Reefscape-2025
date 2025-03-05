@@ -860,10 +860,10 @@ public class CustomAutoChooser {
     c.addCommands(
         sequence(
             pathWrapper.getFollowCommand(0),
-            AlignCommands.frontAlignToReefLeft(swerve, vision)
-                .alongWith(
-                    superstructure.setWantedSuperstateCommand(SuperState.L3_FRONT).withTimeout(3)),
-            intake.outtakeAuto()));
+            AlignCommands.backAlignToReefLeft(swerve, vision)
+                .alongWith(superstructure.setWantedSuperstateCommand(SuperState.L4_BACK))
+                .withTimeout(5),
+            intake.outtake().withTimeout(3)));
     /* Pick up */
     c.addCommands(
         sequence(

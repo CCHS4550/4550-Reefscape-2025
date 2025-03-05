@@ -40,16 +40,16 @@ public class FollowPathCommand extends Command {
   private static ProfiledPIDController rotationPID;
 
   static {
-    translationPID = new PIDController(3, 0, 0);
+    translationPID = new PIDController(1, 0, 0);
 
-    xPID = new ProfiledPIDController(3, 0, 0, new Constraints(5, 8));
-    yPID = new ProfiledPIDController(3, 0, 0, new Constraints(5, 8));
+    xPID = new ProfiledPIDController(1, 0, 0, new Constraints(.01, 4));
+    yPID = new ProfiledPIDController(1, 0, 0, new Constraints(.01, 4));
 
-    rotationPID = new ProfiledPIDController(3, 0, 0, new Constraints(10, 5));
+    rotationPID = new ProfiledPIDController(1, 0, 0, new Constraints(2, 5));
     rotationPID.enableContinuousInput(-Math.PI, Math.PI);
   }
 
-  private DoubleSupplier driveSpeedModifier = () -> 1;
+  private DoubleSupplier driveSpeedModifier = () -> .01;
 
   /**
    * Follows a PathPlannerTrajectory
@@ -197,7 +197,7 @@ public class FollowPathCommand extends Command {
     Logger.recordOutput("FollowPathCommand/rotationError", rotationError);
 
     // return timer.hasElapsed(trajectory.getTotalTimeSeconds())
-    return (translationError < .15 && rotationError < .15) || timer.hasElapsed(7);
+    return (translationError < .15 && rotationError < .15) || timer.hasElapsed(5);
   }
 
   public static double clamp(double measurement, double min, double max) {

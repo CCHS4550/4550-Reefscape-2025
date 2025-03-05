@@ -323,7 +323,7 @@ public class OrthogonalToTag extends Command {
 
     // if (distanceMetersErr < .05 && angleDegreesErr < 5) exitCommand = true;
 
-    return exitCommand;
+    return false;
   }
 
   /** Helper Methods */
