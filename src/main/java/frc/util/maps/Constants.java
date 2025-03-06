@@ -269,13 +269,6 @@ public class Constants {
 
     public static final double ELEVATOR_THROUGHBORE_OFFSET = 0;
     public static final int HALL_EFFECT_PORT = 5;
-
-    public static double[] elevatorPositions = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    public static double elevatorMaxVelocity = 0;
-    public static double elevatorMaxAcceleration = 0;
-    public static double elevatorKP = 0;
-    public static double elevatorKI = 0;
-    public static double elevatorKD = 0;
   }
 
   public static class WristConstants {
@@ -320,16 +313,16 @@ public class Constants {
 
   public class FieldPositionConstants {
 
-    // 5 inches from reef to bumper
     public static final Transform2d FRONT_REEF_LEFT_OFFSET =
-        new Transform2d(Inches.of((-18.7500 - 5)), Inches.of(6.481791 - 1), new Rotation2d());
+        new Transform2d(Inches.of((-18.7500 - 8)), Inches.of(6.481791 - 1), new Rotation2d());
     public static final Transform2d FRONT_REEF_RIGHT_OFFSET =
-        new Transform2d(Inches.of((-18.7500 - 5)), Inches.of(-6.481791 - 1), new Rotation2d());
+        new Transform2d(Inches.of((-18.7500 - 8)), Inches.of(-6.481791 - 1), new Rotation2d());
 
     public static final Transform2d BACK_REEF_LEFT_OFFSET =
-        new Transform2d(Inches.of((-18.7500 + .5)), Inches.of(6.481791), new Rotation2d(Math.PI));
+        new Transform2d(Inches.of((-18.7500 - 3.25)), Inches.of(6.481791), new Rotation2d(Math.PI));
     public static final Transform2d BACK_REEF_RIGHT_OFFSET =
-        new Transform2d(Inches.of((-18.7500 + .5)), Inches.of(-6.481791), new Rotation2d(Math.PI));
+        new Transform2d(
+            Inches.of((-18.7500 - 3.25)), Inches.of(-6.481791), new Rotation2d(Math.PI));
 
     public static final Transform2d CORAL_STATION_LEFT_OFFSET =
         new Transform2d(Inches.of((-18.7500 + 3)), Inches.of(6.481791), new Rotation2d());

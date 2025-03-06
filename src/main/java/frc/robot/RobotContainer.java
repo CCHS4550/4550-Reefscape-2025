@@ -5,7 +5,6 @@ import frc.robot.controlschemes.MechanismScheme;
 import frc.robot.controlschemes.SwerveDriveScheme;
 import frc.robot.controlschemes.TestingScheme;
 import frc.robot.subsystems.Superstructure;
-import frc.robot.subsystems.algae.AlgaeIOHardware;
 import frc.robot.subsystems.algae.AlgaeIOReplay;
 import frc.robot.subsystems.algae.AlgaeIOSim;
 import frc.robot.subsystems.algae.AlgaeSubsystem;
@@ -69,7 +68,7 @@ public class RobotContainer {
     switch (Constants.currentMode) {
       case REAL:
         System.out.println("Creating Real Robot.");
-        algae = new AlgaeSubsystem(CCSparkMax::new, AlgaeIOHardware::new);
+        algae = new AlgaeSubsystem(CCMotorReplay::new, AlgaeIOReplay::new);
         arm = new ArmSubsystem(CCSparkMax::new, ArmIOHardware::new);
         climber = new ClimberSubsystem(CCSparkMax::new, ClimberIOHardware::new);
         elevator = new ElevatorSubsystem(CCSparkMax::new, ElevatorIOHardware::new);

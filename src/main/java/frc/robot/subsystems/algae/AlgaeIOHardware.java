@@ -5,12 +5,10 @@ import static edu.wpi.first.units.Units.Volts;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.subsystems.algae.AlgaeSubsystem.AlgaeStates;
-import frc.util.maps.Constants;
 import frc.util.motorcontroller.CCMotorController;
 
 public class AlgaeIOHardware implements AlgaeIO {
@@ -29,14 +27,6 @@ public class AlgaeIOHardware implements AlgaeIO {
   public AlgaeIOHardware(CCMotorController wrist, CCMotorController intake) {
     this.wrist = wrist;
     this.intake = intake;
-    algaePidController =
-        new ProfiledPIDController(
-            Constants.ElevatorConstants.elevatorKP,
-            0,
-            0,
-            new TrapezoidProfile.Constraints(
-                Constants.ElevatorConstants.elevatorMaxVelocity,
-                Constants.ElevatorConstants.elevatorMaxAcceleration));
 
     algaePidController.reset(0.0);
     // TODO Sysid

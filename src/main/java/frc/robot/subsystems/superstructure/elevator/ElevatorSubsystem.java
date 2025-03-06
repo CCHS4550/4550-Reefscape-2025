@@ -29,7 +29,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     // DEFAULT_WITHINFRAME(0),
     L1_FRONT(0.2),
     L2_FRONT(0),
-    L3_FRONT(0.406),
+    L3_FRONT(0.38),
     L4_INTERMEDIATE(0.25),
     L4_BACK(.525),
     // A1(0),

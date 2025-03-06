@@ -105,7 +105,7 @@ public class Superstructure extends SubsystemBase {
 
         wrist.setWantedStateCommand(WristState.DEFAULT_WITHINFRAME).schedule();
 
-        new WaitCommand(1).andThen(elevator.setWantedStateCommand(ElevatorState.ZERO)).schedule();
+        new WaitCommand(.5).andThen(elevator.setWantedStateCommand(ElevatorState.ZERO)).schedule();
         break;
 
       case CORAL_STATION_BACK:
@@ -157,7 +157,7 @@ public class Superstructure extends SubsystemBase {
 
         wrist.setWantedStateCommand(WristState.L4_BACK).schedule();
 
-        new WaitCommand(0)
+        new WaitCommand(.75)
             .andThen(elevator.setWantedStateCommand(ElevatorState.L4_BACK))
             .schedule();
         outtakeReverse = true;
@@ -165,7 +165,7 @@ public class Superstructure extends SubsystemBase {
       case L4_INTERMEDIATE:
         arm.setWantedStateCommand(ArmState.L3_FRONT).schedule();
 
-        wrist.setWantedStateCommand(WristState.L1_FRONT).schedule();
+        wrist.setWantedStateCommand(WristState.L3_FRONT).schedule();
 
         elevator.setWantedStateCommand(ElevatorState.ZERO).schedule();
 

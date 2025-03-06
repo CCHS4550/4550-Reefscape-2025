@@ -29,12 +29,12 @@ public class ArmSubsystem extends SubsystemBase {
     DEFAULT_WITHINFRAME(Units.degreesToRadians(-36)),
     L1_FRONT(Units.degreesToRadians(0)),
     L2_FRONT(Units.degreesToRadians(12.5)),
-    L3_FRONT(Units.degreesToRadians(12.5)),
+    L3_FRONT(Units.degreesToRadians(15)),
     L4_BACK(Units.degreesToRadians(94.234611)),
     CORAL_STATION_FRONT(Units.degreesToRadians(10)),
     CORAL_STATION_BACK(Units.degreesToRadians(0)),
-    KNOCK_ALGAE_TOP(Units.degreesToRadians(-7)),
-    KNOCK_ALGAE_BOTTOM(Units.degreesToRadians(-7)),
+    KNOCK_ALGAE_TOP(Units.degreesToRadians(-3)),
+    KNOCK_ALGAE_BOTTOM(Units.degreesToRadians(-3)),
     CLIMB_PREPARING(Units.degreesToRadians(94.234611)),
     MANUAL(0); // this will never get applied
     public final double angleRadians;
