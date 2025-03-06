@@ -85,6 +85,8 @@ public class CustomAutoChooser {
     MANHATTAN,
     /** Left Wall Taxi */
     AURORA,
+    /**Left Cage 1, 1 piece */
+    VLADIVOSTOK,
     /** Test */
     TEST,
     /** Do nothing */
@@ -220,6 +222,30 @@ public class CustomAutoChooser {
             intake.outtakeAuto()));
 
     return c;
+  }
+
+  public Command runVladivostok (){
+    PathWrapper pathWrapper = 
+        new PathWrapper(
+            sweve, 
+            AutoRoutine.VLADIVOSTOK,
+            Rotation2d.fromRadians(0),
+            new PathWrapper.AutoFile("LCg1 - I4 - Vladivostok.0", true));
+
+            SequentialCommandGroup c= new SequentialCommandGroup();
+
+            c.addCommands(pathWrapper.setInitialPose());
+
+            c.addCommands(
+                sequence(
+            pathWrapper.getFollowCommand(0),
+            AlignCommands.backAlignToReefLeft(swerve, vision)
+                .alongWith(
+                    superstructure.setWantedSuperstateCommand(SuperState.L4_BACK).withTimeout(3)),
+            intake.outtakeAuto()));
+
+            return c;
+
   }
 
   public Command runCentennial() {
