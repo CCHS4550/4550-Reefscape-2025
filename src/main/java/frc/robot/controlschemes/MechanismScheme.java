@@ -101,7 +101,9 @@ public class MechanismScheme {
     greenBottom.onTrue(superstructure.setWantedSuperstateCommand(SuperState.L3_FRONT));
 
     redTop.onTrue(superstructure.setWantedSuperstateCommand(SuperState.KNOCK_ALGAE_TOP));
+    redTop.whileTrue(intake.outtake());
     redBottom.onTrue(superstructure.setWantedSuperstateCommand(SuperState.KNOCK_ALGAE_BOTTOM));
+    redBottom.whileTrue(intake.outtake());
 
     blackTop.whileTrue(intake.outtake());
     blackBottom.whileTrue(superstructure.setWantedSuperstateCommand(SuperState.CLIMB_PREPARING));

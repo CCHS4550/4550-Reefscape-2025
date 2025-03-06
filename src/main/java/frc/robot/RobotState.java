@@ -18,17 +18,11 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
-import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.autonomous.CustomAutoChooser;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.Superstructure.SuperState;
@@ -300,141 +294,145 @@ public class RobotState {
     Logger.processInputs("Subsystem/Vision", visionInputs);
   }
 
-  public void dashboardInit() {
+  // public void dashboardInit() {
 
-    /* Put the Command Scheduler on SmartDashboard */
-    SmartDashboard.putData(CommandScheduler.getInstance());
+  //   /* Put the Command Scheduler on SmartDashboard */
+  //   SmartDashboard.putData(CommandScheduler.getInstance());
 
-    /* Put all the subsystems on ShuffleBoard in their own "Subsystems" tab. */
+  //   /* Put all the subsystems on ShuffleBoard in their own "Subsystems" tab. */
 
-    Shuffleboard.getTab("Subsystem").add("Algae", algae);
-    Shuffleboard.getTab("Subsystem").add("Arm", arm);
-    Shuffleboard.getTab("Subsystem").add("Climber", climber);
-    Shuffleboard.getTab("Subsystem").add("Elevator", elevator);
-    Shuffleboard.getTab("Subsystem").add("Intake", intake);
-    Shuffleboard.getTab("Subsystem").add("Swerve Drive", swerve);
-    Shuffleboard.getTab("Subsystem").add("Wrist", wrist);
+  //   Shuffleboard.getTab("Subsystem").add("Algae", algae);
+  //   Shuffleboard.getTab("Subsystem").add("Arm", arm);
+  //   Shuffleboard.getTab("Subsystem").add("Climber", climber);
+  //   Shuffleboard.getTab("Subsystem").add("Elevator", elevator);
+  //   Shuffleboard.getTab("Subsystem").add("Intake", intake);
+  //   Shuffleboard.getTab("Subsystem").add("Swerve Drive", swerve);
+  //   Shuffleboard.getTab("Subsystem").add("Wrist", wrist);
 
-    SmartDashboard.putNumber("Robot X Position", poseEstimator.getEstimatedPosition().getX());
-    SmartDashboard.putNumber("Robot Y Position", poseEstimator.getEstimatedPosition().getY());
-    SmartDashboard.putNumber(
-        "Robot Rads Angle", poseEstimator.getEstimatedPosition().getRotation().getRadians());
-    SmartDashboard.putNumber(
-        "Robot Degrees Angle", poseEstimator.getEstimatedPosition().getRotation().getDegrees());
+  //   SmartDashboard.putNumber("Robot X Position", poseEstimator.getEstimatedPosition().getX());
+  //   SmartDashboard.putNumber("Robot Y Position", poseEstimator.getEstimatedPosition().getY());
+  //   SmartDashboard.putNumber(
+  //       "Robot Rads Angle", poseEstimator.getEstimatedPosition().getRotation().getRadians());
+  //   SmartDashboard.putNumber(
+  //       "Robot Degrees Angle", poseEstimator.getEstimatedPosition().getRotation().getDegrees());
 
-    /* Put the Pose Estimators on Dashboards */
-    SmartDashboard.putData("Field", gameField);
-  }
+  //   /* Put the Pose Estimators on Dashboards */
+  //   SmartDashboard.putData("Field", gameField);
+  // }
 
-  public GenericEntry yActual, yGoal, xActual, xGoal, barrelActual, barrelGoal;
-  // ** NetworkTableEntry for the encoders of the turn motors */
-  private GenericEntry abs_Enc_FR_Offset_Entry,
-      abs_Enc_FL_Offset_Entry,
-      abs_Enc_BR_Offset_Entry,
-      abs_Enc_BL_Offset_Entry;
-  private GenericEntry abs_Enc_FR_Raw_Entry,
-      abs_Enc_FL_Raw_Entry,
-      abs_Enc_BR_Raw_Entry,
-      abs_Enc_BL_Raw_Entry;
-  private GenericEntry enc_FR_pos_Entry, enc_FL_pos_Entry, enc_BR_pos_Entry, enc_BL_pos_Entry;
+  // public GenericEntry yActual, yGoal, xActual, xGoal, barrelActual, barrelGoal;
+  // // ** NetworkTableEntry for the encoders of the turn motors */
+  // private GenericEntry abs_Enc_FR_Offset_Entry,
+  //     abs_Enc_FL_Offset_Entry,
+  //     abs_Enc_BR_Offset_Entry,
+  //     abs_Enc_BL_Offset_Entry;
+  // private GenericEntry abs_Enc_FR_Raw_Entry,
+  //     abs_Enc_FL_Raw_Entry,
+  //     abs_Enc_BR_Raw_Entry,
+  //     abs_Enc_BL_Raw_Entry;
+  // private GenericEntry enc_FR_pos_Entry, enc_FL_pos_Entry, enc_BR_pos_Entry, enc_BL_pos_Entry;
 
-  // ShuffleBoardLayouts for putting encoders onto the board
-  private ShuffleboardLayout absolute_encoders_offset_list =
-      Shuffleboard.getTab("Encoders")
-          .getLayout("Absolute Encoders Offset", BuiltInLayouts.kGrid)
-          .withSize(2, 2);
+  // // ShuffleBoardLayouts for putting encoders onto the board
+  // private ShuffleboardLayout absolute_encoders_offset_list =
+  //     Shuffleboard.getTab("Encoders")
+  //         .getLayout("Absolute Encoders Offset", BuiltInLayouts.kGrid)
+  //         .withSize(2, 2);
 
-  private ShuffleboardLayout absolute_encoders_no_offset_list =
-      Shuffleboard.getTab("Encoders")
-          .getLayout("Absolute Encoders No Offset", BuiltInLayouts.kGrid)
-          .withSize(2, 2);
-  private ShuffleboardLayout turn_encoders_positions =
-      Shuffleboard.getTab("Encoders")
-          .getLayout("Turn Encoders Position(Rad)", BuiltInLayouts.kGrid)
-          .withSize(2, 2);
+  // private ShuffleboardLayout absolute_encoders_no_offset_list =
+  //     Shuffleboard.getTab("Encoders")
+  //         .getLayout("Absolute Encoders No Offset", BuiltInLayouts.kGrid)
+  //         .withSize(2, 2);
+  // private ShuffleboardLayout turn_encoders_positions =
+  //     Shuffleboard.getTab("Encoders")
+  //         .getLayout("Turn Encoders Position(Rad)", BuiltInLayouts.kGrid)
+  //         .withSize(2, 2);
 
-  public void swerveModuleEncodersInit() {
+  // public void swerveModuleEncodersInit() {
 
-    abs_Enc_FR_Offset_Entry =
-        Shuffleboard.getTab("Encoders")
-            .getLayout(absolute_encoders_offset_list.getTitle())
-            .add(swerve.frontRight.getName(), swerve.frontRight.getAbsoluteEncoderRadiansOffset())
-            .getEntry();
-    abs_Enc_FL_Offset_Entry =
-        Shuffleboard.getTab("Encoders")
-            .getLayout(absolute_encoders_offset_list.getTitle())
-            .add(swerve.frontLeft.getName(), swerve.frontLeft.getAbsoluteEncoderRadiansOffset())
-            .getEntry();
-    abs_Enc_BR_Offset_Entry =
-        Shuffleboard.getTab("Encoders")
-            .getLayout(absolute_encoders_offset_list.getTitle())
-            .add(swerve.backRight.getName(), swerve.backRight.getAbsoluteEncoderRadiansOffset())
-            .getEntry();
-    abs_Enc_BL_Offset_Entry =
-        Shuffleboard.getTab("Encoders")
-            .getLayout(absolute_encoders_offset_list.getTitle())
-            .add(swerve.backLeft.getName(), swerve.backLeft.getAbsoluteEncoderRadiansOffset())
-            .getEntry();
+  //   abs_Enc_FR_Offset_Entry =
+  //       Shuffleboard.getTab("Encoders")
+  //           .getLayout(absolute_encoders_offset_list.getTitle())
+  //           .add(swerve.frontRight.getName(),
+  // swerve.frontRight.getAbsoluteEncoderRadiansOffset())
+  //           .getEntry();
+  //   abs_Enc_FL_Offset_Entry =
+  //       Shuffleboard.getTab("Encoders")
+  //           .getLayout(absolute_encoders_offset_list.getTitle())
+  //           .add(swerve.frontLeft.getName(), swerve.frontLeft.getAbsoluteEncoderRadiansOffset())
+  //           .getEntry();
+  //   abs_Enc_BR_Offset_Entry =
+  //       Shuffleboard.getTab("Encoders")
+  //           .getLayout(absolute_encoders_offset_list.getTitle())
+  //           .add(swerve.backRight.getName(), swerve.backRight.getAbsoluteEncoderRadiansOffset())
+  //           .getEntry();
+  //   abs_Enc_BL_Offset_Entry =
+  //       Shuffleboard.getTab("Encoders")
+  //           .getLayout(absolute_encoders_offset_list.getTitle())
+  //           .add(swerve.backLeft.getName(), swerve.backLeft.getAbsoluteEncoderRadiansOffset())
+  //           .getEntry();
 
-    enc_FR_pos_Entry =
-        Shuffleboard.getTab("Encoders")
-            .getLayout(turn_encoders_positions.getTitle())
-            .add(swerve.frontRight.getName(), swerve.frontRight.getTurnPosition())
-            .getEntry();
-    enc_FL_pos_Entry =
-        Shuffleboard.getTab("Encoders")
-            .getLayout(turn_encoders_positions.getTitle())
-            .add(swerve.frontLeft.getName(), swerve.frontLeft.getTurnPosition())
-            .getEntry();
-    enc_BR_pos_Entry =
-        Shuffleboard.getTab("Encoders")
-            .getLayout(turn_encoders_positions.getTitle())
-            .add(swerve.backRight.getName(), swerve.backRight.getTurnPosition())
-            .getEntry();
-    enc_BL_pos_Entry =
-        Shuffleboard.getTab("Encoders")
-            .getLayout(turn_encoders_positions.getTitle())
-            .add(swerve.backLeft.getName(), swerve.backLeft.getTurnPosition())
-            .getEntry();
+  //   enc_FR_pos_Entry =
+  //       Shuffleboard.getTab("Encoders")
+  //           .getLayout(turn_encoders_positions.getTitle())
+  //           .add(swerve.frontRight.getName(), swerve.frontRight.getTurnPosition())
+  //           .getEntry();
+  //   enc_FL_pos_Entry =
+  //       Shuffleboard.getTab("Encoders")
+  //           .getLayout(turn_encoders_positions.getTitle())
+  //           .add(swerve.frontLeft.getName(), swerve.frontLeft.getTurnPosition())
+  //           .getEntry();
+  //   enc_BR_pos_Entry =
+  //       Shuffleboard.getTab("Encoders")
+  //           .getLayout(turn_encoders_positions.getTitle())
+  //           .add(swerve.backRight.getName(), swerve.backRight.getTurnPosition())
+  //           .getEntry();
+  //   enc_BL_pos_Entry =
+  //       Shuffleboard.getTab("Encoders")
+  //           .getLayout(turn_encoders_positions.getTitle())
+  //           .add(swerve.backLeft.getName(), swerve.backLeft.getTurnPosition())
+  //           .getEntry();
 
-    abs_Enc_FR_Raw_Entry =
-        Shuffleboard.getTab("Encoders")
-            .getLayout(absolute_encoders_no_offset_list.getTitle())
-            .add(swerve.frontRight.getName(), swerve.frontRight.getAbsoluteEncoderRadiansNoOffset())
-            .getEntry();
-    abs_Enc_FL_Raw_Entry =
-        Shuffleboard.getTab("Encoders")
-            .getLayout(absolute_encoders_no_offset_list.getTitle())
-            .add(swerve.frontLeft.getName(), swerve.frontLeft.getAbsoluteEncoderRadiansNoOffset())
-            .getEntry();
-    abs_Enc_BR_Raw_Entry =
-        Shuffleboard.getTab("Encoders")
-            .getLayout(absolute_encoders_no_offset_list.getTitle())
-            .add(swerve.backRight.getName(), swerve.backRight.getAbsoluteEncoderRadiansNoOffset())
-            .getEntry();
-    abs_Enc_BL_Raw_Entry =
-        Shuffleboard.getTab("Encoders")
-            .getLayout(absolute_encoders_no_offset_list.getTitle())
-            .add(swerve.backLeft.getName(), swerve.backLeft.getAbsoluteEncoderRadiansNoOffset())
-            .getEntry();
-  }
+  //   abs_Enc_FR_Raw_Entry =
+  //       Shuffleboard.getTab("Encoders")
+  //           .getLayout(absolute_encoders_no_offset_list.getTitle())
+  //           .add(swerve.frontRight.getName(),
+  // swerve.frontRight.getAbsoluteEncoderRadiansNoOffset())
+  //           .getEntry();
+  //   abs_Enc_FL_Raw_Entry =
+  //       Shuffleboard.getTab("Encoders")
+  //           .getLayout(absolute_encoders_no_offset_list.getTitle())
+  //           .add(swerve.frontLeft.getName(),
+  // swerve.frontLeft.getAbsoluteEncoderRadiansNoOffset())
+  //           .getEntry();
+  //   abs_Enc_BR_Raw_Entry =
+  //       Shuffleboard.getTab("Encoders")
+  //           .getLayout(absolute_encoders_no_offset_list.getTitle())
+  //           .add(swerve.backRight.getName(),
+  // swerve.backRight.getAbsoluteEncoderRadiansNoOffset())
+  //           .getEntry();
+  //   abs_Enc_BL_Raw_Entry =
+  //       Shuffleboard.getTab("Encoders")
+  //           .getLayout(absolute_encoders_no_offset_list.getTitle())
+  //           .add(swerve.backLeft.getName(), swerve.backLeft.getAbsoluteEncoderRadiansNoOffset())
+  //           .getEntry();
+  // }
 
-  public void swerveModuleEncodersPeriodic() {
-    abs_Enc_FR_Offset_Entry.setDouble(swerve.frontRight.getAbsoluteEncoderRadiansOffset());
-    abs_Enc_FL_Offset_Entry.setDouble(swerve.frontLeft.getAbsoluteEncoderRadiansOffset());
-    abs_Enc_BR_Offset_Entry.setDouble(swerve.backRight.getAbsoluteEncoderRadiansOffset());
-    abs_Enc_BL_Offset_Entry.setDouble(swerve.backLeft.getAbsoluteEncoderRadiansOffset());
+  // public void swerveModuleEncodersPeriodic() {
+  //   abs_Enc_FR_Offset_Entry.setDouble(swerve.frontRight.getAbsoluteEncoderRadiansOffset());
+  //   abs_Enc_FL_Offset_Entry.setDouble(swerve.frontLeft.getAbsoluteEncoderRadiansOffset());
+  //   abs_Enc_BR_Offset_Entry.setDouble(swerve.backRight.getAbsoluteEncoderRadiansOffset());
+  //   abs_Enc_BL_Offset_Entry.setDouble(swerve.backLeft.getAbsoluteEncoderRadiansOffset());
 
-    abs_Enc_FR_Raw_Entry.setDouble(swerve.frontRight.getAbsoluteEncoderRadiansNoOffset());
-    abs_Enc_FL_Raw_Entry.setDouble(swerve.frontLeft.getAbsoluteEncoderRadiansNoOffset());
-    abs_Enc_BR_Raw_Entry.setDouble(swerve.backRight.getAbsoluteEncoderRadiansNoOffset());
-    abs_Enc_BL_Raw_Entry.setDouble(swerve.backLeft.getAbsoluteEncoderRadiansNoOffset());
+  //   abs_Enc_FR_Raw_Entry.setDouble(swerve.frontRight.getAbsoluteEncoderRadiansNoOffset());
+  //   abs_Enc_FL_Raw_Entry.setDouble(swerve.frontLeft.getAbsoluteEncoderRadiansNoOffset());
+  //   abs_Enc_BR_Raw_Entry.setDouble(swerve.backRight.getAbsoluteEncoderRadiansNoOffset());
+  //   abs_Enc_BL_Raw_Entry.setDouble(swerve.backLeft.getAbsoluteEncoderRadiansNoOffset());
 
-    enc_FR_pos_Entry.setDouble(swerve.frontRight.getTurnPosition());
-    enc_FL_pos_Entry.setDouble(swerve.frontLeft.getTurnPosition());
-    enc_BR_pos_Entry.setDouble(swerve.backRight.getTurnPosition());
-    enc_BL_pos_Entry.setDouble(swerve.backLeft.getTurnPosition());
-  }
+  //   enc_FR_pos_Entry.setDouble(swerve.frontRight.getTurnPosition());
+  //   enc_FL_pos_Entry.setDouble(swerve.frontLeft.getTurnPosition());
+  //   enc_BR_pos_Entry.setDouble(swerve.backRight.getTurnPosition());
+  //   enc_BL_pos_Entry.setDouble(swerve.backLeft.getTurnPosition());
+  // }
 
   /** Update odometry, not HF */
   public SwerveModulePosition[] updateSwerveModulePositionsPeriodic() {

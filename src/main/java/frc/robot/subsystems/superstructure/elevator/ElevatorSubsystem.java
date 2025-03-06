@@ -34,8 +34,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     L4_BACK(.525),
     // A1(0),
     // A2(0),
-    // CORAL_STATION_FRONT(0),
-    // CORAL_STATION_BACK(0),
+    KNOCK_ALGAE_TOP(.35),
+    KNOCK_ALGAE_BOTTOM(0),
     MANUAL(0),
     CLIMB_PREPARING(0);
 
@@ -125,13 +125,13 @@ public class ElevatorSubsystem extends SubsystemBase {
         elevatorIO.holdAtState(ElevatorState.L4_BACK);
         break;
 
-        // case CORAL_STATION_FRONT:
-        //   elevatorIO.holdAtState(ElevatorState.CORAL_STATION_FRONT);
-        //   break;
+      case KNOCK_ALGAE_TOP:
+        elevatorIO.holdAtState(ElevatorState.KNOCK_ALGAE_TOP);
+        break;
 
-        // case CORAL_STATION_BACK:
-        //   elevatorIO.holdAtState(ElevatorState.CORAL_STATION_BACK);
-        //   break;
+      case KNOCK_ALGAE_BOTTOM:
+        elevatorIO.holdAtState(ElevatorState.KNOCK_ALGAE_BOTTOM);
+        break;
       case MANUAL:
         break;
       case CLIMB_PREPARING:
@@ -163,11 +163,11 @@ public class ElevatorSubsystem extends SubsystemBase {
       case L4_BACK:
         return ElevatorState.L4_BACK;
 
-        // case CORAL_STATION_FRONT:
-        //   return ElevatorState.CORAL_STATION_FRONT;
+      case KNOCK_ALGAE_TOP:
+        return ElevatorState.KNOCK_ALGAE_TOP;
 
-        // case CORAL_STATION_BACK:
-        //   return ElevatorState.CORAL_STATION_BACK;
+      case KNOCK_ALGAE_BOTTOM:
+        return ElevatorState.KNOCK_ALGAE_BOTTOM;
       case MANUAL:
         return ElevatorState.MANUAL;
       default:

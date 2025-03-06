@@ -5,6 +5,7 @@
 package frc.robot.vision;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotState;
 import frc.util.maps.Constants;
@@ -28,49 +29,48 @@ public class PhotonVisionAprilTag extends SubsystemBase implements VisionIO {
       new ArrayList<>();
 
   /* Create Camera */
-  public PhotonCamera limelight3;
-  public PhotonCamera limelight2p;
-  // public PhotonCamera limelight3_2;
+  public PhotonCamera camera1;
+  public PhotonCamera camera2;
+  public PhotonCamera camera3;
 
   /* Camera 1 PhotonPoseEstimator. */
-  public PhotonPoseEstimator limelight3_photonEstimator;
+  public PhotonPoseEstimator camera1_photonEstimator;
   /* Camera 2 PhotonPoseEstimator. */
-  public PhotonPoseEstimator limelight2p_photonEstimator;
+  public PhotonPoseEstimator camera2_photonEstimator;
 
-  public PhotonPoseEstimator limelight3_2_photonEstimator;
+  public PhotonPoseEstimator camera3_photonEstimator;
 
   /** Creates a new Photonvision. */
   public PhotonVisionAprilTag() {
 
     /** 10.45.50.11:5800 */
-    limelight3 = new PhotonCamera(Constants.cameraOne.CAMERA_ONE_NAME);
+    camera1 = new PhotonCamera(Constants.cameraOne.CAMERA_ONE_NAME);
 
-    /** 10.45.50.12:5800 */
-    limelight2p = new PhotonCamera(Constants.cameraTwo.CAMERA_TWO_NAME);
+    /** 10.45.50.14:5800 */
+    camera2 = new PhotonCamera(Constants.cameraTwo.CAMERA_TWO_NAME);
 
     /** 10.45.50.13:5800 */
-    // limelight3_2 = new PhotonCamera(Constants.cameraThree.CAMERA_THREE_NAME);
+    camera3 = new PhotonCamera(Constants.cameraThree.CAMERA_THREE_NAME);
 
-    limelight3_photonEstimator =
+    camera1_photonEstimator =
         new PhotonPoseEstimator(
             Constants.AprilTags.APRIL_TAG_FIELD_LAYOUT,
             PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
             Constants.cameraOne.ROBOT_TO_CAM);
-    limelight2p_photonEstimator =
+    camera2_photonEstimator =
         new PhotonPoseEstimator(
             Constants.AprilTags.APRIL_TAG_FIELD_LAYOUT,
             PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
             Constants.cameraTwo.ROBOT_TO_CAM);
-    // limelight3_2_photonEstimator =
-    //     new PhotonPoseEstimator(
-    //         Constants.AprilTags.APRIL_TAG_FIELD_LAYOUT,
-    //         PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
-    //         Constants.cameraThree.ROBOT_TO_CAM);
+    camera3_photonEstimator =
+        new PhotonPoseEstimator(
+            Constants.AprilTags.APRIL_TAG_FIELD_LAYOUT,
+            PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+            Constants.cameraThree.ROBOT_TO_CAM);
 
-    limelight3_photonEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
-    limelight2p_photonEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
-    // limelight3_2_photonEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
-
+    camera1_photonEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
+    camera2_photonEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
+    camera3_photonEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
   }
 
   /**
@@ -87,22 +87,22 @@ public class PhotonVisionAprilTag extends SubsystemBase implements VisionIO {
     results.clear();
 
     results.addAll(
-        limelight3.getAllUnreadResults().stream()
-            .map(result -> Map.entry(limelight3_photonEstimator, result))
+        camera1.getAllUnreadResults().stream()
+            .map(result -> Map.entry(camera1_photonEstimator, result))
             .collect(Collectors.toList()));
 
     results.addAll(
-        limelight2p.getAllUnreadResults().stream()
-            .map(result -> Map.entry(limelight2p_photonEstimator, result))
+        camera2.getAllUnreadResults().stream()
+            .map(result -> Map.entry(camera2_photonEstimator, result))
             .collect(Collectors.toList()));
 
-    // results.addAll(
-    //     limelight3_2.getAllUnreadResults().stream()
-    //         .map(result -> Map.entry(limelight3_2_photonEstimator, result))
-    //         .collect(Collectors.toList()));
+    results.addAll(
+        camera3.getAllUnreadResults().stream()
+            .map(result -> Map.entry(camera3_photonEstimator, result))
+            .collect(Collectors.toList()));
 
     condensedResults = condensePipelineResults(results);
-    trustedResults = getTrustedResults(results, 0.03, 1);
+    trustedResults = getTrustedResults(results, 0.3, 1);
 
     inputs.hasTarget = hasAnyTarget(results);
 
@@ -149,7 +149,7 @@ public class PhotonVisionAprilTag extends SubsystemBase implements VisionIO {
     for (int i = 0; i < rawResults.size(); i++) {
 
       if (rawResults.get(i).getValue().getMultiTagResult().isPresent()
-          && rawResults.get(i).getValue().getMultiTagResult().get().estimatedPose.ambiguity >= 0
+          // && rawResults.get(i).getValue().getMultiTagResult().get().estimatedPose.ambiguity >= 0
           && rawResults.get(i).getValue().getMultiTagResult().get().estimatedPose.ambiguity
               <= allowedMaxAmbiguity) {
 
@@ -166,6 +166,21 @@ public class PhotonVisionAprilTag extends SubsystemBase implements VisionIO {
         }
 
         if (maxDistance > allowedMaxDistance) trustedResults.add(rawResults.get(i));
+      }
+
+      if (rawResults.get(i).getValue().hasTargets()
+          && rawResults.get(i).getValue().getMultiTagResult().isEmpty()
+          && rawResults.get(i).getValue().getBestTarget().poseAmbiguity <= allowedMaxAmbiguity
+          && rawResults
+                  .get(i)
+                  .getValue()
+                  .getBestTarget()
+                  .bestCameraToTarget
+                  .plus(rawResults.get(i).getKey().getRobotToCameraTransform())
+                  .getTranslation()
+                  .getDistance(new Translation3d())
+              <= allowedMaxDistance) {
+        trustedResults.add(rawResults.get(i));
       }
     }
 

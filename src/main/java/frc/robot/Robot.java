@@ -115,7 +115,7 @@ public class Robot extends LoggedRobot {
     autoChooser = robotState.autoChooserInit();
 
     RobotState.getInstance().poseInit();
-    RobotState.getInstance().swerveModuleEncodersInit();
+    // RobotState.getInstance().swerveModuleEncodersInit();
     // RobotState.getInstance().dashboardInit();
 
     RobotState.getInstance().resetPIDControllers();

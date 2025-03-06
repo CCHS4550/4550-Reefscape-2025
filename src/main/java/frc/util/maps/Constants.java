@@ -234,7 +234,7 @@ public class Constants {
     public static final double TURNKV = 0;
 
     /** This is important! This is the frequency at which odometry data is updated. */
-    public static final double ODOMETRY_FREQUENCY = 250;
+    public static final double ODOMETRY_FREQUENCY = 150;
   }
 
   public static class ArmConstants {
@@ -339,13 +339,13 @@ public class Constants {
         new Transform2d(Inches.of((-18.7500 - 5)), Inches.of(6.481791), new Rotation2d());
 
     public static final Transform2d ALGAE_KNOCK_OFFSET =
-        new Transform2d(Inches.of((-18.7500 - 3)), Inches.of(0), new Rotation2d());
+        new Transform2d(Inches.of((-18.7500 - 2)), Inches.of(0), new Rotation2d());
   }
 
   /** Back Camera */
   public static class cameraOne {
 
-    public static final String CAMERA_ONE_NAME = "limelight3";
+    public static final String CAMERA_ONE_NAME = "everest";
 
     // (Robot pose is considered the center of rotation at the floor level, or Z = 0)
     public static final Translation3d ROBOT_TO_CAMERA_TRANS =
@@ -357,29 +357,25 @@ public class Constants {
         new Transform3d(ROBOT_TO_CAMERA_TRANS, ROBOT_TO_CAMERA_ROT);
   }
 
+  /** Front Right */
   public static class cameraTwo {
-    public static final String CAMERA_TWO_NAME = "limelight2p";
+    public static final String CAMERA_TWO_NAME = "k2";
 
-    /** If camera is on front right module facing OUTWARDS. */
+    /** If camera is on front right module facing INWARDS. */
     public static final Translation3d ROBOT_TO_CAMERA_TRANS =
-        new Translation3d(0.271584, -0.293262, 0.242597);
+        new Translation3d(0.275188, -0.273594, 0.242950);
 
     public static final Rotation3d ROBOT_TO_CAMERA_ROT =
-        new Rotation3d(0, Math.toRadians(-15), Math.toRadians(-15));
+        new Rotation3d(0, Math.toRadians(-15), Math.toRadians(15));
 
     public static final Transform3d ROBOT_TO_CAM =
         new Transform3d(ROBOT_TO_CAMERA_TRANS, ROBOT_TO_CAMERA_ROT);
   }
 
-  /* Left side of the robot */
+  /* Front Left side of the robot */
   public static class cameraThree {
-    public static final String CAMERA_THREE_NAME = "limelight3_2";
 
-    /* If the camera is on the front left module, facing front outwards. */
-    // public static final Translation3d ROBOT_TO_CAMERA_TRANS =
-    //     new Translation3d(0.275180, 0.294236, 0.242951);
-    // public static final Rotation3d ROBOT_TO_CAMERA_ROT =
-    //     new Rotation3d(0, Math.toRadians(-15), Math.toRadians(15));
+    public static final String CAMERA_THREE_NAME = "denali";
 
     /* If the camera is on the front left module, facing back outwards. */
     public static final Translation3d ROBOT_TO_CAMERA_TRANS =

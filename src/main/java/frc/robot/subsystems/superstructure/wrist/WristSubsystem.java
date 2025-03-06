@@ -35,6 +35,8 @@ public class WristSubsystem extends SubsystemBase {
     CORAL_STATION_FRONT(Units.degreesToRadians(-135)),
     CORAL_STATION_BACK(Units.degreesToRadians(0)),
     CLIMB_PREPARING(Units.degreesToRadians(130)),
+    KNOCK_ALGAE_TOP(Units.degreesToRadians(40)),
+    KNOCK_ALGAE_BOTTOM(Units.degreesToRadians(40)),
     MANUAL(0);
     private final double angleRadians;
 
@@ -118,6 +120,13 @@ public class WristSubsystem extends SubsystemBase {
         wristIO.holdAtState(WristState.CORAL_STATION_BACK);
         break;
 
+      case KNOCK_ALGAE_TOP:
+        wristIO.holdAtState(WristState.KNOCK_ALGAE_TOP);
+        break;
+      case KNOCK_ALGAE_BOTTOM:
+        wristIO.holdAtState(WristState.KNOCK_ALGAE_BOTTOM);
+        break;
+
       case MANUAL:
         break;
 
@@ -152,6 +161,11 @@ public class WristSubsystem extends SubsystemBase {
 
       case CORAL_STATION_BACK:
         return WristState.CORAL_STATION_BACK;
+
+      case KNOCK_ALGAE_TOP:
+        return WristState.KNOCK_ALGAE_TOP;
+      case KNOCK_ALGAE_BOTTOM:
+        return WristState.KNOCK_ALGAE_BOTTOM;
 
       case MANUAL:
         return WristState.MANUAL;

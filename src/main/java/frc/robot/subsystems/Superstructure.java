@@ -176,23 +176,27 @@ public class Superstructure extends SubsystemBase {
         break;
 
       case KNOCK_ALGAE_BOTTOM:
-        arm.setWantedStateCommand(ArmState.L3_FRONT).schedule();
-        new WaitCommand(2).andThen(arm.setWantedStateCommand(ArmState.L4_BACK)).schedule();
+        arm.setWantedStateCommand(ArmState.KNOCK_ALGAE_BOTTOM).schedule();
+        // new WaitCommand(1).andThen(arm.setWantedStateCommand(ArmState.ZERO)).schedule();
 
-        wrist.setWantedStateCommand(WristState.L4_BACK).schedule();
-        new WaitCommand(2).andThen(wrist.setWantedStateCommand(WristState.L4_BACK)).schedule();
+        wrist.setWantedStateCommand(WristState.KNOCK_ALGAE_BOTTOM).schedule();
 
-        elevator.setWantedStateCommand(ElevatorState.L1_FRONT).schedule();
+        // intake.outtake().withTimeout(2);
+        // new WaitCommand(1).andThen(wrist.setWantedStateCommand(WristState.L3_FRONT)).schedule();
+
+        elevator.setWantedStateCommand(ElevatorState.KNOCK_ALGAE_BOTTOM).schedule();
         break;
 
       case KNOCK_ALGAE_TOP:
-        arm.setWantedStateCommand(ArmState.L3_FRONT).schedule();
-        new WaitCommand(2).andThen(arm.setWantedStateCommand(ArmState.L4_BACK)).schedule();
+        arm.setWantedStateCommand(ArmState.KNOCK_ALGAE_TOP).schedule();
+        new WaitCommand(1).andThen(arm.setWantedStateCommand(ArmState.ZERO)).schedule();
 
-        wrist.setWantedStateCommand(WristState.L4_BACK).schedule();
-        new WaitCommand(2).andThen(wrist.setWantedStateCommand(WristState.L4_BACK)).schedule();
+        wrist.setWantedStateCommand(WristState.KNOCK_ALGAE_TOP).schedule();
+        // new WaitCommand(1).andThen(wrist.setWantedStateCommand(WristState.L3_FRONT)).schedule();
 
-        elevator.setWantedStateCommand(ElevatorState.L3_FRONT).schedule();
+        // intake.outtake().withTimeout(2);
+
+        elevator.setWantedStateCommand(ElevatorState.KNOCK_ALGAE_TOP).schedule();
 
         break;
 
