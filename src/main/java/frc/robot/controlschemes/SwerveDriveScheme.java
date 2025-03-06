@@ -227,7 +227,7 @@ public class SwerveDriveScheme {
 
     // processorTrigger.whileTrue(AlignCommands.AlignToProcessor(swerve, vision));
 
-    // controller.a().onTrue(runOnce(() -> RobotState.getInstance().resetRotation()));
+    controller.a().onTrue(runOnce(() -> RobotState.getInstance().resetRotation()));
 
     coralStationLeftTrigger.whileTrue(AlignCommands.frontAlignToCoralStationLeft(swerve, vision));
     coralStationRightTrigger.whileTrue(AlignCommands.frontAlignToCoralStationRight(swerve, vision));

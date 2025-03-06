@@ -66,7 +66,7 @@ public class MechanismScheme {
       Superstructure superstructure,
       int port) {
 
-    // TODO ask Ian about these controls
+
     final Trigger yellowTop = buttonBoard.button(1);
     final Trigger yellowBottom = buttonBoard.button(2);
 
@@ -94,7 +94,6 @@ public class MechanismScheme {
     whiteBottom.whileTrue(climber.climberUp());
 
     blueTop.onTrue(superstructure.setWantedSuperstateCommand(SuperState.L1_FRONT));
-    // blueTop.onTrue(new InstantCommand(() -> System.out.println("asdfsjfkdglfh")));
     blueBottom.onTrue(superstructure.setWantedSuperstateCommand(SuperState.L2_FRONT));
 
     greenTop.onTrue(superstructure.setWantedSuperstateCommand(SuperState.L4_BACK));

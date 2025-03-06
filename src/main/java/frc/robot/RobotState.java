@@ -608,7 +608,7 @@ public class RobotState {
     poseEstimator.resetPosition(
         getRotation2d(),
         swerveModulePositions,
-        new Pose2d(poseEstimator.getEstimatedPosition().getTranslation(), new Rotation2d()));
+        new Pose2d(poseEstimator.getEstimatedPosition().getTranslation(), Constants.isBlue ? new Rotation2d() : new Rotation2d().plus(Rotation2d.fromRadians(Math.PI))));
   }
 
   /**

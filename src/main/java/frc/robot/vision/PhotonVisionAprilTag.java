@@ -207,13 +207,12 @@ public class PhotonVisionAprilTag extends SubsystemBase implements VisionIO {
 
       Optional<EstimatedRobotPose> estimatedPose =
           poseResult.getKey().update(poseResult.getValue());
-      // if (estimatedPose.isPresent()
-      //     && estimatedPose.get().strategy == PoseStrategy.LOWEST_AMBIGUITY) {
-      estimates.add(estimatedPose.get().estimatedPose.toPose2d());
-      // }
+
+      if (estimatedPose.isPresent()) estimates.add(estimatedPose.get().estimatedPose.toPose2d());
+    
     }
 
-    // estimates.removeIf(pose -> pose == null);
+    estimates.removeIf(pose -> pose == null);
 
     return estimates.toArray(new Pose2d[0]);
   }
