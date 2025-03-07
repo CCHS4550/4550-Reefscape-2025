@@ -1,6 +1,7 @@
 package frc.robot.controlschemes;
 
-import static edu.wpi.first.wpilibj2.command.Commands.runOnce;
+import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
@@ -24,9 +25,6 @@ import frc.robot.subsystems.superstructure.wrist.WristSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveDriveSubsystem;
 import frc.robot.vision.VisionIO;
 import frc.util.maps.Constants;
-import java.util.function.BooleanSupplier;
-import java.util.function.DoubleSupplier;
-import org.littletonrobotics.junction.Logger;
 
 /**
  * Control scheme for swerve drive. Includes movement, the toggle between field centric and robot
@@ -242,6 +240,10 @@ public class SwerveDriveScheme {
         .rightBumper()
         .onTrue(runOnce(() -> setSlowMode()))
         .onFalse(runOnce(() -> setNormalMode()));
+
+      if(RobotController.getMatchTime() == 0){
+        controller.setRumble(0, 1.0).withTimeout(0.5);
+      }
   }
   /** Toggle field centric and robot centric driving. */
   private static void toggleFieldCentric() {

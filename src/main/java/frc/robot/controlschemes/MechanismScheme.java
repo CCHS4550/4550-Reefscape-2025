@@ -52,11 +52,19 @@ public class MechanismScheme {
                 () ->
                     BlinkinLEDController.getInstance()
                         .setIfNotAlready(BlinkinPattern.RAINBOW_RAINBOW_PALETTE)));
+<<<<<<< Updated upstream
 
     intake
         .hasCoralTrigger()
         .onTrue(Commands.runOnce(() -> intake.intakeSlow(), intake))
         .onFalse(runOnce(() -> intake.intakeNormal(), intake));
+=======
+    
+    // intake
+    //     .hasCoralTrigger()
+    //     .onTrue(Commands.runOnce(() -> intake.intakeSlow(), intake))
+    //     .onFalse(runOnce(() -> intake.intakeNormal(), intake));
+>>>>>>> Stashed changes
   }
 
   public static void configureButtons(
