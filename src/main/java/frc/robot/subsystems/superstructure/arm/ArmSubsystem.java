@@ -30,7 +30,8 @@ public class ArmSubsystem extends SubsystemBase {
     L1_FRONT(Units.degreesToRadians(0)),
     L2_FRONT(Units.degreesToRadians(12.5)),
     L3_FRONT(Units.degreesToRadians(15)),
-    L4_BACK(Units.degreesToRadians(94.234611)),
+    // L4_BACK(Units.degreesToRadians(94.234611)),
+    L4_BACK(Units.degreesToRadians(91)),
     CORAL_STATION_FRONT(Units.degreesToRadians(10)),
     CORAL_STATION_BACK(Units.degreesToRadians(0)),
     KNOCK_ALGAE_TOP(Units.degreesToRadians(-3)),
@@ -177,7 +178,7 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public Command setWantedStateCommand(ArmState wantedState) {
-    System.out.println(wantedState);
+    // System.out.println(wantedState);
     return new InstantCommand(() -> setWantedState(wantedState));
   }
 

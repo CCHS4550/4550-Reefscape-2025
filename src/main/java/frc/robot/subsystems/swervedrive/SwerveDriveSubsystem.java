@@ -279,12 +279,12 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     //     desiredStates, Constants.SwerveConstants.MAX_DRIVE_SPEED_METERS_PER_SECOND_THEORETICAL);
     // Logger.recordOutput("SwerveModuleStates/SetpointsOptimized", desiredStates);
 
-    Logger.recordOutput("Swerve Drive Outputs/Desired Module States", desiredStates);
+    // Logger.recordOutput("Swerve Drive Outputs/Desired Module States", desiredStates);
     frontRight.setDesiredState(desiredStates[0], openLoop);
     frontLeft.setDesiredState(desiredStates[1], openLoop);
     backRight.setDesiredState(desiredStates[2], openLoop);
     backLeft.setDesiredState(desiredStates[3], openLoop);
-    Logger.recordOutput("Swerve Drive Outputs/Processed Desired Module States", desiredStates);
+    // Logger.recordOutput("Swerve Drive Outputs/Processed Desired Module States", desiredStates);
   }
 
   /* Returns the actual moduleStates */

@@ -319,10 +319,10 @@ public class Constants {
         new Transform2d(Inches.of((-18.7500 - 8)), Inches.of(-6.481791 - 1), new Rotation2d());
 
     public static final Transform2d BACK_REEF_LEFT_OFFSET =
-        new Transform2d(Inches.of((-18.7500 - 3.25)), Inches.of(6.481791), new Rotation2d(Math.PI));
+        new Transform2d(Inches.of((-18.7500 - 0.25)), Inches.of(6.481791), new Rotation2d(Math.PI));
     public static final Transform2d BACK_REEF_RIGHT_OFFSET =
         new Transform2d(
-            Inches.of((-18.7500 - 3.25)), Inches.of(-6.481791), new Rotation2d(Math.PI));
+            Inches.of((-18.7500 - 0.25)), Inches.of(-6.481791), new Rotation2d(Math.PI));
 
     public static final Transform2d CORAL_STATION_LEFT_OFFSET =
         new Transform2d(Inches.of((-18.7500 + 3)), Inches.of(6.481791), new Rotation2d());
@@ -444,7 +444,7 @@ public class Constants {
             .collect(Collectors.toMap(i -> BARGE_IDS[i], BARGE_POSES::get));
   }
 
-  public static final int BLINKIN_LED_CONTROLLER_PORT = 9;
+  public static final int BLINKIN_LED_CONTROLLER_PORT = 4;
 
   // safely divide
   public static double safeDivision(double numerator, double denominator) {

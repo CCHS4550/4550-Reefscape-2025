@@ -68,7 +68,7 @@ public class Superstructure extends SubsystemBase {
     /** Position to Score L4 */
     L4_BACK,
 
-    L4_INTERMEDIATE,
+    // L4_INTERMEDIATE,
     /** In position to climb */
     CLIMB_PREPARING,
 
@@ -105,7 +105,9 @@ public class Superstructure extends SubsystemBase {
 
         wrist.setWantedStateCommand(WristState.DEFAULT_WITHINFRAME).schedule();
 
-        new WaitCommand(.5).andThen(elevator.setWantedStateCommand(ElevatorState.ZERO)).schedule();
+        new WaitCommand(.625)
+            .andThen(elevator.setWantedStateCommand(ElevatorState.ZERO))
+            .schedule();
         break;
 
       case CORAL_STATION_BACK:
@@ -113,7 +115,7 @@ public class Superstructure extends SubsystemBase {
 
         wrist.setWantedStateCommand(WristState.CORAL_STATION_BACK).schedule();
 
-        new WaitCommand(1).andThen(elevator.setWantedStateCommand(ElevatorState.ZERO)).schedule();
+        new WaitCommand(.5).andThen(elevator.setWantedStateCommand(ElevatorState.ZERO)).schedule();
         break;
 
       case CORAL_STATION_FRONT:
@@ -121,7 +123,7 @@ public class Superstructure extends SubsystemBase {
 
         wrist.setWantedStateCommand(WristState.CORAL_STATION_FRONT).schedule();
 
-        elevator.setWantedStateCommand(ElevatorState.ZERO).schedule();
+        new WaitCommand(.5).andThen(elevator.setWantedStateCommand(ElevatorState.ZERO)).schedule();
         outtakeReverse = false;
         break;
 
@@ -157,23 +159,25 @@ public class Superstructure extends SubsystemBase {
 
         wrist.setWantedStateCommand(WristState.L4_BACK).schedule();
 
-        new WaitCommand(.75)
+        new WaitCommand(0.625)
             .andThen(elevator.setWantedStateCommand(ElevatorState.L4_BACK))
             .schedule();
         outtakeReverse = true;
         break;
-      case L4_INTERMEDIATE:
-        arm.setWantedStateCommand(ArmState.L3_FRONT).schedule();
+        // case L4_INTERMEDIATE:
+        //   arm.setWantedStateCommand(ArmState.L3_FRONT).schedule();
 
-        wrist.setWantedStateCommand(WristState.L3_FRONT).schedule();
+        //   wrist.setWantedStateCommand(WristState.L3_FRONT).schedule();
 
-        elevator.setWantedStateCommand(ElevatorState.ZERO).schedule();
+        //   elevator.setWantedStateCommand(ElevatorState.L4_INTERMEDIATE).schedule();
 
-        new WaitCommand(0).andThen(setWantedSuperstateCommand(wantedSuperState)).schedule();
-        wantedSuperState = SuperState.L4_INTERMEDIATE;
-        outtakeReverse = true;
+        //   new WaitCommand(0.5).andThen(setWantedSuperstateCommand(wantedSuperState)).schedule();
 
-        break;
+        //   System.out.println("Applying Intermediate State");
+
+        //   outtakeReverse = true;
+
+        //   break;
 
       case KNOCK_ALGAE_BOTTOM:
         arm.setWantedStateCommand(ArmState.KNOCK_ALGAE_BOTTOM).schedule();
@@ -185,6 +189,9 @@ public class Superstructure extends SubsystemBase {
         // new WaitCommand(1).andThen(wrist.setWantedStateCommand(WristState.L3_FRONT)).schedule();
 
         elevator.setWantedStateCommand(ElevatorState.KNOCK_ALGAE_BOTTOM).schedule();
+
+        outtakeReverse = false;
+
         break;
 
       case KNOCK_ALGAE_TOP:
@@ -197,6 +204,8 @@ public class Superstructure extends SubsystemBase {
         // intake.outtake().withTimeout(2);
 
         elevator.setWantedStateCommand(ElevatorState.KNOCK_ALGAE_TOP).schedule();
+
+        outtakeReverse = false;
 
         break;
 
@@ -222,55 +231,53 @@ public class Superstructure extends SubsystemBase {
         return currentSuperState = SuperState.WITHIN_FRAME_PERIMETER_DEFAULT;
 
       case ZERO:
-        if (currentSuperState == SuperState.L4_BACK)
-          return currentSuperState = SuperState.L4_INTERMEDIATE;
+        // if (currentSuperState == SuperState.L4_BACK)
+        //   return currentSuperState = SuperState.L4_INTERMEDIATE;
         return currentSuperState = SuperState.ZERO;
 
       case CORAL_STATION_BACK:
-        if (currentSuperState == SuperState.L4_BACK)
-          return currentSuperState = SuperState.L4_INTERMEDIATE;
+        // if (currentSuperState == SuperState.L4_BACK)
+        //   return currentSuperState = SuperState.L4_INTERMEDIATE;
         return currentSuperState = SuperState.CORAL_STATION_BACK;
 
       case CORAL_STATION_FRONT:
-        if (currentSuperState == SuperState.L4_BACK)
-          return currentSuperState = SuperState.L4_INTERMEDIATE;
+        // if (currentSuperState == SuperState.L4_BACK)
+        //   return currentSuperState = SuperState.L4_INTERMEDIATE;
         return currentSuperState = SuperState.CORAL_STATION_FRONT;
 
       case L1_FRONT:
-        if (currentSuperState == SuperState.L4_BACK)
-          return currentSuperState = SuperState.L4_INTERMEDIATE;
+        // if (currentSuperState == SuperState.L4_BACK)
+        //   return currentSuperState = SuperState.L4_INTERMEDIATE;
         return currentSuperState = SuperState.L1_FRONT;
 
       case L2_FRONT:
-        if (currentSuperState == SuperState.L4_BACK)
-          return currentSuperState = SuperState.L4_INTERMEDIATE;
+        // if (currentSuperState == SuperState.L4_BACK)
+        //   return currentSuperState = SuperState.L4_INTERMEDIATE;
         return currentSuperState = SuperState.L2_FRONT;
 
       case L3_FRONT:
-        if (currentSuperState == SuperState.L4_BACK)
-          return currentSuperState = SuperState.L4_INTERMEDIATE;
+        // if (currentSuperState == SuperState.L4_BACK)
+        //   return currentSuperState = SuperState.L4_INTERMEDIATE;
         return currentSuperState = SuperState.L3_FRONT;
 
       case L4_BACK:
-        if (currentSuperState == SuperState.WITHIN_FRAME_PERIMETER_DEFAULT
-            || currentSuperState == SuperState.L1_FRONT
-            || currentSuperState == SuperState.ZERO) {
-          return currentSuperState = SuperState.L4_INTERMEDIATE;
-        }
         return currentSuperState = SuperState.L4_BACK;
 
+        // }
+        // return currentSuperState = SuperState.L4_BACK;
+
       case CLIMB_PREPARING:
-        if (currentSuperState == SuperState.L4_BACK)
-          return currentSuperState = SuperState.L4_INTERMEDIATE;
+        // if (currentSuperState == SuperState.L4_BACK)
+        //   return currentSuperState = SuperState.L4_INTERMEDIATE;
         return currentSuperState = SuperState.CLIMB_PREPARING;
 
       case KNOCK_ALGAE_BOTTOM:
-        if (currentSuperState == SuperState.L4_BACK)
-          return currentSuperState = SuperState.L4_INTERMEDIATE;
+        // if (currentSuperState == SuperState.L4_BACK)
+        //   return currentSuperState = SuperState.L4_INTERMEDIATE;
         return currentSuperState = SuperState.KNOCK_ALGAE_BOTTOM;
       case KNOCK_ALGAE_TOP:
-        if (currentSuperState == SuperState.L4_BACK)
-          return currentSuperState = SuperState.L4_INTERMEDIATE;
+        // if (currentSuperState == SuperState.L4_BACK)
+        //   return currentSuperState = SuperState.L4_INTERMEDIATE;
         return currentSuperState = SuperState.KNOCK_ALGAE_TOP;
 
       default:

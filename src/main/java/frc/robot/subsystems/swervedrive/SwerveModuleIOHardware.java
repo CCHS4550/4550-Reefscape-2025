@@ -242,7 +242,7 @@ public class SwerveModuleIOHardware implements SwerveModuleIO {
     desiredState.speedMetersPerSecond *= desiredState.angle.minus(encoderRotation).getCos();
 
     setDriveVelocity(desiredState.speedMetersPerSecond);
-    Logger.recordOutput("desiredState - Meters per Second", desiredState.speedMetersPerSecond);
+    // Logger.recordOutput("desiredState - Meters per Second", desiredState.speedMetersPerSecond);
     setTurnPosition(() -> desiredState.angle.getRadians());
     // setTurnPosition();
 

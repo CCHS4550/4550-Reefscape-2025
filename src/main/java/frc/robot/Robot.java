@@ -169,6 +169,8 @@ public class Robot extends LoggedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
+
+    Constants.checkAlliance();
     HighFrequencyThread.getInstance().start();
 
     BlinkinLEDController.getInstance().setIfNotAlready(BlinkinPattern.RAINBOW_RAINBOW_PALETTE);
@@ -194,9 +196,11 @@ public class Robot extends LoggedRobot {
   @Override
   public void teleopInit() {
 
+    Constants.checkAlliance();
+
     HighFrequencyThread.getInstance().start();
 
-    BlinkinLEDController.getInstance().setPattern(BlinkinPattern.RAINBOW_RAINBOW_PALETTE);
+    BlinkinLEDController.getInstance().setPattern(BlinkinPattern.WHITE);
 
     if (!RobotState.getInstance().poseInitialized) RobotState.getInstance().poseInit();
 

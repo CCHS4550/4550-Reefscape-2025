@@ -209,7 +209,6 @@ public class PhotonVisionAprilTag extends SubsystemBase implements VisionIO {
           poseResult.getKey().update(poseResult.getValue());
 
       if (estimatedPose.isPresent()) estimates.add(estimatedPose.get().estimatedPose.toPose2d());
-    
     }
 
     estimates.removeIf(pose -> pose == null);

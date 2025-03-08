@@ -8,7 +8,6 @@ import static edu.wpi.first.units.Units.Volts;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.util.maps.Constants;
@@ -25,7 +24,7 @@ public class ClimberSubsystem extends SubsystemBase {
 
   public final ClimberIOInputsAutoLogged climberInputs = new ClimberIOInputsAutoLogged();
 
-  PWM blinkinTest = new PWM(8);
+  // PWM blinkinTest = new PWM(8);
   /** Creates a new WristSubsystem. */
   public ClimberSubsystem(
       CCMotorController.MotorFactory motorFactory, ClimberIO.IOFactory ioFactory) {
@@ -48,7 +47,7 @@ public class ClimberSubsystem extends SubsystemBase {
   public void periodic() {
     climberIO.updateInputs(climberInputs);
     Logger.processInputs("Subsystem/Climber", climberInputs);
-    blinkinTest.setPosition(.5);
+    // blinkinTest.setPosition(.5);
     // This method will be called once per scheduler run
   }
 
