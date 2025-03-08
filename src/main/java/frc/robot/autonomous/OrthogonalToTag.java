@@ -321,9 +321,9 @@ public class OrthogonalToTag extends Command {
     //   delayTimer.reset();
     // }
 
-    // if (distanceMetersErr < .05 && angleDegreesErr < 5) exitCommand = true;
+    if (distanceMetersErr < .05 && angleDegreesErr < 5) exitCommand = true;
 
-    return false;
+    return exitCommand;
   }
 
   /** Helper Methods */

@@ -29,10 +29,11 @@ public class ArmSubsystem extends SubsystemBase {
     DEFAULT_WITHINFRAME(Units.degreesToRadians(-36)),
     L1_FRONT(Units.degreesToRadians(0)),
     L2_FRONT(Units.degreesToRadians(12.5)),
-    L3_FRONT(Units.degreesToRadians(15)),
+    L3_FRONT(Units.degreesToRadians(17)),
     // L4_BACK(Units.degreesToRadians(94.234611)),
     L4_BACK(Units.degreesToRadians(91)),
-    CORAL_STATION_FRONT(Units.degreesToRadians(10)),
+    // 11.5
+    CORAL_STATION_FRONT(Units.degreesToRadians(11)),
     CORAL_STATION_BACK(Units.degreesToRadians(0)),
     KNOCK_ALGAE_TOP(Units.degreesToRadians(-3)),
     KNOCK_ALGAE_BOTTOM(Units.degreesToRadians(-3)),

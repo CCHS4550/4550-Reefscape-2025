@@ -49,7 +49,7 @@ public class FollowPathCommand extends Command {
     rotationPID.enableContinuousInput(-Math.PI, Math.PI);
   }
 
-  private DoubleSupplier driveSpeedModifier = () -> .01;
+  private DoubleSupplier driveSpeedModifier = () -> 0;
 
   /**
    * Follows a PathPlannerTrajectory
@@ -197,7 +197,7 @@ public class FollowPathCommand extends Command {
     Logger.recordOutput("FollowPathCommand/rotationError", rotationError);
 
     // return timer.hasElapsed(trajectory.getTotalTimeSeconds())
-    return (translationError < .15 && rotationError < .15) || timer.hasElapsed(5);
+    return (translationError < 2 && rotationError < 2) || timer.hasElapsed(5);
   }
 
   public static double clamp(double measurement, double min, double max) {

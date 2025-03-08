@@ -155,11 +155,11 @@ public class Superstructure extends SubsystemBase {
         break;
 
       case L4_BACK:
-        arm.setWantedStateCommand(ArmState.L4_BACK).schedule();
+        new WaitCommand(0.625).andThen(arm.setWantedStateCommand(ArmState.L4_BACK)).schedule();
 
-        wrist.setWantedStateCommand(WristState.L4_BACK).schedule();
+        new WaitCommand(0.625).andThen(wrist.setWantedStateCommand(WristState.L4_BACK)).schedule();
 
-        new WaitCommand(0.625)
+        new WaitCommand(0)
             .andThen(elevator.setWantedStateCommand(ElevatorState.L4_BACK))
             .schedule();
         outtakeReverse = true;

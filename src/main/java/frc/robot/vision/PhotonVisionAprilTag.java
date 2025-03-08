@@ -102,7 +102,7 @@ public class PhotonVisionAprilTag extends SubsystemBase implements VisionIO {
             .collect(Collectors.toList()));
 
     condensedResults = condensePipelineResults(results);
-    trustedResults = getTrustedResults(results, 0.3, 1);
+    trustedResults = getTrustedResults(results, 0.00, 1.5);
 
     inputs.hasTarget = hasAnyTarget(results);
 

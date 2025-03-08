@@ -18,6 +18,7 @@ import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.Superstructure.SuperState;
 import frc.util.maps.Constants;
 import frc.util.motorcontroller.CCMotorController;
+import java.util.function.BooleanSupplier;
 import org.littletonrobotics.junction.Logger;
 
 public class IntakeSubsystem extends SubsystemBase {
@@ -27,6 +28,8 @@ public class IntakeSubsystem extends SubsystemBase {
   private final IntakeIO intakeIO;
 
   public final IntakeIOInputsAutoLogged intakeInputs = new IntakeIOInputsAutoLogged();
+
+  private BooleanSupplier hasCoralSupplier = () -> intakeInputs.hasCoral;
 
   // private DoubleSupplier intakeSpeedModifier = () -> 1;
 
@@ -50,7 +53,8 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public Command intakeCoralStation() {
-    return startEnd(() -> intakeIO.intake(Volts.of(12)), () -> intakeIO.intake(Volts.of(0)));
+    return startEnd(() -> intakeIO.intake(Volts.of(12)), () -> intakeIO.intake(Volts.of(0)))
+        .onlyWhile(hasCoralTrigger().negate());
   }
 
   public Command outtake() {
@@ -77,11 +81,9 @@ public class IntakeSubsystem extends SubsystemBase {
         () -> intakeIO.intake(Volts.of(12)),
         () -> {},
         (bool) -> {
-          if (bool) intakeIO.intake(Volts.of(0));
+          intakeIO.intake(Volts.of(0));
         },
-        () -> {
-          return hasCoral();
-        },
+        () -> hasCoralSupplier.getAsBoolean(),
         this);
   }
 
@@ -89,15 +91,13 @@ public class IntakeSubsystem extends SubsystemBase {
     return new FunctionalCommand(
         () -> {
           boolean outtakeReverse = RobotState.getInstance().currentSuperState == SuperState.L4_BACK;
-          intakeIO.intake(Volts.of(outtakeReverse ? 12 : -12));
+          intakeIO.intake(Volts.of(outtakeReverse ? -12 : 12));
         },
         () -> {},
         (bool) -> {
-          if (bool) intakeIO.intake(Volts.of(0));
+          intakeIO.intake(Volts.of(0));
         },
-        () -> {
-          return !hasCoral();
-        },
+        () -> !hasCoralSupplier.getAsBoolean(),
         this);
   }
 

@@ -30,7 +30,7 @@ public class WristSubsystem extends SubsystemBase {
     DEFAULT_WITHINFRAME(Units.degreesToRadians(-188)),
     L1_FRONT(Units.degreesToRadians(15)),
     L2_FRONT(Units.degreesToRadians(70)),
-    L3_FRONT(Units.degreesToRadians(75)),
+    L3_FRONT(Units.degreesToRadians(70)),
     // L4_BACK(Units.degreesToRadians(130)),
     L4_BACK(Units.degreesToRadians(130)),
     CORAL_STATION_FRONT(Units.degreesToRadians(-135)),

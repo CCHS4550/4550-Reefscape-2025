@@ -4,6 +4,7 @@
 
 package frc.robot.autonomous;
 
+import choreo.util.ChoreoAllianceFlipUtil;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -68,7 +69,12 @@ public class PathWrapper {
 
     followCommands.add(followTrajectory(initialTraj, swerve));
 
-    initialPose = new Pose2d(initialTraj.getInitialPose().getTranslation(), initialHeading);
+    initialPose =
+        new Pose2d(
+            Constants.isBlue
+                ? initialTraj.getInitialPose().getTranslation()
+                : ChoreoAllianceFlipUtil.flip(initialTraj.getInitialPose().getTranslation()),
+            initialHeading);
     //  initialPath.getPreviewStartingHolonomicPose();
 
     for (int i = 1; i < files.length; i++) {
@@ -181,7 +187,7 @@ public class PathWrapper {
   public static PathPlannerPath flipIfNecessary(PathPlannerPath path) {
 
     if (Constants.isBlue) return path;
-    else return path.flipPath();
+    return path.flipPath();
   }
 
   public static Rotation2d rotateIfNecessary(Rotation2d rotation2d) {

@@ -1,7 +1,5 @@
 package frc.robot.controlschemes;
 
-import static edu.wpi.first.wpilibj2.command.Commands.runOnce;
-
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.Superstructure;
@@ -13,8 +11,6 @@ import frc.robot.subsystems.superstructure.arm.ArmSubsystem;
 import frc.robot.subsystems.superstructure.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.superstructure.wrist.WristSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveDriveSubsystem;
-import frc.util.BlinkinLEDController;
-import frc.util.BlinkinLEDController.BlinkinPattern;
 
 public class MechanismScheme {
   private static CommandGenericHID buttonBoard;
@@ -33,21 +29,21 @@ public class MechanismScheme {
     buttonBoard = new CommandGenericHID(port);
     configureButtons(algae, arm, climber, elevator, intake, swerve, wrist, superstructure, port);
 
-    intake
-        .hasCoralTrigger()
-        .onTrue(
-            intake
-                .stop()
-                .andThen(
-                    runOnce(
-                        () ->
-                            BlinkinLEDController.getInstance()
-                                .setIfNotAlready(BlinkinPattern.STROBE_GOLD))))
-        .onFalse(
-            runOnce(
-                () ->
-                    BlinkinLEDController.getInstance()
-                        .setIfNotAlready(BlinkinPattern.RAINBOW_RAINBOW_PALETTE)));
+    // intake
+    //     .hasCoralTrigger()
+    //     .onTrue(
+    //         intake
+    //             .stop()
+    //             .andThen(
+    //                 Commands.runOnce(
+    //                     () ->
+    //                         BlinkinLEDController.getInstance()
+    //                             .setIfNotAlready(BlinkinPattern.STROBE_GOLD))))
+    //     .onFalse(
+    //         Commands.runOnce(
+    //             () ->
+    //                 BlinkinLEDController.getInstance()
+    //                     .setIfNotAlready(BlinkinPattern.RAINBOW_RAINBOW_PALETTE)));
 
     // intake
     //     .hasCoralTrigger()
