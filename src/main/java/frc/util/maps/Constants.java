@@ -369,11 +369,18 @@ public class Constants {
 
     public static final String CAMERA_THREE_NAME = "denali";
 
-    /* If the camera is on the front left module, facing back outwards. */
+    // /* If the camera is on the front left module, facing back outwards. */
+    // public static final Translation3d ROBOT_TO_CAMERA_TRANS =
+    //     new Translation3d(0.198172, 0.294237, 0.242951);
+    // public static final Rotation3d ROBOT_TO_CAMERA_ROT =
+    //     new Rotation3d(0, Math.toRadians(-15), Math.toRadians((180 - 15)));
+
+
+            /* If the camera is on the front left module, facing front inwards, towards the coral station. */
     public static final Translation3d ROBOT_TO_CAMERA_TRANS =
-        new Translation3d(0.198172, 0.294237, 0.242951);
-    public static final Rotation3d ROBOT_TO_CAMERA_ROT =
-        new Rotation3d(0, Math.toRadians(-15), Math.toRadians((180 - 15)));
+    new Translation3d(0.248631, 0.280716, 0.250142);
+public static final Rotation3d ROBOT_TO_CAMERA_ROT =
+    new Rotation3d(0, Math.toRadians(-45), Math.toRadians((-15)));
 
     public static final Transform3d ROBOT_TO_CAM =
         new Transform3d(ROBOT_TO_CAMERA_TRANS, ROBOT_TO_CAMERA_ROT);
