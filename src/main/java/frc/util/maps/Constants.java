@@ -375,12 +375,11 @@ public class Constants {
     // public static final Rotation3d ROBOT_TO_CAMERA_ROT =
     //     new Rotation3d(0, Math.toRadians(-15), Math.toRadians((180 - 15)));
 
-
-            /* If the camera is on the front left module, facing front inwards, towards the coral station. */
+    /* If the camera is on the front left module, facing front inwards, towards the coral station. */
     public static final Translation3d ROBOT_TO_CAMERA_TRANS =
-    new Translation3d(0.248631, 0.280716, 0.250142);
-public static final Rotation3d ROBOT_TO_CAMERA_ROT =
-    new Rotation3d(0, Math.toRadians(-45), Math.toRadians((-15)));
+        new Translation3d(0.248631, 0.280716, 0.250142);
+    public static final Rotation3d ROBOT_TO_CAMERA_ROT =
+        new Rotation3d(0, Math.toRadians(-45), Math.toRadians((-15)));
 
     public static final Transform3d ROBOT_TO_CAM =
         new Transform3d(ROBOT_TO_CAMERA_TRANS, ROBOT_TO_CAMERA_ROT);

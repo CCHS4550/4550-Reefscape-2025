@@ -347,7 +347,7 @@ public class CustomAutoChooser {
             pathWrapper.getFollowCommand(0),
             AlignCommands.backAlignToReefLeft(swerve, vision)
                 .alongWith(superstructure.setWantedSuperstateCommand(SuperState.L4_BACK))
-                .withTimeout(2.5),
+                .withTimeout(5.5),
             intake.outtakeAuto()));
 
     /* Pick up */
@@ -355,8 +355,8 @@ public class CustomAutoChooser {
         sequence(
             superstructure
                 .setWantedSuperstateCommand(SuperState.CORAL_STATION_FRONT)
-                .alongWith(pathWrapper.getFollowCommand(1))
-                .withTimeout(3.5),
+                .withDeadline(pathWrapper.getFollowCommand(1))
+                .withTimeout(5),
             AlignCommands.frontAlignToCoralStationLeft(swerve, vision)
                 .alongWith(
                     superstructure.setWantedSuperstateCommand(SuperState.CORAL_STATION_FRONT))
@@ -366,7 +366,7 @@ public class CustomAutoChooser {
     /* Score */
     c.addCommands(
         sequence(
-            pathWrapper.getFollowCommand(2).withTimeout(2),
+            pathWrapper.getFollowCommand(2).withTimeout(3),
             AlignCommands.backAlignToReefRight(swerve, vision)
                 .alongWith(superstructure.setWantedSuperstateCommand(SuperState.L4_BACK))
                 .withTimeout(5.5),
@@ -888,49 +888,47 @@ public class CustomAutoChooser {
             pathWrapper.getFollowCommand(0),
             AlignCommands.backAlignToReefLeft(swerve, vision)
                 .alongWith(superstructure.setWantedSuperstateCommand(SuperState.L4_BACK))
-                .withTimeout(5),
-            intake.outtake().withTimeout(3)));
-    /* Pick up */
-    c.addCommands(
-        sequence(
-            superstructure
-                .setWantedSuperstateCommand(SuperState.WITHIN_FRAME_PERIMETER_DEFAULT)
-                .alongWith(new WaitCommand(1).andThen(pathWrapper.getFollowCommand(1))),
-            AlignCommands.frontAlignToCoralStationRight(swerve, vision)
-                .alongWith(
-                    superstructure
-                        .setWantedSuperstateCommand(SuperState.CORAL_STATION_FRONT)
-                        .withTimeout(3)),
-            intake.intakeAuto()));
-    /* Score */
-    c.addCommands(
-        sequence(
-            superstructure
-                .setWantedSuperstateCommand(SuperState.WITHIN_FRAME_PERIMETER_DEFAULT)
-                .alongWith(new WaitCommand(1).andThen(pathWrapper.getFollowCommand(2))),
-            AlignCommands.backAlignToReefLeft(swerve, vision)
-                .alongWith(
-                    superstructure.setWantedSuperstateCommand(SuperState.L4_BACK).withTimeout(3)),
+                .withTimeout(5.5),
             intake.outtakeAuto()));
     /* Pick up */
     c.addCommands(
         sequence(
-            pathWrapper.getFollowCommand(3),
-            AlignCommands.frontAlignToCoralStationRight(swerve, vision)
+            superstructure
+                .setWantedSuperstateCommand(SuperState.CORAL_STATION_FRONT)
+                .withDeadline(pathWrapper.getFollowCommand(1))
+                .withTimeout(5),
+            AlignCommands.frontAlignToCoralStationLeft(swerve, vision)
                 .alongWith(
-                    superstructure
-                        .setWantedSuperstateCommand(SuperState.CORAL_STATION_FRONT)
-                        .withTimeout(3)),
+                    superstructure.setWantedSuperstateCommand(SuperState.CORAL_STATION_FRONT))
+                .withTimeout(1),
             intake.intakeAuto()));
     /* Score */
     c.addCommands(
         sequence(
+            pathWrapper.getFollowCommand(2),
+            AlignCommands.backAlignToReefLeft(swerve, vision)
+                .alongWith(superstructure.setWantedSuperstateCommand(SuperState.L4_BACK))
+                .withTimeout(5.5),
+            intake.outtakeAuto()));
+    /* Pick up */
+    c.addCommands(
+        sequence(
             superstructure
-                .setWantedSuperstateCommand(SuperState.WITHIN_FRAME_PERIMETER_DEFAULT)
-                .alongWith(new WaitCommand(1).andThen(pathWrapper.getFollowCommand(4))),
-            AlignCommands.backAlignToReefRight(swerve, vision)
+                .setWantedSuperstateCommand(SuperState.CORAL_STATION_FRONT)
+                .withDeadline(pathWrapper.getFollowCommand(3))
+                .withTimeout(5),
+            AlignCommands.frontAlignToCoralStationLeft(swerve, vision)
                 .alongWith(
-                    superstructure.setWantedSuperstateCommand(SuperState.L4_BACK).withTimeout(3)),
+                    superstructure.setWantedSuperstateCommand(SuperState.CORAL_STATION_FRONT))
+                .withTimeout(1),
+            intake.intakeAuto()));
+    /* Score */
+    c.addCommands(
+        sequence(
+            pathWrapper.getFollowCommand(4),
+            AlignCommands.backAlignToReefRight(swerve, vision)
+                .alongWith(superstructure.setWantedSuperstateCommand(SuperState.L4_BACK))
+                .withTimeout(5.5),
             intake.outtakeAuto()));
 
     return c;
