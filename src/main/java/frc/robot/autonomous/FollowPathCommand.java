@@ -197,7 +197,7 @@ public class FollowPathCommand extends Command {
     Logger.recordOutput("FollowPathCommand/rotationError", rotationError);
 
     // return timer.hasElapsed(trajectory.getTotalTimeSeconds())
-    return (translationError < 2 && rotationError < 2)|| timer.hasElapsed(5);
+    return (translationError < 2 && rotationError < 2) || timer.hasElapsed(5);
   }
 
   public static double clamp(double measurement, double min, double max) {
