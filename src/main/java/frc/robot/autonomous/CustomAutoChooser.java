@@ -4,6 +4,7 @@
 
 package frc.robot.autonomous;
 
+import static edu.wpi.first.wpilibj2.command.Commands.race;
 import static edu.wpi.first.wpilibj2.command.Commands.sequence;
 import static edu.wpi.first.wpilibj2.command.Commands.waitSeconds;
 
@@ -149,11 +150,13 @@ public class CustomAutoChooser {
 
     /* Score */
     c.addCommands(
-        sequence(
-            pathWrapper.getFollowCommand(0),
-            waitSeconds(4),
-            superstructure.setWantedSuperstateCommand(SuperState.L4_BACK),
-            intake.outtakeAuto()));
+        race(
+            sequence(pathWrapper.getFollowCommand(0), waitSeconds(2)),
+            sequence(
+                waitSeconds(2),
+                superstructure.setWantedSuperstateCommand(SuperState.L4_BACK),
+                waitSeconds(1),
+                intake.outtakeAuto())));
 
     /* Pick up */
     c.addCommands(
@@ -164,7 +167,14 @@ public class CustomAutoChooser {
             intake.intakeAuto()));
 
     /* Score */
-    c.addCommands(sequence(pathWrapper.getFollowCommand(2), intake.outtakeAuto()));
+    c.addCommands(
+        race(
+            sequence(pathWrapper.getFollowCommand(2), waitSeconds(2)),
+            sequence(
+                waitSeconds(2),
+                superstructure.setWantedSuperstateCommand(SuperState.L4_BACK),
+                waitSeconds(1),
+                intake.outtakeAuto())));
 
     /* Pick up */
     c.addCommands(
@@ -175,7 +185,14 @@ public class CustomAutoChooser {
             intake.intakeAuto()));
 
     /* Score */
-    c.addCommands(sequence(pathWrapper.getFollowCommand(4), intake.outtakeAuto()));
+    c.addCommands(
+        race(
+            sequence(pathWrapper.getFollowCommand(4), waitSeconds(2)),
+            sequence(
+                waitSeconds(2),
+                superstructure.setWantedSuperstateCommand(SuperState.L4_BACK),
+                waitSeconds(1),
+                intake.outtakeAuto())));
 
     /* Pick up */
     c.addCommands(
@@ -186,7 +203,14 @@ public class CustomAutoChooser {
             intake.intakeAuto()));
 
     /* Score */
-    c.addCommands(sequence(pathWrapper.getFollowCommand(6), intake.outtakeAuto()));
+    c.addCommands(
+        race(
+            sequence(pathWrapper.getFollowCommand(6), waitSeconds(2)),
+            sequence(
+                waitSeconds(2),
+                superstructure.setWantedSuperstateCommand(SuperState.L4_BACK),
+                waitSeconds(1),
+                intake.outtakeAuto())));
 
     return c;
   }
