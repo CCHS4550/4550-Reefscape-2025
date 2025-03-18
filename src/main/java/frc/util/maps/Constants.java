@@ -282,7 +282,9 @@ public class Constants {
     public static final double WRIST_MOTOR_RADIANS_PER_SECOND_CONVERSION_FACTOR =
         WRIST_MOTOR_ROTATIONS_TO_WRIST_ROTATIONS_RADIANS / 60;
 
-    public static final double WRIST_THROUGHBORE_OFFSET = -1.360;
+    public static final double WRIST_THROUGHBORE_OFFSET = -0.02;
+    //  -2.445;
+    // -1.360;
 
     public static final boolean WRIST_REVERSE = false;
 
@@ -314,19 +316,21 @@ public class Constants {
   public class FieldPositionConstants {
 
     public static final Transform2d FRONT_REEF_LEFT_OFFSET =
-        new Transform2d(Inches.of((-18.7500 - 6)), Inches.of(6.481791), new Rotation2d());
+        new Transform2d(Inches.of((-18.7500 - 3)), Inches.of(6.481791 - 1), new Rotation2d());
     public static final Transform2d FRONT_REEF_RIGHT_OFFSET =
-        new Transform2d(Inches.of((-18.7500 - 6)), Inches.of(-6.481791), new Rotation2d());
+        new Transform2d(Inches.of((-18.7500 - 3)), Inches.of(-6.481791 - 3), new Rotation2d());
 
     public static final Transform2d BACK_REEF_LEFT_OFFSET =
-        new Transform2d(Inches.of((-18.7500 - 2)), Inches.of(6.481791), new Rotation2d(Math.PI));
+        new Transform2d(
+            Inches.of((-18.7500 + 3)), Inches.of(6.481791 + 2), new Rotation2d(Math.PI));
     public static final Transform2d BACK_REEF_RIGHT_OFFSET =
-        new Transform2d(Inches.of((-18.7500 - 2)), Inches.of(-6.481791), new Rotation2d(Math.PI));
+        new Transform2d(
+            Inches.of((-18.7500 + 1.75)), Inches.of(-6.481791 + 1), new Rotation2d(Math.PI));
 
     public static final Transform2d CORAL_STATION_LEFT_OFFSET =
-        new Transform2d(Inches.of((-18.7500 + 8)), Inches.of(6.481791 + 1), new Rotation2d());
+        new Transform2d(Inches.of((-18.7500 + 8)), Inches.of(6), new Rotation2d());
     public static final Transform2d CORAL_STATION_RIGHT_OFFSET =
-        new Transform2d(Inches.of((-18.7500 + 8)), Inches.of(-6.481791 + 1), new Rotation2d());
+        new Transform2d(Inches.of((-18.7500 + 8)), Inches.of(-6), new Rotation2d());
     public static final Transform2d PROCESSOR_OFFSET =
         new Transform2d(Inches.of((-18.7500 - 5)), Inches.of(6.481791), new Rotation2d());
 
@@ -337,7 +341,8 @@ public class Constants {
   /** Back Camera */
   public static class cameraOne {
 
-    public static final String CAMERA_ONE_NAME = "everest";
+    // 10.45.50.13
+    public static final String CAMERA_ONE_NAME = "denali";
 
     // (Robot pose is considered the center of rotation at the floor level, or Z = 0)
     public static final Translation3d ROBOT_TO_CAMERA_TRANS =
@@ -351,6 +356,7 @@ public class Constants {
 
   /** Front Right */
   public static class cameraTwo {
+    // 10.45.50.14
     public static final String CAMERA_TWO_NAME = "k2";
 
     /** If camera is on front right module facing INWARDS. */
@@ -367,7 +373,8 @@ public class Constants {
   /* Front Left side of the robot */
   public static class cameraThree {
 
-    public static final String CAMERA_THREE_NAME = "denali";
+    // 10.45.50.11
+    public static final String CAMERA_THREE_NAME = "everest";
 
     // /* If the camera is on the front left module, facing back outwards. */
     // public static final Translation3d ROBOT_TO_CAMERA_TRANS =

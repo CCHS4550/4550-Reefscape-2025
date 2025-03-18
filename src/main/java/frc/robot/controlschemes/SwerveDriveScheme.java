@@ -7,6 +7,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -41,7 +42,7 @@ public class SwerveDriveScheme {
         return fieldCentric;
       };
 
-  private static DoubleSupplier driveSpeedModifier = () -> .2;
+  private static DoubleSupplier driveSpeedModifier = () -> .4;
 
   private static double turnSpeedModifier = 0.4;
 
@@ -164,6 +165,10 @@ public class SwerveDriveScheme {
                 },
                 swerve)
             .withName("Swerve Controller Command"));
+
+    new Trigger(() -> RobotState.getInstance().visionInputs.hasEstimate)
+        .onTrue(runOnce(() -> controller.setRumble(RumbleType.kBothRumble, 1)))
+        .onFalse(runOnce(() -> controller.setRumble(RumbleType.kBothRumble, 0)));
 
     configureButtons(
         algae, arm, climber, elevator, intake, swerve, wrist, superstructure, vision, controller);

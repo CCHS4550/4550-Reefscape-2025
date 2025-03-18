@@ -37,19 +37,16 @@ public class PhotonVisionAprilTag extends SubsystemBase implements VisionIO {
   public PhotonPoseEstimator camera1_photonEstimator;
   /* Camera 2 PhotonPoseEstimator. */
   public PhotonPoseEstimator camera2_photonEstimator;
-
+  /* Camera 3 PhotonPoseEstimator */
   public PhotonPoseEstimator camera3_photonEstimator;
 
   /** Creates a new Photonvision. */
   public PhotonVisionAprilTag() {
 
-    /** 10.45.50.11:5800 */
     camera1 = new PhotonCamera(Constants.cameraOne.CAMERA_ONE_NAME);
 
-    /** 10.45.50.14:5800 */
     camera2 = new PhotonCamera(Constants.cameraTwo.CAMERA_TWO_NAME);
 
-    /** 10.45.50.13:5800 */
     camera3 = new PhotonCamera(Constants.cameraThree.CAMERA_THREE_NAME);
 
     camera1_photonEstimator =

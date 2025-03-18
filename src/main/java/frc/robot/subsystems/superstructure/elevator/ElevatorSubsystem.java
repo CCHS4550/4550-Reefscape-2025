@@ -34,7 +34,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     L4_BACK(.525),
     // A1(0),
     // A2(0),
-    KNOCK_ALGAE_TOP(.35),
+    KNOCK_ALGAE_TOP(.375),
     KNOCK_ALGAE_BOTTOM(0),
     MANUAL(0),
     CLIMB_PREPARING(0);

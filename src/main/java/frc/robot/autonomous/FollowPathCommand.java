@@ -15,8 +15,6 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotState;
 import frc.robot.subsystems.swervedrive.SwerveDriveSubsystem;
-import frc.util.BlinkinLEDController;
-import frc.util.BlinkinLEDController.BlinkinPattern;
 import frc.util.maps.Constants;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
@@ -42,8 +40,8 @@ public class FollowPathCommand extends Command {
   static {
     translationPID = new PIDController(1, 0, 0);
 
-    xPID = new ProfiledPIDController(1, 0, 0, new Constraints(.01, 4));
-    yPID = new ProfiledPIDController(1, 0, 0, new Constraints(.01, 4));
+    xPID = new ProfiledPIDController(1, 0, 0, new Constraints(.03, 6));
+    yPID = new ProfiledPIDController(1, 0, 0, new Constraints(.03, 6));
 
     rotationPID = new ProfiledPIDController(1, 0, 0, new Constraints(2, 5));
     rotationPID.enableContinuousInput(-Math.PI, Math.PI);
@@ -87,7 +85,7 @@ public class FollowPathCommand extends Command {
   @Override
   public void execute() {
 
-    BlinkinLEDController.getInstance().setIfNotAlready(BlinkinPattern.BREATH_RED);
+    // BlinkinLEDController.getInstance().setIfNotAlready(BlinkinPattern.BREATH_RED);
 
     currentPose = RobotState.getInstance().getPose();
 
@@ -197,7 +195,7 @@ public class FollowPathCommand extends Command {
     Logger.recordOutput("FollowPathCommand/rotationError", rotationError);
 
     // return timer.hasElapsed(trajectory.getTotalTimeSeconds())
-    return (translationError < 2 && rotationError < 2)|| timer.hasElapsed(5);
+    return timer.hasElapsed(3);
   }
 
   public static double clamp(double measurement, double min, double max) {

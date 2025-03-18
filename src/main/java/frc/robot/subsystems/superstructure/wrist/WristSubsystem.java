@@ -30,14 +30,14 @@ public class WristSubsystem extends SubsystemBase {
     DEFAULT_WITHINFRAME(Units.degreesToRadians(-188)),
     L1_FRONT(Units.degreesToRadians(15)),
     L2_FRONT(Units.degreesToRadians(70)),
-    L3_FRONT(Units.degreesToRadians(70)),
+    L3_FRONT(Units.degreesToRadians(85)),
     // L4_BACK(Units.degreesToRadians(130)),
     L4_BACK(Units.degreesToRadians(130)),
     CORAL_STATION_FRONT(Units.degreesToRadians(-135)),
     CORAL_STATION_BACK(Units.degreesToRadians(0)),
     CLIMB_PREPARING(Units.degreesToRadians(130)),
-    KNOCK_ALGAE_TOP(Units.degreesToRadians(40)),
-    KNOCK_ALGAE_BOTTOM(Units.degreesToRadians(40)),
+    KNOCK_ALGAE_TOP(Units.degreesToRadians(50)),
+    KNOCK_ALGAE_BOTTOM(Units.degreesToRadians(50)),
     MANUAL(0);
     private final double angleRadians;
 

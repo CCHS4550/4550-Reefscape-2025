@@ -11,22 +11,19 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotState;
 import frc.robot.subsystems.swervedrive.SwerveDriveSubsystem;
 import frc.robot.vision.*;
-import frc.util.BlinkinLEDController;
-import frc.util.BlinkinLEDController.BlinkinPattern;
 import frc.util.maps.Constants;
 import java.util.ArrayList;
 import java.util.List;
@@ -63,7 +60,7 @@ public class OrthogonalToTag extends Command {
   private static ProfiledPIDController rotationPID;
 
   static {
-    translationPID = new PIDController(.7, .5, 0);
+    translationPID = new PIDController(1.5, 0, 0);
 
     xPID = new ProfiledPIDController(1.5, 0, 0, new Constraints(5, 8));
     yPID = new ProfiledPIDController(1.5, 0, 0, new Constraints(5, 8));
@@ -169,7 +166,7 @@ public class OrthogonalToTag extends Command {
 
     Logger.recordOutput("OrthogonalToTag/ExecutingCommand...", true);
 
-    BlinkinLEDController.getInstance().setIfNotAlready(BlinkinPattern.BREATH_BLUE);
+    // BlinkinLEDController.getInstance().setIfNotAlready(BlinkinPattern.BREATH_BLUE);
     // if pose is null, it should get a pose from a thigsndfkhgnldgfsfdfakd
 
     for (int i = 0; i < getTransform3dList().size(); i++) {
@@ -237,26 +234,26 @@ public class OrthogonalToTag extends Command {
       Logger.recordOutput("OrthogonalToTag/Using HF", false);
     }
 
-    vision
-        .getTrustedResults(vision.getCondensedPipelineResults(), 0.3, 1)
-        .forEach(
-            result -> {
-              result
-                  .getValue()
-                  .getTargets()
-                  .forEach(
-                      target -> {
-                        poseRelativeToTargetEstimator.addVisionMeasurement(
-                            new Pose3d(0, 0, 0, new Rotation3d())
-                                .plus(
-                                    result
-                                        .getKey()
-                                        .getRobotToCameraTransform()
-                                        .plus(target.getBestCameraToTarget()))
-                                .toPose2d(),
-                            result.getValue().getTimestampSeconds());
-                      });
-            });
+    // vision
+    //     .getTrustedResults(vision.getCondensedPipelineResults(), 0.3, 1)
+    //     .forEach(
+    //         result -> {
+    //           result
+    //               .getValue()
+    //               .getTargets()
+    //               .forEach(
+    //                   target -> {
+    //                     poseRelativeToTargetEstimator.addVisionMeasurement(
+    //                         new Pose3d(0, 0, 0, new Rotation3d())
+    //                             .plus(
+    //                                 result
+    //                                     .getKey()
+    //                                     .getRobotToCameraTransform()
+    //                                     .plus(target.getBestCameraToTarget()))
+    //                             .toPose2d(),
+    //                         result.getValue().getTimestampSeconds());
+    //                   });
+    //         });
 
     globalCurrentPose = globalInitialPose.plus(new Transform2d(new Pose2d(), currentRelativePose));
     Logger.recordOutput("OrthogonalToTag/globalCurrentPose", globalCurrentPose);
@@ -323,7 +320,7 @@ public class OrthogonalToTag extends Command {
 
     if (distanceMetersErr < .05 && angleDegreesErr < 5) exitCommand = true;
 
-    return exitCommand;
+    return DriverStation.isTeleop() ? false : exitCommand;
   }
 
   /** Helper Methods */
