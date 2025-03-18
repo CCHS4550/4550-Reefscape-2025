@@ -456,7 +456,7 @@ public class Constants {
             .collect(Collectors.toMap(i -> BARGE_IDS[i], BARGE_POSES::get));
   }
 
-  public static final int BLINKIN_LED_CONTROLLER_PORT = 4;
+  public static final int BLINKIN_LED_CONTROLLER_PORT = 8;
 
   // safely divide
   public static double safeDivision(double numerator, double denominator) {
