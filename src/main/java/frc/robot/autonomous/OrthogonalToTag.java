@@ -24,6 +24,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotState;
 import frc.robot.subsystems.swervedrive.SwerveDriveSubsystem;
 import frc.robot.vision.*;
+import frc.util.BlinkinLEDController;
+import frc.util.BlinkinLEDController.BlinkinPattern;
 import frc.util.maps.Constants;
 import java.util.ArrayList;
 import java.util.List;
@@ -158,6 +160,8 @@ public class OrthogonalToTag extends Command {
     rotationPID.reset(currentRelativePose.getRotation().getRadians());
 
     globalInitialPose = RobotState.getInstance().getPose();
+
+    BlinkinLEDController.getInstance().setPattern(BlinkinPattern.STROBE_GOLD);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -284,6 +288,8 @@ public class OrthogonalToTag extends Command {
   @Override
   public void end(boolean interrupted) {
     Logger.recordOutput("OrthogonalToTag/ExecutingCommand...", false);
+
+    BlinkinLEDController.getInstance().setPattern(BlinkinPattern.COLOR_WAVES_RAINBOW_PALETTE);
   }
 
   // Returns true when the command should end.

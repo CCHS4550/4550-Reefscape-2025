@@ -112,8 +112,8 @@ public class RobotState {
   /** High frequency odometry objects (HF) */
   public int sampleCountHF;
 
-  public double[] sampleTimestampsHF;
-  public SwerveModulePosition[][] swerveModulePositionsHF;
+  public double[] sampleTimestampsHF = new double[0];
+  public SwerveModulePosition[][] swerveModulePositionsHF = new SwerveModulePosition[4][0];
 
   private StatusSignal<Angle> yaw;
   private Queue<Double> gyroContainer;
@@ -530,7 +530,7 @@ public class RobotState {
    */
   public Rotation2d[] gyroAnglesPlusSwerveModuleDeltasHF() {
 
-    List<Rotation2d> gyroAnglesPlusDeltasHF = new ArrayList<>();
+    List<Rotation2d> gyroAnglesPlusDeltasHF = new ArrayList<>(0);
 
     SwerveModulePosition[] previousPositions = swerveModulePositions;
 

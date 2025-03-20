@@ -15,7 +15,8 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotState;
 import frc.robot.subsystems.swervedrive.SwerveDriveSubsystem;
-import frc.util.maps.Constants;
+import frc.util.BlinkinLEDController;
+import frc.util.BlinkinLEDController.BlinkinPattern;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
@@ -66,6 +67,8 @@ public class FollowPathCommand extends Command {
   @Override
   public void initialize() {
 
+    BlinkinLEDController.getInstance().setPattern(BlinkinPattern.VIOLET);
+
     currentPose = RobotState.getInstance().getPose();
 
     timer.reset();
@@ -98,68 +101,67 @@ public class FollowPathCommand extends Command {
     // wantedState.pose = Constants.isBlue() ? wantedState.pose : wantedState.flip().pose;
 
     // if (!Constants.isBlue) wantedState.pose = wantedState.flip().pose;
-    wantedState.heading = wantedState.pose.getRotation();
+    // wantedState.heading = wantedState.pose.getRotation();
 
-    double xSpeed =
-        wantedState.linearVelocity
-            * Math.cos(wantedState.heading.getRadians())
-            * driveSpeedModifier.getAsDouble();
-    double ySpeed =
-        wantedState.linearVelocity
-            * Math.sin(wantedState.heading.getRadians())
-            * driveSpeedModifier.getAsDouble();
+    // double xSpeed =
+    //     wantedState.linearVelocity
+    //         * Math.cos(wantedState.heading.getRadians())
+    //         * driveSpeedModifier.getAsDouble();
+    // double ySpeed =
+    //     wantedState.linearVelocity
+    //         * Math.sin(wantedState.heading.getRadians())
+    //         * driveSpeedModifier.getAsDouble();
 
-    Logger.recordOutput("FollowPathCommand/wantedChoreoVelocityX", xSpeed);
-    Logger.recordOutput("FollowPathCommand/wantedChoreoVelocityY", ySpeed);
+    // Logger.recordOutput("FollowPathCommand/wantedChoreoVelocityX", xSpeed);
+    // Logger.recordOutput("FollowPathCommand/wantedChoreoVelocityY", ySpeed);
 
-    double xPIDOutput = translationPID.calculate(currentPose.getX(), wantedState.pose.getX());
-    double yPIDOutput = translationPID.calculate(currentPose.getY(), wantedState.pose.getY());
+    // double xPIDOutput = translationPID.calculate(currentPose.getX(), wantedState.pose.getX());
+    // double yPIDOutput = translationPID.calculate(currentPose.getY(), wantedState.pose.getY());
 
-    Logger.recordOutput("FollowPathCommand/x PID Output", xPIDOutput);
-    Logger.recordOutput("FollowPathCommand/y PID Output", yPIDOutput);
+    // Logger.recordOutput("FollowPathCommand/x PID Output", xPIDOutput);
+    // Logger.recordOutput("FollowPathCommand/y PID Output", yPIDOutput);
 
-    double wantedRotationSpeeds =
-        rotationPID.calculate(
-            currentPose.getRotation().getRadians(), wantedState.heading.getRadians());
+    // double wantedRotationSpeeds =
+    //     rotationPID.calculate(
+    //         currentPose.getRotation().getRadians(), wantedState.heading.getRadians());
 
-    xSpeed = xSpeed + xPIDOutput;
-    ySpeed = ySpeed + yPIDOutput;
+    // xSpeed = xSpeed + xPIDOutput;
+    // ySpeed = ySpeed + yPIDOutput;
 
-    xSpeed =
-        clamp(
-            xSpeed,
-            -Constants.SwerveConstants.MAX_DRIVE_SPEED_METERS_PER_SECOND_THEORETICAL,
-            Constants.SwerveConstants.MAX_DRIVE_SPEED_METERS_PER_SECOND_THEORETICAL);
-    ySpeed =
-        clamp(
-            ySpeed,
-            -Constants.SwerveConstants.MAX_DRIVE_SPEED_METERS_PER_SECOND_THEORETICAL,
-            Constants.SwerveConstants.MAX_DRIVE_SPEED_METERS_PER_SECOND_THEORETICAL);
+    // xSpeed =
+    //     clamp(
+    //         xSpeed,
+    //         -Constants.SwerveConstants.MAX_DRIVE_SPEED_METERS_PER_SECOND_THEORETICAL,
+    //         Constants.SwerveConstants.MAX_DRIVE_SPEED_METERS_PER_SECOND_THEORETICAL);
+    // ySpeed =
+    //     clamp(
+    //         ySpeed,
+    //         -Constants.SwerveConstants.MAX_DRIVE_SPEED_METERS_PER_SECOND_THEORETICAL,
+    //         Constants.SwerveConstants.MAX_DRIVE_SPEED_METERS_PER_SECOND_THEORETICAL);
 
-    wantedRotationSpeeds =
-        clamp(
-            wantedRotationSpeeds,
-            -Constants.SwerveConstants.MAX_ANGULAR_SPEED_RADIANS_PER_SECOND,
-            Constants.SwerveConstants.MAX_ANGULAR_SPEED_RADIANS_PER_SECOND);
-    // double setXSpeed = xSpeed + xPID;
-    // double setYSpeed = ySpeed + yPID;
+    // wantedRotationSpeeds =
+    //     clamp(
+    //         wantedRotationSpeeds,
+    //         -Constants.SwerveConstants.MAX_ANGULAR_SPEED_RADIANS_PER_SECOND,
+    //         Constants.SwerveConstants.MAX_ANGULAR_SPEED_RADIANS_PER_SECOND);
+    // // double setXSpeed = xSpeed + xPID;
+    // // double setYSpeed = ySpeed + yPID;
 
-    // setXSpeed = xRateLimiter.calculate(setXSpeed);
-    //               ySpeed = yRateLimiter.calculate(ySpeed);
+    // // setXSpeed = xRateLimiter.calculate(setXSpeed);
+    // //               ySpeed = yRateLimiter.calculate(ySpeed);
 
-    Logger.recordOutput("xSpeed + xPID", xSpeed);
-    Logger.recordOutput("ySpeed + yPID", ySpeed);
-    Logger.recordOutput("wantedRotationSpeeds", wantedRotationSpeeds);
+    // Logger.recordOutput("xSpeed + xPID", xSpeed);
+    // Logger.recordOutput("ySpeed + yPID", ySpeed);
+    // Logger.recordOutput("wantedRotationSpeeds", wantedRotationSpeeds);
 
     /** Add alliance transform! */
 
     /** Create a ChassisSpeeds object to represent how the robot should be moving at this time. */
     ChassisSpeeds chassisSpeeds =
-        ChassisSpeeds.fromFieldRelativeSpeeds(
-            xSpeed, ySpeed, wantedRotationSpeeds, RobotState.getInstance().getPoseRotation2d());
-    // SwerveDrive.getInstance()
-    //     .swerveFollower
-    //     .calculateRobotRelativeSpeeds(RobotState.getInstance().currentPose, wantedState);
+        // ChassisSpeeds.fromFieldRelativeSpeeds(
+        //     xSpeed, ySpeed, wantedRotationSpeeds, RobotState.getInstance().getPoseRotation2d());
+        swerve.swerveFollower.calculateRobotRelativeSpeeds(
+            RobotState.getInstance().getPose(), wantedState);
 
     Logger.recordOutput("FollowPathCommand/wantedAutoPose", wantedState.pose);
 
@@ -173,6 +175,8 @@ public class FollowPathCommand extends Command {
   public void end(boolean interrupted) {
     this.timer.stop();
     swerve.stopModules();
+
+    BlinkinLEDController.getInstance().setPattern(BlinkinPattern.COLOR_WAVES_RAINBOW_PALETTE);
   }
 
   // Returns true when the command should end.
@@ -194,8 +198,9 @@ public class FollowPathCommand extends Command {
     Logger.recordOutput("FollowPathCommand/translationError", translationError);
     Logger.recordOutput("FollowPathCommand/rotationError", rotationError);
 
-    // return timer.hasElapsed(trajectory.getTotalTimeSeconds())
+    // return timer.hasElapsed(trajectory.getTotalTimeSeconds());
     return timer.hasElapsed(3);
+    // return (translationError < 1 && rotationError < 5)
   }
 
   public static double clamp(double measurement, double min, double max) {

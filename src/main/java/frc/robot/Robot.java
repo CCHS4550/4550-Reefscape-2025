@@ -52,6 +52,7 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void robotInit() {
+    HighFrequencyThread.getInstance().start();
 
     Constants.setCurrentMode();
     System.out.println(Constants.currentMode);
@@ -200,7 +201,7 @@ public class Robot extends LoggedRobot {
 
     HighFrequencyThread.getInstance().start();
 
-    BlinkinLEDController.getInstance().setPattern(BlinkinPattern.WHITE);
+    BlinkinLEDController.getInstance().setPattern(BlinkinPattern.COLOR_WAVES_RAINBOW_PALETTE);
 
     if (!RobotState.getInstance().poseInitialized) RobotState.getInstance().poseInit();
 

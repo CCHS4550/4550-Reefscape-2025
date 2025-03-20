@@ -4,7 +4,6 @@
 
 package frc.robot.autonomous;
 
-import static edu.wpi.first.wpilibj2.command.Commands.race;
 import static edu.wpi.first.wpilibj2.command.Commands.sequence;
 import static edu.wpi.first.wpilibj2.command.Commands.waitSeconds;
 
@@ -135,7 +134,7 @@ public class CustomAutoChooser {
         new PathWrapper(
             swerve,
             AutoRoutine.SHANGHAI,
-            Rotation2d.fromRadians(Math.PI),
+            Rotation2d.fromRadians(0),
             new PathWrapper.AutoFile("LCg1 - I2K4L4J4 - Shanghai.0", true),
             new PathWrapper.AutoFile("LCg1 - I2K4L4J4 - Shanghai.1", true),
             new PathWrapper.AutoFile("LCg1 - I2K4L4J4 - Shanghai.2", true),
@@ -148,28 +147,32 @@ public class CustomAutoChooser {
 
     c.addCommands(pathWrapper.setInitialPose());
 
+    /* Score */
+    // c.addCommands(
+    //     // sequence(
+    //     //     pathWrapper.getFollowCommand(0),
+    //     //     // AlignCommands.backAlignToReefLeft(swerve, vision)
+    //     //     //     .alongWith(superstructure.setWantedSuperstateCommand(SuperState.L4_BACK))
+    //     //     //     .withTimeout(5.5),
+    //     //     intake.outtakeAuto())
+    //     race(
+    //         sequence(pathWrapper.getFollowCommand(0), waitSeconds(12)),
+    //         sequence(
+    //             waitSeconds(6),
+    //             superstructure.setWantedSuperstateCommand(SuperState.L4_BACK),
+    //             waitSeconds(2),
+    //             intake.outtakeAuto(),
+    //             waitSeconds(2))));
+
     c.addCommands(
         sequence(
-            pathWrapper.getFollowCommand(0).withTimeout(3),
-            superstructure
-                .setWantedSuperstateCommand(SuperState.L4_BACK)
-                .withDeadline(AlignCommands.backAlignToReefLeft(swerve, vision).withTimeout(3)),
+            pathWrapper.getFollowCommand(0),
+            AlignCommands.backAlignToReefLeft(swerve, vision)
+                .alongWith(sequence(superstructure.setWantedSuperstateCommand(SuperState.L4_BACK)))
+                .withTimeout(6),
+            AlignCommands.backAlignToReefLeft(swerve, vision).withTimeout(6),
+            waitSeconds(2),
             intake.outtakeAuto()));
-    /* Score */
-    c.addCommands(
-        // sequence(
-        //     pathWrapper.getFollowCommand(0),
-        //     // AlignCommands.backAlignToReefLeft(swerve, vision)
-        //     //     .alongWith(superstructure.setWantedSuperstateCommand(SuperState.L4_BACK))
-        //     //     .withTimeout(5.5),
-        //     intake.outtakeAuto())
-        race(
-            sequence(pathWrapper.getFollowCommand(0), waitSeconds(2)),
-            sequence(
-                waitSeconds(2),
-                superstructure.setWantedSuperstateCommand(SuperState.L4_BACK),
-                waitSeconds(0.5),
-                intake.outtakeAuto())));
 
     /* Pick up */
     c.addCommands(
@@ -185,13 +188,14 @@ public class CustomAutoChooser {
             intake.intakeAuto()));
     /* Score */
     c.addCommands(
-        race(
-            sequence(pathWrapper.getFollowCommand(2), waitSeconds(2)),
-            sequence(
-                waitSeconds(2),
-                superstructure.setWantedSuperstateCommand(SuperState.L4_BACK),
-                waitSeconds(0.5),
-                intake.outtakeAuto())));
+        sequence(
+            pathWrapper.getFollowCommand(2),
+            AlignCommands.backAlignToReefLeft(swerve, vision)
+                .alongWith(sequence(superstructure.setWantedSuperstateCommand(SuperState.L4_BACK)))
+                .withTimeout(6),
+            AlignCommands.backAlignToReefLeft(swerve, vision).withTimeout(6),
+            waitSeconds(2),
+            intake.outtakeAuto()));
 
     /* Pick up */
     c.addCommands(
@@ -208,13 +212,14 @@ public class CustomAutoChooser {
 
     /* Score */
     c.addCommands(
-        race(
-            sequence(pathWrapper.getFollowCommand(4), waitSeconds(2)),
-            sequence(
-                waitSeconds(2),
-                superstructure.setWantedSuperstateCommand(SuperState.L4_BACK),
-                waitSeconds(0.5),
-                intake.outtakeAuto())));
+        sequence(
+            pathWrapper.getFollowCommand(4),
+            AlignCommands.backAlignToReefLeft(swerve, vision)
+                .alongWith(sequence(superstructure.setWantedSuperstateCommand(SuperState.L4_BACK)))
+                .withTimeout(6),
+            AlignCommands.backAlignToReefLeft(swerve, vision).withTimeout(6),
+            waitSeconds(2),
+            intake.outtakeAuto()));
 
     /* Pick up */
     c.addCommands(
@@ -231,13 +236,14 @@ public class CustomAutoChooser {
 
     /* Score */
     c.addCommands(
-        race(
-            sequence(pathWrapper.getFollowCommand(6), waitSeconds(2)),
-            sequence(
-                waitSeconds(2),
-                superstructure.setWantedSuperstateCommand(SuperState.L4_BACK),
-                waitSeconds(0.5),
-                intake.outtakeAuto())));
+        sequence(
+            pathWrapper.getFollowCommand(6),
+            AlignCommands.backAlignToReefLeft(swerve, vision)
+                .alongWith(sequence(superstructure.setWantedSuperstateCommand(SuperState.L4_BACK)))
+                .withTimeout(6),
+            AlignCommands.backAlignToReefLeft(swerve, vision).withTimeout(6),
+            waitSeconds(2),
+            intake.outtakeAuto()));
 
     return c;
   }
@@ -401,7 +407,7 @@ public class CustomAutoChooser {
         new PathWrapper(
             swerve,
             AutoRoutine.DETROIT,
-            Rotation2d.fromRadians(Math.PI),
+            Rotation2d.fromRadians(0),
             new PathWrapper.AutoFile("RCg1 - F2C4D4E4 - Detroit.0", true),
             new PathWrapper.AutoFile("RCg1 - F2C4D4E4 - Detroit.1", true),
             new PathWrapper.AutoFile("RCg1 - F2C4D4E4 - Detroit.2", true),
@@ -419,22 +425,22 @@ public class CustomAutoChooser {
     c.addCommands(
         sequence(
             pathWrapper.getFollowCommand(0),
-            AlignCommands.frontAlignToReefRight(swerve, vision)
-                .alongWith(
-                    superstructure.setWantedSuperstateCommand(SuperState.L3_FRONT).withTimeout(3)),
+            AlignCommands.backAlignToReefRight(swerve, vision)
+                .alongWith(superstructure.setWantedSuperstateCommand(SuperState.L4_BACK))
+                .withTimeout(3),
             intake.outtakeAuto()));
 
     /* Pick up */
     c.addCommands(
         sequence(
             superstructure
-                .setWantedSuperstateCommand(SuperState.WITHIN_FRAME_PERIMETER_DEFAULT)
-                .alongWith(new WaitCommand(1).andThen(pathWrapper.getFollowCommand(1))),
+                .setWantedSuperstateCommand(SuperState.CORAL_STATION_FRONT)
+                .withDeadline(pathWrapper.getFollowCommand(1))
+                .withTimeout(5),
             AlignCommands.frontAlignToCoralStationLeft(swerve, vision)
                 .alongWith(
-                    superstructure
-                        .setWantedSuperstateCommand(SuperState.CORAL_STATION_FRONT)
-                        .withTimeout(3)),
+                    superstructure.setWantedSuperstateCommand(SuperState.CORAL_STATION_FRONT))
+                .withTimeout(1),
             intake.intakeAuto()));
 
     /* Score */
@@ -442,21 +448,21 @@ public class CustomAutoChooser {
         sequence(
             pathWrapper.getFollowCommand(2),
             AlignCommands.backAlignToReefLeft(swerve, vision)
-                .alongWith(
-                    superstructure.setWantedSuperstateCommand(SuperState.L4_BACK).withTimeout(3)),
+                .alongWith(superstructure.setWantedSuperstateCommand(SuperState.L4_BACK))
+                .withTimeout(4),
             intake.outtakeAuto()));
 
     /* Pick up */
     c.addCommands(
         sequence(
             superstructure
-                .setWantedSuperstateCommand(SuperState.WITHIN_FRAME_PERIMETER_DEFAULT)
-                .alongWith(new WaitCommand(1).andThen(pathWrapper.getFollowCommand(3))),
+                .setWantedSuperstateCommand(SuperState.CORAL_STATION_FRONT)
+                .withDeadline(pathWrapper.getFollowCommand(3))
+                .withTimeout(5),
             AlignCommands.frontAlignToCoralStationLeft(swerve, vision)
                 .alongWith(
-                    superstructure
-                        .setWantedSuperstateCommand(SuperState.CORAL_STATION_FRONT)
-                        .withTimeout(3)),
+                    superstructure.setWantedSuperstateCommand(SuperState.CORAL_STATION_FRONT))
+                .withTimeout(1),
             intake.intakeAuto()));
 
     /* Score */
@@ -464,21 +470,21 @@ public class CustomAutoChooser {
         sequence(
             pathWrapper.getFollowCommand(4),
             AlignCommands.backAlignToReefRight(swerve, vision)
-                .alongWith(
-                    superstructure.setWantedSuperstateCommand(SuperState.L4_BACK).withTimeout(3)),
+                .alongWith(superstructure.setWantedSuperstateCommand(SuperState.L4_BACK))
+                .withTimeout(3),
             intake.outtakeAuto()));
 
     /* Pick up */
     c.addCommands(
         sequence(
             superstructure
-                .setWantedSuperstateCommand(SuperState.WITHIN_FRAME_PERIMETER_DEFAULT)
-                .alongWith(new WaitCommand(1).andThen(pathWrapper.getFollowCommand(5))),
+                .setWantedSuperstateCommand(SuperState.CORAL_STATION_FRONT)
+                .withDeadline(pathWrapper.getFollowCommand(5))
+                .withTimeout(5),
             AlignCommands.frontAlignToCoralStationLeft(swerve, vision)
                 .alongWith(
-                    superstructure
-                        .setWantedSuperstateCommand(SuperState.CORAL_STATION_FRONT)
-                        .withTimeout(3)),
+                    superstructure.setWantedSuperstateCommand(SuperState.CORAL_STATION_FRONT))
+                .withTimeout(1),
             intake.intakeAuto()));
 
     /* Score */
@@ -486,8 +492,8 @@ public class CustomAutoChooser {
         sequence(
             pathWrapper.getFollowCommand(6),
             AlignCommands.backAlignToReefLeft(swerve, vision)
-                .alongWith(
-                    superstructure.setWantedSuperstateCommand(SuperState.L4_BACK).withTimeout(3)),
+                .alongWith(superstructure.setWantedSuperstateCommand(SuperState.L4_BACK))
+                .withTimeout(3),
             intake.outtakeAuto()));
 
     return c;
@@ -588,30 +594,30 @@ public class CustomAutoChooser {
         sequence(
             pathWrapper.getFollowCommand(0),
             AlignCommands.backAlignToReefLeft(swerve, vision)
-                .alongWith(
-                    superstructure.setWantedSuperstateCommand(SuperState.L4_BACK).withTimeout(3)),
+                .alongWith(superstructure.setWantedSuperstateCommand(SuperState.L4_BACK))
+                .withTimeout(5.5),
             intake.outtakeAuto()));
 
     /* Pick up */
     c.addCommands(
         sequence(
             superstructure
-                .setWantedSuperstateCommand(SuperState.WITHIN_FRAME_PERIMETER_DEFAULT)
-                .alongWith(new WaitCommand(1).andThen(pathWrapper.getFollowCommand(1))),
+                .setWantedSuperstateCommand(SuperState.CORAL_STATION_FRONT)
+                .withDeadline(pathWrapper.getFollowCommand(1))
+                .withTimeout(5),
             AlignCommands.frontAlignToCoralStationLeft(swerve, vision)
                 .alongWith(
-                    superstructure
-                        .setWantedSuperstateCommand(SuperState.CORAL_STATION_FRONT)
-                        .withTimeout(3)),
+                    superstructure.setWantedSuperstateCommand(SuperState.CORAL_STATION_FRONT))
+                .withTimeout(1),
             intake.intakeAuto()));
 
     /* Score */
     c.addCommands(
         sequence(
             pathWrapper.getFollowCommand(2),
-            AlignCommands.backAlignToReefRight(swerve, vision)
-                .alongWith(
-                    superstructure.setWantedSuperstateCommand(SuperState.L4_BACK).withTimeout(3)),
+            AlignCommands.backAlignToReefLeft(swerve, vision)
+                .alongWith(superstructure.setWantedSuperstateCommand(SuperState.L4_BACK))
+                .withTimeout(5.5),
             intake.outtakeAuto()));
 
     return c;
@@ -836,6 +842,7 @@ public class CustomAutoChooser {
     return c;
   }
 
+  // seatlte works
   public Command runSeattle() {
 
     PathWrapper pathWrapper =
@@ -849,12 +856,16 @@ public class CustomAutoChooser {
     // Do not add file extensions!
 
     c.addCommands(pathWrapper.setInitialPose());
-    c.addCommands(pathWrapper.getFollowCommand(0));
     c.addCommands(
-        AlignCommands.backAlignToReefLeft(swerve, vision)
-            .alongWith(
-                superstructure.setWantedSuperstateCommand(SuperState.L4_BACK).withTimeout(3)));
-    c.addCommands(intake.outtakeAuto());
+        sequence(
+
+            // pathWrapper.getFollowCommand(0),
+            AlignCommands.backAlignToReefLeft(swerve, vision)
+                .alongWith(superstructure.setWantedSuperstateCommand(SuperState.L4_BACK))
+                .withTimeout(5.5),
+            intake.outtakeAuto(),
+            new WaitCommand(4),
+            superstructure.setWantedSuperstateCommand(SuperState.WITHIN_FRAME_PERIMETER_DEFAULT)));
 
     return c;
   }
@@ -899,15 +910,16 @@ public class CustomAutoChooser {
 
     SequentialCommandGroup c = new SequentialCommandGroup();
     // Do not add file extensions!
-
     c.addCommands(pathWrapper.setInitialPose());
     /* Score */
     c.addCommands(
         sequence(
             pathWrapper.getFollowCommand(0),
             AlignCommands.backAlignToReefLeft(swerve, vision)
-                .alongWith(superstructure.setWantedSuperstateCommand(SuperState.L4_BACK))
-                .withTimeout(5.5),
+                .alongWith(sequence(superstructure.setWantedSuperstateCommand(SuperState.L4_BACK)))
+                .withTimeout(6),
+            AlignCommands.backAlignToReefLeft(swerve, vision).withTimeout(6),
+            waitSeconds(2),
             intake.outtakeAuto()));
     /* Pick up */
     c.addCommands(
@@ -926,8 +938,10 @@ public class CustomAutoChooser {
         sequence(
             pathWrapper.getFollowCommand(2),
             AlignCommands.backAlignToReefLeft(swerve, vision)
-                .alongWith(superstructure.setWantedSuperstateCommand(SuperState.L4_BACK))
-                .withTimeout(5.5),
+                .alongWith(sequence(superstructure.setWantedSuperstateCommand(SuperState.L4_BACK)))
+                .withTimeout(6),
+            AlignCommands.backAlignToReefLeft(swerve, vision).withTimeout(6),
+            waitSeconds(2),
             intake.outtakeAuto()));
     /* Pick up */
     c.addCommands(
@@ -945,9 +959,11 @@ public class CustomAutoChooser {
     c.addCommands(
         sequence(
             pathWrapper.getFollowCommand(4),
-            AlignCommands.backAlignToReefRight(swerve, vision)
-                .alongWith(superstructure.setWantedSuperstateCommand(SuperState.L4_BACK))
-                .withTimeout(5.5),
+            AlignCommands.backAlignToReefLeft(swerve, vision)
+                .alongWith(sequence(superstructure.setWantedSuperstateCommand(SuperState.L4_BACK)))
+                .withTimeout(6),
+            AlignCommands.backAlignToReefLeft(swerve, vision).withTimeout(6),
+            waitSeconds(2),
             intake.outtakeAuto()));
 
     return c;
