@@ -427,7 +427,7 @@ public class CustomAutoChooser {
             pathWrapper.getFollowCommand(0),
             AlignCommands.backAlignToReefRight(swerve, vision)
                 .alongWith(superstructure.setWantedSuperstateCommand(SuperState.L4_BACK))
-                .withTimeout(3),
+                .withTimeout(5),
             intake.outtakeAuto()));
 
     /* Pick up */
@@ -449,7 +449,7 @@ public class CustomAutoChooser {
             pathWrapper.getFollowCommand(2),
             AlignCommands.backAlignToReefLeft(swerve, vision)
                 .alongWith(superstructure.setWantedSuperstateCommand(SuperState.L4_BACK))
-                .withTimeout(4),
+                .withTimeout(6),
             intake.outtakeAuto()));
 
     /* Pick up */

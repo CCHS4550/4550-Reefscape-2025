@@ -210,9 +210,9 @@ public class SwerveDriveSubsystem extends SubsystemBase {
 
     swerveFollower =
         new PPHolonomicDriveController(
-            new com.pathplanner.lib.config.PIDConstants(2, 0, 0),
-            new com.pathplanner.lib.config.PIDConstants(2, 0, 0),
-            .02);
+            new com.pathplanner.lib.config.PIDConstants(.75, 0, 0),
+            new com.pathplanner.lib.config.PIDConstants(.75, 0, 0),
+            1);
 
     turnPIDProfiled =
         new ProfiledPIDController(

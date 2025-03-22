@@ -87,6 +87,7 @@ public class IntakeSubsystem extends SubsystemBase {
         this);
   }
 
+  Timer endTimer = new Timer();
   boolean endStart = false;
 
   public Command outtakeAuto() {
@@ -94,22 +95,21 @@ public class IntakeSubsystem extends SubsystemBase {
         () -> {
           boolean outtakeReverse = RobotState.getInstance().currentSuperState == SuperState.L4_BACK;
           intakeIO.intake(Volts.of(outtakeReverse ? -12 : 12));
-          Timer timer = new Timer();
-          endStart = false;
 
-          timer.reset();
-          timer.stop();
+          endStart = false;
+          endTimer.reset();
+          endTimer.stop();
         },
         () -> {
           if (!hasCoralSupplier.getAsBoolean() && !endStart) {
-            timer.start();
+            endTimer.start();
             endStart = true;
           }
         },
         (bool) -> {
           intakeIO.intake(Volts.of(0));
         },
-        () -> timer.hasElapsed(1),
+        () -> endTimer.hasElapsed(1),
         this);
   }
 

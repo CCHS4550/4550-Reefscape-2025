@@ -200,16 +200,16 @@ public class RobotState {
   }
 
   public void poseInit() {
-
-    poseEstimator =
-        new SwerveDrivePoseEstimator(
-            Constants.SwerveConstants.DRIVE_KINEMATICS,
-            getRotation2d(),
-            swerveModulePositions,
-            new Pose2d(0, 0, new Rotation2d()),
-            VecBuilder.fill(0.1, 0.1, 0.1),
-            VecBuilder.fill(0.5, 0.5, 0.5));
-    ;
+    if (!poseInitialized) {
+      poseEstimator =
+          new SwerveDrivePoseEstimator(
+              Constants.SwerveConstants.DRIVE_KINEMATICS,
+              getRotation2d(),
+              swerveModulePositions,
+              new Pose2d(0, 0, new Rotation2d()),
+              VecBuilder.fill(0.1, 0.1, 0.1),
+              VecBuilder.fill(0.5, 0.5, 0.5));
+    }
 
     poseInitialized = true;
   }

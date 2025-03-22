@@ -149,9 +149,6 @@ public class Robot extends LoggedRobot {
         break;
     }
 
-    RobotState.getInstance().updateOdometryPose();
-    RobotState.getInstance().updateVisionPose();
-
     // Runs the Scheduler. This is responsible for polling buttons, adding
     // newly-scheduled
     // commands, running already-scheduled commands, removing finished or
@@ -174,6 +171,8 @@ public class Robot extends LoggedRobot {
   @Override
   public void autonomousInit() {
 
+    RobotState.getInstance().poseInit();
+
     Constants.checkAlliance();
     HighFrequencyThread.getInstance().start();
 
@@ -189,6 +188,9 @@ public class Robot extends LoggedRobot {
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
+
+    RobotState.getInstance().updateOdometryPose();
+    RobotState.getInstance().updateVisionPose();
     // RobotState.getInstance().swerveModuleEncodersPeriodic();
     RobotState.getInstance().updateSwerveModulePositionsPeriodic();
   }
@@ -196,6 +198,8 @@ public class Robot extends LoggedRobot {
   /** This function is called once when teleop is enabled. */
   @Override
   public void teleopInit() {
+
+    RobotState.getInstance().poseInit();
 
     Constants.checkAlliance();
 
@@ -217,8 +221,8 @@ public class Robot extends LoggedRobot {
     // RobotState.getInstance().swerveModuleEncodersPeriodic();
     RobotState.getInstance().updateSwerveModulePositionsPeriodic();
 
-    // RobotState.getInstance().updateOdometryPose();
-    // RobotState.getInstance().updateVisionPose();
+    RobotState.getInstance().updateOdometryPose();
+    RobotState.getInstance().updateVisionPose();
   }
 
   /** This function is called once when test mode is enabled. */

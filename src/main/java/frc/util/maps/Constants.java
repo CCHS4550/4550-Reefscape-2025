@@ -105,7 +105,8 @@ public class Constants {
     public static final boolean FRONT_RIGHT_TURN_REVERSE = true;
     public static final double FRONT_RIGHT_TURN_ENCODER = 1;
 
-    public static final int FRONT_LEFT_DRIVE = 4;
+    // 4
+    public static final int FRONT_LEFT_DRIVE = 5;
     public static final boolean FRONT_LEFT_DRIVE_REVERSE = true;
     public static final double FRONT_LEFT_DRIVE_ENCODER = 1;
     public static final int FRONT_LEFT_TURN = 3;
@@ -176,7 +177,7 @@ public class Constants {
 
     // Rate Limiters (acceleration)
     // public static final double DRIVE_RATE_LIMIT = MAX_DRIVE_SPEED_METERS_PER_SECOND * 1.5;
-    public static final double DRIVE_RATE_LIMIT = 8.731;
+    public static final double DRIVE_RATE_LIMIT = 5;
     // public static final double TURN_RATE_LIMIT = MAX_ANGULAR_SPEED_RADIANS_PER_SECOND;
     public static final double TURN_RATE_LIMIT = 36.038;
 

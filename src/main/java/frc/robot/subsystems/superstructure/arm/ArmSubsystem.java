@@ -28,7 +28,7 @@ public class ArmSubsystem extends SubsystemBase {
     ZERO(0),
     DEFAULT_WITHINFRAME(Units.degreesToRadians(-36)),
     L1_FRONT(Units.degreesToRadians(0)),
-    L2_FRONT(Units.degreesToRadians(12.5)),
+    L2_FRONT(Units.degreesToRadians(13)),
     L3_FRONT(Units.degreesToRadians(17)),
     // L4_BACK(Units.degreesToRadians(94.234611)),
     L4_BACK(Units.degreesToRadians(91)),
