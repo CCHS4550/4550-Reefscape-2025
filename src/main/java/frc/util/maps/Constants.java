@@ -329,9 +329,9 @@ public class Constants {
             Inches.of((-18.7500 + 1.75)), Inches.of(-6.481791 + 1), new Rotation2d(Math.PI));
 
     public static final Transform2d CORAL_STATION_LEFT_OFFSET =
-        new Transform2d(Inches.of((-18.7500 + 8)), Inches.of(6), new Rotation2d());
+        new Transform2d(Inches.of((-18.7500 + 12)), Inches.of(6), new Rotation2d());
     public static final Transform2d CORAL_STATION_RIGHT_OFFSET =
-        new Transform2d(Inches.of((-18.7500 + 8)), Inches.of(-6), new Rotation2d());
+        new Transform2d(Inches.of((-18.7500 + 12)), Inches.of(-6), new Rotation2d());
     public static final Transform2d PROCESSOR_OFFSET =
         new Transform2d(Inches.of((-18.7500 - 5)), Inches.of(6.481791), new Rotation2d());
 
