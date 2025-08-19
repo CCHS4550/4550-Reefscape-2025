@@ -68,7 +68,7 @@ public class Superstructure extends SubsystemBase {
     /** Position to Score L4 */
     L4_BACK,
 
-    // L4_INTERMEDIATE,
+    L4_INTERMEDIATE,
     /** In position to climb */
     CLIMB_PREPARING,
 
@@ -164,20 +164,20 @@ public class Superstructure extends SubsystemBase {
             .schedule();
         outtakeReverse = true;
         break;
-        // case L4_INTERMEDIATE:
-        //   arm.setWantedStateCommand(ArmState.L3_FRONT).schedule();
+        case L4_INTERMEDIATE:
+          arm.setWantedStateCommand(ArmState.L3_FRONT).schedule();
 
-        //   wrist.setWantedStateCommand(WristState.L3_FRONT).schedule();
+          wrist.setWantedStateCommand(WristState.L3_FRONT).schedule();
 
-        //   elevator.setWantedStateCommand(ElevatorState.L4_INTERMEDIATE).schedule();
+          elevator.setWantedStateCommand(ElevatorState.L4_INTERMEDIATE).schedule();
 
-        //   new WaitCommand(0.5).andThen(setWantedSuperstateCommand(wantedSuperState)).schedule();
+          new WaitCommand(0.5).andThen(setWantedSuperstateCommand(wantedSuperState)).schedule();
 
-        //   System.out.println("Applying Intermediate State");
+          System.out.println("Applying Intermediate State");
 
-        //   outtakeReverse = true;
+          outtakeReverse = true;
 
-        //   break;
+          break;
 
       case KNOCK_ALGAE_BOTTOM:
         arm.setWantedStateCommand(ArmState.KNOCK_ALGAE_BOTTOM).schedule();

@@ -1,9 +1,9 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.controlschemes.MechanismScheme;
-import frc.robot.controlschemes.SwerveDriveScheme;
-import frc.robot.controlschemes.TestingScheme;
+import frc.robot.ControlSchemes.MechanismScheme;
+import frc.robot.ControlSchemes.SwerveDriveScheme;
+import frc.robot.ControlSchemes.TestingScheme;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.algae.AlgaeIOReplay;
 import frc.robot.subsystems.algae.AlgaeIOSim;

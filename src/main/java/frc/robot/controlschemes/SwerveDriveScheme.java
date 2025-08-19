@@ -1,4 +1,4 @@
-package frc.robot.controlschemes;
+package frc.robot.ControlSchemes;
 
 import static edu.wpi.first.wpilibj2.command.Commands.runOnce;
 

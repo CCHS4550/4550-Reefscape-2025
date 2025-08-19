@@ -1,5 +1,11 @@
-package frc.robot.controlschemes;
+package frc.robot.ControlSchemes;
 
+import static edu.wpi.first.wpilibj2.command.Commands.runOnce;
+import static edu.wpi.first.wpilibj2.command.Commands.sequence;
+
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.Superstructure;
@@ -11,6 +17,8 @@ import frc.robot.subsystems.superstructure.arm.ArmSubsystem;
 import frc.robot.subsystems.superstructure.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.superstructure.wrist.WristSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveDriveSubsystem;
+import frc.util.BlinkinLEDController;
+import frc.util.BlinkinLEDController.BlinkinPattern;
 
 public class MechanismScheme {
   private static CommandGenericHID buttonBoard;
@@ -29,22 +37,22 @@ public class MechanismScheme {
     buttonBoard = new CommandGenericHID(port);
     configureButtons(algae, arm, climber, elevator, intake, swerve, wrist, superstructure, port);
 
-    // intake
-    //     .hasCoralTrigger()
-    //     .onTrue(
-    //         intake
-    //             .stop()
-    //             .andThen(
-    //                 Commands.runOnce(
-    //                     () ->
-    //                         BlinkinLEDController.getInstance()
-    //                             .setIfNotAlready(BlinkinPattern.STROBE_GOLD))))
-    //     .onFalse(
-    //         Commands.runOnce(
-    //             () ->
-    //                 BlinkinLEDController.getInstance()
-    //                     .setIfNotAlready(BlinkinPattern.RAINBOW_RAINBOW_PALETTE)));
-
+    intake
+        .hasCoralDelayed(0)
+        .onTrue(
+            intake
+                .stop()
+                .andThen(
+                    runOnce(
+                        () ->
+                            BlinkinLEDController.getInstance()
+                                .setIfNotAlready(BlinkinPattern.STROBE_WHITE))))
+        .onFalse(
+            runOnce(
+                () ->
+                    BlinkinLEDController.getInstance()
+                        .setIfNotAlready(BlinkinPattern.RAINBOW_RAINBOW_PALETTE)));
+    
     // intake
     //     .hasCoralTrigger()
     //     .onTrue(Commands.runOnce(() -> intake.intakeSlow(), intake))
@@ -61,7 +69,14 @@ public class MechanismScheme {
       WristSubsystem wrist,
       Superstructure superstructure,
       int port) {
+    
 
+    Command wristFix = sequence(
+        superstructure.setWantedSuperstateCommand(SuperState.L4_INTERMEDIATE),
+        superstructure.setWantedSuperstateCommand(SuperState.CORAL_STATION_FRONT)
+    );        
+
+    // TODO ask Ian about these controls
     final Trigger yellowTop = buttonBoard.button(1);
     final Trigger yellowBottom = buttonBoard.button(2);
 
@@ -80,26 +95,29 @@ public class MechanismScheme {
     final Trigger blackTop = buttonBoard.button(11);
     final Trigger blackBottom = buttonBoard.button(12);
 
-    yellowTop.onTrue(superstructure.setWantedSuperstateCommand(SuperState.CORAL_STATION_FRONT));
+    yellowTop.onTrue(wristFix
+    );
     yellowTop.whileTrue(superstructure.intakeCoralStation());
     yellowBottom.onTrue(
         superstructure.setWantedSuperstateCommand(SuperState.WITHIN_FRAME_PERIMETER_DEFAULT));
 
+    /** Unmapped controls. Will probably be algae processor. */
     whiteTop.whileTrue(climber.climberDown());
     whiteBottom.whileTrue(climber.climberUp());
 
     blueTop.onTrue(superstructure.setWantedSuperstateCommand(SuperState.L1_FRONT));
+    // blueTop.onTrue(new InstantCommand(() -> System.out.println("asdfsjfkdglfh")));
     blueBottom.onTrue(superstructure.setWantedSuperstateCommand(SuperState.L2_FRONT));
 
     greenTop.onTrue(superstructure.setWantedSuperstateCommand(SuperState.L4_BACK));
     greenBottom.onTrue(superstructure.setWantedSuperstateCommand(SuperState.L3_FRONT));
 
-    redTop.onTrue(superstructure.setWantedSuperstateCommand(SuperState.KNOCK_ALGAE_TOP));
-    redTop.whileTrue(intake.outtake());
-    redBottom.onTrue(superstructure.setWantedSuperstateCommand(SuperState.KNOCK_ALGAE_BOTTOM));
-    redBottom.whileTrue(intake.outtake());
+    redTop.onTrue(
+        superstructure.setWantedSuperstateCommand(SuperState.WITHIN_FRAME_PERIMETER_DEFAULT));
+    redBottom.onTrue(superstructure.setWantedSuperstateCommand(SuperState.CLIMB_PREPARING));
 
     blackTop.whileTrue(intake.outtake());
-    blackBottom.whileTrue(superstructure.setWantedSuperstateCommand(SuperState.CLIMB_PREPARING));
+    blackBottom.whileTrue(intake.intakeCoralStation());
+    // blackBottom.onTrue(superstructure.setWantedSuperstateCommand(SuperState.ZERO));
   }
 }
