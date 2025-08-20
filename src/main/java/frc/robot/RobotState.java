@@ -10,6 +10,9 @@ import choreo.util.ChoreoAllianceFlipUtil;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.Pigeon2;
+
+import edu.wpi.first.math.MatBuilder;
+import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -212,6 +215,28 @@ public class RobotState {
     }
 
     poseInitialized = true;
+  }
+
+  public void dependencyOnVisionPoseEstimator (SwerveDrivePoseEstimator swerveDrivePoseEstimator){
+    //Suhit's idea of not using vision when the robot is moving
+    // When the speed is "small enough", it'll change how much it trusts vision when moving
+    // If it's zero, theoretically it should work only on odometry
+    ChassisSpeeds visionSpeeds = new ChassisSpeeds();
+    visionSpeeds = swerve.getRobotRelativeSpeeds();
+
+    double vxMPS = visionSpeeds.vxMetersPerSecond;
+    double vyMPS = visionSpeeds.vyMetersPerSecond;
+    double thetaMPS = visionSpeeds.omegaRadiansPerSecond;
+
+    boolean vxCondition = (vxMPS<0.03) && (vxMPS>-0.03);
+    boolean vyCondition = (vyMPS < 0.03)&&(vyMPS>-0.03);
+    boolean thetaCondition = (thetaMPS<0.03)&& (thetaMPS>-0.03);
+
+    if (vxCondition && vyCondition && thetaCondition){
+      swerveDrivePoseEstimator.setVisionMeasurementStdDevs(new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0,0,0)); // shut up Mat Builder
+    }
+
+
   }
 
   /** Update the pose estimator with Odometry and Gyro Data (HF Functional) */

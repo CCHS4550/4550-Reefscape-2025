@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 /** Add your docs here. */
+//Wraps auto paths in a container object
 
 /** Largely inspired of off */
 public class PathWrapper {
